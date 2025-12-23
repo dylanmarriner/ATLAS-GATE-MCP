@@ -1,34 +1,54 @@
 import fs from "fs";
 import path from "path";
 
-const PLAN_DIR = "./docs/plans";
+const PLANS_DIR = path.resolve("docs/plans");
 
-export function loadPlans() {
-  const plans = {};
+export function loadPlan(planId) {
+  const planPath = path.join(PLANS_DIR, `${planId}.md`);
 
-  for (const file of fs.readdirSync(PLAN_DIR)) {
-    if (!file.endsWith(".md")) continue;
-
-    const content = fs.readFileSync(path.join(PLAN_DIR, file), "utf8");
-
-    const id = content.match(/^ID:\s*(.+)$/m)?.[1];
-    const status = content.match(/^STATUS:\s*(.+)$/m)?.[1];
-    const scopeBlock = content.match(/^SCOPE:\n([\s\S]*?)(\n[A-Z]+:|\n$)/m)?.[1];
-
-    if (!id || !status || !scopeBlock) continue;
-
-    const scope = scopeBlock
-      .split("\n")
-      .map(l => l.trim())
-      .filter(l => l.startsWith("- "))
-      .map(l => l.slice(2));
-
-    plans[id] = {
-      status,
-      scope,
-      file,
-    };
+  if (!fs.existsSync(planPath)) {
+    throw new Error(`PLAN_NOT_FOUND: ${planId}`);
   }
 
-  return plans;
+  const content = fs.readFileSync(planPath, "utf8");
+  return parsePlan(content, planId);
+}
+
+function parsePlan(content, planId) {
+  const lines = content.split("\n");
+
+  let status = null;
+  let scope = [];
+  let inScope = false;
+
+  for (const line of lines) {
+    if (line.startsWith("STATUS:")) {
+      status = line.replace("STATUS:", "").trim();
+    }
+
+    if (line.startsWith("SCOPE:")) {
+      inScope = true;
+      continue;
+    }
+
+    if (inScope) {
+      if (line.trim().startsWith("- ")) {
+        scope.push(line.trim().replace("- ", ""));
+      } else if (line.trim() === "") {
+        continue;
+      } else {
+        inScope = false;
+      }
+    }
+  }
+
+  if (status !== "APPROVED") {
+    throw new Error(`PLAN_NOT_APPROVED: ${planId}`);
+  }
+
+  if (scope.length === 0) {
+    throw new Error(`PLAN_INVALID: ${planId} has empty SCOPE`);
+  }
+
+  return { id: planId, status, scope };
 }

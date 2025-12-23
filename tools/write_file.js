@@ -7,16 +7,16 @@ import { parseRoleMetadata } from "../core/role-metadata.js";
 import { validateRoleMetadata } from "../core/role-validator.js";
 import { validateRoleMismatch } from "../core/role-mismatch-validator.js";
 import { detectStubs } from "../core/stub-detector.js";
+import { appendAuditLog } from "../core/audit-log.js";
+import { SESSION_ID } from "../session.js";
 
 export async function writeFileHandler({ path: filePath, content, plan }) {
   if (!filePath || !content || !plan) {
-    throw new Error(
-      "INVALID_WRITE_REQUEST: path, content, and plan are required"
-    );
+    throw new Error("INVALID_WRITE_REQUEST");
   }
 
   if (filePath.includes("..")) {
-    throw new Error("INVALID_PATH: directory traversal forbidden");
+    throw new Error("INVALID_PATH");
   }
 
   const normalizedPath = filePath.replace(/\\/g, "/");
@@ -30,18 +30,14 @@ export async function writeFileHandler({ path: filePath, content, plan }) {
   validateRoleMismatch(metadata.ROLE, content);
   detectStubs(content);
 
-  const absolutePath = path.resolve(normalizedPath);
-  fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
-  fs.writeFileSync(absolutePath, content, "utf8");
+  const abs = path.resolve(normalizedPath);
+  fs.mkdirSync(path.dirname(abs), { recursive: true });
+  fs.writeFileSync(abs, content, "utf8");
 
-  return {
-    status: "OK",
-    plan,
-    role: metadata.ROLE,
-    path: normalizedPath,
-  };
-}
+  appendAuditLog(
+    { plan, role: metadata.ROLE, path: normalizedPath },
+    SESSION_ID
+  );
 
-export function registerWriteFileTool(server) {
-  server.tool("write_file", writeFileHandler);
+  return { status: "OK", plan, role: metadata.ROLE, path: normalizedPath };
 }

@@ -10,7 +10,6 @@ const FORBIDDEN_PATTERNS = [
   "fake",
 ];
 
-// patterns that strongly indicate non-implementation
 const FORBIDDEN_REGEX = [
   /^\s*return\s+null\s*;/m,
   /^\s*return\s+\{\s*\}\s*;/m,
@@ -34,8 +33,6 @@ export function detectStubs(content) {
   }
 
   if (hits.length > 0) {
-    throw new Error(
-      `STUB_DETECTED:\n- ${hits.join("\n- ")}`
-    );
+    throw new Error(`STUB_DETECTED:\n- ${hits.join("\n- ")}`);
   }
 }

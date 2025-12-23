@@ -1,30 +1,24 @@
-import path from "path";
-import minimatch from "minimatch";
-import { loadPlans } from "./plan-registry.js";
+import { loadPlan } from "./plan-registry.js";
+
+function pathMatchesScope(filePath, scopePattern) {
+  if (scopePattern.endsWith("/**")) {
+    const base = scopePattern.replace("/**", "");
+    return filePath.startsWith(base);
+  }
+
+  return filePath === scopePattern;
+}
 
 export function enforcePlan(planId, filePath) {
-  const plans = loadPlans();
-  const plan = plans[planId];
+  const plan = loadPlan(planId);
 
-  if (!plan) {
-    throw new Error(`PLAN_NOT_FOUND: ${planId}`);
+  for (const scope of plan.scope) {
+    if (pathMatchesScope(filePath, scope)) {
+      return;
+    }
   }
 
-  if (plan.status !== "APPROVED") {
-    throw new Error(`PLAN_NOT_APPROVED: ${planId}`);
-  }
-
-  const normalized = filePath.replace(/\\/g, "/");
-
-  const allowed = plan.scope.some(pattern =>
-    minimatch(normalized, pattern)
+  throw new Error(
+    `PLAN_SCOPE_VIOLATION: ${filePath} not permitted by plan ${planId}`
   );
-
-  if (!allowed) {
-    throw new Error(
-      `PLAN_SCOPE_VIOLATION: ${filePath} not allowed by ${planId}`
-    );
-  }
-
-  return true;
 }

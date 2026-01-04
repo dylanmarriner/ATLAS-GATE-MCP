@@ -19,6 +19,40 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
+/**
+ * OBJECTIVE 2 — INPUT NORMALIZATION
+ * 
+ * Normalize all tool inputs server-side before validation.
+ * Accepts both string and object input formats.
+ * Prevents client-side formatting assumptions.
+ */
+const originalValidateToolInput = server.validateToolInput.bind(server);
+server.validateToolInput = async function(tool, args, toolName) {
+  // NORMALIZATION: Handle string input (JSON-stringified or raw)
+  if (typeof args === 'string') {
+    try {
+      // Try to parse as JSON object
+      args = JSON.parse(args);
+    } catch (parseError) {
+      // If parse fails, wrap in object with 'path' property for common patterns
+      // This handles cases like: call with "path/to/file.md" directly
+      if (toolName === 'read_file' || toolName === 'list_plans') {
+        args = { path: args };
+      } else {
+        // Re-throw for other tools if string parsing fails
+        throw new Error(`INVALID_INPUT_FORMAT: ${toolName} requires object input, got unparseable string`);
+      }
+    }
+  }
+
+  // NORMALIZATION: Validate args is now an object
+  if (typeof args !== 'object' || args === null) {
+    throw new Error(`INVALID_INPUT_FORMAT: ${toolName} input must be an object, got ${typeof args}`);
+  }
+
+  return originalValidateToolInput(tool, args, toolName);
+};
+
 // Register tools (THIS SDK STYLE)
 server.registerTool(
   "write_file",

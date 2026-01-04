@@ -1,62 +1,98 @@
 # Kaiza MCP Server
 
-A robust, enterprise-grade Model Context Protocol (MCP) server designed for secure, audited file operations. This server acts as a bridge between LLMs and your filesystem, enforcing strict validation plans and maintaining an immutable audit log of all changes.
+> **Enterprise Enforcement Gateway for LLM-Driven Development**
 
-## Features
+The Kaiza MCP Server is a high-assurance Model Context Protocol (MCP) implementation designed to act as a secure, non-negotiable bridge between Large Language Model (LLM) agents and filesystem operations. It forces all autonomous code generation to adhere to strict strict provenance, authorization, and quality standards.
 
-- **Secure File Writing**: All `write_file` operations must be linked to an approved "Implementation Plan" ID.
-- **Scope Enforcement**: Writes are restricted to file paths explicitly allowed by the plan's scope.
-- **Audit Logging**: Every successful write operation is cryptographically hashed and chained in `audit-log.jsonl`, ensuring a tamper-evident history.
-- **Stub Detection**: Automatically rejects code containing placeholder patterns (e.g., `TODO`, `FIXME`, empty returns) to ensure production readiness.
-- **Read-Only Access**: Provides safe `read_file` access to repository contents.
+Unlike standard MCP servers that provide passive tool access, Kaiza functions as an active **Enforcement Authority**. It does not merely execute commands; it validates the *intent*, *authorization*, and *quality* of every operation before execution.
 
-## Installation
+## Core Mandate
 
-```bash
-npm install
+The system exists to solve the "Agent Alignment & Safety" problem in automated coding workflows. It ensures:
+
+1. **No Unauthorized Writes**: Every modification must be cryptographically linked to an approved "Implementation Plan".
+2. **No Silent Corruption**: All writes are hashed and appended to an immutable audit log.
+3. **No Placeholder Code**: A hard-blocking static analysis layer rejects any code containing stubs, mocks, TODOs, or non-production patterns.
+4. **Global Plan Discovery**: It acts as a universal reader for documentation and planning artifacts across repositories.
+
+## High-Level Architecture
+
+The server operates as a standard stdio-based MCP process but injects a rigid strict middleware layer into the execution pipeline:
+
+```mermaid
+graph TD
+    User[LLM Agent] -->|Request| Server[Kaiza MCP Server]
+    Server -->|1. Normalize| Norm[Input Normalization]
+    Norm -->|2. Validate Plan| Policy[Policy Engine]
+    Policy -->|3. Check Scope| Scope[Scope Guard]
+    Scope -->|4. Scan Quality| Static[Enterprise Stub Detector]
+    Static -->|PASS| FS[Filesystem Write]
+    Static -->|FAIL| Reject[Hard Block / Error]
+    FS -->|Success| Audit[Audit Log (Hash Chain)]
 ```
 
-## Running the Server
+## Tooling Model
 
-The server communicates via `stdio`. It is intended to be run by an MCP client (such as Claude Desktop or an IDE extension).
+The server exposes a minimal, high-leverage toolset. Each tool is designed to be deterministic and secure.
 
-```bash
-node server.js
-```
+### 1. `write_file` (Enforced)
 
-## Tools
+Writes content to the filesystem.
 
-### `write_file`
+- **Enforcement**: Requires a valid `plan` ID.
+- **Validation**: Content is scanned for strict prohibition of `TODO`, `FIXME`, stubs, and mocks.
+- **Audit**: Operation is logged with a cryptographic hash of the content.
 
-Writes content to a file.
+### 2. `read_file` (Safe)
 
-- **path**: Relative path to the file.
-- **content**: The string content to write.
-- **plan**: The ID of the approved Implementation Plan authorizing this change.
+Provides read-only access to the filesystem.
 
-### `read_file`
+- **Discovery**: Automatically permits reading from `/docs/**` and `/docs/plans/**` in any governed repository to facilitate context gathering.
+- **Safety**: Path traversal protections are strictly enforced.
 
-Reads the contents of a file.
+### 3. `list_plans` (Governance)
 
-- **path**: Relative path to the file.
+enumerates currently active and approved implementation plans, allowing agents to understand their authorized scope.
 
-### `list_plans`
+### 4. `read_audit_log` (Accountability)
 
-Lists all currently approved implementation plans (found in `docs/plans/*.md`).
+Allows inspection of the immutable operation history for the current session.
 
-### `read_audit_log`
+## Enterprise Guarantees
 
-Reads the current session's audit log entries.
+### The "Hard Block" Policy
 
-## Architecture
+Kaiza is designed to be **intolerant** of low-quality code. The `StubDetector` component analyzes every write payload. If it detects:
 
-- **Core Logic**:
-  - `core/plan-enforcer.js`: Validates operations against `docs/plans`.
-  - `core/audit-log.js`: Manages the append-only hash chain.
-  - `core/stub-detector.js`: Scans content for non-production patterns.
-- **Transport**: Standard Input/Output (`stdio`) using `@modelcontextprotocol/sdk`.
+- `TODO` or `FIXME` comments
+- `mock`, `stub`, or `placeholder` variable names
+- Empty function bodies or no-op returns (e.g., `return null` where logic is expected)
+- Hardcoded test data
 
-## Development
+The operation is **rejected immediately** with an `ENTERPRISE_CODE_VIOLATION`. This is not a warning; it is a failure state.
 
-1. **Configure Plans**: Create markdown files in `docs/plans/` with `ID:`, `STATUS: APPROVED`, and `SCOPE:` headers.
-2. **Start Server**: Run `node server.js` to see the session ID startup message.
+### Immutable Audit Trail
+
+Every successful modification is recorded in `audit-log.jsonl`. This log is an append-only ledger that survives server restarts, providing a forensic timeline of exactly what changed, when, and under which plan's authority.
+
+## Intended Audience
+
+This server is built for:
+
+- **Autonomous Agents**: That require a safety rail to prevent destructive or low-quality code generation.
+- **Enterprise Environments**: Where "human-in-the-loop" review needs to be augmented by "machine-in-the-loop" policy enforcement.
+- **High-Integrity Projects**: Where architectural drift and technical debt must be prevented at the commit level.
+
+It is **NOT** intended for:
+
+- Rapid prototyping where "broken code" is acceptable.
+- Environments requiring unrestricted, arbitrary filesystem access.
+- Users who wish to bypass planning and governance workflows.
+
+## Critical Stop Conditions
+
+The server will refuse to operate if:
+
+1. The requested plan ID does not exist or is not in an `APPROVED` state.
+2. The target file path is outside the scope defined by the plan.
+3. The input content fails the enterprise quality scan.

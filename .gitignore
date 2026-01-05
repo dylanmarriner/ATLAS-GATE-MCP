@@ -6,4 +6,4 @@ tests/adversarial_output/
 *.log
 docs/plans/FOUNDATION-*.md
 docs/plans/Adversarial_Test_Plan.md
-audit-log.jsonl
+

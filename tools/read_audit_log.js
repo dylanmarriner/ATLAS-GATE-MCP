@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export async function readAuditLogHandler() {
   const auditPath = path.resolve("audit-log.jsonl");
 

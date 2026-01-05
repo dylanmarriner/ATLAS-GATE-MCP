@@ -11,6 +11,7 @@ const PLAN_DISCOVERY_PATHS = [
   "/docs/plans/**",
   "/docs/planning/**",
   "/docs/antigravity/**",
+  "/home/mintux/Documents/gemini_universe/**",
 ];
 
 function isAllowedDiscoveryPath(filePath) {

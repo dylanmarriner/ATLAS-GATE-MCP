@@ -1,3 +1,9 @@
-node_modules/
-.env
+node_modules
+.DS_Store
+test-*.js.tmp
+tests/adversarial_output/
+.kaiza/secret
+*.log
+docs/plans/FOUNDATION-*.md
+docs/plans/Adversarial_Test_Plan.md
 audit-log.jsonl

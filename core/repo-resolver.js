@@ -14,7 +14,22 @@ export function resolveRepoRoot(targetPath) {
 
   while (true) {
     const plansDir = path.join(current, "docs", "plans");
+    const gitDir = path.join(current, ".git");
+
+    // PRIORITY 1: Governance Marker (.kaiza/ROOT)
+    if (fs.existsSync(path.join(current, ".kaiza", "ROOT"))) {
+      return current;
+    }
+
+    // PRIORITY 2: Existing "Governed Repo" Structure
     if (fs.existsSync(plansDir)) {
+      return current;
+    }
+
+    // PRIORITY 2: Git Root (Universal Mode base)
+    // If we hit a .git folder, this IS the repo root.
+    // We return it so downstream logic can try to find plans (and fail if missing).
+    if (fs.existsSync(gitDir)) {
       return current;
     }
 

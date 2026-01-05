@@ -27,7 +27,7 @@ const server = new McpServer({
  * Prevents client-side formatting assumptions.
  */
 const originalValidateToolInput = server.validateToolInput.bind(server);
-server.validateToolInput = async function(tool, args, toolName) {
+server.validateToolInput = async function (tool, args, toolName) {
   // NORMALIZATION: Handle string input (JSON-stringified or raw)
   if (typeof args === 'string') {
     try {
@@ -60,8 +60,12 @@ server.registerTool(
     description: "Authoritative audited file write",
     inputSchema: z.object({
       path: z.string(),
-      content: z.string(),
-      plan: z.string(),
+      content: z.string().optional(),
+      patch: z.string().optional(),
+      previousHash: z.string().optional(), // For concurrency/integrity check
+      plan: z.string(), // Plan Name or Path
+      planId: z.string().optional(), // Required for strict enforcement
+      planHash: z.string().optional(), // Required for strict enforcement
       // Optional metadata for auto-header generation
       role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
       purpose: z.string().optional(),
@@ -105,6 +109,30 @@ server.registerTool(
     inputSchema: z.object({}),
   },
   readAuditLogHandler
+);
+
+import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
+
+server.registerTool(
+  "bootstrap_create_foundation_plan",
+  {
+    description: "Create the first approved plan (bootstrap mode only)",
+    inputSchema: bootstrapToolSchema,
+  },
+  bootstrapPlanHandler
+);
+
+import { readPromptHandler } from "./tools/read_prompt.js";
+
+server.registerTool(
+  "read_prompt",
+  {
+    description: "Read canonical prompt (required before writing)",
+    inputSchema: z.object({
+      name: z.string()
+    })
+  },
+  readPromptHandler
 );
 
 // Attach stdio transport (THIS is the “start”)

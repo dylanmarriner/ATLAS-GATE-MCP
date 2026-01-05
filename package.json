@@ -5,14 +5,18 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test-ast-policy.js",
+    "verify": "node test-bootstrap.js && node test-enforcement.js && node test-preflight.js && node test-ast-policy.js && node test-plan-enforcement.js && node verify_security.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.1",
+    "acorn": "^8.15.0",
+    "acorn-walk": "^8.3.4",
+    "diff": "^8.0.2",
+    "js-yaml": "^4.1.1",
     "zod": "^4.2.1"
   }
 }
-

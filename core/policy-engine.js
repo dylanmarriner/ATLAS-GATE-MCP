@@ -63,6 +63,13 @@ export function analyzeDiffCompliance(oldContent, newContent) {
         }
     });
 
+    // 3. Ban @ts-nocheck
+    for (const added of addedLines) {
+        if (added.includes("@ts-nocheck")) {
+            violations.push(`TS_NOCHECK_DETECTED: Usage of @ts-nocheck is prohibited.`);
+        }
+    }
+
     return {
         allowed: violations.length === 0,
         violations

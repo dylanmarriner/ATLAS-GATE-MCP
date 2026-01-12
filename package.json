@@ -4,6 +4,9 @@
   "description": "",
   "type": "module",
   "main": "index.js",
+  "bin": {
+    "kaiza-mcp": "./bin/kaiza-mcp.js"
+  },
   "scripts": {
     "test": "node test-ast-policy.js",
     "verify": "node test-bootstrap.js && node test-enforcement.js && node test-preflight.js && node test-ast-policy.js && node test-plan-enforcement.js && node verify_security.js"

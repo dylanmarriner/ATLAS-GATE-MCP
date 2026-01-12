@@ -16,16 +16,74 @@ Unlike standard MCP servers that provide passive tool access, Kaiza functions as
 
 ### Installation
 
+**Option 1: Global Installation (Recommended)**
+
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd KAIZA-MCP-server
-
-# Install dependencies
+# Clone and install globally
+git clone <repository-url> kaiza-mcp
+cd kaiza-mcp
 npm install
+npm install -g .
+```
 
-# Verify installation
-npm run verify
+**Option 2: Local Installation**
+
+```bash
+git clone <repository-url> kaiza-mcp
+cd kaiza-mcp
+npm install
+```
+
+### configuration
+
+Add to your MCP client configuration (e.g., Claude Desktop):
+
+**For Global Install:**
+```json
+{
+  "mcpServers": {
+    "kaiza-mcp": {
+      "command": "kaiza-mcp",
+      "args": [],
+      "cwd": "/path/to/your/governed/repository"
+    }
+  }
+}
+```
+
+**For Local Install:**
+```json
+{
+  "mcpServers": {
+    "kaiza-mcp": {
+      "command": "node",
+      "args": ["/path/to/kaiza-mcp/bin/kaiza-mcp.js"],
+      "cwd": "/path/to/your/governed/repository"
+    }
+  }
+}
+```
+
+## 🌍 Global Portability & Context Detection
+
+Kaiza MCP is designed to be **portability-native**. It can be installed once and used anywhere.
+
+### Automatic Context Detection
+When you run `kaiza-mcp` (or invoke it via an MCP client), it automatically detects the "Repository Root" based on your current working directory (CWD).
+
+It looks for:
+1. `.kaiza/ROOT` marker (Explicit)
+2. `.git/` directory (Implicit)
+3. `docs/plans/` directory (Legacy)
+
+If none are found, it treats the current directory as the root. This means you can use Kaiza in any folder, even an empty one, and it will function correctly (creating necessary `.kaiza` structures on demand).
+
+### Logic & Validation
+The server uses a **Canonical Path Resolver** to ensure all file operations are relative to the detected root, regardless of where the server binary is located.
+
+To verify portability on your machine:
+```bash
+./tests/verify-portability.sh
 ```
 
 ### MCP Client Configuration

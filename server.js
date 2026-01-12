@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import { z } from "zod";
 
-// IMPORTANT: direct imports from the SDK you ACTUALLY have
-import { McpServer } from "./node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js";
-import { StdioServerTransport } from "./node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js";
+// IMPORTANT: Standard package imports for portability
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { writeFileHandler } from "./tools/write_file.js";
 import { listPlansHandler } from "./tools/list_plans.js";

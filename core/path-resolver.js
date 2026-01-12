@@ -156,6 +156,39 @@ export function initializePathResolver(repoRootPath) {
 }
 
 /**
+ * Ensure the path resolver is initialized.
+ * If not already initialized, attempts to resolve root from the provided hint path.
+ * If hint is missing, falls back to CWD.
+ *
+ * @param {string} hintPath - Optional path hint (e.g. from first tool call)
+ */
+export function ensurePathResolver(hintPath) {
+  if (SESSION_INITIALIZED) {
+    return;
+  }
+
+  const startPath = hintPath && typeof hintPath === 'string' && hintPath.trim().length > 0
+    ? hintPath
+    : process.cwd();
+
+  try {
+    const discovered = findRepositoryRoot(startPath);
+    SESSION_REPO_ROOT = discovered;
+    SESSION_INITIALIZED = true;
+
+    console.error(
+      `[PATH_RESOLVER] Lazy-initialized with repo root: ${SESSION_REPO_ROOT} (Hint: ${startPath})`
+    );
+  } catch (e) {
+    // Should not happen as findRepositoryRoot has fallback
+    console.error(`[PATH_RESOLVER] Initialization failed: ${e.message}`);
+    // Fallback to CWD to ensure stability
+    SESSION_REPO_ROOT = process.cwd();
+    SESSION_INITIALIZED = true;
+  }
+}
+
+/**
  * Auto-initialize the path resolver by discovering the repository root from
  * the current working directory. Called during server startup if explicit
  * initialization is not performed.
@@ -164,19 +197,7 @@ export function initializePathResolver(repoRootPath) {
  * @throws {Error} if already initialized or if no repository root found
  */
 export function autoInitializePathResolver(fallbackPath = process.cwd()) {
-  if (SESSION_INITIALIZED) {
-    throw new Error(
-      `PATH_RESOLVER_ALREADY_INITIALIZED: Cannot reinitialize path resolver.`
-    );
-  }
-
-  const discovered = findRepositoryRoot(fallbackPath);
-  SESSION_REPO_ROOT = discovered;
-  SESSION_INITIALIZED = true;
-
-  console.error(
-    `[PATH_RESOLVER] Auto-initialized with repo root: ${SESSION_REPO_ROOT}`
-  );
+  ensurePathResolver(fallbackPath);
 }
 
 /**

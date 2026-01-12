@@ -12,17 +12,15 @@ import { readAuditLogHandler } from "./tools/read_audit_log.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
 
 // CANONICAL PATH RESOLVER: Initialize first before any other operations
-import { autoInitializePathResolver, getRepoRoot } from "./core/path-resolver.js";
+// CANONICAL PATH RESOLVER: Initialize first before any other operations
+import { ensurePathResolver, getRepoRoot } from "./core/path-resolver.js";
 
 // One session per server run
 export const SESSION_ID = crypto.randomUUID();
 
-// INITIALIZATION: Discover and cache repository root via canonical path resolver
-// This must happen before any path-dependent operations
-autoInitializePathResolver(process.cwd());
-
-// WORKSPACE ROOT: Now sourced from path resolver (cached at startup)
-export const WORKSPACE_ROOT = getRepoRoot();
+// REMOVED: Eager initialization. We now initialize lazily on the first tool call
+// to support correct repo detection when started from a generic location (e.g. global install).
+// WORKSPACE_ROOT export removed as it depends on eager init.
 
 // Create server
 const server = new McpServer({
@@ -59,6 +57,18 @@ server.validateToolInput = async function (tool, args, toolName) {
   // NORMALIZATION: Validate args is now an object
   if (typeof args !== 'object' || args === null) {
     throw new Error(`INVALID_INPUT_FORMAT: ${toolName} input must be an object, got ${typeof args}`);
+  }
+
+  // LAZY INITIALIZATION:
+  // If the path resolver hasn't been initialized yet, use the 'path' argument (if present)
+  // as a hint to find the repository root. This ensures that if the server is started
+  // in a generic directory (like ~), it locks onto the correct repo based on the first operation.
+  if (args.path) {
+    ensurePathResolver(args.path);
+  } else {
+    // If no path is provided in the first call (e.g. read_audit_log),
+    // we assume CWD is the intention or we just init with CWD to be safe.
+    ensurePathResolver(process.cwd());
   }
 
   return originalValidateToolInput(tool, args, toolName);

@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 
-
 import { analyzeDiffCompliance, applyUnifiedPatch } from "../core/policy-engine.js";
 import crypto from "crypto";
 
@@ -14,6 +13,7 @@ import { detectStubs } from "../core/stub-detector.js";
 import { appendAuditLog } from "../core/audit-log.js";
 import { SESSION_ID, SESSION_STATE } from "../session.js";
 import { runPreflight } from "../core/preflight.js";
+import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver.js";
 
 /**
  * ...
@@ -51,13 +51,16 @@ export async function writeFileHandler({
     throw new Error("INVALID_WRITE_REQUEST: path is required and must be a non-empty string");
   }
 
-  // PATH TRAVERSAL PROTECTION
-  if (filePath.includes("..")) {
-    throw new Error("INVALID_PATH: path traversal not permitted");
+  // CANONICAL PATH RESOLUTION: Use path resolver for all path operations
+  // This ensures all writes stay within the repository and are fully normalized
+  let abs;
+  try {
+    abs = resolveWriteTarget(filePath);
+  } catch (err) {
+    throw new Error(`INVALID_PATH: ${err.message}`);
   }
 
   const normalizedPath = filePath.replace(/\\/g, "/");
-  const abs = path.resolve(normalizedPath);
   let oldContent = "";
   let fileExists = false;
 
@@ -101,8 +104,8 @@ export async function writeFileHandler({
   }
 
   // GATE 2: PLAN ENFORCEMENT
-  // Verify the plan exists in the governed repo
-  const { repoRoot } = enforcePlan(plan, normalizedPath, planId, planHash);
+  // Verify the plan exists in the governed repo AND that it authorizes this file path
+  const { repoRoot } = enforcePlan(plan, abs, planId, planHash);
 
   let contentToWrite = finalContent;
 
@@ -138,7 +141,7 @@ export async function writeFileHandler({
 
   // GATE 4: ENTERPRISE CODE ENFORCEMENT (OBJECTIVE 3)
   // HARD BLOCK: No stubs, mocks, placeholders, TODOs, or non-enterprise code
-  detectStubs(contentToWrite);
+  detectStubs(contentToWrite, normalizedPath);
 
   // GATE 5: WRITE & AUDIT
   // All enforcement gates passed; write to filesystem and log
@@ -164,20 +167,23 @@ export async function writeFileHandler({
     // actually we have 'oldContent' in memory.
   }
 
-  // We write the file first.
-  fs.mkdirSync(path.dirname(abs), { recursive: true });
+  // CANONICAL PATH RESOLUTION: Ensure directory exists via path resolver
+  ensureDirectoryExists(path.dirname(abs));
   fs.writeFileSync(abs, contentToWrite, "utf8");
 
+  // GATE 4.5: PREFLIGHT CHECK - ALWAYS RUN (NO BYPASSES)
+  // Preflight verifies that written code doesn't break the build
+  // This is a hard requirement: no code escapes without passing tests/lint
   try {
     runPreflight(repoRoot);
   } catch (err) {
-    // REVERT
+    // REVERT: Changes failed preflight, so we reject them completely
     if (fileExists) {
       fs.writeFileSync(abs, oldContent, "utf8");
     } else {
       fs.unlinkSync(abs);
     }
-    throw new Error(`PREFLIGHT_FAILED: Changes rejected because tests/checks failed.\n${err.message}`);
+    throw new Error(`PREFLIGHT_FAILED: Code rejected because it breaks the build.\n${err.message}`);
   }
 
   // GATE 5: AUDIT LOGGING

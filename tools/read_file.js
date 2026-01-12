@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { resolveRepoRoot } from "../core/repo-resolver.js";
+import { resolveReadTarget } from "../core/path-resolver.js";
 
 /**
  * PLAN DISCOVERY: Automatically grant read access to /docs/** paths
@@ -11,7 +11,6 @@ const PLAN_DISCOVERY_PATHS = [
   "/docs/plans/**",
   "/docs/planning/**",
   "/docs/antigravity/**",
-  "/home/mintux/Documents/gemini_universe/**",
 ];
 
 function isAllowedDiscoveryPath(filePath) {
@@ -23,8 +22,7 @@ function isAllowedDiscoveryPath(filePath) {
 }
 
 export async function readFileHandler({ path: filePath }) {
-  // INPUT NORMALIZATION: Accept both string and structured input
-  // (server.js monkey-patch handles string parsing, but be defensive)
+  // INPUT VALIDATION
   if (typeof filePath !== "string") {
     throw new Error("INVALID_INPUT_TYPE: path must be a string");
   }
@@ -40,28 +38,26 @@ export async function readFileHandler({ path: filePath }) {
 
   const normalizedPath = filePath.replace(/\\/g, "/");
 
-  // OBJECTIVE 1 — PLAN DISCOVERY: Auto-allow /docs/** reads in any governed repo
-  if (isAllowedDiscoveryPath(normalizedPath)) {
-    try {
-      const repoRoot = resolveRepoRoot(normalizedPath);
-      const abs = path.resolve(repoRoot, normalizedPath.replace(/^\//, ""));
-      if (!fs.existsSync(abs)) {
-        throw new Error(`FILE_NOT_FOUND: ${normalizedPath}`);
-      }
-      return fs.readFileSync(abs, "utf8");
-    } catch (error) {
-      // Fall through to standard resolution if repo discovery fails
-      if (!error.message.includes("NO_GOVERNED_REPO_FOUND")) {
-        throw error;
-      }
-    }
+  // CANONICAL PATH RESOLUTION: Use path resolver for all path operations
+  let absPath;
+  try {
+    absPath = resolveReadTarget(filePath);
+  } catch (err) {
+    throw new Error(`INVALID_PATH: ${err.message}`);
   }
 
-  // STANDARD: Resolve path relative to cwd
-  const abs = path.resolve(normalizedPath);
-  if (!fs.existsSync(abs)) {
-    throw new Error(`FILE_NOT_FOUND: ${normalizedPath}`);
+  // Verify the file exists
+  if (!fs.existsSync(absPath)) {
+    throw new Error(`FILE_NOT_FOUND: ${filePath} (resolved to ${absPath})`);
   }
 
-  return fs.readFileSync(abs, "utf8");
+  // Read and return
+  return {
+    content: [
+      {
+        type: "text",
+        text: fs.readFileSync(absPath, "utf8"),
+      }
+    ]
+  };
 }

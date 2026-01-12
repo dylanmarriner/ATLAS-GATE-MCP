@@ -1,0 +1,432 @@
+{
+  "taxonomy": "NON_REAL_CONSTRUCTS_C1_C8",
+  "version": "1.0",
+  "description": "Detection rules for identifying non-production-ready code patterns across 15 languages",
+  "rules": {
+    "C1_STUB": {
+      "name": "Stub (non-implemented endpoint/function)",
+      "severity": "HIGH",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin", "Scala"],
+          "regex": "return new \\w+\\(.*\\);.*//\\s*(stub|demo|placeholder)",
+          "signal": "Unconditional object creation with demo comment"
+        },
+        {
+          "language": ["Python"],
+          "regex": "return\\s*\\{.*['\"](?:DEMO|STUB|PLACEHOLDER)['\"].*\\}",
+          "signal": "Dict literal with demo string constant"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "=>\\s*\\(.*\\{.*['\"](?:DEMO|STUB)['\"].*\\}",
+          "signal": "Arrow function returning demo object"
+        },
+        {
+          "language": ["Go"],
+          "regex": "return \\w+\\{.*['\"]DEMO['\"].*\\}",
+          "signal": "Struct literal with DEMO constant"
+        },
+        {
+          "language": ["Rust"],
+          "regex": "fn \\w+.*->.*\\{.*['\"]DEMO['\"].*\\}",
+          "signal": "Function returning DEMO string"
+        },
+        {
+          "language": ["C", "C++"],
+          "regex": "return \\d+;\\s*//\\s*(stub|demo|placeholder)",
+          "signal": "Constant return with demo comment"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "return\\s*\\[.*['\"]DEMO['\"].*\\];",
+          "signal": "Array return with DEMO constant"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "def \\w+.*=\\s*\\{.*\\bDEMO\\b.*\\}",
+          "signal": "Method returning demo hash"
+        },
+        {
+          "language": ["Swift"],
+          "regex": "\\.init\\(.*name:\\s*['\"]DEMO['\"]",
+          "signal": "Init with DEMO name"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "SELECT\\s+'DEMO'.*AS",
+          "signal": "SELECT with DEMO constant, no FROM"
+        },
+        {
+          "language": ["Bash"],
+          "regex": "echo\\s+'\\{.*['\"]DEMO['\"].*\\}'",
+          "signal": "Echo with DEMO JSON"
+        },
+        {
+          "language": ["PowerShell"],
+          "regex": "\\@\\{.*Name=\\\"DEMO\\\".*\\}",
+          "signal": "PSObject with DEMO field"
+        }
+      ]
+    },
+    "C2_MOCK_FAKE": {
+      "name": "Mock/Fake (test double used outside tests)",
+      "severity": "HIGH",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin"],
+          "regex": "class\\s+Fake\\w+\\s+(extends|implements)",
+          "signal": "Class named Fake* implementing interface"
+        },
+        {
+          "language": ["Python"],
+          "regex": "class\\s+Fake\\w+\\s*:",
+          "signal": "Class named Fake* in non-test code"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "(export\\s+)?class\\s+\\w*Fake\\w*",
+          "signal": "Exported class with Fake in name"
+        },
+        {
+          "language": ["C#"],
+          "regex": "class\\s+Fake\\w+\\s*:\\s*I\\w+",
+          "signal": ".NET Fake* class implementing interface"
+        },
+        {
+          "language": ["Go"],
+          "regex": "type\\s+Fake\\w+\\s+struct",
+          "signal": "Go struct named Fake*"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "class\\s+Fake\\w+.*\\{",
+          "signal": "PHP class named Fake*"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "class\\s+\\w*Fake\\w*",
+          "signal": "Ruby class with Fake in name"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "CREATE\\s+VIEW\\s+\\w*fake\\w*\\s+AS\\s+SELECT\\s+'",
+          "signal": "View with fake data (literal SELECT)"
+        }
+      ]
+    },
+    "C3_TODO_FIXME": {
+      "name": "TODO/FIXME markers (unfinished logic)",
+      "severity": "MEDIUM",
+      "patterns": [
+        {
+          "language": ["Java", "JavaScript", "TypeScript", "Kotlin", "Scala", "Go", "Rust", "C", "C++"],
+          "regex": "//\\s*(?:TODO|FIXME).*(?:auth|rbac|security|policy|enforce)",
+          "signal": "TODO near security/policy logic"
+        },
+        {
+          "language": ["Python", "Ruby"],
+          "regex": "#\\s*(?:TODO|FIXME).*(?:auth|rbac|security|policy|enforce)",
+          "signal": "TODO near security logic"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "//\\s*(?:TODO|FIXME).*(?:enforce|verify|auth)",
+          "signal": "TODO near enforcement logic"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "--\\s*TODO.*(?:RLS|constraint|enforce)",
+          "signal": "TODO near RLS/constraint"
+        },
+        {
+          "language": ["Bash"],
+          "regex": "#\\s*TODO.*(?:enforce|auth|check)",
+          "signal": "TODO before enforcing gate"
+        }
+      ]
+    },
+    "C4_HARDCODED_RETURN": {
+      "name": "Hardcoded/placeholder return values",
+      "severity": "HIGH",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin", "Scala"],
+          "regex": "return\\s+\\d+;.*//|return\\s+['\"](?:SUCCESS|OK|SIM)['\"];",
+          "signal": "Hardcoded numeric or status return"
+        },
+        {
+          "language": ["Python"],
+          "regex": "return\\s+['\"]SUCCESS['\"]|return\\s+\\d+_\\d+(?:#|$)",
+          "signal": "Hardcoded string/numeric return"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "return\\s+\\{\\s*status:\\s*['\"]SUCCESS['\"]",
+          "signal": "Object with hardcoded status"
+        },
+        {
+          "language": ["Go"],
+          "regex": "return\\s+\\d+(?:\\s*//|$|\\n)",
+          "signal": "Hardcoded numeric return"
+        },
+        {
+          "language": ["C", "C++"],
+          "regex": "return\\s+[01];",
+          "signal": "Unconditional true/false return"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "return\\s+\\[.*['\"]SUCCESS['\"].*\\];",
+          "signal": "Array with hardcoded success"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "\\{\\s*status:\\s*['\"]SUCCESS['\"]",
+          "signal": "Hash with hardcoded status"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "SELECT\\s+1\\s+AS|SELECT\\s+'SUCCESS'",
+          "signal": "SELECT returning constant"
+        }
+      ]
+    },
+    "C5_POLICY_BYPASS": {
+      "name": "Hardcoded policy bypass (critical)",
+      "severity": "CRITICAL",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin", "Scala", "Go", "Rust"],
+          "regex": "return true;",
+          "signal": "Unconditional true in policy function"
+        },
+        {
+          "language": ["Python"],
+          "regex": "def\\s+(?:can_|is_|check_)\\w+.*:\\s*return\\s+True",
+          "signal": "Policy function returning True always"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "(?:const|function)\\s+(?:can|is|check)\\w+.*=>\\s*true",
+          "signal": "Policy function returning true"
+        },
+        {
+          "language": ["C#"],
+          "regex": "bool\\s+(?:Can|Is|Check)\\w+.*=>\\s*true;",
+          "signal": ".NET policy returning true"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "function\\s+(?:can|is)\\w+.*\\{\\s*return\\s+true;",
+          "signal": "PHP auth always returns true"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "def\\s+(?:can_|is_)?\\w+\\?.*\\s+true\\s*end",
+          "signal": "Ruby predicate returning true"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "WHERE\\s+1=1|WHERE\\s+true",
+          "signal": "SQL tautology in WHERE clause"
+        },
+        {
+          "language": ["Bash"],
+          "regex": "\\[\\s*-n.*\\].*return\\s+0|return\\s+0\\s*#.*allow",
+          "signal": "Bash always returning success (0)"
+        },
+        {
+          "language": ["PowerShell"],
+          "regex": "\\$true(?:\\s*#|$|\\n)",
+          "signal": "PowerShell returning $true"
+        }
+      ]
+    },
+    "C6_FAKE_APPROVAL": {
+      "name": "Fake approval logic (high risk)",
+      "severity": "HIGH",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin", "Scala"],
+          "regex": "\\.setStatus\\(Status\\.(?:APPROVED|Approved)\\)|status\\s*=\\s*Status\\.(?:APPROVED|Approved)",
+          "signal": "Direct status assignment to APPROVED"
+        },
+        {
+          "language": ["Python"],
+          "regex": "\\.status\\s*=\\s*['\"]APPROVED['\"]|req\\.status\\s*=\\s*['\"]APPROVED['\"]",
+          "signal": "Python status set to APPROVED"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "\\.status\\s*=\\s*['\"]APPROVED['\"]|approvedBy\\s*=\\s*['\"]SYSTEM['\"]",
+          "signal": "Status set to APPROVED or SYSTEM approver"
+        },
+        {
+          "language": ["C#"],
+          "regex": "\\.Status\\s*=\\s*Status\\.Approved|ApproverId\\s*=\\s*['\"]SYSTEM['\"]",
+          "signal": ".NET status set to Approved"
+        },
+        {
+          "language": ["Go"],
+          "regex": "\\.Status\\s*=\\s*['\"]APPROVED['\"]|Approver\\s*=\\s*['\"]SYSTEM['\"]",
+          "signal": "Go status/approver assignment"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "\\$\\w+->status\\s*=\\s*['\"]APPROVED['\"]|approved_by\\s*=\\s*['\"]SYSTEM['\"]",
+          "signal": "PHP approval bypass"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "update!\\(.*status:\\s*['\"]APPROVED['\"]",
+          "signal": "Ruby model update with APPROVED"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "UPDATE\\s+\\w+\\s+SET\\s+status='APPROVED'.*approved_by='SYSTEM'",
+          "signal": "SQL update with SYSTEM approver"
+        }
+      ]
+    },
+    "C7_FAKE_LIMITS": {
+      "name": "Fake budget/limit checks",
+      "severity": "MEDIUM",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin", "Scala", "Go"],
+          "regex": "if\\s*\\(\\s*(?:true|1==1)\\s*\\)",
+          "signal": "Tautology guard on enforcement"
+        },
+        {
+          "language": ["Python"],
+          "regex": "if\\s+True:|if\\s+1==1:",
+          "signal": "Always-true condition"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "if\\s*\\(\\s*true\\s*\\)",
+          "signal": "Tautology in if statement"
+        },
+        {
+          "language": ["C", "C++"],
+          "regex": "if\\s*\\(\\s*1\\s*\\)",
+          "signal": "Constant true in C/C++"
+        },
+        {
+          "language": ["PHP"],
+          "regex": "if\\s*\\(\\s*true\\s*\\)|if\\s*\\(\\s*1\\s*\\)",
+          "signal": "Always-true in PHP"
+        },
+        {
+          "language": ["Ruby"],
+          "regex": "if\\s+true|if\\s+1\\s*==\\s*1",
+          "signal": "Tautology in Ruby"
+        },
+        {
+          "language": ["SQL"],
+          "regex": "WHERE\\s+\\d+\\s*>\\s*\\d+|CASE\\s+WHEN\\s+\\?\\s*<\\s*\\d+",
+          "signal": "Hardcoded cap in SQL condition"
+        }
+      ]
+    },
+    "C8_SIMULATED_OUTCOME": {
+      "name": "Simulated execution outcome",
+      "severity": "HIGH",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin"],
+          "regex": "if\\s*\\(.*(?:DRY_RUN|SIMULATE).*\\)\\s*return.*['\"](?:OK|SUCCESS|SIMULATED)['\"]",
+          "signal": "Env gate returning success"
+        },
+        {
+          "language": ["Python"],
+          "regex": "if\\s+(?:os\\.getenv|sys\\.argv).*SIMULATE.*:\\s*return\\s*\\{['\"]ok['\"]",
+          "signal": "Env check returning success dict"
+        },
+        {
+          "language": ["JavaScript", "TypeScript"],
+          "regex": "if\\s*\\(process\\.env\\.SIMULATE\\)\\s*return",
+          "signal": "SIMULATE env returning early"
+        },
+        {
+          "language": ["Go"],
+          "regex": "if\\s+os\\.Getenv\\(\"SIMULATE\"\\)\\s*!=\\s*\"\".*return",
+          "signal": "Go SIMULATE env early return"
+        },
+        {
+          "language": ["Bash"],
+          "regex": "\\[\\s*-n\\s*\\\"\\$SIMULATE\\\"\\s*\\].*exit\\s+0",
+          "signal": "Bash SIMULATE env exit success"
+        },
+        {
+          "language": ["PowerShell"],
+          "regex": "if\\s*\\(\\$env:SIMULATE\\)\\s*\\{\\s*return",
+          "signal": "PowerShell SIMULATE env return"
+        }
+      ]
+    },
+    "SUSPICIOUS_IDENTIFIERS": {
+      "name": "Identifiers indicating non-real constructs",
+      "severity": "MEDIUM",
+      "patterns": [
+        {
+          "language": ["all"],
+          "regex": "(?:fake|mock|stub|dummy|demo|sample|testonly|test_only|simulate|dry_run|dryrun|noop|bypass|hack|tmp)_?(?:[A-Za-z0-9_]*)",
+          "signal": "Suspicious identifier naming pattern"
+        }
+      ]
+    },
+    "UNUSED_PARAMETERS": {
+      "name": "Functions with unused parameters (placeholder signal)",
+      "severity": "MEDIUM",
+      "patterns": [
+        {
+          "language": ["Java", "Kotlin"],
+          "regex": "\\w+\\s+(?:\\w+)\\s*\\(\\s*(?:\\w+\\s+\\w+\\s*,?\\s*)+\\).*return.*(?:constant|literal)",
+          "signal": "Function with params returning constant"
+        },
+        {
+          "language": ["Python"],
+          "regex": "def\\s+\\w+\\([^)]*\\):\\s*return\\s+(?:['\"]|\\d+|\\{|\\[)",
+          "signal": "Function with params returning literal"
+        }
+      ]
+    }
+  },
+  "severity_levels": {
+    "CRITICAL": {
+      "color": "red",
+      "action": "BLOCK_ALWAYS",
+      "requiresApproval": true,
+      "requiresPlanAuthorization": true,
+      "constructs": ["C1_STUB", "C2_MOCK_FAKE", "C3_TODO_FIXME", "C4_HARDCODED_RETURN", "C5_POLICY_BYPASS", "C6_FAKE_APPROVAL", "C7_FAKE_LIMITS", "C8_SIMULATED_OUTCOME"]
+    }
+  },
+  "policy": {
+    "mode": "DEFAULT_DENY",
+    "description": "All non-real constructs (C1-C8) are BLOCKED by default. Code must be production-ready and complete.",
+    "exceptions": [
+      "Only if explicitly documented in plan with AUTHORIZED_C[N] markers",
+      "Plan must reference specific use case and controls",
+      "Plan must be referenced in write_file call"
+    ]
+  },
+  "false_positive_guidance": {
+    "C1_STUB": [
+      "Distinguish legitimate immutable constants from stubs: check for explicit constant naming, test coverage, limited call sites"
+    ],
+    "C2_MOCK_FAKE": [
+      "Legitimate Null Object pattern with logs and no writes can be distinguished via explicit semantics + audited usage"
+    ],
+    "C5_POLICY_BYPASS": [
+      "Public endpoints are legitimate: distinguish by explicit policy registry and route scope"
+    ],
+    "C4_HARDCODED_RETURN": [
+      "Protocol constants are legitimate: distinguish via spec reference + centralized constant pattern"
+    ],
+    "C8_SIMULATED_OUTCOME": [
+      "Explicit dry-run that prevents writes is legitimate: distinguish by transaction guards + 'no writes' invariant tests"
+    ]
+  }
+}

@@ -1,8 +1,9 @@
 import fs from "fs";
 import path from "path";
+import { getAuditLogPath } from "../core/path-resolver.js";
 
 export async function readAuditLogHandler() {
-  const auditPath = path.resolve("audit-log.jsonl");
+  const auditPath = getAuditLogPath();
 
   if (!fs.existsSync(auditPath)) {
     return {

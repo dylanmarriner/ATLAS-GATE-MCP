@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { bootstrapCreateFoundationPlan } from "../core/governance.js";
-import { resolveRepoRoot } from "../core/repo-resolver.js";
+import { getRepoRoot } from "../core/path-resolver.js";
 
 // Input schema for the bootstrap tool
 export const bootstrapToolSchema = z.object({
@@ -18,20 +18,45 @@ export const bootstrapToolSchema = z.object({
 export async function bootstrapPlanHandler(args) {
     const { path: targetPath, planContent, payload, signature } = args;
 
-    console.error(`[BOOTSTRAP] Attempting bootstrap for path: ${targetPath}`);
+    console.error(`[BOOTSTRAP] Plan creation request received`);
+    
+    // AUTHORITY CHECK: Only AMP/Antigravity can create plans
+    // Windsurf (executor agent) is blocked from plan creation
+    
+    const caller = process.env.CALLER_ID || 'unknown';
+    console.error(`[BOOTSTRAP] Caller: ${caller}`);
+    
+    // Check if caller is authorized (AMP or Antigravity)
+    const authorizedCallers = ['AMP', 'Antigravity', 'amp', 'antigravity'];
+    const isAuthorized = authorizedCallers.some(caller_name => 
+        caller.toUpperCase().includes(caller_name.toUpperCase())
+    );
+    
+    // ENFORCEMENT: Block Windsurf from creating plans
+    if (caller === 'windsurf' || caller === 'WINDSURF' || caller.includes('windsurf')) {
+        throw new Error(
+            `WINDSURF_CANNOT_CREATE_PLANS: You are an EXECUTOR, not a PLANNER.
+        
+You cannot create or modify governance plans.
 
+Only AMP and Antigravity have authority to create plans.
+
+Windsurf's role: EXECUTE existing plans via write_file, NOT CREATE them.
+
+If you need a new plan:
+1. Request from AMP (strategic planning)
+2. Or request from Antigravity (implementation planning)
+3. They will create the plan in docs/plans/
+4. Then Windsurf will execute it`
+        );
+    }
+    
+    // If not explicitly Windsurf but also not explicitly AMP/Antigravity, allow bootstrap
+    // (External callers like AMP/Antigravity would call this via MCP with auth)
+    
     try {
-        const repoRoot = resolveRepoRoot(targetPath);
-
-        // Validate repoIdentifier matches (simple check: is it the repo root basename or hash?)
-        // For now, let's assume it should match the repo root name or path to prevent replay against wrong repo
-        // In a real scenario, this might be a stronger ID.
-        // For this implementation, we will check if the payload.repoIdentifier is contained in the resolved root path
-        // to ensure we are bootstrapping the intended repo.
-
-        // Hardening: Could reject if repoIdentifier doesn't match, but let's trust the secret for now 
-        // and just pass to the core function which checks the enabled state.
-
+        // Use canonical path resolver to get the cached repo root
+        const repoRoot = getRepoRoot();
         const result = bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature);
 
         return {
@@ -39,10 +64,10 @@ export async function bootstrapPlanHandler(args) {
                 {
                     type: "text",
                     text: JSON.stringify({
-                        status: "BOOTSTRAP_SUCCESS",
+                        status: "PLAN_CREATED",
                         planId: result.planId,
                         planPath: result.path,
-                        message: "Foundation plan created. Bootstrap mode disabled."
+                        message: "Plan created by AMP/Antigravity. Bootstrap mode may remain enabled for additional plans."
                     }, null, 2)
                 }
             ]

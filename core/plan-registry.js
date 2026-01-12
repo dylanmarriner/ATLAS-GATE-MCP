@@ -1,13 +1,15 @@
 import fs from "fs";
 import path from "path";
-
-const PLANS_DIR = path.resolve("docs/plans");
+import { getPlansDir, resolvePlanPath } from "./path-resolver.js";
 
 export function loadPlan(planId) {
-  const planPath = path.join(PLANS_DIR, `${planId}.md`);
-
-  if (!fs.existsSync(planPath)) {
-    throw new Error(`PLAN_NOT_FOUND: ${planId}`);
+  // CANONICAL PATH RESOLUTION: Use path resolver for deterministic plan discovery
+  // All plans are stored in the canonical plans directory
+  let planPath;
+  try {
+    planPath = resolvePlanPath(planId);
+  } catch (err) {
+    throw new Error(`PLAN_NOT_FOUND: ${planId} - ${err.message}`);
   }
 
   const content = fs.readFileSync(planPath, "utf8");

@@ -7,3 +7,8 @@ tests/adversarial_output/
 docs/plans/FOUNDATION-*.md
 docs/plans/Adversarial_Test_Plan.md
 
+
+tests/audit_workspace_*
+tests/audit_report.json
+*.tmp
+

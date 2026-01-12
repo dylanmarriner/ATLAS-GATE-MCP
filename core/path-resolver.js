@@ -386,30 +386,53 @@ export function resolveWriteTarget(relativePath) {
   const normalizedTarget = path.normalize(targetPath);
   const normalizedRepo = path.normalize(repoRoot);
 
-  // INV_PATH_WITHIN_REPO: Ensure the resolved path is within the repo root
-  invariantTrue(
-    normalizedTarget.startsWith(normalizedRepo + path.sep) ||
-    normalizedTarget === normalizedRepo,
-    "INV_PATH_WITHIN_REPO",
-    `Write target ${normalizedTarget} is outside repository root ${normalizedRepo}`
-  );
+  // INV_PATH_CANONICAL: Resolve symlinks to canonical form
+  // We must do this BEFORE the "within repo" check because the user might provide
+  // a symlinked path (e.g. /media/...) while the repo root is resolved to real path (e.g. /home/...)
+  let canonicalTarget = normalizedTarget;
 
-  // INV_PATH_CANONICAL: Resolve symlinks for files that exist
-  // For files that don't exist yet, we skip symlink resolution
-  // to avoid unnecessary syscalls
   if (fs.existsSync(normalizedTarget)) {
     try {
-      return fs.realpathSync(normalizedTarget);
+      canonicalTarget = fs.realpathSync(normalizedTarget);
     } catch (err) {
-      // If realpath fails, warn but continue with normalized path
       console.warn(
         `[PATH_RESOLVER] Warning: Could not resolve symlinks for ${normalizedTarget}: ${err.message}`
       );
-      return normalizedTarget;
+    }
+  } else {
+    // File doesn't exist yet (e.g. new file creation).
+    // We must resolve the real path of the parent directory to ensure it matches repo root.
+    let current = path.dirname(normalizedTarget);
+    let relativeTail = path.basename(normalizedTarget);
+
+    // Walk up until we find an existing directory
+    while (current !== path.dirname(current) && !fs.existsSync(current)) {
+      relativeTail = path.join(path.basename(current), relativeTail);
+      current = path.dirname(current);
+    }
+
+    if (fs.existsSync(current)) {
+      try {
+        const realCurrent = fs.realpathSync(current);
+        canonicalTarget = path.join(realCurrent, relativeTail);
+      } catch (err) {
+        // Ignore, stick with normalized path
+      }
     }
   }
 
-  return normalizedTarget;
+  // INV_PATH_WITHIN_REPO: Ensure the CANONICAL resolved path is within the repo root
+  // We check against the canonical (real) repo root.
+  const canonicalRepo = path.normalize(repoRoot); // repoRoot is already realpath'd by getRepoRoot path resolver logic
+
+  invariantTrue(
+    canonicalTarget.startsWith(canonicalRepo + path.sep) ||
+    canonicalTarget === canonicalRepo,
+    "INV_PATH_WITHIN_REPO",
+    `Write target ${canonicalTarget} is outside repository root ${canonicalRepo} (received: ${normalizedTarget})`
+  );
+
+  return canonicalTarget;
 }
 
 /**

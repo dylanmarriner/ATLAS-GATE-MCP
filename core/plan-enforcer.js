@@ -52,26 +52,39 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
   const fileBuffer = fs.readFileSync(planFile);
   const fileContent = fileBuffer.toString("utf8");
 
-  // INV_PLAN_NOT_CORRUPTED: Plan must have valid frontmatter
-  const match = fileContent.match(/^---\n([\s\S]+?)\n---/);
-  invariantTrue(
-    match !== null,
-    "INV_PLAN_NOT_CORRUPTED",
-    `Invalid plan format: No frontmatter found in ${normalizedPlanName}.md`
-  );
+  // INV_PLAN_NOT_CORRUPTED: Plan must have valid frontmatter OR parsable metadata
+  const yamlMatch = fileContent.match(/^---\n([\s\S]+?)\n---/);
+  let frontmatter = null;
+  let isYaml = false;
 
-  let frontmatter;
-  try {
-    frontmatter = yaml.load(match[1]);
-  } catch (e) {
-    throw new Error(`INVALID_PLAN_YAML: ${e.message}`);
+  if (yamlMatch) {
+    try {
+      frontmatter = yaml.load(yamlMatch[1]);
+      isYaml = true;
+    } catch (e) {
+      throw new Error(`INVALID_PLAN_YAML: ${e.message}`);
+    }
+  } else {
+    // Fallback: Try to parse "1. PLAN_METADATA" style (ATLAS format)
+    const statusMatch = fileContent.match(/-\s*STATUS:\s*(.+)/);
+    const idMatch = fileContent.match(/-\s*ID:\s*(.+)/);
+    const contextMatch = fileContent.match(/-\s*CONTEXT:\s*(.+)/);
+    const scopeMatch = fileContent.match(/-\s*LOCKED_TO:\s*(.+)/); // ATLAS specific
+
+    if (statusMatch) {
+      frontmatter = {
+        status: statusMatch[1].trim(),
+        plan_id: idMatch ? idMatch[1].trim() : null,
+        scope: scopeMatch ? scopeMatch[1].trim() : null,
+        // Add other fields as needed or leave generic
+      };
+    }
   }
 
-  // INV_PLAN_NOT_CORRUPTED: Frontmatter must be valid YAML object
   invariantNotNull(
     frontmatter,
     "INV_PLAN_NOT_CORRUPTED",
-    `Plan frontmatter did not parse to a valid object: ${normalizedPlanName}.md`
+    `Invalid plan format: No frontmatter or parsable metadata found in ${normalizedPlanName}.md`
   );
 
   // INV_PLAN_APPROVED: Check plan approval status
@@ -81,13 +94,21 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
   if (govState.auto_register_plans && status !== "APPROVED" && status !== "approved") {
     // Auto-approve: update frontmatter and rewrite file
     console.error(`[PLAN-ENFORCER] Auto-registering plan: ${normalizedPlanName}`);
-    frontmatter.status = "APPROVED";
-    frontmatter.auto_registered = true;
-    frontmatter.auto_registered_at = new Date().toISOString();
 
-    // Reconstruct file with updated frontmatter
-    const updatedContent = `---\n${yaml.dump(frontmatter)}---\n${fileContent.split('---').slice(2).join('---')}`;
-    fs.writeFileSync(planFile, updatedContent, "utf8");
+    if (isYaml) {
+      frontmatter.status = "APPROVED";
+      frontmatter.auto_registered = true;
+      frontmatter.auto_registered_at = new Date().toISOString();
+      const updatedContent = `---\n${yaml.dump(frontmatter)}---\n${fileContent.split('---').slice(2).join('---')}`;
+      fs.writeFileSync(planFile, updatedContent, "utf8");
+    } else {
+      // ATLAS Format update
+      // Replace "STATUS: <Value>" with "STATUS: APPROVED"
+      const updatedContent = fileContent.replace(/(-\s*STATUS:\s*)(.+)/, '$1APPROVED');
+      fs.writeFileSync(planFile, updatedContent, "utf8");
+      // Update local object for check
+      frontmatter.status = "APPROVED";
+    }
   } else {
     // INV_PLAN_APPROVED: Only APPROVED plans can be executed
     invariantTrue(
@@ -112,8 +133,13 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 
   // INV_PLAN_HASH_MATCH: Verify plan integrity if hash provided
   if (requiredPlanHash) {
-    // Use binary buffer for hashing to ensure bit-perfect match with sha256sum
-    const currentHash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
+    // Use string content for hashing to allow stripping the plan_hash line
+    const fileContentStr = fileBuffer.toString('utf8');
+    // Strip the plan_hash line to avoid circular dependency
+    // Matches "  plan_hash: <64 hex chars>\n" or similar
+    const contentToHash = fileContentStr.replace(/^.*plan_hash:.*(\r\n|\n)/gm, '');
+
+    const currentHash = crypto.createHash("sha256").update(contentToHash).digest("hex");
     invariantEqual(
       currentHash,
       requiredPlanHash,

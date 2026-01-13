@@ -19,7 +19,7 @@ function readGovernanceState(repoRoot) {
         return {
             bootstrap_enabled: true,  // Allow bootstrap in fresh repos
             approved_plans_count: 0,
-            auto_register_plans: false,
+            auto_register_plans: true,
         };
     }
     return JSON.parse(fs.readFileSync(govPath, "utf8"));

@@ -36,6 +36,7 @@ import { invariant, invariantNotNull, invariantTrue, invariantEqual, invariantTy
  */
 let SESSION_REPO_ROOT = null;
 let SESSION_INITIALIZED = false;
+let SESSION_IS_FALLBACK = false;
 
 /**
  * Deterministically resolve the repository root by walking upward from
@@ -47,12 +48,8 @@ let SESSION_INITIALIZED = false;
  * 3. docs/plans directory (legacy governance structure)
  * 4. Current directory if none found (fallback for arbitrary repos)
  *
- * This ensures the system works in ANY repository without requiring setup.
- * A "random person off the street" can use this in any folder.
- *
  * @param {string} startPath - File or directory to start walking from
- * @returns {string} Absolute path to repository root
- * @throws {Error} Never throws - always returns a valid repo root
+ * @returns {object} { path: string, isFallback: boolean }
  */
 function findRepositoryRoot(startPath) {
   let current = path.resolve(startPath);
@@ -72,19 +69,19 @@ function findRepositoryRoot(startPath) {
     // PRIORITY 1: .kaiza/ROOT marker (explicit governance)
     const kaizaRootMarker = path.join(current, ".kaiza", "ROOT");
     if (fs.existsSync(kaizaRootMarker)) {
-      return current;
+      return { path: current, isFallback: false };
     }
 
     // PRIORITY 2: .git directory (universal repo root)
     const gitDir = path.join(current, ".git");
     if (fs.existsSync(gitDir)) {
-      return current;
+      return { path: current, isFallback: false };
     }
 
     // PRIORITY 3: docs/plans directory (legacy governance)
     const plansDir = path.join(current, "docs", "plans");
     if (fs.existsSync(plansDir)) {
-      return current;
+      return { path: current, isFallback: false };
     }
 
     // Move to parent directory
@@ -92,28 +89,34 @@ function findRepositoryRoot(startPath) {
   }
 
   // PRIORITY 4: Fallback - use the original starting directory
-  // This ensures the system works in ANY repo without requiring setup markers.
-  // The MCP server will create necessary directories on first use.
   console.error(
-    `[PATH_RESOLVER] No governance markers found. Using ${originalCurrent} as repo root.`
+    `[PATH_RESOLVER] No governance markers found. Using ${originalCurrent} as fallback repo root.`
   );
-  return originalCurrent;
+  return { path: originalCurrent, isFallback: true };
 }
 
 /**
  * Initialize the path resolver with an explicit repository root.
- * Must be called exactly once at server startup.
+ * Must be called exactly once at server startup (or during lazy upgrade).
  *
  * @param {string} repoRootPath - Absolute path to repository root
- * @throws {Error} if already initialized or if path does not exist
+ * @param {boolean} isFallback - Whether this is a fallback detection
+ * @throws {Error} if already initialized strongly or if path does not exist
  */
-export function initializePathResolver(repoRootPath) {
-  // INV_REPO_ROOT_SINGLE: Prevent double initialization
-  invariantFalse(
-    SESSION_INITIALIZED,
-    "INV_REPO_ROOT_SINGLE",
-    `Path resolver already initialized with root: ${SESSION_REPO_ROOT}`
-  );
+export function initializePathResolver(repoRootPath, isFallback = false) {
+  // INV_REPO_ROOT_SINGLE: Prevent re-initialization unless upgrading from fallback
+  if (SESSION_INITIALIZED) {
+    if (SESSION_IS_FALLBACK && !isFallback) {
+      // Allow upgrade!
+      console.error(`[PATH_RESOLVER] Upgrading repo root from Fallback to Strong: ${repoRootPath}`);
+    } else {
+      invariantFalse(
+        SESSION_INITIALIZED,
+        "INV_REPO_ROOT_SINGLE",
+        `Path resolver already initialized with root: ${SESSION_REPO_ROOT}`
+      );
+    }
+  }
 
   // INV_REPO_ROOT_INITIALIZED: Input validation
   invariantNotNull(repoRootPath, "INV_REPO_ROOT_INITIALIZED", "Repo root path is required");
@@ -149,9 +152,10 @@ export function initializePathResolver(repoRootPath) {
   // INV_PATH_NORMALIZED: Normalize the path
   SESSION_REPO_ROOT = path.normalize(absPath);
   SESSION_INITIALIZED = true;
+  SESSION_IS_FALLBACK = isFallback;
 
   console.error(
-    `[PATH_RESOLVER] Initialized with repo root: ${SESSION_REPO_ROOT}`
+    `[PATH_RESOLVER] Initialized with repo root: ${SESSION_REPO_ROOT} (Fallback: ${isFallback})`
   );
 }
 
@@ -159,33 +163,38 @@ export function initializePathResolver(repoRootPath) {
  * Ensure the path resolver is initialized.
  * If not already initialized, attempts to resolve root from the provided hint path.
  * If hint is missing, falls back to CWD.
+ * If already initialized as Fallback, attempts to upgrade if hint provides Strong root.
  *
  * @param {string} hintPath - Optional path hint (e.g. from first tool call)
  */
 export function ensurePathResolver(hintPath) {
-  if (SESSION_INITIALIZED) {
-    return;
-  }
-
+  // Define startPath
   const startPath = hintPath && typeof hintPath === 'string' && hintPath.trim().length > 0
     ? hintPath
     : process.cwd();
 
+  // Try to discover root
+  let discovered;
   try {
-    const discovered = findRepositoryRoot(startPath);
-    SESSION_REPO_ROOT = discovered;
-    SESSION_INITIALIZED = true;
-
-    console.error(
-      `[PATH_RESOLVER] Lazy-initialized with repo root: ${SESSION_REPO_ROOT} (Hint: ${startPath})`
-    );
+    discovered = findRepositoryRoot(startPath); // Returns { path, isFallback }
   } catch (e) {
-    // Should not happen as findRepositoryRoot has fallback
-    console.error(`[PATH_RESOLVER] Initialization failed: ${e.message}`);
-    // Fallback to CWD to ensure stability
-    SESSION_REPO_ROOT = process.cwd();
-    SESSION_INITIALIZED = true;
+    console.error(`[PATH_RESOLVER] Discovery failed: ${e.message}`);
+    discovered = { path: process.cwd(), isFallback: true };
   }
+
+  // If already initialized
+  if (SESSION_INITIALIZED) {
+    // Check if we can upgrade
+    if (SESSION_IS_FALLBACK && !discovered.isFallback) {
+      // Upgrade found!
+      // Re-initialize with new strong path
+      initializePathResolver(discovered.path, false);
+    }
+    return;
+  }
+
+  // First initialization
+  initializePathResolver(discovered.path, discovered.isFallback);
 }
 
 /**

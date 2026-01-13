@@ -26,18 +26,21 @@ autoInitializePathResolver(process.cwd());
 let testsRun = 0;
 let testsPassed = 0;
 let testsFailed = 0;
+const testPromises = [];
 
 function test(name, fn) {
   testsRun++;
-  try {
-    fn();
-    testsPassed++;
-    console.log(`✓ PASS: ${name}`);
-  } catch (err) {
-    testsFailed++;
-    console.error(`✗ FAIL: ${name}`);
-    console.error(`  Error: ${err.message}`);
-  }
+  testPromises.push((async () => {
+    try {
+      await fn();
+      testsPassed++;
+      console.log(`✓ PASS: ${name}`);
+    } catch (err) {
+      testsFailed++;
+      console.error(`✗ FAIL: ${name}`);
+      console.error(`  Error: ${err.message}`);
+    }
+  })());
 }
 
 function assert(condition, message) {
@@ -49,7 +52,7 @@ function assert(condition, message) {
 function assertEqual(actual, expected, message) {
   if (actual !== expected) {
     throw new Error(
-      message || 
+      message ||
       `Expected ${expected}, got ${actual}`
     );
   }
@@ -58,7 +61,7 @@ function assertEqual(actual, expected, message) {
 function assertIncludes(haystack, needle, message) {
   if (!haystack.includes(needle)) {
     throw new Error(
-      message || 
+      message ||
       `Expected to find "${needle}" in "${haystack}"`
     );
   }
@@ -95,7 +98,7 @@ test("Allows arrow functions with true return", () => {
 test("Blocks empty function bodies", () => {
   const code = `function empty() {}`;
   try {
-    detectStubs(code);
+    detectStubs(code, "test.js");
     throw new Error("Should have blocked empty function");
   } catch (err) {
     if (err.message === "Should have blocked empty function") throw err;
@@ -106,7 +109,7 @@ test("Blocks empty function bodies", () => {
 test("Blocks empty catch blocks", () => {
   const code = `try { work(); } catch(e) {}`;
   try {
-    detectStubs(code);
+    detectStubs(code, "test.js");
     throw new Error("Should have blocked empty catch");
   } catch (err) {
     if (err.message === "Should have blocked empty catch") throw err;
@@ -139,7 +142,7 @@ test("Blocks FIXME comments", () => {
 test("Blocks null returns", () => {
   const code = `function getData() { return null; }`;
   try {
-    detectStubs(code);
+    detectStubs(code, "test.js");
     throw new Error("Should have blocked null return");
   } catch (err) {
     if (err.message === "Should have blocked null return") throw err;
@@ -150,7 +153,7 @@ test("Blocks null returns", () => {
 test("Blocks undefined returns", () => {
   const code = `function getData() { return undefined; }`;
   try {
-    detectStubs(code);
+    detectStubs(code, "test.js");
     throw new Error("Should have blocked undefined return");
   } catch (err) {
     if (err.message === "Should have blocked undefined return") throw err;
@@ -172,7 +175,7 @@ test("Blocks mock/fake data patterns", () => {
 test("Throws on unparseable code", () => {
   const code = `function broken(( { invalid syntax`;
   try {
-    detectStubs(code);
+    detectStubs(code, "test.js");
     throw new Error("Should have thrown on syntax error");
   } catch (err) {
     if (err.message === "Should have thrown on syntax error") throw err;
@@ -221,7 +224,7 @@ test("resolveWriteTarget normalizes paths", () => {
   const target = resolveWriteTarget("src/./index.js");
   assertIncludes(target, "src");
   assertIncludes(target, "index.js");
-  assert(!target.includes("/."), "Should not contain /."); 
+  assert(!target.includes("/."), "Should not contain /.");
 });
 
 test("resolveReadTarget validates path format", () => {
@@ -278,25 +281,25 @@ console.log("\n=== AUDIT LOG TESTS ===\n");
 import { appendAuditLog } from "./core/audit-log.js";
 import { getAuditLogPath } from "./core/path-resolver.js";
 
-test("appendAuditLog creates audit log entry", () => {
+test("appendAuditLog creates audit log entry", async () => {
   const before = getAuditLogPath();
   const sessionId = crypto.randomUUID();
-  
-  appendAuditLog(
+
+  await appendAuditLog(
     { path: "test/file.js", plan: "TEST", role: "EXECUTABLE" },
     sessionId
   );
 
   const logPath = getAuditLogPath();
   assert(fs.existsSync(logPath), "Audit log should exist");
-  
+
   const content = fs.readFileSync(logPath, "utf8");
   assert(content.length > 0, "Audit log should not be empty");
 });
 
-test("appendAuditLog includes hash field", () => {
+test("appendAuditLog includes hash field", async () => {
   const sessionId = crypto.randomUUID();
-  appendAuditLog(
+  await appendAuditLog(
     { path: "test/file2.js", plan: "TEST", role: "BOUNDARY" },
     sessionId
   );
@@ -304,7 +307,7 @@ test("appendAuditLog includes hash field", () => {
   const logPath = getAuditLogPath();
   const lines = fs.readFileSync(logPath, "utf8").trim().split("\n");
   const last = JSON.parse(lines[lines.length - 1]);
-  
+
   assert(last.hash, "Entry should have hash field");
   assert(last.prevHash, "Entry should have prevHash field");
 });
@@ -330,6 +333,8 @@ test("enforcePlan throws for non-existent plan", () => {
 // ==============================================================================
 // SUMMARY
 // ==============================================================================
+
+await Promise.all(testPromises);
 
 console.log("\n" + "=".repeat(70));
 console.log(`COMPREHENSIVE TEST RESULTS`);

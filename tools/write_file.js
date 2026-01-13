@@ -187,7 +187,7 @@ export async function writeFileHandler({
   }
 
   // GATE 5: AUDIT LOGGING
-  appendAuditLog(
+  await appendAuditLog(
     {
       plan,
       role: metadata.ROLE,

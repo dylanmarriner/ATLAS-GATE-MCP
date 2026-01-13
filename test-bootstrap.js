@@ -1,7 +1,14 @@
 import crypto from "crypto";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { autoInitializePathResolver } from "./core/path-resolver.js";
 import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
+
+autoInitializePathResolver(process.cwd());
+
+const __filename = fileURLToPath(import.meta.url);
 
 // Mock environment
 const SECRET = "test-secret-123";

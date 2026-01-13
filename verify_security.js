@@ -1,11 +1,14 @@
 import { writeFileHandler } from "./tools/write_file.js";
+import { autoInitializePathResolver, getPlansDir } from "./core/path-resolver.js";
+
+autoInitializePathResolver(process.cwd());
 import { readPromptHandler } from "./tools/read_prompt.js";
 import { SESSION_STATE } from "./session.js";
 import fs from "fs";
 import path from "path";
 
 const REPO_ROOT = process.cwd();
-const TEST_FILE = "security-test.js.tmp";
+const TEST_FILE = "security-test.tmp.js";
 const TEST_PATH = path.join(REPO_ROOT, TEST_FILE);
 
 // Reset session state for testing if possible, specific to this run?
@@ -89,7 +92,7 @@ async function runPenetrationTest() {
         console.error("❌ FAIL: Missing Plan BYPASSED!");
         passed = false;
     } catch (e) {
-        if (e.message.includes("PLAN_NAME_REQUIRED") || e.message.includes("Validation error") || e.message.includes("too_small")) {
+        if (e.message.includes("PLAN_NAME_REQUIRED") || e.message.includes("Validation error") || e.message.includes("too_small") || e.message.includes("Plan not found") || e.message.includes("INV_PLAN_EXISTS")) {
             console.log(`✅ PASS: Missing Plan blocked (${e.message.split('\n')[0]}).`);
         } else {
             console.error(`❌ FAIL: Wrong error: ${e.message}`);
@@ -100,7 +103,7 @@ async function runPenetrationTest() {
     // 4. PLAN ENFORCEMENT (Invalid Plan ID - if strict)
     // We need a real plan file to test this effectively.
     // Let's find one.
-    const planDir = path.join(REPO_ROOT, "docs/plans");
+    const planDir = getPlansDir();
     const plans = fs.readdirSync(planDir).filter(f => f.endsWith(".md"));
     if (plans.length > 0) {
         console.log("\n[4] Testing Mismatched Plan ID...");
@@ -108,7 +111,7 @@ async function runPenetrationTest() {
             await writeFileHandler({
                 path: TEST_PATH,
                 content: "console.log('valid');",
-                plan: plans[0],
+                plan: plans.find(p => p.startsWith("FOUNDATION")) || plans[0],
                 planId: "invalid-uuid",
                 role: "EXECUTABLE",
                 purpose: "test",
@@ -122,7 +125,7 @@ async function runPenetrationTest() {
             console.error("❌ FAIL: Mismatched ID BYPASSED!");
             passed = false;
         } catch (e) {
-            if (e.message.includes("PLAN_ID_MISMATCH")) {
+            if (e.message.includes("Plan ID mismatch") || e.message.includes("INV_PLAN_UNIQUE_ID")) {
                 console.log("✅ PASS: Mismatched ID blocked.");
             } else {
                 console.error(`❌ FAIL: Wrong error: ${e.message}`);
@@ -137,7 +140,7 @@ async function runPenetrationTest() {
         await writeFileHandler({
             path: TEST_PATH,
             content: "export function empty() { }",
-            plan: plans[0], // Valid plan
+            plan: plans.find(p => p.startsWith("FOUNDATION")) || plans[0], // Valid plan
             // We need valid ID/Hash? If we omit them, lenient check allows? 
             // Yes, currently lenient if omitted.
             role: "EXECUTABLE",
@@ -163,7 +166,7 @@ async function runPenetrationTest() {
         await writeFileHandler({
             path: TEST_PATH,
             content: "export function work() { /* TODO implementation */ return null; }",
-            plan: plans[0],
+            plan: plans.find(p => p.startsWith("FOUNDATION")) || plans[0],
             role: "EXECUTABLE",
             purpose: "test",
             connectedVia: "test",
@@ -209,7 +212,7 @@ async function runPenetrationTest() {
         await writeFileHandler({
             path: TEST_PATH,
             content: "// export const x = 100;", // Commented out
-            plan: plans[0],
+            plan: plans.find(p => p.startsWith("FOUNDATION")) || plans[0],
             role: "EXECUTABLE",
             purpose: "test",
             connectedVia: "test",

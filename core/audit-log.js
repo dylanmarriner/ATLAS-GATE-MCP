@@ -1,11 +1,20 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { getAuditLogPath as getResolvedAuditLogPath } from "./path-resolver.js";
+import { getAuditLogPath as getResolvedAuditLogPath, getRepoRoot } from "./path-resolver.js";
+import { acquireLock, releaseLock } from "./file-lock.js";
 
 // Delegate to path resolver for canonical audit log location
 function getAuditLogPath() {
   return getResolvedAuditLogPath();
+}
+
+/**
+ * Get the path for the audit log lock directory.
+ * Stored in .kaiza/audit.lock relative to repo root.
+ */
+function getAuditLockPath() {
+  return path.join(getRepoRoot(), ".kaiza", "audit.lock");
 }
 
 function sha256(input) {
@@ -28,35 +37,40 @@ function getLastHash() {
 /**
  * ATOMICITY: Append to audit log with hash chain integrity.
  * Uses atomic append with exclusive file access to prevent concurrent corruption.
+ * NOW ASYNC with file locking.
  * 
  * INVARIANT: Each record includes hash of previous record, creating an unbreakable chain.
  * If two writes race, the second will see a different prevHash, detecting the race.
  */
-export function appendAuditLog(entry, sessionId) {
+export async function appendAuditLog(entry, sessionId) {
   const auditPath = getAuditLogPath();
-  
+  const lockPath = getAuditLockPath();
+
   // Ensure directory exists
   const dir = path.dirname(auditPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // CRITICAL: Read current tail and write new entry atomically
-  // This prevents the race condition where two concurrent writers read the same "last" entry
-  // Strategy: Use atomic read-then-append with explicit lock via file position
-  
-  let prevHash;
-  
+  // ACQUIRE LOCK
+  try {
+    await acquireLock(lockPath, { retryInterval: 50, maxRetries: 500 });
+  } catch (err) {
+    throw new Error(`AUDIT_LOG_LOCK_FAILED: ${err.message}`);
+  }
+
+  // CRITICAL SECTION
   try {
     // Open for append (creates if not exists)
     // This is atomic at the filesystem level on most systems
     const fd = fs.openSync(auditPath, 'a');
-    
+
     try {
       // Read current file to get last hash
       const currentContent = fs.readFileSync(auditPath, "utf8");
       const lines = currentContent.trim().split("\n").filter(l => l.length > 0);
-      
+
+      let prevHash;
       if (lines.length === 0) {
         prevHash = "GENESIS";
       } else {
@@ -82,5 +96,8 @@ export function appendAuditLog(entry, sessionId) {
     }
   } catch (err) {
     throw new Error(`AUDIT_LOG_APPEND_FAILED: ${err.message}`);
+  } finally {
+    // RELEASE LOCK
+    await releaseLock(lockPath);
   }
 }

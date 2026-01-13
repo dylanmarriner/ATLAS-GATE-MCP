@@ -23,7 +23,7 @@ console.log("Testing AST Policy...");
 
 for (const code of PASS_CASES) {
     try {
-        detectStubs(code);
+        detectStubs(code, "test.js");
         console.log(`PASS: ${code.slice(0, 30)}...`);
     } catch (e) {
         console.error(`FAIL (Should Pass): ${code}\nError: ${e.message}`);
@@ -33,7 +33,7 @@ for (const code of PASS_CASES) {
 
 for (const { code, match } of FAIL_CASES) {
     try {
-        detectStubs(code);
+        detectStubs(code, "test.js");
         console.error(`FAIL (Should Block): ${code}`);
         failed = true;
     } catch (e) {

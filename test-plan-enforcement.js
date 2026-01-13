@@ -2,10 +2,13 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { writeFileHandler } from "./tools/write_file.js";
+import { autoInitializePathResolver, getPlansDir } from "./core/path-resolver.js";
+
+autoInitializePathResolver(process.cwd());
 import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
 
 const REPO_ROOT = process.cwd();
-const TEST_FILE = "test-plan-enforce.js.tmp";
+const TEST_FILE = "test-plan-enforce.tmp.js";
 const TEST_PATH = path.join(REPO_ROOT, TEST_FILE);
 
 import { readPromptHandler } from "./tools/read_prompt.js";
@@ -21,13 +24,13 @@ async function runTest() {
     // Our bootstrap implementation disables itself after 1st plan.
     // We probably already have a plan from previous steps.
     // Use existing plan.
-    const plansDir = path.join(REPO_ROOT, "docs", "plans");
+    const plansDir = getPlansDir();
     const plans = fs.readdirSync(plansDir).filter(f => f.endsWith(".md"));
     if (plans.length === 0) {
         console.error("No plans found. Run bootstrap test first.");
         process.exit(1);
     }
-    const planName = plans[0];
+    const planName = plans.find(p => p.startsWith("FOUNDATION")) || plans[0];
     const planPath = path.join(plansDir, planName);
     const planContent = fs.readFileSync(planPath, "utf8");
 
@@ -75,7 +78,7 @@ async function runTest() {
         console.error("FAIL: Wrong ID was NOT blocked.");
         process.exit(1);
     } catch (e) {
-        if (e.message.includes("PLAN_ID_MISMATCH")) {
+        if (e.message.includes("Plan ID mismatch") || e.message.includes("INV_PLAN_UNIQUE_ID")) {
             console.log("PASS: Wrong ID blocked.");
         } else {
             console.error(`FAIL: Wrong error: ${e.message}`);
@@ -118,7 +121,7 @@ async function runTest() {
         console.error("FAIL: Wrong Hash was NOT blocked.");
         process.exit(1);
     } catch (e) {
-        if (e.message.includes("PLAN_INTEGRITY_VIOLATION")) {
+        if (e.message.includes("integrity check failed") || e.message.includes("INV_PLAN_INTEGRITY")) {
             console.log("PASS: Wrong Hash blocked.");
         } else {
             console.error(`FAIL: Wrong error: ${e.message}`);

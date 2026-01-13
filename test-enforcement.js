@@ -1,19 +1,22 @@
 import fs from "fs";
 import path from "path";
 import { writeFileHandler } from "./tools/write_file.js";
+import { autoInitializePathResolver, getPlansDir } from "./core/path-resolver.js";
+
+autoInitializePathResolver(process.cwd());
 
 const REPO_ROOT = process.cwd();
 
 // Find a plan
-const plansDir = path.join(REPO_ROOT, "docs", "plans");
+const plansDir = getPlansDir();
 const plans = fs.readdirSync(plansDir).filter(f => f.endsWith(".md"));
 if (plans.length === 0) {
     console.error("No plans found. Run bootstrap test first.");
     process.exit(1);
 }
-const PLAN_NAME = plans[0];
+const PLAN_NAME = plans.find(p => p.startsWith("FOUNDATION")) || plans[0];
 
-const TEST_FILE = "test-enforcement.js.tmp";
+const TEST_FILE = "test-enforcement.tmp.js";
 const TEST_PATH = path.join(REPO_ROOT, TEST_FILE);
 
 import { readPromptHandler } from "./tools/read_prompt.js";
@@ -26,9 +29,9 @@ async function runTest() {
 
     // 1. Create initial file
     const initialContent = `
-function sensitiveLogic() {
+function sensitiveLogic(param) {
   console.log("I am important");
-  if (true) {
+  if (param) {
       return "secure";
   }
 }
@@ -49,9 +52,9 @@ export const foo = 1;
 
     // 2. Try to comment out the logic (Should Fail)
     const commentedContent = `
-// function sensitiveLogic() {
+// function sensitiveLogic(param) {
 //   console.log("I am important");
-//   if (true) {
+//   if (param) {
 //       return "secure";
 //   }
 // }

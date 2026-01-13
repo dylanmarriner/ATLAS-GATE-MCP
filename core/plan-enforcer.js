@@ -48,8 +48,9 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
     `Plan not found: ${planName} expected at ${planFile}`
   );
 
-  // INV_PLAN_NOT_CORRUPTED: Read and parse plan file
-  const fileContent = fs.readFileSync(planFile, "utf8");
+  // INV_PLAN_NOT_CORRUPTED: Read plan file as binary buffer for strict integrity
+  const fileBuffer = fs.readFileSync(planFile);
+  const fileContent = fileBuffer.toString("utf8");
 
   // INV_PLAN_NOT_CORRUPTED: Plan must have valid frontmatter
   const match = fileContent.match(/^---\n([\s\S]+?)\n---/);
@@ -111,7 +112,8 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 
   // INV_PLAN_HASH_MATCH: Verify plan integrity if hash provided
   if (requiredPlanHash) {
-    const currentHash = crypto.createHash("sha256").update(fileContent).digest("hex");
+    // Use binary buffer for hashing to ensure bit-perfect match with sha256sum
+    const currentHash = crypto.createHash("sha256").update(fileBuffer).digest("hex");
     invariantEqual(
       currentHash,
       requiredPlanHash,

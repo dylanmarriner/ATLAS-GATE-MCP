@@ -1,8 +1,8 @@
-
 import path from "path";
 import fs from "fs";
 import { writeFileHandler } from "../tools/write_file.js";
 import { SESSION_STATE } from "../session.js";
+import { lockWorkspaceRoot } from "../core/path-resolver.js";
 
 // Mock SESSION_STATE to unlock prompt gate for testing if needed
 // or we can test the prompt gate itself.
@@ -101,33 +101,41 @@ async function main() {
     SESSION_STATE.hasFetchedPrompt = true;
 
     // Create Mock Plan
-    const PLAN_NAME = "Adversarial_Test_Plan";
-    const PLAN_FILE = path.join(REPO_ROOT, "docs", "plans", `${PLAN_NAME}.md`);
-    if (!fs.existsSync(path.dirname(PLAN_FILE))) fs.mkdirSync(path.dirname(PLAN_FILE), { recursive: true });
+    const PLAN_HASH = "6448139d0c27b8c485e89ecb44839e3130a18d9505be9c97103557d74164637d";
+    const PLAN_PATH = path.join(REPO_ROOT, "docs", "plans", `${PLAN_HASH}.md`);
 
-    fs.writeFileSync(PLAN_FILE, `---
-status: APPROVED
-plan_id: ADV-001
----
+    // Write the plan with the canonical header
+    if (!fs.existsSync(path.dirname(PLAN_PATH))) {
+        fs.mkdirSync(path.dirname(PLAN_PATH), { recursive: true });
+    }
+    fs.writeFileSync(PLAN_PATH, `<!--
+KAIZA_PLAN_HASH: ${PLAN_HASH}
+ROLE: INFRASTRUCTURE
+STATUS: APPROVED
+-->
 # Adversarial Test Plan
-For Red Team Usage.
+Scope: /**
+Red Team Usage.
 `);
 
-    const PLAN_HASH = (await import("crypto")).default.createHash("sha256").update(fs.readFileSync(PLAN_FILE, "utf8")).digest("hex");
-
     const COMMON_ARGS = {
-        plan: PLAN_NAME,
-        planId: "ADV-001",
+        plan: PLAN_HASH,
         planHash: PLAN_HASH,
-        role: "INFRASTRUCTURE", // VALID ROLE
-        registeredIn: ".kaiza/governance.json",
+        role: "INFRASTRUCTURE",
         purpose: "Testing Governance Enforcement",
+        authority: PLAN_HASH,
+        registeredIn: "tests/adversarial-runner.js",
         failureModes: "Intentional Failure",
-        overwrite: true
+        overwrite: true,
+        intent: "Adversarial testing of governance layers to ensure no-fallback and hard-error enforcement."
     };
 
-    console.log("=== STARTING ADVERSARIAL RED TEAM AUDIT ===\n");
+    console.log("=== STARTING ADVERSARIAL RED TEAM AUDIT ===");
+    SESSION_STATE.hasFetchedPrompt = true;
+    SESSION_STATE.fetchedPromptName = "WINDSURF_CANONICAL";
+    lockWorkspaceRoot(process.cwd());
 
+    const results = [];
     let passes = 0;
     let fails = 0;
 
@@ -144,7 +152,7 @@ For Red Team Usage.
                 content: `export const noop = () => {};`
             },
             expectedOutcome: "REJECT",
-            expectedError: "AST_VIOLATION: Empty function body"
+            expectedError: "HARD_BLOCK_VIOLATION: Empty function body"
         },
         {
             name: "Stub: Return Undefined",
@@ -155,7 +163,7 @@ For Red Team Usage.
                 content: `export function foo() { return undefined; }`
             },
             expectedOutcome: "REJECT",
-            expectedError: "Placeholder return value (undefined)"
+            expectedError: "HARD_BLOCK_VIOLATION: Returning undefined"
         },
         {
             name: "Stub: Return Empty Obj",
@@ -166,7 +174,7 @@ For Red Team Usage.
                 content: `export function foo() { return {}; }`
             },
             expectedOutcome: "REJECT",
-            expectedError: "Placeholder return value ({})"
+            expectedError: "HARD_BLOCK_VIOLATION: Returning empty object"
         },
 
         // 2.2 Comment-Out Strategy
@@ -200,7 +208,7 @@ export function validateUser() {
             `
         },
         expectedOutcome: "REJECT",
-        expectedError: "COMMENT_OUT_DETECTED"
+        expectedError: "POLICY_VIOLATION: COMMENT_OUT_DETECTED"
     });
 
     // 2.3 Type Laundering
@@ -216,7 +224,7 @@ export function validateUser() {
             `
         },
         expectedOutcome: "REJECT", // Does our stub detector catch this? Threat model said yes.
-        expectedError: "TEXT_VIOLATION: Found forbidden term" // or something similar
+        expectedError: "CONSTRUCT_TAXONOMY_VIOLATION"
     });
 
     // 2.4 Exception Swallowing
@@ -235,7 +243,7 @@ export function validateUser() {
             `
         },
         expectedOutcome: "REJECT",
-        expectedError: "AST_VIOLATION: Swallowed exception"
+        expectedError: "HARD_BLOCK_VIOLATION: Empty catch block"
     });
 
     // 2.6 Scope & Path Escapes
@@ -249,7 +257,7 @@ export function validateUser() {
             rawPath: true
         },
         expectedOutcome: "REJECT",
-        expectedError: "INVALID_PATH: path traversal not permitted"
+        expectedError: "INVALID_PATH: Path traversal (..) not permitted"
     });
 
     attacks.push({
@@ -262,8 +270,7 @@ export function validateUser() {
             rawPath: true
         },
         expectedOutcome: "REJECT",
-        // Expect failure because it can't resolve repo root or plan enforcement fails
-        expectedError: "NO_GOVERNED_REPO_FOUND"
+        expectedError: "REFUSE: Path is outside workspace root"
         // Or "outside of repository" if we enforce that.
         // Let's see what it returns.
     });
@@ -305,21 +312,28 @@ export function validateUser() {
     if (noPromptPass) passes++; else fails++;
     SESSION_STATE.hasFetchedPrompt = true; // Restore
 
-    // Invalid Plan ID
+    // Invalid Plan Hash (Missing File)
     const badIdPass = await runAttack("Governance: Bad Plan ID", {
-        description: "Mismatch plan ID",
-        input: { ...COMMON_ARGS, planId: "WRONG-ID", path: "bad_plan.js", content: "ok" },
+        description: "Mismatch plan ID (hash not found)",
+        input: { ...COMMON_ARGS, plan: "0000000000000000000000000000000000000000000000000000000000000000", path: "bad_plan.js", content: "ok" },
         expectedOutcome: "REJECT",
-        expectedError: "PLAN_ID_MISMATCH"
+        expectedError: "REFUSE: Plan not found by hash"
     });
     if (badIdPass) passes++; else fails++;
 
-    // Integrity Violation (Bad Hash)
+    // Integrity Violation (Hash Mismatch in header)
+    // We need a file that exists but has a different internal hash
+    const mismatchHash = "1111111111111111111111111111111111111111111111111111111111111111";
+    fs.writeFileSync(path.join(REPO_ROOT, "docs", "plans", `${mismatchHash}.md`), `<!--
+KAIZA_PLAN_HASH: 2222222222222222222222222222222222222222222222222222222222222222
+ROLE: INFRASTRUCTURE
+STATUS: APPROVED
+-->`);
     const badHashPass = await runAttack("Governance: Bad Plan Hash", {
-        description: "Mismatch plan Hash",
-        input: { ...COMMON_ARGS, planHash: "deadbeef", path: "bad_hash.js", content: "ok" },
+        description: "Mismatch plan Hash (Internal/External mismatch)",
+        input: { ...COMMON_ARGS, plan: mismatchHash, path: "bad_hash.js", content: "ok" },
         expectedOutcome: "REJECT",
-        expectedError: "PLAN_INTEGRITY_VIOLATION"
+        expectedError: "REFUSE: Hash mismatch"
     });
     if (badHashPass) passes++; else fails++;
 
@@ -341,27 +355,12 @@ export function validateUser() {
     // Phase 3: Preflight Attacks
     console.log("\nRunning Attack: Preflight: Break Verification (Revert Test)");
 
-    const targetPath = "core/stub-detector.js";
+    const targetPath = "core/error.js";
     const absTarget = path.join(REPO_ROOT, targetPath);
     const original = fs.readFileSync(absTarget, "utf8");
 
-    // Mutation: Throw error and obfuscate patterns to pass AST check
-    let mutated = original.replace(
-        "export function detectStubs(content) {",
-        "export function detectStubs(content) { throw new Error('FORCED_FAILURE');"
-    );
-
-    // Obfuscate forbidden terms in the source code of the detector itself
-    const forbidden = ["TODO", "FIXME", "stub", "mock", "@ts-ignore"];
-    forbidden.forEach(word => {
-        // Replace "WORD" with "W"+"ORD"
-        const obf = `"${word[0]}" + "${word.slice(1)}"`;
-        // We replace occurrences in the pattern definition
-        // We must be careful not to break the code.
-        // We assume they appear as "WORD" or 'WORD'.
-        mutated = mutated.split(`"${word}"`).join(obf);
-        mutated = mutated.split(`'${word}'`).join(obf);
-    });
+    // Mutation: Throw error to fail preflight (lint/build)
+    let mutated = original + "\n\nthrow new Error('FORCED_PREFLIGHT_FAILURE');\n";
 
     const input = {
         ...COMMON_ARGS,
@@ -378,15 +377,12 @@ export function validateUser() {
     }
 
     // Assertions
-    const errorMatch = result.error && result.error.message.includes("PREFLIGHT_FAILURE"); // runPreflight throws PREFLIGHT_FAILURE? 
-    // Wait, preflight.js says: throw new Error(`PREFLIGHT_FAILURE: Command '${cmd}' failed...`);
-    // And write_file.js wraps it in `PREFLIGHT_FAILED: Changes rejected...`?
-    // Let's match "PREFLIGHT".
+    const errorMatch = result.error && result.error.message.includes("PREFLIGHT");
 
     const current = fs.readFileSync(absTarget, "utf8");
     const reverted = current === original;
 
-    if ((errorMatch || (result.error && result.error.message.includes("PREFLIGHT"))) && reverted) {
+    if (errorMatch && reverted) {
         logResult("Preflight: Break Logic & Revert", true);
         passes++;
     } else {
@@ -403,6 +399,12 @@ export function validateUser() {
     console.log(`\n\n=== SUMMARY ===`);
     console.log(`PASS: ${passes}`);
     console.log(`FAIL: ${fails}`);
+
+    // Cleanup
+    ["6448139d0c27b8c485e89ecb44839e3130a18d9505be9c97103557d74164637d", "1111111111111111111111111111111111111111111111111111111111111111"].forEach(hash => {
+        const p = path.join(REPO_ROOT, "docs", "plans", `${hash}.md`);
+        if (fs.existsSync(p)) fs.unlinkSync(p);
+    });
 
     if (fails > 0) process.exit(1);
     process.exit(0);

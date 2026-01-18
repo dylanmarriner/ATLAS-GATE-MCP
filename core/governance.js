@@ -75,11 +75,8 @@ export function verifyBootstrapAuth(payload, signature) {
 }
 
 export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
-    // Use canonical path resolver to get the cached repo root
-    const resolvedRepoRoot = getRepoRoot();
-
     // 1. Verify Enabled
-    if (!isBootstrapEnabled(resolvedRepoRoot)) {
+    if (!isBootstrapEnabled(getRepoRoot())) {
         throw new Error("BOOTSTRAP_DISABLED");
     }
 
@@ -87,8 +84,17 @@ export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payl
     verifyBootstrapAuth(payload, signature);
 
     // 3. Write Plan using canonical path resolver
-    const planId = crypto.randomUUID();
-    const planFileName = `FOUNDATION-${planId}.md`;
+    // RF5: Antigravity hashes once
+    const rawHash = crypto.createHash("sha256").update(planContent).digest("hex");
+
+    // Embed hash in content according to protocol
+    let finalContent = planContent;
+    if (planContent.includes("PENDING_HASH")) {
+        finalContent = planContent.replace("PENDING_HASH", rawHash);
+    }
+
+    // RF4: Filename == hash
+    const planFileName = `${rawHash}.md`;
     const plansDir = getPlansDir();
 
     if (!fs.existsSync(plansDir)) {
@@ -97,21 +103,22 @@ export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payl
 
     const fullPlanPath = path.join(plansDir, planFileName);
 
-    // Ensure content has APPROVED status
-    if (!planContent.includes("status: APPROVED")) {
+    // Ensure content has APPROVED status (case-insensitive and supporting new format)
+    const approvedMatch = finalContent.match(/STATUS:\s*APPROVED/i);
+    if (!approvedMatch) {
         throw new Error("FOUNDATION_PLAN_MUST_BE_APPROVED");
     }
 
-    fs.writeFileSync(fullPlanPath, planContent, "utf8");
+    fs.writeFileSync(fullPlanPath, finalContent, "utf8");
 
     // 4. Update Governance State -> Disable Bootstrap
-    const state = readGovernanceState(resolvedRepoRoot);
+    const state = readGovernanceState(getRepoRoot());
     state.bootstrap_enabled = false;
     state.approved_plans_count = 1;
-    writeGovernanceState(resolvedRepoRoot, state);
+    writeGovernanceState(getRepoRoot(), state);
 
     return {
-        planId,
+        planId: rawHash,
         path: fullPlanPath
     };
 }

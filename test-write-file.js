@@ -15,6 +15,7 @@ export interface Test {
   id: string;
 }
       `,
+      intent: "Creating test billing source file for verification of write-time commentary and plan enforcement."
     });
 
     console.log("SUCCESS:", result);

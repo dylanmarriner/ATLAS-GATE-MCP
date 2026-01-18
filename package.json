@@ -5,7 +5,9 @@
   "type": "module",
   "main": "index.js",
   "bin": {
-    "kaiza-mcp": "./bin/kaiza-mcp.js"
+    "kaiza-mcp": "./bin/kaiza-mcp.js",
+    "kaiza-mcp-antigravity": "./bin/kaiza-mcp-antigravity.js",
+    "kaiza-mcp-windsurf": "./bin/kaiza-mcp-windsurf.js"
   },
   "scripts": {
     "test": "node test-ast-policy.js",

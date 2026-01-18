@@ -101,3 +101,24 @@ export async function appendAuditLog(entry, sessionId) {
     await releaseLock(lockPath);
   }
 }
+
+/**
+ * Log a structured hard failure to the audit log.
+ * This is used for invariant violations and execution errors.
+ */
+export async function logHardFailure(error, context, sessionId) {
+  const diagnostic = typeof error.toDiagnostic === 'function'
+    ? error.toDiagnostic()
+    : {
+      error_code: "LEGACY_ERROR",
+      human_message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    };
+
+  await appendAuditLog({
+    type: "HARD_FAILURE",
+    ...context,
+    diagnostic
+  }, sessionId);
+}

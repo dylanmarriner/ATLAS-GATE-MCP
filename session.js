@@ -7,6 +7,10 @@ import crypto from "crypto";
 export const SESSION_ID = crypto.randomUUID();
 
 export const SESSION_STATE = {
+    workspaceRoot: null,
     hasFetchedPrompt: false,
-    activePlanId: null
+    fetchedPromptName: null,
+    activePlanId: null,
+    isLocked: false,
+    lockError: null
 };

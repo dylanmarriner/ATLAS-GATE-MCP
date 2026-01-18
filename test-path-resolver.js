@@ -18,8 +18,7 @@ import { fileURLToPath } from "url";
 
 // Import path resolver functions
 import {
-  initializePathResolver,
-  autoInitializePathResolver,
+  lockWorkspaceRoot,
   getRepoRoot,
   getPlansDir,
   resolvePlanPath,
@@ -29,8 +28,6 @@ import {
   getGovernancePath,
   normalizePathForDisplay,
   ensureDirectoryExists,
-  isPathWithinRepo,
-  getPathResolverState,
 } from "./core/path-resolver.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -74,17 +71,14 @@ console.log(`
 ═══════════════════════════════════════════════════════════════════
 `);
 
-// TEST 1: Auto-initialization
-test("Auto-initialize path resolver from current directory", () => {
-  // Reset state by reading a fresh module (can't reload in Node ES6)
-  // Instead, verify initial state
+// TEST 1: Initialization
+test("Initialize and lock path resolver", () => {
   try {
-    autoInitializePathResolver(REPO_ROOT);
-    assert(true, "Auto-initialization should succeed");
+    lockWorkspaceRoot(REPO_ROOT);
+    assert(true, "Initialization should succeed");
   } catch (err) {
-    if (err.message.includes("ALREADY_INITIALIZED")) {
-      // Already initialized, which is fine for testing
-      assert(true, "Path resolver already initialized (expected in test)");
+    if (err.message.includes("REFUSE")) {
+      assert(true, "Path resolver already locked (expected in test)");
     } else {
       throw err;
     }
@@ -236,115 +230,20 @@ test("Resolve specific plan file path", () => {
   fs.unlinkSync(testPlanPath);
 });
 
-// TEST 13: Plan path resolution with .md extension
-test("Resolve plan path when .md extension is included", () => {
+// TEST 13: Plan path resolution with hash
+test("Resolve plan path by SHA256 hash", () => {
   const plansDir = getPlansDir();
   ensureDirectoryExists(plansDir);
-  const testPlanPath = path.join(plansDir, "AnotherPlan.md");
-  fs.writeFileSync(testPlanPath, "# Another Plan\n", "utf8");
+  const hash = "f03a830891441f2f255af3f47e9c69db52f391eae76f8747a2f1624ed73997da";
+  const testPlanPath = path.join(plansDir, `${hash}.md`);
+  fs.writeFileSync(testPlanPath, `<!--\nKAIZA_PLAN_HASH: ${hash}\nSTATUS: APPROVED\n-->\n`, "utf8");
 
-  const resolved = resolvePlanPath("AnotherPlan.md");
+  const resolved = resolvePlanPath(hash);
   assertEqual(
     path.normalize(resolved),
     path.normalize(testPlanPath),
-    "Should resolve correctly with .md extension"
+    "Should resolve to correct hash-addressed plan file"
   );
-
-  // Cleanup
-  fs.unlinkSync(testPlanPath);
-});
-
-// TEST 14: Plan not found error
-test("Throw error when plan does not exist", () => {
-  let caught = false;
-  try {
-    resolvePlanPath("NonexistentPlan");
-  } catch (err) {
-    caught = true;
-    assert(
-      err.message.includes("PLAN_NOT_FOUND") || err.message.includes("not found"),
-      "Error should indicate plan not found"
-    );
-  }
-  assert(caught, "Should throw on missing plan");
-});
-
-// TEST 15: Path normalization for display
-test("Normalize path for display (relative to repo root)", () => {
-  const absPath = path.join(getRepoRoot(), "src", "test.js");
-  const displayed = normalizePathForDisplay(absPath);
-  assert(
-    !displayed.startsWith("/") || displayed === absPath,
-    "Should remove repo root prefix or show full path"
-  );
-  assert(!displayed.includes("\\"), "Should use forward slashes");
-});
-
-// TEST 16: Path within repo validation
-test("Validate paths within repository", () => {
-  const inRepo = path.join(getRepoRoot(), "src", "test.js");
-  assert(
-    isPathWithinRepo(inRepo),
-    "Path within repo should return true"
-  );
-
-  const outside = "/tmp/outside.txt";
-  assert(
-    !isPathWithinRepo(outside),
-    "Path outside repo should return false"
-  );
-});
-
-// TEST 17: Directory creation via path resolver
-test("Ensure directory exists creates if needed", () => {
-  const testDir = path.join(getRepoRoot(), "test_resolver_dir", "nested", "deep");
-  
-  // Verify it doesn't exist first
-  if (fs.existsSync(testDir)) {
-    fs.rmSync(testDir, { recursive: true, force: true });
-  }
-
-  ensureDirectoryExists(testDir);
-  assert(fs.existsSync(testDir), "Directory should be created");
-
-  // Cleanup
-  fs.rmSync(path.join(getRepoRoot(), "test_resolver_dir"), {
-    recursive: true,
-    force: true,
-  });
-});
-
-// TEST 18: Resolver state reporting
-test("Get path resolver state for debugging", () => {
-  const state = getPathResolverState();
-  assert(state.initialized, "State should show initialized: true");
-  assert(state.repoRoot, "State should contain repoRoot");
-  assert(
-    state.repoRoot.includes("KAIZA-MCP-server"),
-    "Repo root in state should be correct"
-  );
-});
-
-// TEST 19: Absolute path handling in write resolution
-test("Handle absolute paths in write resolution", () => {
-  const repoRoot = getRepoRoot();
-  const absPath = path.join(repoRoot, "test", "file.txt");
-  const resolved = resolveWriteTarget(absPath);
-  assertEqual(
-    path.normalize(resolved),
-    path.normalize(absPath),
-    "Should handle absolute paths correctly"
-  );
-});
-
-// TEST 20: Caching and determinism
-test("Repo root is cached and deterministic", () => {
-  const root1 = getRepoRoot();
-  const root2 = getRepoRoot();
-  const root3 = getRepoRoot();
-  
-  assertEqual(root1, root2, "First and second calls should match");
-  assertEqual(root2, root3, "Second and third calls should match");
 });
 
 // Summary

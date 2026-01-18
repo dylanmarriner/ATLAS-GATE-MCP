@@ -10,110 +10,188 @@ import { listPlansHandler } from "./tools/list_plans.js";
 import { readFileHandler } from "./tools/read_file.js";
 import { readAuditLogHandler } from "./tools/read_audit_log.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
+import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
 
-// CANONICAL PATH RESOLVER: Initialize first before any other operations
-// CANONICAL PATH RESOLVER: Initialize first before any other operations
-import { ensurePathResolver, getRepoRoot } from "./core/path-resolver.js";
+// GOVERNANCE IMPORTS
+import { ensureKaizaError, ERROR_CODES } from "./core/error.js";
+import { logHardFailure } from "./core/audit-log.js";
+import { analyzeDirectoryGovernance } from "./core/static-analyzer.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// One session per server run
-export const SESSION_ID = crypto.randomUUID();
+// CANONICAL PATH RESOLVER: Authority comes strictly from begin_session
+import { getRepoRoot } from "./core/path-resolver.js";
+import { SESSION_ID, SESSION_STATE } from "./session.js";
 
-// REMOVED: Eager initialization. We now initialize lazily on the first tool call
-// to support correct repo detection when started from a generic location (e.g. global install).
-// WORKSPACE_ROOT export removed as it depends on eager init.
+// RF1-RF3: Explicit workspace authority model.
+// No eager or lazy initialization via discovery.
 
-// Create server
-const server = new McpServer({
-  name: "kaiza-mcp",
-  version: "1.0.0",
-});
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * OBJECTIVE 2 — INPUT NORMALIZATION
- * 
- * Normalize all tool inputs server-side before validation.
- * Accepts both string and object input formats.
- * Prevents client-side formatting assumptions.
+ * Startup Self-Audit: Refuse to start if code violates governance.
  */
-const originalValidateToolInput = server.validateToolInput.bind(server);
-server.validateToolInput = async function (tool, args, toolName) {
-  // NORMALIZATION: Handle string input (JSON-stringified or raw)
-  if (typeof args === 'string') {
+function runSelfAudit() {
+  console.error("[GOVERNANCE] Starting Self-Audit...");
+  // Audit the server's own source code
+  const violations = analyzeDirectoryGovernance(__dirname);
+  if (violations.length > 0) {
+    const msg = `SELF_AUDIT_FAILURE: MCP refused startup. ${violations.length} files violate error handling governance. Fix empty catch blocks or swallowed errors.`;
+    console.error(`[GOVERNANCE] ${msg}`);
+    console.error(JSON.stringify(violations, null, 2));
+    process.exit(1);
+  }
+  console.error("[GOVERNANCE] Self-Audit Passed.");
+}
+
+/**
+ * Tool Handler Boundary: mandatory diagnostics and session locking.
+ */
+function wrapHandler(handler, toolName) {
+  return async (args) => {
     try {
-      // Try to parse as JSON object
-      args = JSON.parse(args);
-    } catch (parseError) {
-      // If parse fails, wrap in object with 'path' property for common patterns
-      // This handles cases like: call with "path/to/file.md" directly
-      if (toolName === 'read_file' || toolName === 'list_plans') {
-        args = { path: args };
-      } else {
-        // Re-throw for other tools if string parsing fails
-        throw new Error(`INVALID_INPUT_FORMAT: ${toolName} requires object input, got unparseable string`);
+      return await handler(args);
+    } catch (err) {
+      const kerr = ensureKaizaError(err, {
+        error_code: err.code || ERROR_CODES.INTERNAL_ERROR,
+        phase: "EXECUTION",
+        component: "TOOL_HANDLER",
+        invariant: "MANDATORY_DIAGNOSTICS"
+      });
+
+      // LOG HARD FAILURE TO AUDIT LOG
+      try {
+        await logHardFailure(kerr, { tool: toolName }, SESSION_ID);
+      } catch (logErr) {
+        console.error(`[CRITICAL] Audit log failed during error handling: ${logErr.message}`);
+      }
+
+      // LOCK SESSION (unless it's already a lock error being re-thrown)
+      if (kerr.error_code !== ERROR_CODES.SESSION_LOCKED) {
+        SESSION_STATE.isLocked = true;
+        SESSION_STATE.lockError = kerr.toDiagnostic();
+      }
+
+      console.error(`[GOVERNANCE] HARD FAILURE in ${toolName}: ${kerr.message}`);
+      throw kerr;
+    }
+  };
+}
+
+// Create server factory
+export async function startServer(role = "ANTIGRAVITY") {
+  // 8️⃣ Startup Self-Audit (CRITICAL)
+  runSelfAudit();
+
+  const server = new McpServer({
+    name: `kaiza-mcp-${role.toLowerCase()}`,
+    version: "1.0.0",
+  });
+
+  const { beginSessionHandler } = await import("./tools/begin_session.js");
+
+  /**
+   * RF1 & RF3: Mandatory Session Initialization Gate
+   */
+  const originalValidateToolInput = server.validateToolInput.bind(server);
+  server.validateToolInput = async function (tool, args, toolName) {
+    // NORMALIZATION
+    if (typeof args === 'string') {
+      try {
+        args = JSON.parse(args);
+      } catch (parseError) {
+        if (toolName === 'read_file' || toolName === 'list_plans') {
+          args = { path: args };
+        } else {
+          throw new Error(`INVALID_INPUT_FORMAT: ${toolName} requires object input, got unparseable string`);
+        }
       }
     }
-  }
 
-  // NORMALIZATION: Validate args is now an object
-  if (typeof args !== 'object' || args === null) {
-    throw new Error(`INVALID_INPUT_FORMAT: ${toolName} input must be an object, got ${typeof args}`);
-  }
+    if (typeof args !== 'object' || args === null) {
+      throw new Error(`INVALID_INPUT_FORMAT: ${toolName} input must be an object, got ${typeof args}`);
+    }
 
-  // LAZY INITIALIZATION:
-  // If the path resolver hasn't been initialized yet, use the 'path' argument (if present)
-  // as a hint to find the repository root. This ensures that if the server is started
-  // in a generic directory (like ~), it locks onto the correct repo based on the first operation.
-  if (args.path) {
-    ensurePathResolver(args.path);
-  } else {
-    // If no path is provided in the first call (e.g. read_audit_log),
-    // we assume CWD is the intention or we just init with CWD to be safe.
-    ensurePathResolver(process.cwd());
-  }
+    // RF1: Hard Gate - Check if session is initialized
+    console.error(`[DEBUG] tool=${toolName} workspaceRoot=${SESSION_STATE.workspaceRoot}`);
+    if (toolName !== 'begin_session' && SESSION_STATE.workspaceRoot === null) {
+      throw new Error("REFUSE: Session not initialized. You must call begin_session with an absolute workspace_root first.");
+    }
 
-  return originalValidateToolInput(tool, args, toolName);
-};
+    // 7️⃣ SESSION LOCK: Prevent further calls until Failure Report is written
+    if (SESSION_STATE.isLocked) {
+      const isFailureReport = toolName === 'write_file' &&
+        args.path &&
+        (args.path.includes("docs/reports/") || args.path.includes("docs/reports\\"));
 
-// Register all tools (AFTER all imports are complete)
-async function registerAllTools() {
-  // Import bootstrap last to avoid circular dependency issues
-  const { bootstrapPlanHandler, bootstrapToolSchema } = await import("./tools/bootstrap_tool.js");
+      const isAuditRo = toolName === 'read_audit_log' || toolName === 'read_file';
 
+      if (!isFailureReport && !isAuditRo) {
+        throw new Error(`SESSION_LOCKED: Hard failure in previous call. You MUST write a Failure Report to docs/reports/ before continuing. Error: ${SESSION_STATE.lockError.human_message}`);
+      }
+    }
+
+    // Prevent re-initialization
+    if (toolName === 'begin_session' && SESSION_STATE.workspaceRoot !== null) {
+      throw new Error(`REFUSE: Session already locked to ${SESSION_STATE.workspaceRoot}.`);
+    }
+
+    return originalValidateToolInput(tool, args, toolName);
+  };
+
+  // Universal Tools (Mandatory First Call)
   server.registerTool(
-    "write_file",
+    "begin_session",
     {
-      description: "Authoritative audited file write",
+      description: "Initialize and lock the workspace authority for the session (MANDATORY FIRST CALL)",
       inputSchema: z.object({
-        path: z.string(),
-        content: z.string().optional(),
-        patch: z.string().optional(),
-        previousHash: z.string().optional(), // For concurrency/integrity check
-        plan: z.string(), // Plan Name or Path
-        planId: z.string().optional(), // Required for strict enforcement
-        planHash: z.string().optional(), // Required for strict enforcement
-        // Optional metadata for auto-header generation
-        role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
-        purpose: z.string().optional(),
-        usedBy: z.string().optional(),
-        connectedVia: z.string().optional(),
-        registeredIn: z.string().optional(),
-        executedVia: z.string().optional(),
-        failureModes: z.string().optional(),
-        authority: z.string().optional(),
+        workspace_root: z.string().describe("Absolute path to project root")
       }),
     },
-    writeFileHandler
+    wrapHandler(beginSessionHandler, "begin_session")
   );
 
+  // RF1-RF3: Tool Manifestation (Visible immediately, but gated)
+  if (role === "WINDSURF") {
+    console.error("[SERVER] WINDSURF: manifesting execution tools");
+    server.registerTool(
+      "write_file",
+      {
+        description: "Authoritative audited file write (Windsurf only)",
+        inputSchema: z.object({
+          path: z.string(),
+          content: z.string().optional(),
+          patch: z.string().optional(),
+          previousHash: z.string().optional(),
+          plan: z.string().describe("The SHA256 plan hash identifying the authorized plan"),
+          role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
+          intent: z.string().optional().describe("Summary of intent for this change (MANDATORY for governance)"),
+        }),
+      },
+      wrapHandler(writeFileHandler, "write_file")
+    );
+  } else if (role === "ANTIGRAVITY") {
+    console.error("[SERVER] ANTIGRAVITY: manifesting planning tools");
+    server.registerTool(
+      "bootstrap_create_foundation_plan",
+      {
+        description: "Create the first approved plan (Antigravity only)",
+        inputSchema: bootstrapToolSchema,
+      },
+      wrapHandler(bootstrapPlanHandler, "bootstrap_create_foundation_plan")
+    );
+  }
+
+  // Read-only tools - Allowed for both, but only after ignition
   server.registerTool(
     "list_plans",
     {
       description: "List approved plans",
       inputSchema: z.object({
-        path: z.string(),
+        path: z.string().optional(),
       }),
     },
-    listPlansHandler
+    wrapHandler(listPlansHandler, "list_plans")
   );
 
   server.registerTool(
@@ -124,7 +202,7 @@ async function registerAllTools() {
         path: z.string(),
       }),
     },
-    readFileHandler
+    wrapHandler(readFileHandler, "read_file")
   );
 
   server.registerTool(
@@ -133,36 +211,22 @@ async function registerAllTools() {
       description: "Read append-only audit log",
       inputSchema: z.object({}),
     },
-    readAuditLogHandler
-  );
-
-  server.registerTool(
-    "bootstrap_create_foundation_plan",
-    {
-      description: "Create the first approved plan (bootstrap mode only)",
-      inputSchema: bootstrapToolSchema,
-    },
-    bootstrapPlanHandler
+    wrapHandler(readAuditLogHandler, "read_audit_log")
   );
 
   server.registerTool(
     "read_prompt",
     {
-      description: "Read canonical prompt (required before writing)",
+      description: `Read canonical prompt - Role: ${role}`,
       inputSchema: z.object({
         name: z.string()
       })
     },
-    readPromptHandler
+    wrapHandler((args) => readPromptHandler(args, role), "read_prompt")
   );
+
+  // Attach stdio transport and start
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error(`[MCP] kaiza-mcp-${role.toLowerCase()} running | session=${SESSION_ID}`);
 }
-
-// Register tools and start server
-await registerAllTools();
-
-// Attach stdio transport (THIS is the "start")
-const transport = new StdioServerTransport();
-server.connect(transport);
-
-// Human-safe confirmation
-console.error(`[MCP] kaiza-mcp running | session=${SESSION_ID}`);

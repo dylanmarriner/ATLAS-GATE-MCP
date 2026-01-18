@@ -10,4 +10,9 @@
  * via process.cwd().
  */
 
-import "../server.js";
+import { startServer } from "../server.js";
+
+startServer("ANTIGRAVITY").catch((error) => {
+    console.error("Failed to start kaiza-mcp server:", error);
+    process.exit(1);
+});

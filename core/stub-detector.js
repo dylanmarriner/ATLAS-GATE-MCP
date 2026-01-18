@@ -1,5 +1,6 @@
 import * as acorn from "acorn";
 import * as walk from "acorn-walk";
+import { KaizaError, ERROR_CODES } from "./error.js";
 
 /**
  * Non-Real Constructs Detection (C1-C8 Taxonomy)
@@ -134,36 +135,30 @@ export function detectStubs(content, filePath = "") {
 
   // === IMMEDIATE HARD BLOCK - NO EXCEPTIONS ===
   if (hardBlockViolations.length > 0) {
-    throw new Error(
-      `HARD_BLOCK_VIOLATION [NO EXCEPTIONS, NO PLAN OVERRIDE]:\n\n` +
-      `The following constructs are ABSOLUTELY FORBIDDEN:\n\n` +
-      hardBlockViolations.map(v => {
-        let explanation = "";
-        if (v.category.includes("C5_HARD_BLOCK_POLICY_BYPASS")) {
-          explanation = " — Policy Bypass (always-allow, return true)";
-        } else if (v.category.includes("C8_HARD_BLOCK_SIMULATED_OUTCOME")) {
-          explanation = " — Simulated Outcome (SIMULATE, DRY_RUN flags)";
-        } else if (v.category.includes("C3_HARD_BLOCK_TODO_FIXME")) {
-          explanation = " — Incomplete Work (TODO, FIXME markers)";
-        } else if (v.category.includes("C2_HARD_BLOCK_MOCK_FAKE")) {
-          explanation = " — Test Double in Production (mock, fake, dummy)";
-        }
-        return `  🚫 "${v.pattern}"${explanation}`;
-      }).join("\n") +
-      `\n\n` +
-      `POLICY: These 4 constructs (C2, C3, C5, C8) are PERMANENTLY BLOCKED.\n` +
-      `No plan authorization, no exceptions, no overrides.\n\n` +
-      `REASON:\n` +
-      `- C5 (Policy Bypass): Removes all security\n` +
-      `- C8 (Simulated Outcome): Pretends work was done\n` +
-      `- C3 (TODO/FIXME): Incomplete code cannot ship\n` +
-      `- C2 (Mock/Fake): Test doubles in production = data loss\n\n` +
-      `WHAT TO DO:\n` +
-      `1. Remove all ${hardBlockViolations.map(v => v.pattern).join(', ')}\n` +
-      `2. Write real, complete, production code\n` +
-      `3. Retry write_file\n\n` +
-      `Reference: docs/CONSTRUCT_TAXONOMY.md`
-    );
+    throw new KaizaError({
+      error_code: ERROR_CODES.WRITE_REJECTED,
+      phase: "EXECUTION",
+      component: "STUB_DETECTOR",
+      invariant: "NO_STUBS",
+      human_message: `HARD_BLOCK_VIOLATION [NO EXCEPTIONS, NO PLAN OVERRIDE]:\n\n` +
+        `The following constructs are ABSOLUTELY FORBIDDEN:\n\n` +
+        hardBlockViolations.map(v => {
+          let explanation = "";
+          if (v.category.includes("C5_HARD_BLOCK_POLICY_BYPASS")) {
+            explanation = " — Policy Bypass (always-allow, return true)";
+          } else if (v.category.includes("C8_HARD_BLOCK_SIMULATED_OUTCOME")) {
+            explanation = " — Simulated Outcome (SIMULATE, DRY_RUN flags)";
+          } else if (v.category.includes("C3_HARD_BLOCK_TODO_FIXME")) {
+            explanation = " — Incomplete Work (TODO, FIXME markers)";
+          } else if (v.category.includes("C2_HARD_BLOCK_MOCK_FAKE")) {
+            explanation = " — Test Double in Production (mock, fake, dummy)";
+          }
+          return `  🚫 "${v.pattern}"${explanation}`;
+        }).join("\n") +
+        `\n\n` +
+        `POLICY: These 4 constructs (C2, C3, C5, C8) are PERMANENTLY BLOCKED.\n` +
+        `No plan authorization, no exceptions, no overrides.`
+    });
   }
 
   // === PHASE 2: Check other CRITICAL patterns ===
@@ -237,12 +232,13 @@ export function detectStubs(content, filePath = "") {
         Function(node) {
           if (node.body.type === "BlockStatement" && node.body.body.length === 0) {
             // HARD BLOCK: Empty function bodies are stub code that must be implemented
-            throw new Error(
-              `HARD_BLOCK_VIOLATION: Empty function body at line ${node.loc.start.line}\n` +
-              `Empty functions are stub code and cannot ship.\n` +
-              `Implement the function logic or remove it.\n` +
-              `Reference: docs/CONSTRUCT_TAXONOMY.md`
-            );
+            throw new KaizaError({
+              error_code: ERROR_CODES.WRITE_REJECTED,
+              phase: "EXECUTION",
+              component: "STUB_DETECTOR",
+              invariant: "NO_EMPTY_FUNCTIONS",
+              human_message: `HARD_BLOCK_VIOLATION: Empty function body at line ${node.loc.start.line}\nEmpty functions are stub code and cannot ship.`
+            });
           }
         },
         CatchClause(node) {
@@ -286,7 +282,14 @@ export function detectStubs(content, filePath = "") {
               `Reference: docs/CONSTRUCT_TAXONOMY.md`
             );
           }
-          // Empty arrays [] and objects {} are VALID returns (e.g., empty collection)
+          else if (node.argument.type === "ObjectExpression" && node.argument.properties.length === 0) {
+            throw new Error(
+              `HARD_BLOCK_VIOLATION: Returning empty object at line ${node.loc.start.line}\n` +
+              `Empty object returns ({}) are FORBIDDEN as stubs. Return valid data or throw an error.\n` +
+              `Reference: docs/CONSTRUCT_TAXONOMY.md`
+            );
+          }
+          // Empty arrays [] are VALID returns (e.g., empty collection)
         }
       });
 

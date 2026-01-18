@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
 import crypto from "crypto";
-import { getRepoRoot, getPlansDir, getGovernancePath, normalizePathForDisplay } from "./path-resolver.js";
+import { getRepoRoot, resolvePlanPath, getGovernancePath, normalizePathForDisplay } from "./path-resolver.js";
 import { invariant, invariantNotNull, invariantTrue, invariantEqual } from "./invariant.js";
 
 function readGovernanceState(repoRoot) {
@@ -14,176 +14,59 @@ function readGovernanceState(repoRoot) {
 }
 
 /**
- * Enforce that a plan exists in the repo governing the target path.
- * Verifies plan status and ID/Hash if provided.
- * Uses canonical path resolver for all path operations.
+ * RF4 & RF5: High-assurance Plan Enforcement
+ * Plans are addressed strictly by hash. 
  */
-export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHash) {
-  // INV_WRITE_AUTHORIZED_PLAN: Plan name must be provided
-  invariantNotNull(planName, "INV_WRITE_AUTHORIZED_PLAN", "Plan name is required for write authorization");
+export function enforcePlan(planHash, targetPath) {
+  invariantNotNull(planHash, "INV_PLAN_HASH_REQUIRED", "Plan hash is required for authorization");
 
-  const repoRoot = getRepoRoot();
-  const plansDir = getPlansDir();
-  const govState = readGovernanceState(repoRoot);
+  // RF4: Plan Addressing = HASH ONLY
+  const planFile = resolvePlanPath(planHash);
 
-  // INV_PLANS_DIR_EXISTS: Plans directory must exist or be creatable
-  invariantTrue(
-    fs.existsSync(plansDir),
-    "INV_PLANS_DIR_EXISTS",
-    `Plans directory not found: ${plansDir}`
-  );
+  // RF5: Read for string equality check only (NO RE-HASHING)
+  const fileContent = fs.readFileSync(planFile, "utf8");
 
-  // INV_PLAN_STABLE_ID: Normalize plan name consistently
-  const baseName = path.basename(planName);
-  const normalizedPlanName = baseName.endsWith(".md")
-    ? baseName.slice(0, -3)
-    : baseName;
+  // Extract the embedded hash from the canonical header.
+  // We expect:
+  // <!--
+  // KAIZA_PLAN_HASH: <hash>
+  // ROLE: <role>
+  // STATUS: APPROVED
+  // -->
+  const headerMatch = fileContent.match(/<!--\s*KAIZA_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
-  const planFile = path.join(plansDir, `${normalizedPlanName}.md`);
-
-  // INV_PLAN_EXISTS: Referenced plan must exist
-  invariantTrue(
-    fs.existsSync(planFile),
-    "INV_PLAN_EXISTS",
-    `Plan not found: ${planName} expected at ${planFile}`
-  );
-
-  // INV_PLAN_NOT_CORRUPTED: Read plan file as binary buffer for strict integrity
-  const fileBuffer = fs.readFileSync(planFile);
-  const fileContent = fileBuffer.toString("utf8");
-
-  // INV_PLAN_NOT_CORRUPTED: Plan must have valid frontmatter OR parsable metadata
-  const yamlMatch = fileContent.match(/^---\n([\s\S]+?)\n---/);
-  let frontmatter = null;
-  let isYaml = false;
-
-  if (yamlMatch) {
-    try {
-      frontmatter = yaml.load(yamlMatch[1]);
-      isYaml = true;
-    } catch (e) {
-      throw new Error(`INVALID_PLAN_YAML: ${e.message}`);
-    }
-  } else {
-    // Fallback: Try to parse "1. PLAN_METADATA" style (ATLAS format)
-    const statusMatch = fileContent.match(/-\s*STATUS:\s*(.+)/);
-    const idMatch = fileContent.match(/-\s*ID:\s*(.+)/);
-    const contextMatch = fileContent.match(/-\s*CONTEXT:\s*(.+)/);
-    const scopeMatch = fileContent.match(/-\s*LOCKED_TO:\s*(.+)/); // ATLAS specific
-
-    if (statusMatch) {
-      frontmatter = {
-        status: statusMatch[1].trim(),
-        plan_id: idMatch ? idMatch[1].trim() : null,
-        scope: scopeMatch ? scopeMatch[1].trim() : null,
-        // Add other fields as needed or leave generic
-      };
-    }
+  if (!headerMatch) {
+    throw new Error(`REFUSE: Plan ${planHash} is not APPROVED or has invalid header format.`);
   }
 
-  invariantNotNull(
-    frontmatter,
-    "INV_PLAN_NOT_CORRUPTED",
-    `Invalid plan format: No frontmatter or parsable metadata found in ${normalizedPlanName}.md`
-  );
+  const embeddedHash = headerMatch[1];
 
-  // INV_PLAN_APPROVED: Check plan approval status
-  const status = frontmatter.status;
-
-  // AUTO-REGISTER: If auto_register_plans is enabled, accept any plan in docs/plans
-  if (govState.auto_register_plans && status !== "APPROVED" && status !== "approved") {
-    // Auto-approve: update frontmatter and rewrite file
-    console.error(`[PLAN-ENFORCER] Auto-registering plan: ${normalizedPlanName}`);
-
-    if (isYaml) {
-      frontmatter.status = "APPROVED";
-      frontmatter.auto_registered = true;
-      frontmatter.auto_registered_at = new Date().toISOString();
-      const updatedContent = `---\n${yaml.dump(frontmatter)}---\n${fileContent.split('---').slice(2).join('---')}`;
-      fs.writeFileSync(planFile, updatedContent, "utf8");
-    } else {
-      // ATLAS Format update
-      // Replace "STATUS: <Value>" with "STATUS: APPROVED"
-      const updatedContent = fileContent.replace(/(-\s*STATUS:\s*)(.+)/, '$1APPROVED');
-      fs.writeFileSync(planFile, updatedContent, "utf8");
-      // Update local object for check
-      frontmatter.status = "APPROVED";
-    }
-  } else {
-    // INV_PLAN_APPROVED: Only APPROVED plans can be executed
-    invariantTrue(
-      status === "APPROVED" || status === "approved",
-      "INV_PLAN_APPROVED",
-      `Plan is not approved: status is '${status}', expected 'APPROVED'`
-    );
+  // RF5: Windsurf only verifies string equality
+  if (embeddedHash !== planHash) {
+    throw new Error(`REFUSE: Hash mismatch. Filename ${planHash} does not match embedded hash ${embeddedHash}`);
   }
 
-  // INV_PLAN_STABLE_ID: Check and verify plan ID
-  // NOTE: plan_id in frontmatter is optional (legacy plans may not have it)
-  // But if client provides requiredPlanId, we should validate it matches
-  if (requiredPlanId && frontmatter.plan_id) {
-    // Client provided ID AND plan has ID: they must match
-    invariantEqual(
-      requiredPlanId,
-      frontmatter.plan_id,
-      "INV_PLAN_UNIQUE_ID",
-      `Plan ID mismatch: expected ${requiredPlanId}, got ${frontmatter.plan_id}`
-    );
-  }
-
-  // INV_PLAN_HASH_MATCH: Verify plan integrity if hash provided
-  if (requiredPlanHash) {
-    // Use string content for hashing to allow stripping the plan_hash line
-    const fileContentStr = fileBuffer.toString('utf8');
-    // Strip the plan_hash line to avoid circular dependency
-    // Matches "  plan_hash: <64 hex chars>\n" or similar
-    const contentToHash = fileContentStr.replace(/^.*plan_hash:.*(\r\n|\n)/gm, '');
-
-    const currentHash = crypto.createHash("sha256").update(contentToHash).digest("hex");
-    invariantEqual(
-      currentHash,
-      requiredPlanHash,
-      "INV_PLAN_HASH_MATCH",
-      `Plan file integrity check failed. Expected hash ${requiredPlanHash}, got ${currentHash}. Plan may have been tampered with.`
-    );
-  }
-
-  // INV_PLAN_SCOPE_ENFORCED: Check if target path is allowed by plan scope
-  if (frontmatter.scope) {
-    const scopePattern = frontmatter.scope;
-    // Remove glob suffixes to get base directory
-    const scopeBase = scopePattern.replace(/(\/\*\*|\/\*)$/, "");
+  // SCOPE CHECK: Still mandatory (RF2 says plans stay with local dir)
+  // We parse the remainder of the file for scope if needed, 
+  // but according to the new protocol, the hash is the primary authority.
+  // We'll maintain backward compatibility for scope checks if they exist in markdown body.
+  const scopeMatch = fileContent.match(/scope:\s*(.+)/i);
+  if (scopeMatch) {
+    const scope = scopeMatch[1].trim();
+    const repoRoot = getRepoRoot();
+    const scopeBase = scope.replace(/(\/\*\*|\/\*)$/, "");
     const allowedPath = path.resolve(repoRoot, scopeBase);
-
-    // targetPath is already absolute (passed from writeFileHandler)
     const rel = path.relative(allowedPath, targetPath);
-
-    // Check if target is inside allowed path
-    // valid if rel does not start with '..' and is not absolute
     const isWithinScope = !rel.startsWith('..') && !path.isAbsolute(rel);
 
-    invariantTrue(
-      isWithinScope,
-      "INV_PATH_WITHIN_SCOPE",
-      `File path ${normalizePathForDisplay(targetPath)} is not within plan scope: ${scopePattern}`
-    );
-  } else if (frontmatter.files && Array.isArray(frontmatter.files)) {
-    // Logic for explicit file list if needed, though audit used scope
-    // Implementing for completeness if simple
-    const isAllowed = frontmatter.files.some(f => {
-      const allowedAbs = path.resolve(repoRoot, f);
-      return allowedAbs === targetPath;
-    });
-    invariantTrue(
-      isAllowed,
-      "INV_PATH_WITHIN_SCOPE",
-      `File path ${normalizePathForDisplay(targetPath)} is not in allowed files list.`
-    );
+    if (!isWithinScope) {
+      throw new Error(`REFUSE: File path is not within plan scope: ${scope}`);
+    }
   }
 
   return {
-    repoRoot,
-    plan: normalizedPlanName,
-    data: frontmatter
+    repoRoot: getRepoRoot(),
+    plan: planHash,
+    data: {} // No longer using frontmatter, keeping data for backward compatibility
   };
 }

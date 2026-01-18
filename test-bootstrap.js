@@ -3,10 +3,15 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { autoInitializePathResolver } from "./core/path-resolver.js";
+import { lockWorkspaceRoot } from "./core/path-resolver.js";
 import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
 
-autoInitializePathResolver(process.cwd());
+const REPO_ROOT = process.cwd();
+try {
+    lockWorkspaceRoot(REPO_ROOT);
+} catch (e) {
+    // Ignore if already locked in some environments, but normally we lock it here
+}
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -14,11 +19,12 @@ const __filename = fileURLToPath(import.meta.url);
 const SECRET = "test-secret-123";
 process.env.KAIZA_BOOTSTRAP_SECRET = SECRET;
 
-const REPO_ROOT = process.cwd();
-const PLAN_CONTENT = `---
-plan_id: FOUNDATION-1
-status: APPROVED
----
+const PLAN_CONTENT = `<!--
+KAIZA_PLAN_HASH: PENDING_HASH
+ROLE: ANTIGRAVITY
+STATUS: APPROVED
+-->
+
 # Foundation Plan
 All good.
 `;

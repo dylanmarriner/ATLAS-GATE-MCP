@@ -2,21 +2,9 @@
  * ROLE: INFRASTRUCTURE
  * PURPOSE: Centralized invariant assertion system
  * AUTHORITY: This module enforces non-negotiable correctness invariants
- *
- * DESIGN:
- * All invariants must fail fast, loud, and unrecoverably. There are no warnings,
- * no downgrades to errors, no silent failures. An invariant violation means the
- * system has entered an invalid state and must stop immediately.
- *
- * USAGE:
- *   invariant(condition, CODE, "human-readable message")
- *   invariantNotNull(value, CODE, "message")
- *   invariantTrue(value, CODE, "message")
- *   invariantEqual(actual, expected, CODE, "message")
- *
- * CODES are uppercase identifiers: e.g., INV_PATH_ABSOLUTE, INV_PLAN_EXISTS
- * This allows tracing invariant failures back to the specific rule that was violated.
  */
+
+import { KaizaError, ERROR_CODES } from "./error.js";
 
 /**
  * Core invariant assertion function.
@@ -115,17 +103,17 @@ export function invariantFalse(condition, code, message) {
  * Custom error class for invariant violations.
  * Ensures all invariant failures are classified and traceable.
  */
-class InvariantViolationError extends Error {
+class InvariantViolationError extends KaizaError {
   constructor(code, message) {
-    super(`[${code}] ${message}`);
+    super({
+      error_code: ERROR_CODES.INVARIANT_VIOLATION,
+      phase: "EXECUTION",
+      component: "INVARIANT_SYSTEM",
+      invariant: code,
+      human_message: message,
+    });
     this.name = "InvariantViolationError";
-    this.code = code;
-    this.message = message;
-
-    // Capture stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, InvariantViolationError);
-    }
+    this.code = code; // Keep legacy code property for backward compat
 
     // Make the error non-recoverable
     Object.setPrototypeOf(this, InvariantViolationError.prototype);

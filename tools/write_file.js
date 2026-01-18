@@ -14,6 +14,7 @@ import { appendAuditLog } from "../core/audit-log.js";
 import { SESSION_ID, SESSION_STATE } from "../session.js";
 import { runPreflight } from "../core/preflight.js";
 import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver.js";
+import { KaizaError, ERROR_CODES } from "../core/error.js";
 
 /**
  * ...
@@ -36,19 +37,58 @@ export async function writeFileHandler({
   executedVia,
   failureModes,
   authority,
+  intent,
 }) {
 
   // GATE 0: PROMPT GATE
   // Must fetch canonical prompt before writing.
   if (SESSION_STATE && !SESSION_STATE.hasFetchedPrompt) {
-    // Check if we are in testing mode (environment var) or strictly enforce
-    // For this implementation: strictly enforce.
-    throw new Error("PROMPT_GATE_LOCKED: You must call read_prompt('ANTIGRAVITY_CANONICAL') before any write operations.");
+    throw new KaizaError({
+      error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
+      phase: "EXECUTION",
+      component: "WRITE_FILE",
+      invariant: "PROMPT_GATE_LOCKED",
+      human_message: "PROMPT_GATE_LOCKED: You must call read_prompt('WINDSURF_CANONICAL') before any write operations."
+    });
   }
 
-  // GATE 1: INPUT VALIDATION & NORMALIZATION
+  if (SESSION_STATE && SESSION_STATE.fetchedPromptName !== "WINDSURF_CANONICAL") {
+    throw new KaizaError({
+      error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
+      phase: "EXECUTION",
+      component: "WRITE_FILE",
+      invariant: "PROMPT_GATE_LOCKED",
+      human_message: "Windsurf write operations require WINDSURF_CANONICAL prompt context."
+    });
+  }
+
+  // GATE 1: INTENT & AUTHORITY ENFORCEMENT (Requirement 4)
+  const isFailureReport = filePath.includes("docs/reports/");
+
+  if (!isFailureReport) {
+    const hasIntent = intent && intent.trim().length > 20;
+    const hasMetadata = purpose && authority && failureModes;
+
+    if (!hasIntent && !hasMetadata) {
+      throw new KaizaError({
+        error_code: ERROR_CODES.WRITE_REJECTED,
+        phase: "EXECUTION",
+        component: "WRITE_FILE",
+        invariant: "MANDATORY_COMMENTARY",
+        human_message: "REFUSE WRITE: Mandatory intent commentary missing. You must provide 'intent' (min 20 chars) or complete metadata (purpose, authority, failureModes). Governance requires every change to have recorded intent."
+      });
+    }
+  }
+
+  // GATE 1.1: INPUT VALIDATION & NORMALIZATION
   if (!filePath || typeof filePath !== 'string' || filePath.trim().length === 0) {
-    throw new Error("INVALID_WRITE_REQUEST: path is required and must be a non-empty string");
+    throw new KaizaError({
+      error_code: ERROR_CODES.WRITE_REJECTED,
+      phase: "EXECUTION",
+      component: "WRITE_FILE",
+      invariant: "VALID_INPUT",
+      human_message: "path is required and must be a non-empty string"
+    });
   }
 
   // CANONICAL PATH RESOLUTION: Use path resolver for all path operations
@@ -105,7 +145,8 @@ export async function writeFileHandler({
 
   // GATE 2: PLAN ENFORCEMENT
   // Verify the plan exists in the governed repo AND that it authorizes this file path
-  const { repoRoot } = enforcePlan(plan, abs, planId, planHash);
+  // RF4: plan is now the hash
+  const { repoRoot } = enforcePlan(plan, abs);
 
   let contentToWrite = finalContent;
 

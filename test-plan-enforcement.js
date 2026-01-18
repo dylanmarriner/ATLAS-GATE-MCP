@@ -2,12 +2,15 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { writeFileHandler } from "./tools/write_file.js";
-import { autoInitializePathResolver, getPlansDir } from "./core/path-resolver.js";
-
-autoInitializePathResolver(process.cwd());
-import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
+import { lockWorkspaceRoot, getPlansDir } from "./core/path-resolver.js";
 
 const REPO_ROOT = process.cwd();
+try {
+    lockWorkspaceRoot(REPO_ROOT);
+} catch (e) { }
+
+import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
+
 const TEST_FILE = "test-plan-enforce.tmp.js";
 const TEST_PATH = path.join(REPO_ROOT, TEST_FILE);
 
@@ -17,7 +20,7 @@ async function runTest() {
     console.log("Testing Plan Enforcement...");
 
     // Satisfy Prompt Gate
-    await readPromptHandler({ name: "ANTIGRAVITY_CANONICAL" });
+    await readPromptHandler({ name: "WINDSURF_CANONICAL" }, "WINDSURF");
 
     // 1. Bootstrap a fresh plan
     // We need to bypass governance check for bootstrap if a plan already exists?
@@ -30,98 +33,43 @@ async function runTest() {
         console.error("No plans found. Run bootstrap test first.");
         process.exit(1);
     }
-    const planName = plans.find(p => p.startsWith("FOUNDATION")) || plans[0];
-    const planPath = path.join(plansDir, planName);
-    const planContent = fs.readFileSync(planPath, "utf8");
+    const PLAN_HASH = plans[0].replace(".md", "");
+    console.log(`Using plan hash: ${PLAN_HASH}`);
 
-    // Extract ID
-    const idMatch = planContent.match(/plan_id:\s*(.+)/);
-    if (!idMatch) {
-        console.error("No plan_id in plan file.");
-        process.exit(1);
-    }
-    const realPlanId = idMatch[1].trim();
-
-    // Calculate Hash
-    const realHash = crypto.createHash("sha256").update(planContent).digest("hex");
-
-    // 2. Write with Correct ID (Should Pass)
-    console.log("Case 1: Correct ID");
+    // 2. Write with Correct Hash (Should Pass)
+    console.log("Case 1: Correct Hash");
     await writeFileHandler({
         path: TEST_PATH,
         content: "export const x = 1;",
-        plan: planName,
-        planId: realPlanId,
+        plan: PLAN_HASH,
         role: "EXECUTABLE",
         connectedVia: "test",
         purpose: "test",
         registeredIn: "test",
-        failureModes: "test"
-    });
-    console.log("PASS: Correct ID accepted.");
-    fs.unlinkSync(TEST_PATH);
-
-    // 3. Write with Wrong ID (Should Fail)
-    console.log("Case 2: Wrong ID");
-    try {
-        await writeFileHandler({
-            path: TEST_PATH,
-            content: "export const x = 1;",
-            plan: planName,
-            planId: "wrong-id",
-            role: "EXECUTABLE",
-            connectedVia: "test",
-            purpose: "test",
-            registeredIn: "test",
-            failureModes: "test"
-        });
-        console.error("FAIL: Wrong ID was NOT blocked.");
-        process.exit(1);
-    } catch (e) {
-        if (e.message.includes("Plan ID mismatch") || e.message.includes("INV_PLAN_UNIQUE_ID")) {
-            console.log("PASS: Wrong ID blocked.");
-        } else {
-            console.error(`FAIL: Wrong error: ${e.message}`);
-            process.exit(1);
-        }
-    }
-
-    // 4. Write with Correct Hash (Should Pass)
-    console.log("Case 3: Correct Hash");
-    await writeFileHandler({
-        path: TEST_PATH,
-        content: "export const x = 1;",
-        plan: planName,
-        planId: realPlanId,
-        planHash: realHash,
-        role: "EXECUTABLE",
-        connectedVia: "test",
-        purpose: "test",
-        registeredIn: "test",
-        failureModes: "test"
+        failureModes: "test",
+        intent: "Verifying that a write with the correct plan hash is accepted by the server."
     });
     console.log("PASS: Correct Hash accepted.");
     fs.unlinkSync(TEST_PATH);
 
-    // 5. Write with Wrong Hash (Should Fail)
-    console.log("Case 4: Wrong Hash");
+    // 3. Write with Wrong Hash (This should fail integrity check)
+    console.log("Case 2: Wrong ID (now hash)");
     try {
         await writeFileHandler({
             path: TEST_PATH,
             content: "export const x = 1;",
-            plan: planName,
-            planId: realPlanId,
-            planHash: "badhash",
+            plan: "badhash",
             role: "EXECUTABLE",
             connectedVia: "test",
             purpose: "test",
             registeredIn: "test",
-            failureModes: "test"
+            failureModes: "test",
+            intent: "Verifying that a write with a bad plan hash is rejected by the server."
         });
         console.error("FAIL: Wrong Hash was NOT blocked.");
         process.exit(1);
     } catch (e) {
-        if (e.message.includes("integrity check failed") || e.message.includes("INV_PLAN_INTEGRITY")) {
+        if (e.message.includes("REFUSE") || e.message.includes("not found")) {
             console.log("PASS: Wrong Hash blocked.");
         } else {
             console.error(`FAIL: Wrong error: ${e.message}`);

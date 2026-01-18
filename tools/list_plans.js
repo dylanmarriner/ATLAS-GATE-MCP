@@ -27,23 +27,10 @@ export async function listPlansHandler({ path: targetPath }) {
       const fullPath = path.join(plansDir, planFile);
       const content = fs.readFileSync(fullPath, "utf8");
 
-      // INV_PLAN_NOT_CORRUPTED: Parse frontmatter
-      const match = content.match(/^---\n([\s\S]+?)\n---/);
-      if (!match) {
-        // Plan file missing frontmatter - skip it
-        continue;
-      }
+      // INV_PLAN_APPROVED: Only include APPROVED plans with canonical header
+      const headerMatch = content.match(/<!--\s*KAIZA_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
-      let frontmatter;
-      try {
-        frontmatter = yaml.load(match[1]);
-      } catch (e) {
-        // Invalid YAML - skip corrupted plan
-        continue;
-      }
-
-      // INV_PLAN_APPROVED: Only include APPROVED plans
-      if (frontmatter && (frontmatter.status === "APPROVED" || frontmatter.status === "approved")) {
+      if (headerMatch) {
         const planId = planFile.replace(".md", "");
         approvedPlans.push(planId);
       }

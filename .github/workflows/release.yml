@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run full verification
+      run: npm run verify
+
+    - name: Create release archive
+      run: |
+        tar -czf kaiza-mcp-server-${{ github.ref_name }}.tar.gz \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='tests' \
+          --exclude='.github' \
+          --exclude='audit-log.jsonl' \
+          --exclude='*.log' \
+          .
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          KAIZA MCP Server ${{ github.ref_name }}
+
+          ## Changes
+          See commit history for details.
+
+          ## Installation
+          ```bash
+          npm install
+          npm test
+          npm run verify
+          ```
+
+          ## Usage
+          See README.md for detailed usage instructions.
+        draft: false
+        prerelease: false
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./kaiza-mcp-server-${{ github.ref_name }}.tar.gz
+        asset_name: kaiza-mcp-server-${{ github.ref_name }}.tar.gz
+        asset_content_type: application/gzip

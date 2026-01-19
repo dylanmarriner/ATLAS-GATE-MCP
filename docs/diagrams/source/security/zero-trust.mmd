@@ -1,0 +1,109 @@
+---
+title: "Zero-Trust Security Architecture"
+description: "Diagram illustrating the zero-trust security model implementation"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["security-team"]
+tags: ["security", "zero-trust", "architecture"]
+audience: ["technical", "executive"]
+---
+
+graph TB
+    subgraph "Zero-Trust Principles"
+        ZT1[Never Trust<br/>Always Verify]
+        ZT2[Least Privilege<br/>Access]
+        ZT3[Micro-Segmentation<br/>of Operations]
+        ZT4[Continuous<br/>Monitoring]
+    end
+    
+    subgraph "Authentication Layer"
+        AI[AI Agent]
+        SM[Session Manager]
+        AUTH[Authentication<br/>Bootstrap Secret]
+        ROLE[Role Verification<br/>ANTIGRAVITY/WINDSURF]
+    end
+    
+    subgraph "Authorization Layer"
+        PLAN[Plan Validation<br/>SHA256 Hash]
+        SCOPE[Scope Enforcement<br/>Bounded Operations]
+        META[Metadata Validation<br/>Required Fields]
+    end
+    
+    subgraph "Execution Layer"
+        TOOL[Tool Access<br/>Role-Specific]
+        FILE[File Operations<br/>Authorized Paths]
+        AUDIT[Audit Logging<br/>Immutable Records]
+    end
+    
+    subgraph "Verification Layer"
+        HASH[Content Hashing<br/>SHA256 Verification]
+        CHAIN[Chain Verification<br/>Hash Links]
+        INTEGR[Integrity Checks<br/>Stub Detection]
+    end
+    
+    subgraph "Monitoring Layer"
+        LOG[Audit Log<br/>JSONL Format]
+        ALERT[Anomaly Detection<br/>Security Events]
+        COMPL[Compliance Reporting<br/>Regulatory Requirements]
+    end
+    
+    %% Trust Boundaries
+    subgraph "Trust Boundary 1: Session"
+        AI
+        SM
+        AUTH
+        ROLE
+    end
+    
+    subgraph "Trust Boundary 2: Authorization"
+        PLAN
+        SCOPE
+        META
+    end
+    
+    subgraph "Trust Boundary 3: Execution"
+        TOOL
+        FILE
+        AUDIT
+    end
+    
+    %% Connections
+    ZT1 --> AUTH
+    ZT2 --> ROLE
+    ZT3 --> SCOPE
+    ZT4 --> ALERT
+    
+    AI --> SM
+    SM --> AUTH
+    AUTH --> ROLE
+    ROLE --> PLAN
+    PLAN --> SCOPE
+    SCOPE --> META
+    META --> TOOL
+    TOOL --> FILE
+    FILE --> AUDIT
+    AUDIT --> HASH
+    HASH --> CHAIN
+    CHAIN --> INTEGR
+    INTEGR --> LOG
+    LOG --> ALERT
+    ALERT --> COMPL
+    
+    %% Feedback Loops
+    ALERT -.-> AUTH
+    COMPL -.-> ROLE
+    LOG -.-> PLAN
+    
+    %% Styling
+    classDef principleBox fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef authBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef execBox fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef verifyBox fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef monitorBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    class ZT1,ZT2,ZT3,ZT4 principleBox
+    class AI,SM,AUTH,ROLE authBox
+    class PLAN,SCOPE,META,TOOL,FILE,AUDIT execBox
+    class HASH,CHAIN,INTEGR verifyBox
+    class LOG,ALERT,COMPL monitorBox

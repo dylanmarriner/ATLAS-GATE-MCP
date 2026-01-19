@@ -1,0 +1,116 @@
+---
+title: "KAIZA MCP System Architecture Overview"
+description: "High-level architecture diagram showing system components and relationships"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["architecture", "system", "overview"]
+audience: ["technical", "executive"]
+---
+
+graph TB
+    subgraph "AI Agent Environment"
+        AI[AI Agent<br/>Claude/Windsurf/etc.]
+    end
+    
+    subgraph "KAIZA MCP Server"
+        subgraph "Session Management"
+            SM[Session Manager]
+            SI[Session Initializer]
+        end
+        
+        subgraph "Role Management"
+            RM[Role Manager]
+            AG[ANTIGRAVITY Role<br/>Planning]
+            WS[WINDSURF Role<br/>Execution]
+        end
+        
+        subgraph "Authorization & Plans"
+            PA[Plan Authorizer]
+            PS[Plan Storage<br/>Hash-Addressed]
+            PV[Plan Validator]
+        end
+        
+        subgraph "Core Tools"
+            RF[Read File Tool]
+            WF[Write File Tool]
+            LP[List Plans Tool]
+            AL[Audit Log Tool]
+        end
+        
+        subgraph "Security & Audit"
+            SL[Security Layer]
+            ALG[Audit Logger]
+            CH[Chain Verifier]
+        end
+    end
+    
+    subgraph "Storage Layer"
+        subgraph "File System"
+            WS_ROOT[Workspace Root]
+            PLAN_DIR[docs/plans/]
+            AUDIT_FILE[audit-log.jsonl]
+            GOV_FILE[governance.json]
+        end
+        
+        subgraph "Version Control"
+            GIT[Git Repository]
+        end
+    end
+    
+    subgraph "External Systems"
+        MCP[MCP Client]
+        IDP[Identity Provider<br/>Optional]
+        SIEM[SIEM System<br/>Optional]
+    end
+    
+    %% Connections
+    AI -->|MCP Protocol| SM
+    SM --> SI
+    SI --> RM
+    RM --> AG
+    RM --> WS
+    
+    AG --> PA
+    WS --> PA
+    PA --> PS
+    PA --> PV
+    
+    AG --> RF
+    AG --> LP
+    WS --> WF
+    WS --> RF
+    WS --> LP
+    WS --> AL
+    
+    RF --> SL
+    WF --> SL
+    LP --> SL
+    AL --> ALG
+    
+    SL --> CH
+    ALG --> CH
+    
+    PS --> PLAN_DIR
+    ALG --> AUDIT_FILE
+    SM --> GOV_FILE
+    
+    RF --> WS_ROOT
+    WF --> WS_ROOT
+    WS_ROOT --> GIT
+    
+    AI --> MCP
+    RM --> IDP
+    ALG --> SIEM
+    
+    %% Styling
+    classDef roleBox fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef storageBox fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef externalBox fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef securityBox fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class AG,WS roleBox
+    class WS_ROOT,PLAN_DIR,AUDIT_FILE,GOV_FILE,GIT storageBox
+    class MCP,IDP,SIEM externalBox
+    class SL,ALG,CH securityBox

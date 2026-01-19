@@ -1,0 +1,71 @@
+---
+title: "Role-Based Governance Model"
+description: "Diagram showing the dual-role governance model and interactions"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["architecture", "governance", "roles"]
+audience: ["technical", "executive"]
+---
+
+sequenceDiagram
+    participant AI as AI Agent
+    participant SM as Session Manager
+    participant AG as ANTIGRAVITY Role
+    participant WS as WINDSURF Role
+    participant PS as Plan Storage
+    participant FS as File System
+    participant AL as Audit Logger
+    
+    Note over AI,AL: Session Initialization
+    AI->>SM: begin_session(workspace_root)
+    SM->>SM: Lock workspace_root
+    SM->>AI: Session established
+    
+    Note over AI,AL: Planning Phase (ANTIGRAVITY)
+    AI->>SM: Switch to ANTIGRAVITY role
+    SM->>AG: Activate ANTIGRAVITY tools
+    
+    AG->>FS: read_file(requirements.md)
+    FS-->>AG: Requirements content
+    
+    AG->>PS: list_plans()
+    PS-->>AG: Existing plans list
+    
+    AG->>AG: Create new plan content
+    AG->>PS: bootstrap_create_foundation_plan(plan)
+    PS->>PS: Generate SHA256 hash
+    PS->>AL: Log plan creation
+    PS-->>AG: Plan hash and confirmation
+    
+    Note over AI,AL: Execution Phase (WINDSURF)
+    AI->>SM: Switch to WINDSURF role
+    SM->>WS: Activate WINDSURF tools
+    
+    WS->>PS: list_plans()
+    PS-->>WS: Available plans
+    
+    WS->>AG: read_prompt(WINDSURF_CANONICAL)
+    AG-->>WS: Prompt acknowledgment
+    
+    WS->>PS: Validate plan hash
+    PS-->>WS: Plan validation result
+    
+    WS->>FS: write_file(file, content, plan_hash)
+    FS->>FS: Validate plan authorization
+    FS->>FS: Execute file write
+    FS->>AL: Log write operation
+    FS-->>WS: Write confirmation
+    
+    Note over AI,AL: Audit and Verification
+    WS->>AL: read_audit_log()
+    AL-->>WS: Audit log entries
+    
+    WS->>FS: Verify file changes
+    FS-->>WS: Verification results
+    
+    Note over AI,AL: Session Completion
+    AI->>SM: Session complete
+    SM->>AL: Log session termination
+    SM->>SM: Unlock workspace_root

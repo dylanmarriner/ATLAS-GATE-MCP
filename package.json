@@ -1,9 +1,9 @@
 {
-  "name": "mcp-server",
+  "name": "@kaiza/mcp-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Enterprise governance gateway for AI-driven development with role-based access control, cryptographic audit trails, and plan-based authorization",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
   "bin": {
     "kaiza-mcp": "./bin/kaiza-mcp.js",
     "kaiza-mcp-antigravity": "./bin/kaiza-mcp-antigravity.js",
@@ -11,11 +11,40 @@
   },
   "scripts": {
     "test": "node test-ast-policy.js",
-    "verify": "node test-bootstrap.js && node test-enforcement.js && node test-preflight.js && node test-ast-policy.js && node test-plan-enforcement.js && node verify_security.js"
+    "verify": "node test-bootstrap.js && node test-enforcement.js && node test-preflight.js && node test-ast-policy.js && node test-plan-enforcement.js && node verify_security.js",
+    "docs:build": "npm run docs:render && npm run docs:validate",
+    "docs:render": "find docs/diagrams/source -name '*.mmd' -exec npx mmdc -i {} -o docs/diagrams/rendered/{}.svg \\;",
+    "docs:validate": "node scripts/validate-docs.js",
+    "security:audit": "node verify_security.js",
+    "quality:check": "npm run verify && npm run docs:validate",
+    "release:prepare": "npm run quality:check && npm run docs:build && node scripts/prepare-release.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-governance",
+    "enterprise-security",
+    "audit-trail",
+    "role-based-access",
+    "plan-authorization",
+    "zero-trust",
+    "compliance",
+    "cryptographic-audit"
+  ],
+  "author": {
+    "name": "KAIZA MCP Team",
+    "email": "team@kaiza-mcp.org",
+    "url": "https://kaiza-mcp.org"
+  },
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dylanmarriner/KAIZA-MCP-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dylanmarriner/KAIZA-MCP-server/issues"
+  },
+  "homepage": "https://github.com/dylanmarriner/KAIZA-MCP-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.1",
     "acorn": "^8.15.0",
@@ -23,5 +52,17 @@
     "diff": "^8.0.2",
     "js-yaml": "^4.1.1",
     "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.6.1",
+    "plantuml": "^0.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/dylanmarriner"
   }
 }

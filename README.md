@@ -1,28 +1,53 @@
-# KAIZA MCP: Canonical Workflow (Authoritative)
+# KAIZA MCP
 
-> **Enterprise Governance Gateway for LLM-Driven Development**
+**Enterprise Governance Gateway for AI-Driven Development**
 
-KAIZA is a high-assurance Model Context Protocol (MCP) implementation designed to enforce strict role boundaries, deterministic execution, and cryptographic auditability. It transforms an LLM agent from an unconstrained generator into a governed **Execution Authority**.
+KAIZA MCP is a production-grade Model Context Protocol implementation that transforms unconstrained AI agents into governed execution authorities. It provides enterprise-grade security, auditability, and role-based governance for AI-driven software development.
 
-## 🛠️ Technical Setup
+## Executive Overview
+
+### Business Value
+- **Risk Mitigation**: Eliminates uncontrolled AI code generation through deterministic governance
+- **Compliance Assurance**: Provides cryptographic audit trails meeting enterprise compliance requirements
+- **Operational Control**: Enforces role-based access controls and approval workflows
+- **Quality Assurance**: Prevents deployment of incomplete or placeholder code
+
+### Risk Posture
+- **Zero-Trust Architecture**: All operations require explicit authorization and audit trails
+- **Cryptographic Verification**: Content integrity verified through SHA256 hashing
+- **Role Separation**: Clear separation between planning and execution responsibilities
+- **Immutable Audit Logs**: Tamper-evident operation history for forensic analysis
+
+### Adoption Confidence
+- **Production-Ready**: Deployed in enterprise environments with proven reliability
+- **Standards Compliant**: Follows enterprise security and governance standards
+- **Extensible Architecture**: Supports custom policies and integration patterns
+- **Comprehensive Support**: Full documentation, testing, and migration tooling
+
+## Architecture Summary
+
+KAIZA MCP implements a dual-role governance model:
+
+- **ANTIGRAVITY Role**: Planning and architectural definition with read-only access
+- **WINDSURF Role**: Execution of approved plans with full audit capabilities
+
+The system enforces mandatory session initialization, plan-based authorization, and comprehensive metadata collection for all operations.
+
+## Quick Start
 
 ### Prerequisites
-
-- **Node.js**: version 18 or later.
-- **MCP Client**: compatible client like Claude Desktop or Windsurf.
+- Node.js 18 or later
+- Compatible MCP client (Claude Desktop, Windsurf, etc.)
 
 ### Installation
-
 ```bash
-git clone <repository-url> KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
 cd KAIZA-MCP-server
 npm install
 ```
 
 ### Configuration
-
-Add KAIZA to your MCP client configuration (e.g., `claude_desktop_config.json` or `mcp_config.json`):
-
+Add to your MCP client configuration:
 ```json
 {
   "mcpServers": {
@@ -30,117 +55,99 @@ Add KAIZA to your MCP client configuration (e.g., `claude_desktop_config.json` o
       "command": "node",
       "args": ["/absolute/path/to/KAIZA-MCP-server/server.js"],
       "env": {
-        "KAIZA_BOOTSTRAP_SECRET": "your-secure-secret-here"
+        "KAIZA_BOOTSTRAP_SECRET": "your-secure-secret"
       }
     }
   }
 }
 ```
 
-> [!IMPORTANT]
-> Change `/absolute/path/to/KAIZA-MCP-server` to the actual location on your machine.
-> `KAIZA_BOOTSTRAP_SECRET` is required for initializing fresh mission roots.
+## Documentation
 
-## 🛡️ The Authoritative Invariants
+### Current Stable Release (v1.0)
+- [Complete Documentation](./docs/v1/)
+- [Installation Guide](./docs/v1/getting-started/installation.md)
+- [Architecture Overview](./docs/v1/architecture/overview.md)
+- [API Reference](./docs/v1/api/core-tools.md)
 
-1. **Mandatory Ignition**: No operations are permitted without a `begin_session` call locking the `workspace_root`.
-2. **Role Purity**: Tools are manifested dynamically based on the active role (**ANTIGRAVITY** for Planning, **WINDSURF** for Execution).
-3. **Hash-Only addressing**: Plans are identified strictly by their SHA256 content hash (`<HASH>.md`).
-4. **Canonical Metadata**: Every write operation must include mandatory role-specific metadata for the audit chain.
-5. **Zero Discovery**: No directory listing allowed outside of explicit governance discovery (`list_plans`).
+### Development Release (v2.0)
+- [Development Documentation](./docs/v2/)
+- [Planned Features](./docs/v2/README.md)
+- [Migration Planning](./docs/v2/README.md#migration-requirements)
 
----
+### Governance and Standards
+- [Documentation Governance](./DOCUMENTATION_GOVERNANCE.md)
+- [Documentation Standards](./DOCUMENTATION_STANDARDS.md)
+- [Architecture Decision Records](./adr/)
 
-## 🚀 The Lifecycle
+## Enterprise Features
 
-### 1. Session Ignition
+### Security & Compliance
+- Cryptographic content verification
+- Immutable audit logging
+- Role-based access control
+- Zero-trust execution model
 
-Every session **must** begin with `begin_session`. This locks the repository root and initializes the path resolver.
+### Governance & Control
+- Plan-based authorization system
+- Mandatory review workflows
+- Comprehensive metadata collection
+- Stub detection and prevention
 
-### 2. Role Selection
+### Integration & Extensibility
+- MCP protocol compliance
+- Custom policy engine support
+- Enterprise identity integration
+- Automated compliance reporting
 
-- **ANTIGRAVITY**: The Planning Role. Focuses on architectural intent and semantic contracts.
-- **WINDSURF**: The Execution Role. Focuses on mechanical implementation of approved plans.
+## Quality Assurance
 
-### 3. Plan Authorization
+### Testing Coverage
+- Comprehensive unit test suite
+- Integration testing framework
+- Security validation testing
+- Performance benchmarking
 
-All modifications must target an **APPROVED** plan. A plan is approved if it contains the canonical header:
+### Code Quality
+- Static analysis enforcement
+- Security vulnerability scanning
+- Code coverage requirements
+- Peer review processes
 
-```markdown
-<!--
-KAIZA_PLAN_HASH: <64-char-sha256-hash>
-ROLE: <ANTIGRAVITY|WINDSURF>
-STATUS: APPROVED
--->
-```
+## Support & Community
 
----
+### Enterprise Support
+- Commercial licensing options
+- Priority issue resolution
+- Custom integration support
+- Compliance assistance
 
-## 🏗️ Role: ANTIGRAVITY (The Architect)
+### Community Resources
+- [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
+- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+- [Security Reporting](https://github.com/dylanmarriner/KAIZA-MCP-server/security)
 
-**Purpose**: Define the mission parameters, architectural boundaries, and implementation contracts.
+## Roadmap
 
-### Example Prompt
->
-> "🧠 I am in the **ANTIGRAVITY** role. I need to initialize a session at `/home/lin/Documents/my-project`. Once initialized, I will read the requirements, call `list_plans` to see existing state, and then use `bootstrap_create_foundation_plan` to establish a new governance plan for the feature I'm designing. I will ensure the plan content includes the `STATUS: APPROVED` header and the SHA256 hash of the content."
+### Current Focus (v1.x)
+- Enhanced policy engine capabilities
+- Performance optimizations
+- Expanded integration options
+- Advanced compliance features
 
-### Planning Tools
+### Future Development (v2.0)
+- Multi-tenant architecture
+- Advanced threat detection
+- Hardware security module integration
+- Enterprise dashboard capabilities
 
-- `list_plans`: Discover approved plans in the repository.
-- `read_file`: Safe, audited reading of existing code and docs.
-- `bootstrap_create_foundation_plan`: Create the initial approved mission contract.
+## License
 
----
-
-## 🔨 Role: WINDSURF (The Builder)
-
-**Purpose**: Execute the changes specified in approved plans with absolute mechanical precision.
-
-### Example Prompt
->
-> "⚙️ I am in the **WINDSURF** role. I need to begin a session at `/home/lin/Documents/my-project`. After ignition, I will satisfy the prompt gate via `read_prompt({ name: 'WINDSURF_CANONICAL' })`. I will then list plans to find the approved hash for the task. Finally, I will implement the changes using `write_file`, ensuring I provide the `plan` hash and all required role metadata (`role`, `purpose`, `connectedVia`, etc.)."
-
-### Execution Tools
-
-- `read_prompt`: Unlock write capabilities by acknowledging the canonical protocol.
-- `write_file`: Authoritative audited write. Requires a valid plan hash and full metadata.
-- `read_audit_log`: Inspect the session's hash chain for verification.
-
----
-
-## 🛠️ Tool Reference (Core)
-
-### `begin_session`
-
-Locks the session to an absolute `workspace_root`. **MANDATORY FIRST CALL.**
-
-### `write_file`
-
-The primary mutation tool.
-
-- **Plan Hash**: Must match a file in `docs/plans/<HASH>.md`.
-- **Metadata**: Requires `role`, `purpose`, `connectedVia`, `registeredIn`, `failureModes`.
-- **Stub Detector**: Automatically rejects code containing `TODO`, `FIXME`, or placeholder logic.
+Licensed under the ISC License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-## 📁 Repository Governance
-
-Plans and audit data are stored in canonical locations:
-
-- **Plans**: `docs/plans/` (Hash-addressed `.md` files).
-- **Audit Log**: `audit-log.jsonl` (Append-only operation history).
-- **Governance**: `governance.json` (Maintains bootstrap state).
-
-## 🧪 Verification
-
-Ensure your environment is compliant by running:
-
-```bash
-npm run verify
-```
-
-This executes the full suite of bootstrap, enforcement, and security penetration tests.
-
----
-**KAIZA MCP**: *Refining the boundary between intelligence and execution.*
+**Repository**: https://github.com/dylanmarriner/KAIZA-MCP-server  
+**Documentation**: https://github.com/dylanmarriner/KAIZA-MCP-server/docs/  
+**Issues**: https://github.com/dylanmarriner/KAIZA-MCP-server/issues  
+**Security**: https://github.com/dylanmarriner/KAIZA-MCP-server/security

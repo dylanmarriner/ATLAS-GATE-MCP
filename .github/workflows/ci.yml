@@ -93,18 +93,44 @@ jobs:
         npm install -g @mermaid-js/mermaid-cli
         npm install -g plantuml
 
-    - name: Build documentation
-      run: |
-        npm run docs:build
-
-    - name: Validate diagrams
+    - name: Validate documentation structure
       run: |
         npm run docs:validate
 
+    - name: Build documentation from source
+      run: |
+        npm run docs:build
+
+    - name: Verify no build artifacts committed
+      run: |
+        if git ls-files | grep -E "docs/(build|dist|site|diagrams/rendered)" | grep -v ".gitignore"; then
+          echo "❌ Build artifacts found in repository"
+          git ls-files | grep -E "docs/(build|dist|site|diagrams/rendered)"
+          exit 1
+        else
+          echo "✅ No build artifacts committed to repository"
+        fi
+
+    - name: Validate diagrams rendered correctly
+      run: |
+        if [ ! -d "docs/diagrams/rendered" ] || [ -z "$(ls -A docs/diagrams/rendered)" ]; then
+          echo "❌ No rendered diagrams found"
+          exit 1
+        fi
+        echo "✅ Diagrams rendered successfully"
+
     - name: Check documentation coverage
       run: |
-        find docs -name "*.md" | wc -l
-        echo "Documentation files found"
+        DOC_COUNT=$(find docs -name "*.md" | wc -l)
+        echo "📚 Documentation files: $DOC_COUNT"
+        if [ "$DOC_COUNT" -lt 5 ]; then
+          echo "❌ Insufficient documentation coverage"
+          exit 1
+        fi
+
+    - name: Validate markdown links
+      run: |
+        npx markdown-link-check docs/**/*.md || true
 
   performance:
     runs-on: ubuntu-latest

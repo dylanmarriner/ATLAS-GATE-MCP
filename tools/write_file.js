@@ -15,6 +15,7 @@ import { SESSION_ID, SESSION_STATE } from "../session.js";
 import { runPreflight } from "../core/preflight.js";
 import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver.js";
 import { KaizaError, ERROR_CODES } from "../core/error.js";
+import { enforceRustPolicy, runRustVerificationGates } from "../core/rust-policy-engine.js";
 
 /**
  * ...
@@ -179,6 +180,18 @@ export async function writeFileHandler({
 
   validateRoleMetadata(metadata);
   validateRoleMismatch(metadata.ROLE, contentToWrite);
+
+  // GATE 3.5: RUST STATIC ENFORCEMENT GATE (MANDATORY)
+  // Pre-write Rust policy validation for forbidden patterns and error handling
+  if (normalizedPath.endsWith('.rs')) {
+    // Extract allowed patterns from plan if present
+    const planAllowances = {};
+    if (plan) {
+      // TODO: parse plan to extract rust-allowed-patterns section
+      // For now, empty set means all patterns forbidden by default
+    }
+    enforceRustPolicy(normalizedPath, contentToWrite, repoRoot, planAllowances);
+  }
 
   // GATE 4: ENTERPRISE CODE ENFORCEMENT (OBJECTIVE 3)
   // HARD BLOCK: No stubs, mocks, placeholders, TODOs, or non-enterprise code

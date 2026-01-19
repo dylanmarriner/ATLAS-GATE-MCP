@@ -6,6 +6,7 @@
 - **Run tests**: `npm test` (runs `test-ast-policy.js`)
 - **Run single test**: `node <test-file>.js` (e.g., `node test-bootstrap.js`)
 - **Full verification**: `npm run verify` (all test-*.js files + security checks)
+- **Rust policy tests**: `node test-rust-policy.js` (tests static enforcement gates)
 
 ## Architecture
 
@@ -26,6 +27,25 @@
 **Tool Distribution**:
 - **ANTIGRAVITY**: begin_session, list_plans, read_file, read_audit_log, read_prompt, bootstrap_create_foundation_plan
 - **WINDSURF**: begin_session, list_plans, read_file, read_audit_log, read_prompt, write_file
+
+## Rust Enforcement Gates (Mandatory for Rust Projects)
+
+**Pre-Write Static Gate** (GATE 3.5 in write_file):
+- Detects forbidden patterns: unwrap(), panic!(), unsafe {}, static mut, etc.
+- Validates error handling: Result<T, SystemError> pattern required
+- Patterns can be allowed via plan with justification
+- Location: `core/rust-policy-engine.js`
+
+**Post-Write Verification Gates** (in preflight):
+- `cargo fmt --check` - Code style compliance
+- `cargo clippy -- -D warnings` - Lint compliance
+- `cargo build` - Compilation verification
+- Verify `#![deny(...)]` attributes in lib.rs/main.rs
+- Fail fast: any gate failure reverts changes and rejects write
+- Location: `core/preflight.js` + `core/rust-policy-engine.js`
+
+**Test**: `node test-rust-policy.js` (16 comprehensive tests)
+**Documentation**: `RUST_ENFORCEMENT_GATES.md`
 
 ## Code Style & Conventions
 

@@ -1,8 +1,20 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import { runRustVerificationGates } from "./rust-policy-engine.js";
 
 export function runPreflight(repoRoot) {
+    // RUST VERIFICATION GATES (CRITICAL) - Must run first if Rust project
+    const cargoTomlPath = path.join(repoRoot, "Cargo.toml");
+    if (fs.existsSync(cargoTomlPath)) {
+        try {
+            runRustVerificationGates(repoRoot);
+        } catch (err) {
+            // Rust gates are mandatory, fail hard
+            throw err;
+        }
+    }
+
     // Detect package manager
     const hasPnpm = fs.existsSync(path.join(repoRoot, "pnpm-lock.yaml"));
     const hasYarn = fs.existsSync(path.join(repoRoot, "yarn.lock"));

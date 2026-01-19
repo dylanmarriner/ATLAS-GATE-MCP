@@ -44,15 +44,11 @@ export function verifyBootstrapAuth(payload, signature) {
     if (!secret) {
         // Fallback: Try to read from the repo's .kaiza/bootstrap_secret.json
         // We know the path for this specific case
-        try {
-            const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
-            if (fs.existsSync(fallbackPath)) {
-                const data = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
-                secret = data.bootstrap_secret;
-                console.error("[DEBUG] Loaded secret from file fallback");
-            }
-        } catch (e) {
-            console.error("Failed to load fallback secret:", e);
+        const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
+        if (fs.existsSync(fallbackPath)) {
+            const data = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
+            secret = data.bootstrap_secret;
+            console.error("[DEBUG] Loaded secret from file fallback");
         }
     }
 

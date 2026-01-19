@@ -35,8 +35,8 @@ export async function listPlansHandler({ path: targetPath }) {
         approvedPlans.push(planId);
       }
     } catch (err) {
-      // Skip files that cannot be read/parsed
-      continue;
+      // GOVERNANCE: File read errors should be fatal for plan validation
+      throw new Error(`PLAN_READ_FAILED: Cannot read plan file ${planFile}: ${err.message}`);
     }
   }
 

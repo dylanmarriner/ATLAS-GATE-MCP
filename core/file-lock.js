@@ -62,8 +62,7 @@ export async function releaseLock(lockPath) {
             // Lock already gone, acceptable idempotent behavior
             return;
         }
-        console.error(`[FILE_LOCK] Warning: Failed to release lock at ${lockPath}: ${err.message}`);
-        // We don't throw here to avoid crashing the main flow during cleanup,
-        // but this might leave a stale lock.
+        // GOVERNANCE: All errors must be fatal or handled as KaizaError
+        throw new Error(`LOCK_RELEASE_FAILED: Failed to release lock at ${lockPath}: ${err.message}`);
     }
 }

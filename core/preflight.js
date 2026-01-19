@@ -17,15 +17,11 @@ export function runPreflight(repoRoot) {
     // Check scripts in package.json
     const pkgPath = path.join(repoRoot, "package.json");
     if (fs.existsSync(pkgPath)) {
-        try {
-            const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-            if (pkg.scripts) {
-                if (pkg.scripts.test) commands.push(`${pm} run test`);
-                if (pkg.scripts.lint) commands.push(`${pm} run lint`);
-                if (pkg.scripts.typecheck) commands.push(`${pm} run typecheck`);
-            }
-        } catch (e) {
-            // ignore invalid package.json
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+        if (pkg.scripts) {
+            if (pkg.scripts.test) commands.push(`${pm} run test`);
+            if (pkg.scripts.lint) commands.push(`${pm} run lint`);
+            if (pkg.scripts.typecheck) commands.push(`${pm} run typecheck`);
         }
     }
 

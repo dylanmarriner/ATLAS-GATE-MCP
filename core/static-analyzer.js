@@ -7,7 +7,16 @@ import * as walk from "acorn-walk";
  * Static analyzer to enforce error handling governance.
  */
 export function analyzeFileGovernance(filePath) {
-    const content = fs.readFileSync(filePath, "utf8");
+    let content = fs.readFileSync(filePath, "utf8");
+
+    // Strip shebang line if present (common in executable JS files)
+    if (content.startsWith("#!")) {
+        const shebangEnd = content.indexOf("\n");
+        if (shebangEnd !== -1) {
+            content = content.slice(shebangEnd + 1);
+        }
+    }
+
     const violations = [];
 
     try {

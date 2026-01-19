@@ -147,19 +147,15 @@ export function getGovernancePath() {
 }
 
 export function normalizePathForDisplay(absolutePath) {
-  try {
-    const root = getRepoRoot();
-    const normalized = path.normalize(absolutePath).replace(/\\/g, "/");
-    const repoNormalized = root.replace(/\\/g, "/");
+  const root = getRepoRoot();
+  const normalized = path.normalize(absolutePath).replace(/\\/g, "/");
+  const repoNormalized = root.replace(/\\/g, "/");
 
-    if (normalized.startsWith(repoNormalized + "/")) {
-      return normalized.substring(repoNormalized.length + 1);
-    }
-    if (normalized === repoNormalized) return ".";
-    return normalized;
-  } catch {
-    return absolutePath;
+  if (normalized.startsWith(repoNormalized + "/")) {
+    return normalized.substring(repoNormalized.length + 1);
   }
+  if (normalized === repoNormalized) return ".";
+  return normalized;
 }
 
 export function ensureDirectoryExists(directoryPath) {

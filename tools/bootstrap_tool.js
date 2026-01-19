@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { bootstrapCreateFoundationPlan } from "../core/governance.js";
 import { getRepoRoot } from "../core/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 
 // Input schema for the bootstrap tool
 export const bootstrapToolSchema = z.object({
@@ -34,21 +35,10 @@ export async function bootstrapPlanHandler(args) {
     
     // ENFORCEMENT: Block Windsurf from creating plans
     if (caller === 'windsurf' || caller === 'WINDSURF' || caller.includes('windsurf')) {
-        throw new Error(
-            `WINDSURF_CANNOT_CREATE_PLANS: You are an EXECUTOR, not a PLANNER.
-        
-You cannot create or modify governance plans.
-
-Only AMP and Antigravity have authority to create plans.
-
-Windsurf's role: EXECUTE existing plans via write_file, NOT CREATE them.
-
-If you need a new plan:
-1. Request from AMP (strategic planning)
-2. Or request from Antigravity (implementation planning)
-3. They will create the plan in docs/plans/
-4. Then Windsurf will execute it`
-        );
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.UNAUTHORIZED_ACTION, {
+            human_message: "Windsurf (executor) cannot create plans. Only AMP and Antigravity (planners) can create plans. Request a new plan from AMP or Antigravity.",
+            tool_name: "bootstrap_create_foundation_plan",
+        });
     }
     
     // If not explicitly Windsurf but also not explicitly AMP/Antigravity, allow bootstrap

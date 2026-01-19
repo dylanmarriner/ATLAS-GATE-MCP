@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { resolveReadTarget } from "../core/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 
 /**
  * PLAN DISCOVERY: Automatically grant read access to /docs/** paths
@@ -24,16 +25,25 @@ function isAllowedDiscoveryPath(filePath) {
 export async function readFileHandler({ path: filePath }) {
   // INPUT VALIDATION
   if (typeof filePath !== "string") {
-    throw new Error("INVALID_INPUT_TYPE: path must be a string");
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_TYPE, {
+      human_message: "path must be a string",
+      tool_name: "read_file",
+    });
   }
 
   if (!filePath || filePath.trim().length === 0) {
-    throw new Error("EMPTY_PATH_NOT_ALLOWED");
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+      human_message: "path cannot be empty",
+      tool_name: "read_file",
+    });
   }
 
   // PATH TRAVERSAL PROTECTION: Prevent directory traversal attacks
   if (filePath.includes("..")) {
-    throw new Error("INVALID_PATH: path traversal not permitted");
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PATH_TRAVERSAL_BLOCKED, {
+      human_message: "Path traversal (..) is not permitted",
+      tool_name: "read_file",
+    });
   }
 
   const normalizedPath = filePath.replace(/\\/g, "/");
@@ -43,12 +53,19 @@ export async function readFileHandler({ path: filePath }) {
   try {
     absPath = resolveReadTarget(filePath);
   } catch (err) {
-    throw new Error(`INVALID_PATH: ${err.message}`);
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_PATH, {
+      human_message: `Invalid path: ${err.message}`,
+      tool_name: "read_file",
+      cause: err,
+    });
   }
 
   // Verify the file exists
   if (!fs.existsSync(absPath)) {
-    throw new Error(`FILE_NOT_FOUND: ${filePath} (resolved to ${absPath})`);
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.FILE_NOT_FOUND, {
+      human_message: `File not found: ${filePath}`,
+      tool_name: "read_file",
+    });
   }
 
   // Read and return

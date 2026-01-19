@@ -16,6 +16,7 @@ import { runPreflight } from "../core/preflight.js";
 import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver.js";
 import { KaizaError, ERROR_CODES } from "../core/error.js";
 import { enforceRustPolicy, runRustVerificationGates } from "../core/rust-policy-engine.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 
 /**
  * ...
@@ -98,7 +99,11 @@ export async function writeFileHandler({
   try {
     abs = resolveWriteTarget(filePath);
   } catch (err) {
-    throw new Error(`INVALID_PATH: ${err.message}`);
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_PATH, {
+      human_message: `Invalid file path: ${err.message}`,
+      tool_name: "write_file",
+      cause: err,
+    });
   }
 
   const normalizedPath = filePath.replace(/\\/g, "/");
@@ -115,7 +120,11 @@ export async function writeFileHandler({
     // crypto was imported? need to ensure import
     const currentHash = crypto.createHash('sha256').update(oldContent).digest('hex');
     if (currentHash !== previousHash) {
-      throw new Error(`PREVIOUS_HASH_MISMATCH: expected ${previousHash}, got ${currentHash}`);
+      throw SystemError.toolFailure(SYSTEM_ERROR_CODES.HASH_MISMATCH, {
+        human_message: `File hash mismatch. Concurrent modification detected.`,
+        tool_name: "write_file",
+        cause: new Error(`expected ${previousHash}, got ${currentHash}`),
+      });
     }
   }
 
@@ -130,18 +139,28 @@ export async function writeFileHandler({
     try {
       finalContent = applyUnifiedPatch(oldContent, patch);
     } catch (e) {
-      throw new Error(`PATCH_FAILED: ${e.message}`);
+      throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PATCH_APPLY_FAILED, {
+        human_message: `Failed to apply patch: ${e.message}`,
+        tool_name: "write_file",
+        cause: e,
+      });
     }
   } else if (content !== undefined) {
     finalContent = content;
   } else {
-    throw new Error("INVALID_WRITE_REQUEST: either content or patch must be provided");
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+      human_message: "Either 'content' or 'patch' must be provided",
+      tool_name: "write_file",
+    });
   }
 
   // DIFF POLICY ENFORCEMENT
   const compliance = analyzeDiffCompliance(oldContent, finalContent);
   if (!compliance.allowed) {
-    throw new Error(`POLICY_VIOLATION: ${compliance.violations.join("; ")}`);
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.POLICY_VIOLATION, {
+      human_message: `Policy violation: ${compliance.violations.join("; ")}`,
+      tool_name: "write_file",
+    });
   }
 
   // GATE 2: PLAN ENFORCEMENT
@@ -237,7 +256,11 @@ export async function writeFileHandler({
     } else {
       fs.unlinkSync(abs);
     }
-    throw new Error(`PREFLIGHT_FAILED: Code rejected because it breaks the build.\n${err.message}`);
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PREFLIGHT_FAILED, {
+      human_message: `Code rejected because it breaks the build: ${err.message}`,
+      tool_name: "write_file",
+      cause: err,
+    });
   }
 
   // GATE 5: AUDIT LOGGING

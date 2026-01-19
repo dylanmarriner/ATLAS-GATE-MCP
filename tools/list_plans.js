@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
 import { getRepoRoot, getPlansDir } from "../core/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 
 export async function listPlansHandler({ path: targetPath }) {
   // CANONICAL PATH RESOLUTION: Always use the cached repo root and plans directory
@@ -36,7 +37,11 @@ export async function listPlansHandler({ path: targetPath }) {
       }
     } catch (err) {
       // GOVERNANCE: File read errors should be fatal for plan validation
-      throw new Error(`PLAN_READ_FAILED: Cannot read plan file ${planFile}: ${err.message}`);
+      throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PLAN_NOT_FOUND, {
+        human_message: `Cannot read plan file ${planFile}: ${err.message}`,
+        tool_name: "list_plans",
+        cause: err,
+      });
     }
   }
 

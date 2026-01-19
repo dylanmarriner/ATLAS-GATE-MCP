@@ -1,4 +1,5 @@
 import { SESSION_STATE } from "../session.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 
 const ANTIGRAVITY_PROMPT = `
 🧠 ANTIGRAVITY PLANNING PROMPT — EXECUTION AUTHORITY TRANSLATOR (CANONICAL / MCP-ENFORCED)
@@ -407,10 +408,16 @@ YOU ARE A CONSTRAINED EXECUTION ENGINE
 
 export async function readPromptHandler({ name }, role) {
     if (role === "ANTIGRAVITY" && name !== "ANTIGRAVITY_CANONICAL") {
-        throw new Error(`ROLE_PROMPT_MISMATCH: Antigravity cannot read prompt ${name}`);
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.UNAUTHORIZED_ACTION, {
+            human_message: `Antigravity cannot read prompt ${name}`,
+            tool_name: "read_prompt",
+        });
     }
     if (role === "WINDSURF" && name !== "WINDSURF_CANONICAL") {
-        throw new Error(`ROLE_PROMPT_MISMATCH: Windsurf cannot read prompt ${name}`);
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.UNAUTHORIZED_ACTION, {
+            human_message: `Windsurf cannot read prompt ${name}`,
+            tool_name: "read_prompt",
+        });
     }
 
     let promptText;
@@ -419,7 +426,10 @@ export async function readPromptHandler({ name }, role) {
     } else if (name === "WINDSURF_CANONICAL") {
         promptText = WINDSURF_PROMPT;
     } else {
-        throw new Error(`UNKNOWN_PROMPT: ${name}`);
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+            human_message: `Unknown prompt name: ${name}`,
+            tool_name: "read_prompt",
+        });
     }
 
     // Update session state

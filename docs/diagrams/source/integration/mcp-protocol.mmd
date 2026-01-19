@@ -1,0 +1,90 @@
+---
+title: "MCP Protocol Integration"
+description: "Integration diagram showing KAIZA MCP server integration with MCP protocol and clients"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["integration", "mcp", "protocol", "mermaid"]
+audience: ["technical", "executive"]
+---
+
+sequenceDiagram
+    participant Client as MCP Client
+    participant Server as KAIZA MCP Server
+    participant Session as Session Manager
+    participant Auth as Authorization Engine
+    participant Plans as Plan Storage
+    participant Audit as Audit Logger
+    participant FileSystem as File System
+    
+    Note over Client,FileSystem: MCP Protocol Integration
+    
+    Client->>Server: Initialize Connection
+    Server->>Server: Load Configuration
+    Server->>Client: Server Information
+    
+    Note over Client,FileSystem: Session Initialization
+    Client->>Server: begin_session(workspace_root)
+    Server->>Session: Create Session
+    Session->>Auth: Validate Workspace
+    Auth->>Session: Validation Result
+    Session->>Client: Session Established
+    
+    Note over Client,FileSystem: Role Selection
+    Client->>Server: set_role(ANTIGRAVITY)
+    Server->>Auth: Validate Role
+    Auth->>Server: Role Confirmed
+    Server->>Client: Role Activated
+    
+    Note over Client,FileSystem: Planning Operations
+    Client->>Server: list_plans()
+    Server->>Plans: Query Plans
+    Plans->>Server: Plan List
+    Server->>Client: Available Plans
+    
+    Client->>Server: bootstrap_create_foundation_plan(plan)
+    Server->>Auth: Validate Plan Content
+    Auth->>Server: Validation Result
+    Server->>Plans: Store Plan
+    Plans->>Audit: Log Plan Creation
+    Server->>Client: Plan Hash Returned
+    
+    Note over Client,FileSystem: Role Switch
+    Client->>Server: set_role(WINDSURF)
+    Server->>Auth: Validate Role
+    Auth->>Server: Role Confirmed
+    Server->>Client: Role Activated
+    
+    Note over Client,FileSystem: Execution Operations
+    Client->>Server: read_prompt(WINDSURF_CANONICAL)
+    Server->>Auth: Validate Prompt
+    Auth->>Server: Validation Result
+    Server->>Client: Prompt Acknowledged
+    
+    Client->>Server: write_file(path, content, plan_hash)
+    Server->>Auth: Validate Plan Hash
+    Auth->>Plans: Lookup Plan
+    Plans->>Auth: Plan Details
+    Auth->>Server: Authorization Result
+    
+    alt Authorization Successful
+        Server->>FileSystem: Write File
+        FileSystem->>Audit: Log Write Operation
+        Server->>Client: Write Confirmation
+    else Authorization Failed
+        Server->>Audit: Log Authorization Failure
+        Server->>Client: Authorization Error
+    end
+    
+    Note over Client,FileSystem: Audit Operations
+    Client->>Server: read_audit_log()
+    Server->>Audit: Query Audit Log
+    Audit->>Server: Audit Entries
+    Server->>Client: Audit Log Data
+    
+    Note over Client,FileSystem: Session Termination
+    Client->>Server: end_session()
+    Server->>Session: Terminate Session
+    Session->>Audit: Log Session End
+    Server->>Client: Session Closed

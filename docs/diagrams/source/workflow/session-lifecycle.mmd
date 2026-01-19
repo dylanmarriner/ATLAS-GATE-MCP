@@ -1,0 +1,67 @@
+---
+title: "Session Lifecycle Workflow"
+description: "Complete workflow diagram showing session initialization, role switching, and termination"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["workflow", "session", "lifecycle", "mermaid"]
+audience: ["technical", "executive"]
+---
+
+stateDiagram-v2
+    [*] --> Uninitialized
+    
+    Uninitialized --> SessionStart: begin_session(workspace_root)
+    SessionStart --> Authentication: Validate workspace
+    Authentication --> RoleSelection: Authentication successful
+    Authentication --> Error: Authentication failed
+    Error --> Uninitialized: Reset
+    
+    RoleSelection --> AntigravityRole: Select ANTIGRAVITY
+    RoleSelection --> WindsurfRole: Select WINDSURF
+    
+    AntigravityRole --> PlanningOperations: Initialize planning tools
+    PlanningOperations --> PlanCreation: Create/modify plans
+    PlanCreation --> PlanReview: Review and validate plans
+    PlanReview --> PlanApproval: Approve plans
+    PlanApproval --> RoleSwitch: Switch role or continue
+    
+    WindsurfRole --> ExecutionOperations: Initialize execution tools
+    ExecutionOperations --> PlanValidation: Validate plan authorization
+    PlanValidation --> FileOperations: Execute approved operations
+    FileOperations --> AuditLogging: Log all operations
+    AuditLogging --> RoleSwitch: Switch role or continue
+    
+    RoleSwitch --> AntigravityRole: Switch to ANTIGRAVITY
+    RoleSwitch --> WindsurfRole: Switch to WINDSURF
+    RoleSwitch --> SessionEnd: End session
+    
+    SessionEnd --> Cleanup: Cleanup resources
+    Cleanup --> [*]: Session terminated
+    
+    Error --> [*]: Error handling
+    
+    note right of SessionStart
+        Session initialization requires:
+        - Valid workspace path
+        - Proper permissions
+        - Bootstrap secret (if new)
+    end note
+    
+    note right of PlanValidation
+        Plan validation includes:
+        - Hash verification
+        - Authorization check
+        - Scope validation
+        - Role compatibility
+    end note
+    
+    note right of AuditLogging
+        Audit logging captures:
+        - Operation details
+        - User context
+        - Timestamp
+        - Result status
+        - Metadata
+    end note

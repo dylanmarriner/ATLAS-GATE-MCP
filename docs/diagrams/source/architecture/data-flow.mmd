@@ -1,0 +1,95 @@
+---
+title: "Data Flow Architecture"
+description: "Comprehensive data flow diagram showing information flow through KAIZA MCP system"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["architecture", "data-flow", "mermaid"]
+audience: ["technical", "executive"]
+---
+
+flowchart LR
+    subgraph "Input Layer"
+        A[AI Agent Request] --> B[MCP Protocol]
+        B --> C[Session Manager]
+    end
+    
+    subgraph "Authentication Layer"
+        C --> D[Identity Verification]
+        D --> E[Role Validation]
+        E --> F[Permission Check]
+    end
+    
+    subgraph "Authorization Layer"
+        F --> G[Plan Lookup]
+        G --> H[Hash Verification]
+        H --> I[Scope Validation]
+        I --> J[Authorization Decision]
+    end
+    
+    subgraph "Execution Layer"
+        J --> K[File Operations]
+        K --> L[Content Processing]
+        L --> M[Result Generation]
+    end
+    
+    subgraph "Audit Layer"
+        C --> N[Session Logging]
+        D --> N
+        E --> N
+        F --> N
+        G --> N
+        H --> N
+        I --> N
+        J --> N
+        K --> N
+        L --> N
+        M --> N
+        N --> O[Audit Log Storage]
+    end
+    
+    subgraph "Storage Layer"
+        P[Plan Storage] --> G
+        Q[File System] --> K
+        R[Configuration Store] --> D
+        S[User Directory] --> E
+        O --> T[Audit Database]
+    end
+    
+    subgraph "Output Layer"
+        M --> U[Response Generation]
+        U --> V[Result Formatting]
+        V --> W[MCP Response]
+        W --> X[AI Agent]
+    end
+    
+    %% Feedback Loops
+    O -.-> D : Feedback for Anomaly Detection
+    O -.-> E : Feedback for Role Validation
+    O -.-> J : Feedback for Authorization
+    
+    %% Error Handling
+    D -->|Authentication Error| Y[Error Handler]
+    E -->|Authorization Error| Y
+    H -->|Verification Error| Y
+    I -->|Scope Error| Y
+    J -->|Permission Error| Y
+    K -->|File Error| Y
+    Y --> Z[Error Response]
+    Z --> W
+    
+    %% Styling
+    classDef inputBox fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef authBox fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef execBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef auditBox fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef storageBox fill:#e8eaf6,stroke:#283593,stroke-width:2px
+    classDef errorBox fill:#ffebee,stroke:#c62828,stroke-width:2px
+    
+    class A,B,C inputBox
+    class D,E,F authBox
+    class G,H,I,J,K,L,M execBox
+    class N,O auditBox
+    class P,Q,R,S,T storageBox
+    class U,V,W,X,Y,Z errorBox

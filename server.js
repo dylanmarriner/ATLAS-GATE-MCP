@@ -11,6 +11,12 @@ import { readFileHandler } from "./tools/read_file.js";
 import { readAuditLogHandler } from "./tools/read_audit_log.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
 import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
+import { lintPlanHandler } from "./tools/lint_plan.js";
+import { replayExecutionHandler } from "./tools/replay_execution.js";
+import { verifyWorkspaceIntegrityHandler } from "./tools/verify_workspace_integrity.js";
+import { generateAttestationBundleHandler } from "./tools/generate_attestation_bundle.js";
+import { verifyAttestationBundleHandler } from "./tools/verify_attestation_bundle.js";
+import { exportAttestationBundleHandler } from "./tools/export_attestation_bundle.js";
 
 // GOVERNANCE IMPORTS
 import { ensureKaizaError, ERROR_CODES } from "./core/error.js";
@@ -297,6 +303,20 @@ export async function startServer(role = "ANTIGRAVITY") {
       },
       wrapHandler(bootstrapPlanHandler, "bootstrap_create_foundation_plan")
     );
+    
+    // ANTIGRAVITY: Lint Plan Tool (read-only, non-mutating)
+    server.registerTool(
+      "lint_plan",
+      {
+        description: "Validate a plan without approval (read-only, ANTIGRAVITY only)",
+        inputSchema: z.object({
+          path: z.string().optional().describe("Path to plan file in docs/plans/"),
+          hash: z.string().optional().describe("Plan hash to validate (64-char hex)"),
+          content: z.string().optional().describe("Raw plan content to lint"),
+        }),
+      },
+      wrapHandler(lintPlanHandler, "lint_plan")
+    );
   }
 
   // Read-only tools - Allowed for both, but only after ignition
@@ -340,6 +360,71 @@ export async function startServer(role = "ANTIGRAVITY") {
       })
     },
     wrapHandler((args) => readPromptHandler(args, role), "read_prompt")
+  );
+
+  // Forensic replay tools (read-only, both roles)
+  server.registerTool(
+    "replay_execution",
+    {
+      description: "Deterministic forensic replay of execution from audit log",
+      inputSchema: z.object({
+        plan_hash: z.string().describe("SHA256 plan hash to replay"),
+        phase_id: z.string().optional().describe("Filter to specific phase"),
+        tool: z.string().optional().describe("Filter to specific tool name"),
+        seq_start: z.number().optional().describe("Start sequence number"),
+        seq_end: z.number().optional().describe("End sequence number"),
+      }),
+    },
+    wrapHandler(replayExecutionHandler, "replay_execution")
+  );
+
+  server.registerTool(
+    "verify_workspace_integrity",
+    {
+      description: "Verify workspace audit log and artifact integrity",
+      inputSchema: z.object({}),
+    },
+    wrapHandler(verifyWorkspaceIntegrityHandler, "verify_workspace_integrity")
+  );
+
+  // Attestation tools (read-only, both roles)
+  server.registerTool(
+    "generate_attestation_bundle",
+    {
+      description: "Generate signed attestation bundle from workspace evidence (read-only)",
+      inputSchema: z.object({
+        workspace_root_label: z.string().optional().describe("Label for workspace in bundle"),
+        plan_hash_filter: z.string().optional().describe("Filter to specific plan hash"),
+        time_window: z.object({
+          start: z.string().optional(),
+          end: z.string().optional(),
+        }).optional().describe("Time window for attestation"),
+      }),
+    },
+    wrapHandler(generateAttestationBundleHandler, "generate_attestation_bundle")
+  );
+
+  server.registerTool(
+    "verify_attestation_bundle",
+    {
+      description: "Verify signed attestation bundle (read-only)",
+      inputSchema: z.object({
+        bundle: z.any().describe("Attestation bundle object to verify"),
+      }),
+    },
+    wrapHandler(verifyAttestationBundleHandler, "verify_attestation_bundle")
+  );
+
+  server.registerTool(
+    "export_attestation_bundle",
+    {
+      description: "Export attestation bundle to JSON or Markdown format (read-only)",
+      inputSchema: z.object({
+        bundle: z.any().describe("Attestation bundle object to export"),
+        format: z.enum(["json", "markdown"]).optional().describe("Export format (default: json)"),
+      }),
+    },
+    wrapHandler(exportAttestationBundleHandler, "export_attestation_bundle")
   );
 
   // Attach stdio transport and start

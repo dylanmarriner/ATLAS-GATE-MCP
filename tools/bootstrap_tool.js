@@ -2,6 +2,7 @@ import { z } from "zod";
 import { bootstrapCreateFoundationPlan } from "../core/governance.js";
 import { getRepoRoot } from "../core/path-resolver.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
+import { lintPlan } from "../core/plan-linter.js";
 
 // Input schema for the bootstrap tool
 export const bootstrapToolSchema = z.object({
@@ -45,6 +46,21 @@ export async function bootstrapPlanHandler(args) {
     // (External callers like AMP/Antigravity would call this via MCP with auth)
     
     try {
+        // GATE 1: LINT THE PLAN PROPOSAL (MANDATORY)
+        const lintResult = lintPlan(planContent);
+        if (!lintResult.passed) {
+            throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PLAN_LINT_FAILED, {
+                human_message: `Plan proposal rejected: linting failed with ${lintResult.errors.length} error(s). ${lintResult.errors.map(e => e.message).join("; ")}`,
+                tool_name: "bootstrap_create_foundation_plan",
+                violations: lintResult.errors.map(e => ({
+                    code: e.code,
+                    message: e.message,
+                    invariant: e.invariant,
+                    severity: e.severity
+                }))
+            });
+        }
+
         // Use canonical path resolver to get the cached repo root
         const repoRoot = getRepoRoot();
         const result = bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature);

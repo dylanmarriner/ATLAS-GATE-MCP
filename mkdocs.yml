@@ -1,0 +1,175 @@
+site_name: KAIZA MCP Documentation
+site_description: Enterprise governance gateway for AI-driven development
+site_author: KAIZA MCP Team
+site_url: https://kaiza-mcp.org/docs/
+
+repo_name: dylanmarriner/KAIZA-MCP-server
+repo_url: https://github.com/dylanmarriner/KAIZA-MCP-server
+edit_uri: ""
+
+nav:
+  - Home:
+    - index.md
+    - Executive Overview: executive-overview.md
+    - Quick Start: quick-start.md
+  - Getting Started:
+    - getting-started/index.md
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+    - First Session: getting-started/first-session.md
+    - Beginner Guide: getting-started/beginner-guide.md
+  - Architecture:
+    - architecture/index.md
+    - System Overview: architecture/system-overview.md
+    - Security Model: architecture/security-model.md
+    - Governance Framework: architecture/governance-framework.md
+    - Architecture Decisions: architecture/adr-index.md
+  - API Reference:
+    - api/index.md
+    - Core Tools: api/core-tools.md
+    - Role APIs: api/role-apis.md
+    - Error Handling: api/error-handling.md
+    - MCP Protocol: api/mcp-protocol.md
+  - User Guides:
+    - guides/index.md
+    - Planning Role: guides/planning-role.md
+    - Execution Role: guides/execution-role.md
+    - Session Management: guides/session-management.md
+    - Troubleshooting: guides/troubleshooting.md
+  - Reference:
+    - reference/index.md
+    - Configuration Reference: reference/configuration.md
+    - Best Practices: reference/best-practices.md
+    - Migration Guide: reference/migration.md
+    - Glossary: reference/glossary.md
+  - Governance:
+    - governance/index.md
+    - Documentation Governance: governance/documentation-governance.md
+    - Maturity Model: governance/maturity-model.md
+    - Roadmap: governance/roadmap.md
+    - Changelog: governance/changelog.md
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - search.highlight
+    - search.share
+    - header.autohide
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      type: datetime
+      timezone: UTC
+      locale: en
+  - awesome-pages
+  - macros
+  - glightbox
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:materialx.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: dylanmarriner
+      repo: kaiza-mcp-server
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/dylanmarriner/KAIZA-MCP-server
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/kaiza-mcp
+  version:
+    provider: mike
+    default: stable
+    alias: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+watch:
+  - docs
+
+strict: true
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: warn
+    unrecognized_links: warn
+
+dev_addr: 127.0.0.1:8000

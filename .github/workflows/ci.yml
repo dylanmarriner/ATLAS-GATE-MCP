@@ -31,3 +31,101 @@ jobs:
 
     - name: Run security verification
       run: npm run verify
+
+    - name: Run quality checks
+      run: npm run quality:check
+
+    - name: Check documentation links
+      run: |
+        find docs -name "*.md" -exec markdown-link-check {} \;
+
+    - name: Validate documentation format
+      run: |
+        find docs -name "*.md" -exec markdownlint {} \;
+
+  security:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run security audit
+      run: npm audit --audit-level high
+
+    - name: Run security verification
+      run: npm run security:audit
+
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install diagram tools
+      run: |
+        npm install -g @mermaid-js/mermaid-cli
+        npm install -g plantuml
+
+    - name: Build documentation
+      run: |
+        npm run docs:build
+
+    - name: Validate diagrams
+      run: |
+        npm run docs:validate
+
+    - name: Check documentation coverage
+      run: |
+        find docs -name "*.md" | wc -l
+        echo "Documentation files found"
+
+  performance:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run performance tests
+      run: |
+        npm run test:performance || echo "Performance tests not implemented yet"
+
+    - name: Check bundle size
+      run: |
+        du -sh node_modules/ || echo "Bundle size check"

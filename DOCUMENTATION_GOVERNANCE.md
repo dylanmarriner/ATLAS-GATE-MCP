@@ -18,6 +18,42 @@ Documentation changes maintain backward compatibility where possible. Breaking c
 ### Deprecation Principle
 Deprecated documentation follows a formal deprecation process with clear timelines, migration paths, and removal notifications.
 
+## Documentation Lifecycle Management
+
+### Version Lifecycle
+- **Development**: Documentation created alongside feature development
+- **Review**: Technical and editorial review processes
+- **Approval**: Formal approval for publication
+- **Publication**: Documentation published with specific version
+- **Maintenance**: Regular updates and improvements
+- **Deprecation**: Formal deprecation process with timelines
+- **Retirement**: Documentation retirement and archiving
+
+### Support Policy
+- **Current Major Version**: Full support including new features and bug fixes
+- **Previous Major Version**: Security updates and critical bug fixes only (12 months)
+- **Older Versions**: No support - upgrade required
+- **Development Versions**: Best effort support, no guarantees
+
+### Deprecation Policy
+- **Notice Period**: Minimum 90 days notice before documentation deprecation
+- **Migration Path**: Clear migration guidance to current documentation
+- **Archive Access**: Deprecated documentation archived for 24 months
+- **Communication**: Deprecation notices published in multiple channels
+
+### Ownership Model
+- **Documentation Owner**: Overall responsibility for documentation strategy
+- **Technical Writers**: Content creation, editing, and maintenance
+- **Subject Matter Experts**: Technical accuracy and review
+- **Product Managers**: Feature documentation and user experience
+- **Support Team**: User feedback and issue resolution
+
+### Release Alignment
+- **Documentation Versions**: Aligned with software release versions
+- **Release Notes**: Documentation changes included in release notes
+- **Version Mapping**: Clear mapping between documentation and code versions
+- **Synchronization**: Documentation releases synchronized with software releases
+
 ## Documentation Versioning Strategy
 
 ### Version Structure
@@ -26,10 +62,11 @@ Documentation follows semantic versioning aligned with software releases:
 - **Minor versions** (v1.1.x): Feature additions with backward compatibility
 - **Patch versions** (v1.1.1): Bug fixes and minor improvements
 
-### Support Policy
-- **Current major version**: Full support including new features and bug fixes
-- **Previous major version**: Security updates and critical bug fixes only
-- **Older versions**: No support - upgrade required
+### Code-to-Documentation Version Mapping
+- **v1.0.0 Code**: v1.0.0 Documentation (feature-complete)
+- **v1.0.x Code**: v1.0.x Documentation (patch releases)
+- **v1.1.0 Code**: v1.1.0 Documentation (feature additions)
+- **v2.0.0 Code**: v2.0.0 Documentation (major changes)
 
 ### Directory Structure
 ```
@@ -42,8 +79,16 @@ Documentation follows semantic versioning aligned with software releases:
 │   └── guides/
 ├── v2/                    # Next major version (in development)
 │   └── ...
-└── latest/                # Symbolic link to current stable version
+├── latest/                # Symbolic link to current stable version
+└── development/           # Development documentation (unstable)
 ```
+
+### Version Support Matrix
+| Documentation Version | Code Version | Support Status | End of Life |
+|----------------------|--------------|----------------|-------------|
+| v2.0.x               | v2.0.x       | Full Support   | Active      |
+| v1.0.x               | v1.0.x       | Security Only  | 2027-01-19  |
+| v0.9.x               | v0.9.x       | No Support     | 2026-01-19  |
 
 ## Documentation Lifecycle
 

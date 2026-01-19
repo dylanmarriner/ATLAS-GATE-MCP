@@ -17,6 +17,7 @@ import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver
 import { KaizaError, ERROR_CODES } from "../core/error.js";
 import { enforceRustPolicy, runRustVerificationGates } from "../core/rust-policy-engine.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
+import { executeWriteTimePolicy, detectLanguage } from "../core/write-time-policy-engine.js";
 
 /**
  * ...
@@ -167,6 +168,43 @@ export async function writeFileHandler({
   // Verify the plan exists in the governed repo AND that it authorizes this file path
   // RF4: plan is now the hash
   const { repoRoot } = enforcePlan(plan, abs);
+
+  // GATE 2.5: WRITE-TIME POLICY ENGINE (FAIL-CLOSED)
+  // This policy engine runs BEFORE any filesystem write and enforces:
+  // - Universal denylist (TODOs, empty catches, debug bypasses)
+  // - Language-specific rules (Rust unwrap, TS any, Python randomness)
+  // - Intent artifact co-requirement
+  // If policy fails, write is refused and audit entry is created.
+  const operation = fileExists ? "MODIFY" : "CREATE";
+  const contentHash = crypto.createHash("sha256").update(finalContent).digest("hex");
+  const detectedLang = detectLanguage(normalizedPath, finalContent);
+
+  try {
+    await executeWriteTimePolicy({
+      workspace_root: SESSION_STATE.workspaceRoot,
+      role: "WINDSURF",
+      session_id: SESSION_ID,
+      tool_name: "write_file",
+      plan_hash: plan,
+      phase_id: null, // Phase ID not yet integrated
+      operation,
+      path: normalizedPath,
+      content_bytes: finalContent,
+      detected_language: detectedLang,
+      content_hash: contentHash,
+      content_length: finalContent.length,
+    });
+  } catch (err) {
+    // Policy failure is fatal - refuse write
+    if (err instanceof SystemError) {
+      throw err;
+    }
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.POLICY_VIOLATION, {
+      human_message: `Write-time policy check failed: ${err.message}`,
+      tool_name: "write_file",
+      cause: err,
+    });
+  }
 
   let contentToWrite = finalContent;
 

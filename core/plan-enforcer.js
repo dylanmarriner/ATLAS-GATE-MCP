@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 import crypto from "crypto";
 import { getRepoRoot, resolvePlanPath, getGovernancePath, normalizePathForDisplay } from "./path-resolver.js";
 import { invariant, invariantNotNull, invariantTrue, invariantEqual } from "./invariant.js";
+import { lintPlan } from "./plan-linter.js";
 
 function readGovernanceState(repoRoot) {
   const govPath = getGovernancePath();
@@ -44,6 +45,17 @@ export function enforcePlan(planHash, targetPath) {
   // RF5: Windsurf only verifies string equality
   if (embeddedHash !== planHash) {
     throw new Error(`REFUSE: Hash mismatch. Filename ${planHash} does not match embedded hash ${embeddedHash}`);
+  }
+
+  // GATE: RE-LINT PLAN AT EXECUTION TIME (FAIL IF MODIFIED)
+  const lintResult = lintPlan(fileContent, planHash);
+  if (!lintResult.passed) {
+    throw new Error(
+      `REFUSE: Plan execution blocked. Linting failed with ${lintResult.errors.length} error(s). ` +
+      `Plan may have been modified after approval. Errors: ${
+        lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
+      }`
+    );
   }
 
   // SCOPE CHECK: Still mandatory (RF2 says plans stay with local dir)

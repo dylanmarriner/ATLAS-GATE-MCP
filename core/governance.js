@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { getRepoRoot, getGovernancePath as getResolvedGovernancePath, getPlansDir } from "./path-resolver.js";
+import { lintPlan } from "./plan-linter.js";
 
 const GOVERNANCE_FILE = "governance.json";
 
@@ -79,9 +80,18 @@ export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payl
     // 2. Verify Auth
     verifyBootstrapAuth(payload, signature);
 
-    // 3. Write Plan using canonical path resolver
-    // RF5: Antigravity hashes once
-    const rawHash = crypto.createHash("sha256").update(planContent).digest("hex");
+    // 3. GATE: LINT THE PLAN AT APPROVAL (MANDATORY)
+    const lintResult = lintPlan(planContent);
+    if (!lintResult.passed) {
+        throw new Error(
+            `APPROVAL_BLOCKED: Plan linting failed with ${lintResult.errors.length} error(s). ` +
+            lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
+        );
+    }
+
+    // 4. Write Plan using canonical path resolver
+    // RF5: Antigravity hashes once (use linted hash for consistency)
+    const rawHash = lintResult.hash;
 
     // Embed hash in content according to protocol
     let finalContent = planContent;

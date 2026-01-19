@@ -1,0 +1,100 @@
+---
+title: "Security Threat Model"
+description: "Threat model diagram showing potential security threats and mitigation strategies"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["security-team"]
+tags: ["security", "threat-model", "mermaid"]
+audience: ["technical", "executive"]
+---
+
+graph TB
+    subgraph "Threat Actors"
+        T1[External Attacker]
+        T2[Malicious Insider]
+        T3[Compromised AI Agent]
+        T4[Supply Chain Attacker]
+    end
+    
+    subgraph "Attack Vectors"
+        AV1[Authentication Bypass]
+        AV2[Authorization Escalation]
+        AV3[Plan Tampering]
+        AV4[Audit Log Manipulation]
+        AV5[Code Injection]
+        AV6[Data Exfiltration]
+    end
+    
+    subgraph "Security Controls"
+        SC1[Multi-Factor Authentication]
+        SC2[Zero-Trust Architecture]
+        SC3[Plan Hash Verification]
+        SC4[Immutable Audit Logs]
+        SC5[Input Validation]
+        SC6[Data Encryption]
+    end
+    
+    subgraph "Detection Mechanisms"
+        DM1[Anomaly Detection]
+        DM2[Behavioral Analysis]
+        DM3[Integrity Monitoring]
+        DM4[Security Analytics]
+        DM5[Real-time Alerting]
+    end
+    
+    subgraph "Response Actions"
+        RA1[Automatic Isolation]
+        RA2[Session Termination]
+        RA3[Incident Response]
+        RA4[Forensic Analysis]
+        RA5[Recovery Procedures]
+    end
+    
+    %% Threat to Vector Mapping
+    T1 --> AV1
+    T1 --> AV5
+    T1 --> AV6
+    T2 --> AV2
+    T2 --> AV4
+    T2 --> AV6
+    T3 --> AV3
+    T3 --> AV5
+    T4 --> AV5
+    T4 --> AV6
+    
+    %% Vector to Control Mapping
+    AV1 --> SC1
+    AV2 --> SC2
+    AV3 --> SC3
+    AV4 --> SC4
+    AV5 --> SC5
+    AV6 --> SC6
+    
+    %% Control to Detection Mapping
+    SC1 --> DM1
+    SC2 --> DM2
+    SC3 --> DM3
+    SC4 --> DM4
+    SC5 --> DM5
+    SC6 --> DM1
+    
+    %% Detection to Response Mapping
+    DM1 --> RA1
+    DM2 --> RA2
+    DM3 --> RA3
+    DM4 --> RA4
+    DM5 --> RA5
+    
+    %% Styling
+    classDef threatBox fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef vectorBox fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef controlBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef detectBox fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef responseBox fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    
+    class T1,T2,T3,T4 threatBox
+    class AV1,AV2,AV3,AV4,AV5,AV6 vectorBox
+    class SC1,SC2,SC3,SC4,SC5,SC6 controlBox
+    class DM1,DM2,DM3,DM4,DM5 detectBox
+    class RA1,RA2,RA3,RA4,RA5 responseBox

@@ -1,0 +1,98 @@
+---
+title: "Enterprise Identity Integration"
+description: "Integration diagram showing KAIZA MCP integration with enterprise identity systems"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["integration", "identity", "enterprise", "plantuml"]
+audience: ["technical", "executive"]
+---
+
+@startuml
+!theme plain
+skinparam monochrome true
+skinparam shadowing false
+
+package "Enterprise Identity Systems" {
+    [Active Directory] as AD
+    [LDAP Server] as LDAP
+    [OAuth Provider] as OAuth
+    [SAML Provider] as SAML
+}
+
+package "KAIZA MCP Server" {
+    [Identity Gateway] as Gateway
+    [Authentication Service] as Auth
+    [Authorization Engine] as Authz
+    [Role Manager] as RoleMgr
+    [Session Manager] as SessionMgr
+}
+
+package "MCP Clients" {
+    [Claude Desktop] as Claude
+    [Windsurf IDE] as Windsurf
+    [Custom Client] as Custom
+}
+
+database "User Directory" {
+    [User Profiles] as Users
+    [Role Assignments] as Roles
+    [Permissions] as Perms
+}
+
+database "Audit System" {
+    [Authentication Logs] as AuthLogs
+    [Authorization Logs] as AuthzLogs
+    [Session Logs] as SessionLogs
+}
+
+' Connections
+AD --> Gateway : LDAP/Kerberos
+LDAP --> Gateway : LDAP
+OAuth --> Gateway : OAuth2.0
+SAML --> Gateway : SAML 2.0
+
+Gateway --> Auth : Identity Data
+Auth --> Authz : User Context
+Authz --> RoleMgr : Role Information
+RoleMgr --> SessionMgr : Session Context
+
+Claude --> Gateway : MCP Protocol
+Windsurf --> Gateway : MCP Protocol
+Custom --> Gateway : MCP Protocol
+
+Gateway --> Users : Profile Lookup
+Gateway --> Roles : Role Lookup
+Gateway --> Perms : Permission Lookup
+
+Auth --> AuthLogs : Authentication Events
+Authz --> AuthzLogs : Authorization Events
+SessionMgr --> SessionLogs : Session Events
+
+' Notes
+note right of Gateway
+  Identity Gateway handles:
+  - Multi-protocol authentication
+  - Identity federation
+  - Token validation
+  - Context enrichment
+end note
+
+note right of Authz
+  Authorization Engine provides:
+  - Role-based access control
+  - Policy evaluation
+  - Permission validation
+  - Audit logging
+end note
+
+note bottom of Users
+  User Directory stores:
+  - User profiles
+  - Role assignments
+  - Permission mappings
+  - Group memberships
+end note
+
+@enduml

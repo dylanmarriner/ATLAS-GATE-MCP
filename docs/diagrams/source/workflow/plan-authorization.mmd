@@ -1,0 +1,79 @@
+---
+title: "Plan Authorization Workflow"
+description: "Detailed workflow showing plan creation, review, approval, and execution authorization"
+version: "1.0.0"
+last_updated: "2026-01-19"
+review_date: "2026-04-19"
+owners: ["architecture-team"]
+tags: ["workflow", "authorization", "plans", "mermaid"]
+audience: ["technical", "executive"]
+---
+
+flowchart TD
+    subgraph "Plan Creation Phase"
+        A[Requirements Analysis] --> B[Plan Drafting]
+        B --> C[Content Generation]
+        C --> D[Hash Calculation]
+        D --> E[Initial Validation]
+    end
+    
+    subgraph "Review Phase"
+        E --> F[Technical Review]
+        F --> G{Review Approved?}
+        G -->|No| H[Revision Required]
+        H --> B
+        G -->|Yes| I[Security Review]
+        I --> J{Security Approved?}
+        J -->|No| K[Security Issues]
+        K --> B
+        J -->|Yes| L[Final Approval]
+    end
+    
+    subgraph "Authorization Phase"
+        L --> M[Plan Storage]
+        M --> N[Hash Registration]
+        N --> O[Status Update: APPROVED]
+        O --> P[Authorization Ready]
+    end
+    
+    subgraph "Execution Phase"
+        P --> Q[Execution Request]
+        Q --> R[Plan Lookup]
+        R --> S[Hash Verification]
+        S --> T{Hash Valid?}
+        T -->|No| U[Authorization Failed]
+        T -->|Yes| V[Role Validation]
+        V --> W{Role Authorized?}
+        W -->|No| X[Role Access Denied]
+        W -->|Yes| Y[Scope Validation]
+        Y --> Z{Scope Valid?}
+        Z -->|No| AA[Scope Violation]
+        Z -->|Yes| BB[Execution Authorized]
+    end
+    
+    subgraph "Execution & Audit"
+        BB --> CC[Execute Operation]
+        CC --> DD[Audit Logging]
+        DD --> EE[Result Verification]
+        EE --> FF[Completion Confirmation]
+    end
+    
+    subgraph "Error Handling"
+        U --> GG[Error Logging]
+        X --> GG
+        AA --> GG
+        GG --> HH[Error Response]
+    end
+    
+    %% Styling
+    classDef creationBox fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef reviewBox fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef authBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef execBox fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef errorBox fill:#ffebee,stroke:#c62828,stroke-width:2px
+    
+    class A,B,C,D,E creationBox
+    class F,G,H,I,J,K,L reviewBox
+    class M,N,O,P,Q,R,S,T authBox
+    class V,W,Y,Z,BB,CC,DD,EE,FF execBox
+    class U,X,AA,GG,HH errorBox

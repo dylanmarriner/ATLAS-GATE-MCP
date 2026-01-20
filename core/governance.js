@@ -56,6 +56,8 @@ export function verifyBootstrapAuth(payload, signature) {
          } catch (err) {
              // If workspace not initialized yet, continue to error check below
              console.error("[BOOTSTRAP] Could not load secret from file fallback:", err.message);
+             // Re-throw to maintain error handling governance - every error must be fatal
+             throw err;
          }
      }
 

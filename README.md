@@ -23,20 +23,38 @@ npm install
 ```
 
 ### Configuration
-Add to your MCP client configuration:
+
+#### For Windsurf:
+Add to `~/.codeium/windsurf/mcp_config.json`:
 ```json
 {
   "mcpServers": {
-    "kaiza": {
+    "kaiza-windsurf": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/server.js"],
-      "env": {
-        "KAIZA_BOOTSTRAP_SECRET": "your-secure-secret"
-      }
+      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+      "type": "stdio",
+      "disabled": false
     }
   }
 }
 ```
+
+#### For Antigravity (or other clients):
+Add to your MCP client configuration:
+```json
+{
+  "mcpServers": {
+    "kaiza-antigravity": {
+      "command": "node",
+      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-antigravity.js"],
+      "type": "stdio",
+      "disabled": false
+    }
+  }
+}
+```
+
+Replace `/absolute/path/to/KAIZA-MCP-server` with the actual installation path.
 
 ### Verification
 ```bash
@@ -45,25 +63,41 @@ npm run verify
 
 ## 📖 Documentation
 
-### For Beginners
-- [📘 Complete Beginner's Guide](./BEGINNER_GUIDE.md) - Never used a computer before? Start here
-- [🚀 Quick Start](./docs/v1/getting-started/quick-start.md) - Get up and running quickly
-- [📋 Installation Guide](./docs/v1/getting-started/installation.md) - Detailed setup instructions
+**Start here:** [📘 Absolute Beginner's Guide](./docs/guides/ABSOLUTE_BEGINNER_GUIDE.md) — No computer experience needed.
 
-### For Users
-- [🏗️ Architecture Overview](./docs/v1/architecture/overview.md) - System design and concepts
-- [🔧 User Guides](./docs/v1/guides/) - How to use KAIZA MCP effectively
-- [📚 API Reference](./docs/v1/api/) - Complete API documentation
+### Quick Links
+- **Executive Summary**: [One-page overview for stakeholders](./docs/EXECUTIVE_OVERVIEW.md)
+- **Complete Docs**: [Full documentation index](./docs/README.md)
+- **Glossary**: [Plain-English definitions](./docs/GLOSSARY.md)
 
-### For Developers
-- [🛠️ Contributing Guide](./CONTRIBUTING.md) - How to contribute to the project
-- [🔒 Security Policy](./SECURITY.md) - Security reporting and policies
-- [📋 Architecture Decisions](./adr/) - Technical decision records
+### For Different Audiences
 
-### For Enterprise
-- [📊 Executive Overview](./EXECUTIVE_OVERVIEW.md) - Business value and strategic positioning
-- [🎯 Maturity Model & Roadmap](./MATURITY_MODEL_AND_ROADMAP.md) - Strategic planning and evolution
-- [📋 Governance Framework](./DOCUMENTATION_GOVERNANCE.md) - Documentation and process governance
+**I'm New to Computers**
+- [Absolute Beginner's Guide](./docs/guides/ABSOLUTE_BEGINNER_GUIDE.md) — Start here
+- [Glossary for Humans](./docs/GLOSSARY.md) — Define unfamiliar terms
+- [Troubleshooting](./docs/TROUBLESHOOTING.md) — Help when stuck
+
+**I'm a Developer/Operator**
+- [Architecture Overview](./docs/ARCHITECTURE.md) — System design
+- [Complete Usage Guide](./docs/MCP_USAGE_GUIDE.md) — How to use KAIZA MCP
+- [Quick Reference](./docs/MCP_QUICK_REFERENCE.md) — One-page cheat sheet
+- [Security & Governance](./docs/SECURITY_AND_GOVERNANCE.md) — Security model
+
+**I'm Making Business Decisions**
+- [Executive Overview](./docs/EXECUTIVE_OVERVIEW.md) — Strategic summary (1 page)
+- [Maturity Model](./docs/MATURITY_MODEL.md) — Capabilities & roadmap
+- [Security Policy](./SECURITY.md) — Risk & compliance
+
+**I'm Contributing Code**
+- [Contributing Guide](./CONTRIBUTING.md) — How to contribute
+- [Security Policy](./SECURITY.md) — Vulnerability reporting
+- [Architecture Decision Records](./adr/) — Why we made key decisions
+- [Documentation Standards](./docs/DOCUMENTATION_LIFECYCLE.md) — Maintaining docs
+
+**I Need Governance Details**
+- [Architecture Decision Records (ADRs)](./adr/) — Technical decisions
+- [Governance Model](./docs/SECURITY_AND_GOVERNANCE.md) — Authority & control
+- [Dual-Role Design](./docs/ARCHITECTURE.md#dual-role-governance) — Separation of duties
 
 ## 🏗️ Architecture
 
@@ -118,18 +152,16 @@ Licensed under the [ISC License](./LICENSE).
 
 ## 🆘 Support
 
-- **Documentation**: [Complete documentation](./docs/v1/)
+- **Documentation**: [Complete documentation](./docs/)
+- **Quick Reference**: [One-page reference card](./docs/MCP_QUICK_REFERENCE.md)
+- **Usage Guide**: [Complete usage guide](./docs/MCP_USAGE_GUIDE.md)
 - **Issues**: [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- **Security**: [Security Issues](./SECURITY.md)
-
-## 🌟 Enterprise
-
-For enterprise deployments, custom integrations, or commercial support, please contact us at [enterprise@kaiza-mcp.org](mailto:enterprise@kaiza-mcp.org).
+- **Security**: [Security Policy](./SECURITY.md)
 
 ---
 
 **Repository**: https://github.com/dylanmarriner/KAIZA-MCP-server  
-**Documentation**: https://github.com/dylanmarriner/KAIZA-MCP-server/docs/  
-**Community**: https://github.com/dylanmarriner/KAIZA-MCP-server/discussions  
-**Security**: https://github.com/dylanmarriner/KAIZA-MCP-server/security
+**Issues**: https://github.com/dylanmarriner/KAIZA-MCP-server/issues  
+**Discussions**: https://github.com/dylanmarriner/KAIZA-MCP-server/discussions  
+**Security Reports**: https://github.com/dylanmarriner/KAIZA-MCP-server/security/advisories

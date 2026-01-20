@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { runPreflight } from "./core/preflight.js";
+import { runPreflight } from "../../core/preflight.js";
 
 const REPO_ROOT = process.cwd();
 

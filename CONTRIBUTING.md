@@ -1,217 +1,427 @@
----
-title: "Contributing to KAIZA MCP"
-description: "Guidelines for contributing to the KAIZA MCP project"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
-owners: ["development-team"]
-tags: ["contributing", "guidelines", "development"]
-audience: ["technical", "developer"]
----
-
 # Contributing to KAIZA MCP
 
-## Purpose
+Thank you for considering contributing to KAIZA MCP. This document provides guidelines and workflows for all types of contributions.
 
-KAIZA MCP is an enterprise-grade governance gateway for AI-driven development. We welcome contributions from the community that align with our mission of providing secure, auditable, and governed AI development capabilities.
+## Code of Conduct
 
-## Development Philosophy
+This project is committed to providing a welcoming, inclusive environment. By participating, you agree to:
+- Be respectful and constructive
+- Welcome diverse perspectives
+- Focus on the work, not the person
+- Ask questions if uncertain
 
-### Core Principles
-- **Security First**: All contributions must maintain or enhance security posture
-- **Enterprise Ready**: Code must meet enterprise quality and reliability standards
-- **Governance Focused**: Changes must support or enhance governance capabilities
-- **Documentation Required**: All changes require comprehensive documentation
-- **Test Coverage**: All code must have comprehensive test coverage
+## Ways to Contribute
 
-### Quality Standards
-- **Code Quality**: Follow established coding standards and best practices
-- **Performance**: Maintain or improve system performance
-- **Compatibility**: Ensure backward compatibility where possible
-- **Security**: Pass all security validations and reviews
-- **Documentation**: Include comprehensive documentation for all changes
+### 1. Report Bugs
+- Use [Bug Report template](./.github/ISSUE_TEMPLATE/bug_report.md)
+- Include reproduction steps
+- Provide environment details (OS, Node.js version)
+- Check for duplicates first
 
-## Contribution Types
+### 2. Suggest Features
+- Use [Feature Request template](./.github/ISSUE_TEMPLATE/feature_request.md)
+- Explain the use case
+- Propose how it should work
+- Discuss with maintainers before implementing
 
-### Code Contributions
-- **Bug Fixes**: Address identified issues with proper testing
-- **Features**: Implement new features with comprehensive documentation
-- **Enhancements**: Improve existing functionality with clear benefits
-- **Performance**: Optimize system performance with measurable improvements
-- **Security**: Enhance security capabilities with proper validation
+### 3. Improve Documentation
+- Fix typos or broken links
+- Clarify confusing sections
+- Add missing examples
+- Improve diagrams
 
-### Documentation Contributions
-- **Documentation**: Improve existing documentation with accurate information
-- **Examples**: Provide practical examples and use cases
-- **Architecture**: Document architectural decisions and design patterns
-- **Guides**: Create user guides and tutorials
-- **Translation**: Provide translations for international users
+### 4. Contribute Code
+- Bug fixes
+- New features
+- Performance improvements
+- Test coverage
 
-### Community Contributions
-- **Issue Reporting**: Report bugs and issues with detailed information
-- **Feature Requests**: Propose new features with clear use cases
-- **Testing**: Test pre-release versions and provide feedback
-- **Support**: Help other users in community forums
+### 5. Review Code
+- Comment on pull requests
+- Suggest improvements
+- Test changes locally
+- Help with documentation updates
 
-## Development Process
+## Getting Started
 
-### Environment Setup
-1. **Fork Repository**: Fork the project repository to your GitHub account
-2. **Clone Repository**: Clone your fork to your local development environment
-3. **Install Dependencies**: Run `npm install` to install all dependencies
-4. **Verify Setup**: Run `npm run verify` to ensure environment is ready
+### Prerequisites
+- Node.js 18+
+- Git
+- GitHub account
+- Familiarity with KAIZA MCP architecture (see [ARCHITECTURE.md](./docs/ARCHITECTURE.md))
 
-### Development Workflow
-1. **Create Branch**: Create a feature branch from the main branch
-2. **Implement Changes**: Implement your changes following coding standards
-3. **Add Tests**: Add comprehensive tests for your changes
-4. **Update Documentation**: Update relevant documentation
-5. **Run Validation**: Run `npm run quality:check` to validate changes
-6. **Commit Changes**: Commit changes with clear, descriptive messages
-7. **Push Branch**: Push your branch to your fork
-8. **Create Pull Request**: Create a pull request with detailed description
+### Setup Development Environment
 
-### Code Standards
-- **Language**: JavaScript (ES modules) with JSDoc documentation
-- **Style**: Follow established code style and formatting conventions
-- **Testing**: Comprehensive unit and integration tests
-- **Security**: Follow security coding standards and practices
-- **Performance**: Consider performance implications of changes
+```bash
+# 1. Fork repository on GitHub
+
+# 2. Clone your fork
+git clone https://github.com/YOUR_USERNAME/KAIZA-MCP-server.git
+cd KAIZA-MCP-server
+
+# 3. Add upstream remote
+git remote add upstream https://github.com/dylanmarriner/KAIZA-MCP-server.git
+
+# 4. Install dependencies
+npm install
+
+# 5. Verify setup
+npm run verify
+```
+
+## Development Workflow
+
+### 1. Create a Feature Branch
+
+```bash
+git checkout -b feature/your-feature-name
+# or
+git checkout -b fix/your-bug-fix
+# or
+git checkout -b docs/your-doc-improvement
+```
+
+**Branch naming conventions:**
+- `feature/` — New features
+- `fix/` — Bug fixes
+- `docs/` — Documentation changes
+- `refactor/` — Code cleanup
+- `test/` — Test improvements
+- `chore/` — Maintenance
+
+### 2. Make Your Changes
+
+**For code:**
+```bash
+# Edit source files in src/
+# Add tests in tests/
+# Run tests
+npm test
+npm run verify
+```
+
+**For documentation:**
+```bash
+# Edit files in docs/
+# Build and validate
+npm run docs:build
+# Check links
+node scripts/validate-docs.js
+```
+
+**For diagrams:**
+```bash
+# Edit source in docs/diagrams/source/
+# Regenerate
+npm run docs:render
+```
+
+### 3. Commit with Clear Messages
+
+**Format:**
+```
+type(scope): subject
+
+body (optional)
+
+footer (optional)
+```
+
+**Types:**
+- `feat` — New feature
+- `fix` — Bug fix
+- `docs` — Documentation
+- `test` — Tests
+- `refactor` — Code cleanup
+- `perf` — Performance
+- `chore` — Maintenance
+
+**Examples:**
+```bash
+git commit -m "feat(audit): add plan hash verification"
+git commit -m "fix(bootstrap): handle missing env variable gracefully"
+git commit -m "docs: update ABSOLUTE_BEGINNER_GUIDE.md with Windows steps"
+git commit -m "test: add coverage for role-based access control"
+```
+
+### 4. Keep Your Branch Updated
+
+```bash
+# Fetch latest changes
+git fetch upstream
+
+# Rebase on main
+git rebase upstream/main
+
+# If conflicts, resolve and continue
+git rebase --continue
+```
+
+### 5. Push and Create Pull Request
+
+```bash
+git push origin your-branch-name
+```
+
+Then on GitHub:
+1. Click "Create Pull Request"
+2. Fill out [PR template](./.github/pull_request_template.md)
+3. Link related issue: "Closes #123"
+4. Request review from maintainers
+
+## Code Standards
+
+### JavaScript/Node.js
+
+**Style:**
+- Use ES modules (`import`/`export`)
+- Use `async`/`await` (not `.then()`)
+- Use const/let (not var)
+- 2-space indentation
+
+**Naming:**
+- `camelCase` for variables and functions
+- `PascalCase` for classes and constructors
+- `UPPER_SNAKE_CASE` for constants
+- Descriptive names (avoid `x`, `temp`, `data`)
+
+**Error Handling:**
+```javascript
+// Good: Always handle errors
+try {
+  await riskyOperation();
+} catch (err) {
+  console.error("[CONTEXT] Error detail:", err);
+  throw new SystemError(...);
+}
+
+// Bad: Swallowed errors
+try {
+  await riskyOperation();
+} catch (err) {
+  // silence
+}
+```
+
+**Comments:**
+```javascript
+// Good: Explain WHY
+// We use SHA256 for audit hashes because it's FIPS-compliant
+const hash = crypto.createHash('sha256');
+
+// Bad: Explain WHAT (code already does this)
+// Create a hash
+const hash = crypto.createHash('sha256');
+```
+
+### Testing
+
+**Expectations:**
+- Test critical paths (authentication, audit, file operations)
+- Cover error cases
+- Run tests before submitting PR
+- Add tests for new features
+
+```bash
+npm test              # Run all tests
+npm run verify        # Full verification suite
+```
+
+### Documentation
+
+**For code changes:**
+- Update relevant docs in `docs/`
+- Add entry to `DOCUMENTATION_CHANGELOG.md`
+- Update diagrams if architecture changes
+- Link to related ADRs
+
+**For new features:**
+- Write usage guide or example
+- Update architecture docs if needed
+- Add to glossary if introducing new terms
+
+## Testing
+
+### Run Local Tests
+
+```bash
+# Unit tests
+npm test
+
+# Full verification (includes security audit, tests, lint, docs)
+npm run verify
+
+# Build and validate docs
+npm run docs:build
+```
+
+### Test Coverage
+
+We aim for high coverage on:
+- Authentication and authorization
+- Audit logging
+- File operations
+- Error handling
+
+Low coverage acceptable for:
+- CLI argument parsing
+- Display formatting
+- Tool integrations
+
+### Manual Testing
+
+For PRs that change behavior:
+1. Test with both WINDSURF and ANTIGRAVITY roles
+2. Test error paths
+3. Verify audit logs are created
+4. Check documentation examples still work
 
 ## Documentation Standards
 
-### Documentation Requirements
-- **Technical Accuracy**: All technical information must be accurate and verifiable
-- **Clarity**: Write clear, concise documentation without ambiguity
-- **Completeness**: Include all necessary information for understanding
-- **Examples**: Provide working examples and code samples
-- **Accessibility**: Ensure documentation is accessible to all users
+### When to Update Docs
 
-### Documentation Process
-1. **Follow Standards**: Adhere to documentation standards in `DOCUMENTATION_STANDARDS.md`
-2. **Include Metadata**: Add proper metadata headers to all documentation files
-3. **Review Process**: Documentation undergoes technical and editorial review
-4. **Validation**: Documentation must pass automated validation checks
-5. **Version Alignment**: Documentation versions aligned with software releases
+Every change that affects users requires documentation:
+- New features → New guide or update existing
+- Configuration changes → Update setup docs
+- API changes → Update reference
+- Bug fixes → Update troubleshooting if relevant
+- Architecture changes → Update ADR
 
-## Security Requirements
+### Documentation Checklist
 
-### Security Standards
-- **Zero Trust**: Follow zero-trust security principles
-- **Least Privilege**: Implement least privilege access controls
-- **Defense in Depth**: Implement multiple layers of security controls
-- **Secure by Default**: Ensure secure configurations by default
-- **Audit Trail**: Maintain comprehensive audit logs for all operations
+- [ ] Changes reflected in relevant docs
+- [ ] Examples still work with changes
+- [ ] Links updated
+- [ ] Diagrams regenerated (if needed)
+- [ ] DOCUMENTATION_CHANGELOG.md entry added
+- [ ] Version metadata updated
 
-### Security Review Process
-1. **Self-Assessment**: Perform security self-assessment of changes
-2. **Automated Checks**: Pass all automated security validations
-3. **Manual Review**: Undergo manual security review by security team
-4. **Testing**: Include security testing in test coverage
-5. **Documentation**: Document security implications and considerations
+### Writing Guidelines
 
-## Testing Requirements
-
-### Test Coverage
-- **Unit Tests**: Comprehensive unit tests for all functions and methods
-- **Integration Tests**: Integration tests for component interactions
-- **Security Tests**: Security tests for all security-related functionality
-- **Performance Tests**: Performance tests for performance-critical code
-- **End-to-End Tests**: End-to-end tests for critical workflows
-
-### Test Standards
-- **Quality**: Tests must be well-written and maintainable
-- **Coverage**: Maintain high test coverage for all code changes
-- **Automation**: All tests must be automated and repeatable
-- **Documentation**: Tests must be documented with clear descriptions
-- **Performance**: Tests must run efficiently and quickly
+See [DOCUMENTATION_LIFECYCLE.md](./docs/DOCUMENTATION_LIFECYCLE.md) for:
+- Tone and style
+- File naming
+- Front matter format
+- Heading hierarchy
+- Code block formatting
 
 ## Review Process
 
-### Pull Request Requirements
-- **Description**: Clear, detailed description of changes and purpose
-- **Testing**: Evidence of comprehensive testing and validation
-- **Documentation**: Documentation updates for all relevant changes
-- **Security**: Security considerations and implications addressed
-- **Performance**: Performance impact assessed and documented
+### What Maintainers Look For
 
-### Review Criteria
-- **Technical Quality**: Code quality, architecture, and implementation
-- **Security**: Security implications and best practices
-- **Performance**: Performance impact and optimization
-- **Documentation**: Documentation quality and completeness
-- **Testing**: Test coverage and quality
+1. **Code quality**
+   - Follows style guide
+   - Well-tested
+   - Handles errors
+   - Secure (no secrets, input validation)
 
-### Review Process
-1. **Automated Checks**: Pass all automated validation checks
-2. **Peer Review**: Review by at least one peer developer
-3. **Security Review**: Security review for security-related changes
-4. **Documentation Review**: Documentation review for documentation changes
-5. **Final Approval**: Final approval by maintainers
+2. **Documentation**
+   - Updated appropriately
+   - Correct and clear
+   - Examples included
+   - Links valid
 
-## Community Guidelines
+3. **Testing**
+   - Tests added/updated
+   - All tests passing
+   - Manual testing confirmed
 
-### Code of Conduct
-- **Respect**: Treat all community members with respect and consideration
-- **Inclusivity**: Welcome contributions from diverse backgrounds
-- **Collaboration**: Foster collaborative and constructive discussions
-- **Professionalism**: Maintain professional communication standards
-- **Support**: Provide helpful and supportive assistance
+4. **Commit history**
+   - Clear, descriptive messages
+   - Logical commits (not squashed unnecessarily)
+   - No merge commits
 
-### Communication Channels
-- **GitHub Issues**: For bug reports and feature requests
-- **GitHub Discussions**: For general questions and discussions
-- **Security Issues**: For security-related concerns (private)
-- **Pull Requests**: For code contributions and reviews
+### Review Timeline
+
+- **Feature**: 5-10 business days
+- **Bug fix**: 2-5 business days
+- **Documentation**: 2-3 business days
+- **Security fix**: 24-48 hours (expedited)
 
 ## Release Process
 
-### Release Criteria
-- **Quality**: All quality gates and checks passed
-- **Documentation**: All documentation updated and reviewed
-- **Testing**: Comprehensive testing completed and passed
-- **Security**: Security review completed and approved
-- **Performance**: Performance benchmarks met or exceeded
+### Release Cadence
 
-### Release Process
-1. **Feature Freeze**: No new features added to release branch
-2. **Bug Fixing**: Focus on bug fixes and stabilization
-3. **Testing**: Comprehensive testing and validation
-4. **Documentation**: Final documentation updates and reviews
-5. **Release**: Create release tag and publish release
-6. **Communication**: Communicate release to community
+- **Patch (1.0.x)**: Monthly (bug fixes, small improvements)
+- **Minor (1.x.0)**: Quarterly (new features)
+- **Major (x.0.0)**: Annually (breaking changes)
 
-## Recognition and Attribution
+### Before Release
 
-### Contributor Recognition
-- **Credits**: Contributors credited in release notes and documentation
-- **Acknowledgments**: Significant contributions acknowledged in project communications
-- **Leadership**: Opportunities for leadership roles in project governance
-- **Recognition**: Outstanding contributions recognized and celebrated
+```bash
+npm run quality:check
+npm run release:prepare
+```
 
-### Attribution Requirements
-- **License**: Contributions must be compatible with ISC license
-- **Attribution**: Proper attribution for all contributions
-- **Copyright**: Copyright assigned to project maintainers
-- **Patents**: Patent rights granted for project use
+This:
+1. Runs all tests
+2. Validates documentation
+3. Generates diagrams
+4. Updates changelogs
+5. Bumps version numbers
+
+## Governance & Decision Making
+
+### Architecture Changes
+
+Large changes require an ADR (Architecture Decision Record):
+
+1. **Create draft ADR** in `adr/NNN-kebab-case-title.md`
+2. **Discuss with maintainers** (RFC/issue)
+3. **Implement with approval**
+4. **Mark ADR as ACCEPTED**
+
+See [adr/TEMPLATE.md](./adr/TEMPLATE.md) for format.
+
+### Roadmap & Priorities
+
+Major features are tracked on [Maturity Model](./docs/MATURITY_MODEL.md).
+
+Prioritization factors:
+- Community requests
+- Security implications
+- Breaking change impact
+- Maintenance burden
 
 ## Getting Help
 
-### Support Channels
-- **Documentation**: Comprehensive documentation available in `/docs/` directory
-- **Issues**: Report issues through GitHub Issues
-- **Discussions**: General questions through GitHub Discussions
-- **Community**: Community support through various channels
-
 ### Resources
-- **Development Guide**: Detailed development setup and guidelines
-- **API Documentation**: Comprehensive API reference and examples
-- **Architecture Documentation**: System architecture and design documentation
-- **Best Practices**: Security, performance, and quality best practices
+
+- **Architecture**: [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- **Security**: [SECURITY.md](./SECURITY.md)
+- **Decisions**: [ADRs](./adr/)
+- **Documentation**: [Docs](./docs/)
+
+### Communication Channels
+
+- **Issues**: Technical discussions, bug reports
+- **Discussions**: Design proposals, questions
+- **Email**: For security issues (security@kaiza-mcp.org)
+
+### Asking Questions
+
+1. Check existing issues/discussions first
+2. Ask in Discussions (not Issues for questions)
+3. Include context and what you've already tried
+4. Be patient — maintainers volunteer their time
+
+## Licensing
+
+By contributing, you agree that your contributions are licensed under the ISC License (see [LICENSE](./LICENSE)).
 
 ---
 
-**Document Owner**: KAIZA MCP Development Team  
-**Review Frequency**: Monthly  
-**Last Updated**: 2026-01-19  
-**Version**: 1.0.0
+## Summary
+
+1. **Fork** → **Create branch** → **Make changes** → **Test** → **Document** → **Commit** → **Push** → **PR**
+2. Follow style guide and naming conventions
+3. Write clear commit messages
+4. Update documentation
+5. Add tests for new code
+6. Be patient and respectful in review
+
+Thank you for helping make KAIZA MCP better!
+
+---
+
+**Questions?** Open an issue or start a discussion. We're here to help.

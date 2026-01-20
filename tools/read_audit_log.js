@@ -7,22 +7,36 @@ export async function readAuditLogHandler() {
 
   if (!fs.existsSync(auditPath)) {
     return {
-      count: 0,
-      entries: [],
+      content: [
+        {
+          type: "text",
+          text: "No audit log entries found"
+        }
+      ]
     };
   }
 
-  const lines = fs.readFileSync(auditPath, "utf8").trim();
-  if (!lines) {
+  const fileContent = fs.readFileSync(auditPath, "utf8").trim();
+  if (!fileContent) {
     return {
-      count: 0,
-      entries: [],
+      content: [
+        {
+          type: "text",
+          text: "No audit log entries found"
+        }
+      ]
     };
   }
 
-  const entries = lines.split("\n");
+  const entries = fileContent.split("\n");
+  const text = `Audit Log: ${entries.length} entries\n\n${fileContent}`;
+  
   return {
-    count: entries.length,
-    entries,
+    content: [
+      {
+        type: "text",
+        text: text
+      }
+    ]
   };
 }

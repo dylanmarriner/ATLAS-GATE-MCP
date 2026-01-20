@@ -41,35 +41,41 @@ export function isBootstrapEnabled(repoRoot) {
 }
 
 export function verifyBootstrapAuth(payload, signature) {
-    let secret = process.env.KAIZA_BOOTSTRAP_SECRET;
-    if (!secret) {
-        // Fallback: Try to read from the repo's .kaiza/bootstrap_secret.json
-        // We know the path for this specific case
-        const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
-        if (fs.existsSync(fallbackPath)) {
-            const data = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
-            secret = data.bootstrap_secret;
-            console.error("[DEBUG] Loaded secret from file fallback");
-        }
-    }
+     let secret = process.env.KAIZA_BOOTSTRAP_SECRET;
+     
+     if (!secret) {
+         // Fallback: Try to read from the workspace's .kaiza/bootstrap_secret.json
+         try {
+             const repoRoot = getRepoRoot();
+             const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+             if (fs.existsSync(fallbackPath)) {
+                 const data = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
+                 secret = data.bootstrap_secret;
+                 console.error("[BOOTSTRAP] Loaded secret from .kaiza/bootstrap_secret.json");
+             }
+         } catch (err) {
+             // If workspace not initialized yet, continue to error check below
+             console.error("[BOOTSTRAP] Could not load secret from file fallback:", err.message);
+         }
+     }
 
-    if (!secret) {
-        throw new Error("BOOTSTRAP_SECRET_MISSING");
-    }
+     if (!secret) {
+         throw new Error("BOOTSTRAP_SECRET_MISSING");
+     }
 
-    const hmac = crypto.createHmac("sha256", secret);
-    hmac.update(JSON.stringify(payload));
-    const expectedSignature = hmac.digest("hex");
+     const hmac = crypto.createHmac("sha256", secret);
+     hmac.update(JSON.stringify(payload));
+     const expectedSignature = hmac.digest("hex");
 
-    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
-        throw new Error("INVALID_BOOTSTRAP_SIGNATURE");
-    }
+     if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+         throw new Error("INVALID_BOOTSTRAP_SIGNATURE");
+     }
 
-    // Check timestamp (optional, but good practice)
-    if (payload.timestamp && Date.now() - payload.timestamp > 300000) { // 5 min window
-        throw new Error("BOOTSTRAP_REQUEST_EXPIRED");
-    }
-}
+     // Check timestamp (optional, but good practice)
+     if (payload.timestamp && Date.now() - payload.timestamp > 300000) { // 5 min window
+         throw new Error("BOOTSTRAP_REQUEST_EXPIRED");
+     }
+ }
 
 export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
     // 1. Verify Enabled

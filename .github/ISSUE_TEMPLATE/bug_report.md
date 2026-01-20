@@ -1,64 +1,47 @@
 ---
 name: Bug Report
-about: Report a bug or issue with KAIZA MCP
-title: "[BUG] "
-labels: ['bug']
+about: Report a defect or unexpected behavior
+title: "[BUG] Brief description"
+labels: bug
 assignees: ''
+
 ---
 
 ## Description
-
 A clear and concise description of what the bug is.
 
 ## Steps to Reproduce
-
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Step 1...
+2. Step 2...
+3. Step 3...
 
 ## Expected Behavior
-
-What you expected to happen.
+What should happen?
 
 ## Actual Behavior
-
-What actually happened instead.
+What actually happens?
 
 ## Environment
-
-- **OS**: [e.g., macOS, Windows, Linux]
-- **Node.js Version**: [e.g., 18.0.0]
-- **KAIZA MCP Version**: [e.g., 1.0.0]
-- **MCP Client**: [e.g., Claude Desktop, Windsurf, Antigravity]
+- **OS**: Windows / macOS / Linux
+- **Node.js version**: (run `node --version`)
+- **KAIZA MCP version**: 1.0.0 / main branch
+- **MCP Client**: Claude Desktop / Windsurf / Other
 
 ## Error Messages
-
-If applicable, copy error messages or stack traces here:
-
 ```
-[Paste error output]
-```
-
-## Audit Log Excerpt
-
-If relevant to troubleshooting, paste relevant audit log entries:
-
-```json
-[Paste audit log lines]
+Paste any error messages or logs here
 ```
 
 ## Additional Context
+- Screenshots (if applicable)
+- Relevant configuration
+- Affected files or plans
 
-Add any other context about the problem here (screenshots, configuration, relevant code, etc.).
+## Related Issue
+Closes #000 (if applicable)
 
-## Checklist
-
-- [ ] I've verified this bug exists in the current version
-- [ ] I've checked for similar issues already reported
-- [ ] I've attached relevant error messages or logs
-- [ ] I've tried the [Troubleshooting Guide](../../docs/TROUBLESHOOTING.md)
-
----
-
-**Thank you for reporting!** We'll investigate and respond as soon as possible.
+## Severity
+- [ ] Critical (system broken)
+- [ ] High (major feature broken)
+- [ ] Medium (feature partially broken)
+- [ ] Low (minor issue)

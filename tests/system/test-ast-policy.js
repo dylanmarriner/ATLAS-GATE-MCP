@@ -1,4 +1,4 @@
-import { detectStubs } from "./core/stub-detector.js";
+import { detectStubs } from "../../core/stub-detector.js";
 
 const PASS_CASES = [
     `function valid() { return true; }`,

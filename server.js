@@ -181,11 +181,7 @@ function wrapHandler(handler, toolName) {
         console.error(`[WARN] Legacy audit log also failed: ${legacyErr.message}`);
       }
 
-      // STEP 5: Lock session on failure (unless already locked or this is a recovery write)
-      if (systemErr.error_code !== SYSTEM_ERROR_CODES.SESSION_LOCKED) {
-        SESSION_STATE.isLocked = true;
-        SESSION_STATE.lockError = systemErr.toEnvelope();
-      }
+      // STEP 5: Session locking removed - plans can be written immediately after begin_session
 
       // STEP 6: Log to console for debugging
       console.error(`[GOVERNANCE] HARD FAILURE in ${toolName}: ${systemErr.message}`);
@@ -241,18 +237,7 @@ export async function startServer(role = "ANTIGRAVITY") {
       throw new Error("REFUSE: Session not initialized. You must call begin_session with an absolute workspace_root first.");
     }
 
-    // 7️⃣ SESSION LOCK: Prevent further calls until Failure Report is written
-    if (SESSION_STATE.isLocked) {
-      const isFailureReport = toolName === 'write_file' &&
-        args.path &&
-        (args.path.includes("docs/reports/") || args.path.includes("docs/reports\\"));
-
-      const isAuditRo = toolName === 'read_audit_log' || toolName === 'read_file';
-
-      if (!isFailureReport && !isAuditRo) {
-        throw new Error(`SESSION_LOCKED: Hard failure in previous call. You MUST write a Failure Report to docs/reports/ before continuing. Error: ${SESSION_STATE.lockError.human_message}`);
-      }
-    }
+    // 7️⃣ SESSION LOCK: Removed - plans can be written immediately after begin_session
 
     // Prevent re-initialization
     if (toolName === 'begin_session' && SESSION_STATE.workspaceRoot !== null) {

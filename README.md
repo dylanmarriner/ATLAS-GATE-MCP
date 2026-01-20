@@ -22,6 +22,32 @@ cd KAIZA-MCP-server
 npm install
 ```
 
+### Bootstrap Secret Setup
+
+Before using KAIZA MCP for the first time, you must set up the bootstrap secret (authenticates creation of the first plan):
+
+**Option 1: Automated Setup (Recommended)**
+
+```bash
+# macOS/Linux
+bash scripts/setup-bootstrap.sh
+
+# Windows PowerShell
+powershell -ExecutionPolicy Bypass -File scripts/setup-bootstrap.ps1
+```
+
+**Option 2: Manual Setup**
+
+```bash
+# Generate and set environment variable
+export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+
+# Verify it's set
+echo $KAIZA_BOOTSTRAP_SECRET
+```
+
+For detailed instructions, see [Bootstrap Secret Guide](./docs/BOOTSTRAP_SECRET_GUIDE.md).
+
 ### Configuration
 
 #### For Windsurf:
@@ -63,12 +89,15 @@ npm run verify
 
 ## 📖 Documentation
 
-**Start here:** [📘 Absolute Beginner's Guide](./docs/guides/ABSOLUTE_BEGINNER_GUIDE.md) — No computer experience needed.
+### 🎯 Start Here
+- **Complete Beginner?** → [Absolute Beginner's Guide](./docs/ABSOLUTE_BEGINNER_GUIDE.md) (no computer experience needed)
+- **Decision-Maker?** → [Executive Overview](./EXECUTIVE_OVERVIEW.md) (1-page strategic summary)
+- **Technical Lead?** → [Architecture Overview](./docs/ARCHITECTURE.md) (system design)
 
-### Quick Links
-- **Executive Summary**: [One-page overview for stakeholders](./docs/EXECUTIVE_OVERVIEW.md)
-- **Complete Docs**: [Full documentation index](./docs/README.md)
-- **Glossary**: [Plain-English definitions](./docs/GLOSSARY.md)
+### 📚 Core Documentation
+- **[Full Documentation Index](./docs/README.md)** — All guides and references
+- **[Quick Reference](./docs/MCP_QUICK_REFERENCE.md)** — One-page cheat sheet
+- **[Glossary](./docs/GLOSSARY.md)** — Plain-English definitions of 30+ terms
 
 ### For Different Audiences
 
@@ -84,20 +113,21 @@ npm run verify
 - [Security & Governance](./docs/SECURITY_AND_GOVERNANCE.md) — Security model
 
 **I'm Making Business Decisions**
-- [Executive Overview](./docs/EXECUTIVE_OVERVIEW.md) — Strategic summary (1 page)
-- [Maturity Model](./docs/MATURITY_MODEL.md) — Capabilities & roadmap
-- [Security Policy](./SECURITY.md) — Risk & compliance
+- [Executive Overview](./EXECUTIVE_OVERVIEW.md) — Strategic summary (1 page)
+- [Maturity Model & Roadmap](./docs/MATURITY_MODEL.md) — Capabilities, timeline, investment
+- [Security Policy](./SECURITY.md) — Risk posture & compliance
 
 **I'm Contributing Code**
-- [Contributing Guide](./CONTRIBUTING.md) — How to contribute
-- [Security Policy](./SECURITY.md) — Vulnerability reporting
+- [Contributing Guide](./CONTRIBUTING.md) — Workflow, standards, review process
 - [Architecture Decision Records](./adr/) — Why we made key decisions
-- [Documentation Standards](./docs/DOCUMENTATION_LIFECYCLE.md) — Maintaining docs
+- [Documentation Lifecycle](./docs/DOCUMENTATION_LIFECYCLE.md) — How to maintain docs
+- [Diagram Management](./docs/diagrams/DIAGRAM_GUIDE.md) — Creating and editing diagrams
 
-**I Need Governance Details**
-- [Architecture Decision Records (ADRs)](./adr/) — Technical decisions
-- [Governance Model](./docs/SECURITY_AND_GOVERNANCE.md) — Authority & control
-- [Dual-Role Design](./docs/ARCHITECTURE.md#dual-role-governance) — Separation of duties
+**I Need Governance & Enterprise Info**
+- [ADRs](./adr/) — Architectural decisions with status taxonomy
+- [Documentation Changelog](./DOCUMENTATION_CHANGELOG.md) — Doc updates per release
+- [Maturity Model](./docs/MATURITY_MODEL.md) — Certification roadmap
+- [Dual-Role Governance](./docs/ARCHITECTURE.md#dual-role-governance) — Separation of duties
 
 ## 🏗️ Architecture
 
@@ -137,14 +167,24 @@ KAIZA MCP is designed with security as a primary concern:
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for complete details.
 
-### Quick Contribution Steps
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+### Quick Start
+1. **Read**: [Contributing Guide](./CONTRIBUTING.md) — workflow and standards
+2. **Fork**: The repository on GitHub
+3. **Branch**: Create `feature/your-name` or `fix/your-name`
+4. **Code**: Follow [JavaScript standards](./CONTRIBUTING.md#javascript)
+5. **Test**: Run `npm run verify` to check everything
+6. **Document**: Update docs and [DOCUMENTATION_CHANGELOG.md](./DOCUMENTATION_CHANGELOG.md)
+7. **Commit**: Use [clear messages](./CONTRIBUTING.md#commit-with-clear-messages)
+8. **Submit**: Open a pull request with PR template filled out
+
+### How to Contribute
+- **Report Bugs**: [Bug Report template](./.github/ISSUE_TEMPLATE/bug_report.md)
+- **Suggest Features**: [Feature Request template](./.github/ISSUE_TEMPLATE/feature_request.md)
+- **Improve Docs**: Edit files in `docs/`, update changelog
+- **Add Diagrams**: Follow [Diagram Guide](./docs/diagrams/DIAGRAM_GUIDE.md)
+- **Review Code**: Comment on PRs and help others
 
 ## 📄 License
 
@@ -152,12 +192,21 @@ Licensed under the [ISC License](./LICENSE).
 
 ## 🆘 Support
 
-- **Documentation**: [Complete documentation](./docs/)
-- **Quick Reference**: [One-page reference card](./docs/MCP_QUICK_REFERENCE.md)
-- **Usage Guide**: [Complete usage guide](./docs/MCP_USAGE_GUIDE.md)
-- **Issues**: [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- **Security**: [Security Policy](./SECURITY.md)
+**Documentation**:
+- [Complete Documentation](./docs/) — All guides and references
+- [Absolute Beginner's Guide](./docs/ABSOLUTE_BEGINNER_GUIDE.md) — Step-by-step for novices
+- [Troubleshooting](./docs/TROUBLESHOOTING.md) — Common issues and solutions
+- [Glossary](./docs/GLOSSARY.md) — 30+ terms defined plainly
+
+**Help & Community**:
+- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions) — Ask questions
+- [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues) — Report bugs
+- [Security Policy](./SECURITY.md) — Report security issues
+
+**References**:
+- [Quick Reference Card](./docs/MCP_QUICK_REFERENCE.md) — 1-page cheat sheet
+- [Architecture Overview](./docs/ARCHITECTURE.md) — System design
+- [Security & Governance](./docs/SECURITY_AND_GOVERNANCE.md) — Technical security details
 
 ---
 

@@ -1,16 +1,19 @@
 import fs from "fs";
 import path from "path";
-import { writeFileHandler } from "./tools/write_file.js";
-import { lockWorkspaceRoot } from "./core/path-resolver.js";
+import { writeFileHandler } from "../../tools/write_file.js";
+import { lockWorkspaceRoot } from "../../core/path-resolver.js";
 const REPO_ROOT = process.cwd();
 try {
     lockWorkspaceRoot(REPO_ROOT);
 } catch (e) { }
 
-import { readPromptHandler } from "./tools/read_prompt.js";
-import { SESSION_STATE } from "./session.js";
+import { readPromptHandler } from "../../tools/read_prompt.js";
+import { SESSION_STATE } from "../../session.js";
 
 async function runTest() {
+    // Set workspace root in SESSION_STATE
+    SESSION_STATE.workspaceRoot = REPO_ROOT;
+    
     // Satisfy Prompt Gate
     await readPromptHandler({ name: "WINDSURF_CANONICAL" }, "WINDSURF");
 
@@ -43,12 +46,15 @@ export const foo = 1;
         path: TEST_PATH,
         content: initialContent,
         plan: PLAN_HASH,
-        role: "EXECUTABLE",
+        role: "WINDSURF",
         connectedVia: "test-harness",
         purpose: "verification",
         registeredIn: "server.js",
         failureModes: "test-failure",
-        intent: "Governed write for security remediation verification including more than twenty chars."
+        intent: "Governed write for security remediation verification including more than twenty chars.",
+        workspace_root: REPO_ROOT,
+        session_id: "test-session-123",
+        tool_name: "write_file"
     });
 
     // 2. Try to comment out the logic (Should Fail)
@@ -68,12 +74,15 @@ export const foo = 1;
             path: TEST_PATH,
             content: commentedContent,
             plan: PLAN_HASH,
-            role: "EXECUTABLE",
+            role: "WINDSURF",
             connectedVia: "test-harness",
             purpose: "verification",
             registeredIn: "server.js",
             failureModes: "test-failure",
-            intent: "Attempt to violate security policy by commenting out logic."
+            intent: "Attempt to violate security policy by commenting out logic.",
+            workspace_root: REPO_ROOT,
+            session_id: "test-session-123",
+            tool_name: "write_file"
         });
         console.error("FAIL: Comment-out strategy was NOT blocked.");
         process.exit(1);

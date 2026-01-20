@@ -1,50 +1,37 @@
 ---
 name: Feature Request
-about: Suggest an idea for KAIZA MCP
-title: "[FEATURE] "
-labels: ['enhancement']
+about: Suggest an enhancement or new capability
+title: "[FEATURE] Brief description"
+labels: enhancement
 assignees: ''
+
 ---
 
 ## Description
-
-A clear and concise description of what you want to happen.
-
-## Problem Statement
-
-What problem does this solve? Why is this feature needed?
-
-## Proposed Solution
-
-How should this feature work? Describe your ideal solution.
-
-## Alternatives Considered
-
-Any alternative approaches you've thought about?
+A clear and concise description of what feature you'd like to see.
 
 ## Use Case
+Why do you need this feature? What problem does it solve?
 
-Describe a real-world scenario where this feature would be useful.
+## Proposed Solution
+How do you think this should work?
 
-## Example Usage
-
-If applicable, show how you'd use this feature:
-
-```javascript
-// Example code
-```
+## Alternative Solutions
+Other approaches you've considered.
 
 ## Additional Context
+- Related issues or discussions
+- Relevant documentation
+- Examples or mockups
 
-Add any other context, mockups, or references here.
+## Priority
+- [ ] Critical (blocks workflows)
+- [ ] High (significantly improves experience)
+- [ ] Medium (nice-to-have improvement)
+- [ ] Low (cosmetic or optional)
 
-## Checklist
-
-- [ ] I've searched for similar feature requests
-- [ ] This aligns with KAIZA's governance mission
-- [ ] I can describe a concrete use case
-- [ ] I'm willing to help implement this (if applicable)
-
----
-
-**Thank you for the suggestion!** We'll review this and prioritize based on community demand and alignment with our roadmap.
+## Documentation Impact
+Will this require documentation updates?
+- [ ] Yes, requires new guide
+- [ ] Yes, requires updates to existing docs
+- [ ] No, minimal documentation impact

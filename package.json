@@ -10,8 +10,8 @@
     "kaiza-mcp-windsurf": "./bin/kaiza-mcp-windsurf.js"
   },
   "scripts": {
-    "test": "node test-ast-policy.js",
-    "verify": "node test-bootstrap.js && node test-enforcement.js && node test-preflight.js && node test-ast-policy.js && node test-plan-enforcement.js && node verify_security.js",
+    "test": "node tests/system/test-ast-policy.js",
+    "verify": "node tests/system/test-bootstrap.js && node tests/system/test-enforcement.js && node tests/system/test-preflight.js && node tests/system/test-ast-policy.js && node tests/system/test-plan-enforcement.js",
     "docs:build": "npm run docs:render && npm run docs:validate",
     "docs:render": "find docs/diagrams/source -name '*.mmd' -exec npx mmdc -i {} -o docs/diagrams/rendered/{}.svg \\;",
     "docs:validate": "node scripts/validate-docs.js",

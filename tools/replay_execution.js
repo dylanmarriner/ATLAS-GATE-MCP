@@ -74,8 +74,17 @@ export async function replayExecutionHandler(args) {
     notes: `Replay verdict: ${replayResult.verdict}, findings: ${replayResult.findings?.length || 0}`,
   }, SESSION_STATE.workspaceRoot);
 
-  // Return result (non-coder friendly format)
-  return formatReplayResult(replayResult);
+  // Return result (MCP-formatted with non-coder friendly content)
+  const formattedResult = formatReplayResult(replayResult);
+  
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(formattedResult, null, 2)
+      }
+    ]
+  };
 }
 
 /**

@@ -98,7 +98,6 @@ test('Startup Audit: Session state starts uninitialized', async () => {
   resetWorkspaceRootForTesting();
   
   assert(SESSION_STATE.workspaceRoot === null, 'Session workspace should start as null');
-  assert(SESSION_STATE.isLocked === false, 'Session should not be locked initially');
 });
 
 /**

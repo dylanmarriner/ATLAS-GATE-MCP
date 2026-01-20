@@ -10,7 +10,5 @@ export const SESSION_STATE = {
     workspaceRoot: null,
     hasFetchedPrompt: false,
     fetchedPromptName: null,
-    activePlanId: null,
-    isLocked: false,
-    lockError: null
+    activePlanId: null
 };

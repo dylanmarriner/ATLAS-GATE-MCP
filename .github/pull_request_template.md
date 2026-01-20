@@ -1,59 +1,49 @@
-## Pull Request Description
+## Description
+Brief summary of changes.
 
-### Type of Change
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
 - [ ] Documentation update
-- [ ] Security improvement
-- [ ] Performance improvement
-- [ ] Other (please describe)
 
-### Description
-*Clear and concise description of what this PR changes.*
+## Related Issue
+Closes #000
 
-### Related Issues
-*Link to any related issues this PR addresses.*
-- Closes #
-- Fixes #
-- Related to #
+## Changes
+- Change 1
+- Change 2
+- Change 3
 
-### Changes Made
-*List the specific changes made in this PR.*
-
-### Testing
-*Describe how you tested this change.*
-- [ ] Unit tests pass
-- [ ] Integration tests pass
+## Testing
+- [ ] Unit tests added/updated
 - [ ] Manual testing completed
-- [ ] Security review completed
-- [ ] Documentation updated
+- [ ] No new tests needed
 
-### Breaking Changes
-*If this PR introduces breaking changes, describe them here.*
+## Documentation
+- [ ] Updated relevant docs
+- [ ] Added DOCUMENTATION_CHANGELOG.md entry
+- [ ] Updated diagrams
+- [ ] No documentation needed
 
-### Security Considerations
-*Are there any security implications for this change?*
+## Security Checklist
+- [ ] No secrets committed
+- [ ] No unvalidated user input
+- [ ] Audit logging included (if applicable)
+- [ ] Security review requested (if applicable)
 
-### Performance Impact
-*What is the performance impact of this change?*
+## Checklist
+- [ ] Code follows style guide
+- [ ] Changes are well-commented
+- [ ] No console.log statements (use proper logging)
+- [ ] All tests passing
+- [ ] Links and references verified
 
-### Documentation
-*Is documentation updated for this change?*
-- [ ] API documentation updated
-- [ ] User documentation updated
-- [ ] Developer documentation updated
-- [ ] README updated
+## Breaking Changes
+Describe any breaking changes:
 
-### Checklist
-- [ ] My code follows the project's code style requirements
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code where necessary
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published in downstream modules
+## Migration Path
+If breaking, how should users migrate?
 
-### Additional Notes
-*Add any other context about the problem here.*
+## Screenshots/Demos
+(If applicable)

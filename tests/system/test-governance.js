@@ -28,11 +28,7 @@ function wrapHandler(handler, toolName) {
                 invariant: "MANDATORY_DIAGNOSTICS"
             });
 
-            // LOCK SESSION
-            if (kerr.error_code !== ERROR_CODES.SESSION_LOCKED) {
-                SESSION_STATE.isLocked = true;
-                SESSION_STATE.lockError = kerr.toDiagnostic();
-            }
+            // Session locking removed - plans can be written immediately after begin_session
 
             throw kerr;
         }
@@ -65,69 +61,10 @@ try {
         process.exit(1);
     }
 
-    // 2. Verify Session Lock on Failure
-    console.log("\n[2] Testing Session Lock on Failure...");
-    // Reset state
-    SESSION_STATE.isLocked = false;
+    // 2. Verify Write-Time Commentary Enforcement (moved from test 4)
+    console.log("\n[2] Testing Mandatory Commentary...");
     SESSION_STATE.hasFetchedPrompt = true;
     SESSION_STATE.fetchedPromptName = "WINDSURF_CANONICAL";
-
-    const wrappedWrite = wrapHandler(writeFileHandler, "write_file");
-
-    // Trigger a failure in writeFile (missing path)
-    try {
-        await wrappedWrite({});
-    } catch (e) {
-        if (SESSION_STATE.isLocked) {
-            console.log("✅ PASS: Session locked after tool failure.");
-        } else {
-            console.error("❌ FAIL: Session NOT locked after failure.");
-            process.exit(1);
-        }
-    }
-
-    // 3. Verify further calls are blocked while locked
-    console.log("\n[3] Testing blocked calls while locked...");
-
-    // Logic from server.js validateToolInput
-    function validateLocked(toolName, args = {}) {
-        if (SESSION_STATE.isLocked) {
-            const isFailureReport = toolName === 'write_file' &&
-                args.path &&
-                (args.path.includes("docs/reports/") || args.path.includes("docs/reports\\"));
-
-            const isAuditRo = toolName === 'read_audit_log' || toolName === 'read_file';
-
-            if (!isFailureReport && !isAuditRo) {
-                throw new Error(`SESSION_LOCKED: Hard failure in previous call.`);
-            }
-        }
-    }
-
-    try {
-        validateLocked("read_prompt", { name: "WINDSURF_CANONICAL" });
-        console.error("❌ FAIL: validateLocked allowed call while session is locked.");
-        process.exit(1);
-    } catch (e) {
-        if (e.message.includes("SESSION_LOCKED")) {
-            console.log("✅ PASS: validateLocked blocked call while locked.");
-        } else {
-            console.error(`❌ FAIL: validateLocked failed for wrong reason: ${e.message}`);
-            process.exit(1);
-        }
-    }
-
-    try {
-        validateLocked("write_file", { path: "docs/reports/fail.md" });
-        console.log("✅ PASS: validateLocked allowed Failure Report while locked.");
-    } catch (e) {
-        console.error("❌ FAIL: validateLocked blocked Failure Report while locked.");
-        process.exit(1);
-    }
-
-    // 4. Verify Write-Time Commentary Enforcement
-    console.log("\n[4] Testing Mandatory Commentary...");
-    SESSION_STATE.isLocked = false; // unlock for test
     try {
         await writeFileHandler({
             path: "test.js",
@@ -146,8 +83,8 @@ try {
         }
     }
 
-    // 5. Verify successful write with intent
-    console.log("\n[5] Testing Write with Intent...");
+    // 3. Verify successful write with intent
+    console.log("\n[3] Testing Write with Intent...");
     const plansDir = path.join(REPO_ROOT, "docs", "plans");
     const plans = fs.readdirSync(plansDir).filter(f => f.endsWith(".md"));
     const PLAN_HASH = plans[0].replace(".md", "");
@@ -155,14 +92,14 @@ try {
     await writeFileHandler({
         path: "test-governance.tmp.js",
         content: `/**
- * ROLE: EXECUTABLE
- * PURPOSE: Verification of governed write
- * CONNECTED VIA: test-harness
- * REGISTERED IN: server.js
- * EXECUTED VIA: node
- * FAILURE MODES: test-failure
- */
-console.log('governed write')`,
+    * ROLE: EXECUTABLE
+    * PURPOSE: Verification of governed write
+    * CONNECTED VIA: test-harness
+    * REGISTERED IN: server.js
+    * EXECUTED VIA: node
+    * FAILURE MODES: test-failure
+    */
+    console.log('governed write')`,
         plan: PLAN_HASH,
         intent: "This is a governed write for verification purposes including more than twenty characters of intent."
     });

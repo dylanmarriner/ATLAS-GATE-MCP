@@ -1,122 +1,239 @@
-# KAIZA MCP Server Documentation
+---
+title: "KAIZA MCP Documentation Index"
+description: "Complete documentation guide and navigation"
+version: "1.0.0"
+last_updated: "2026-01-20"
+---
 
-## Documentation Architecture
+# KAIZA MCP Documentation
 
-This documentation follows enterprise-grade **Docs-as-a-Product** principles with strict source/build separation.
+Complete reference for KAIZA Model Context Protocol.
 
-### Source vs Build Artifacts
+---
 
-**Tracked (Source of Truth):**
-- `/docs/` - All documentation source files
-- `/docs/diagrams/source/` - Diagram source files (.mmd, .puml)
-- `/scripts/` - Build and validation scripts
+## Quick Navigation
 
-**Ignored (Generated):**
-- `/docs/build/` - Generated static site
-- `/docs/diagrams/rendered/` - Rendered diagrams (.svg, .png)
-- `/docs/dist/`, `/docs/site/`, `/docs/public/` - Build outputs
+**New to KAIZA?** Start here:
+- [📘 Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) — Zero computer knowledge assumed
+- [🚀 Bootstrap Setup Quick Start](./BOOTSTRAP_SETUP_QUICK_START.md) — 5-minute bootstrap secret setup
+- [🔐 Bootstrap Secret Guide](./BOOTSTRAP_SECRET_GUIDE.md) — Understand the bootstrap secret
 
-### Documentation Structure
+**For Decision-Makers:**
+- [📊 Executive Overview](./EXECUTIVE_OVERVIEW.md) — One-page strategic summary
+- [📈 Maturity Model](./MATURITY_MODEL.md) — Capabilities and 18-month roadmap
+- [🎯 Level 5 Roadmap](./LEVEL_5_ROADMAP.md) — Path to world-class maturity
+
+**For Developers & Operators:**
+- [🏗️ Architecture Overview](./ARCHITECTURE.md) — System design and concepts
+- [📖 Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use KAIZA effectively
+- [⚡ Quick Reference](./MCP_QUICK_REFERENCE.md) — One-page cheat sheet
+- [🔧 Troubleshooting Guide](./TROUBLESHOOTING.md) — Common issues and fixes
+- [🛡️ Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Secrets, API keys, privacy
+
+**For Contributors:**
+- [🤝 Contributing Guide](../CONTRIBUTING.md) — How to contribute to KAIZA
+- [📋 Architecture Decisions (ADRs)](./adr/) — Technical decision records
+- [📝 ADR Template](./adr/TEMPLATE.md) — How to write an ADR
+- [🏷️ ADR Status Taxonomy](./adr/STATUS_TAXONOMY.md) — Decision lifecycle
+
+**System & Process Documentation:**
+- [📚 Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Versioning and support policy
+- [📝 Documentation Changelog](./DOCUMENTATION_CHANGELOG.md) — Version-by-version updates
+- [🎨 Diagram Editing Guide](./diagrams/EDITING_GUIDE.md) — Create and render diagrams
+- [🔒 Security Policy](../SECURITY.md) — Vulnerability reporting
+
+**Reference & Audit:**
+- [📖 Glossary for Humans](./GLOSSARY.md) — Plain-English term definitions
+- [📊 Security & Governance](./SECURITY_AND_GOVERNANCE.md) — Governance model and security
+- [📋 Enterprise Upgrade Summary](./ENTERPRISE_UPGRADE_SUMMARY.md) — What was upgraded
+- [📦 Upgrade Manifest](./UPGRADE_MANIFEST.txt) — Complete file inventory
+
+---
+
+## Documentation by Audience
+
+### I'm New to KAIZA
+
+**Time commitment:** 45 minutes
+
+1. Read [Executive Overview](./EXECUTIVE_OVERVIEW.md) (5 min)
+2. Follow [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) (40 min)
+3. Reference [Glossary](./GLOSSARY.md) as needed
+
+**Result:** You'll have KAIZA installed and understand what it does.
+
+---
+
+### I'm a Developer or Operator
+
+**Time commitment:** 2–4 hours
+
+1. [Architecture Overview](./ARCHITECTURE.md) — System design
+2. [Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use it
+3. [Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Security practices
+4. [Troubleshooting Guide](./TROUBLESHOOTING.md) — Common issues
+5. [ADRs](./adr/) — Why we made key decisions
+
+**Result:** You can deploy KAIZA, create plans, and troubleshoot issues.
+
+---
+
+### I'm Making Business Decisions
+
+**Time commitment:** 30 minutes
+
+1. [Executive Overview](./EXECUTIVE_OVERVIEW.md) (5 min)
+2. [Maturity Model](./MATURITY_MODEL.md) (15 min)
+3. [Security Policy](../SECURITY.md) (10 min)
+
+**Result:** You understand KAIZA's capabilities, roadmap, and risk posture.
+
+---
+
+### I'm Contributing Code
+
+**Time commitment:** 1–2 hours (once)
+
+1. [Contributing Guide](../CONTRIBUTING.md)
+2. [ADR Process](./adr/TEMPLATE.md)
+3. [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md)
+4. [Architecture Decisions](./adr/) — Read relevant ADRs
+
+**Result:** You can contribute code that meets standards and follows decisions.
+
+---
+
+### I'm Responsible for Governance
+
+**Time commitment:** 3–4 hours
+
+1. [Governance Model](./SECURITY_AND_GOVERNANCE.md)
+2. [ADRs](./adr/) — All architecture decisions
+3. [Maturity Model](./MATURITY_MODEL.md) — Audit capabilities
+4. [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Process documentation
+
+**Result:** You can audit KAIZA deployments and governance compliance.
+
+---
+
+## Documentation Structure
 
 ```
 docs/
-├── README.md                    # This file
-├── guides/                      # User guides and tutorials
-├── standards/                   # Engineering and documentation standards
-├── reference/                   # Technical reference materials
-├── reports/                     # Analysis and audit reports
-│   ├── analysis/               # Analysis reports
-│   ├── audit/                  # Security audit reports
-│   ├── implementation/         # Implementation reports
-│   └── hardening/              # Hardening reports
-├── diagrams/                    # Diagrams and visualizations
-│   ├── source/                 # Diagram source files (tracked)
-│   └── rendered/               # Generated diagrams (ignored)
-├── audit/                      # Audit documentation
-└── examples/                   # Code examples
+├── README.md (this file - documentation index)
+├── ABSOLUTE_BEGINNER_GUIDE.md (new users)
+├── BOOTSTRAP_SECRET_GUIDE.md (bootstrap authentication)
+├── BOOTSTRAP_SETUP_QUICK_START.md (quick setup)
+├── EXECUTIVE_OVERVIEW.md (one-page summary)
+├── MATURITY_MODEL.md (capabilities and roadmap)
+├── LEVEL_5_ROADMAP.md (path to level 5 maturity)
+├── GLOSSARY.md (plain-English definitions)
+├── SAFETY_AND_DATA_HANDLING.md (secrets, privacy)
+├── TROUBLESHOOTING.md (common issues)
+├── DOCUMENTATION_LIFECYCLE.md (versioning policy)
+├── DOCUMENTATION_CHANGELOG.md (release notes)
+├── ENTERPRISE_UPGRADE_SUMMARY.md (what was upgraded)
+├── UPGRADE_MANIFEST.txt (complete file inventory)
+├── ARCHITECTURE.md (system design)
+├── MCP_USAGE_GUIDE.md (how to use)
+├── MCP_QUICK_REFERENCE.md (one-page cheat sheet)
+├── SECURITY_AND_GOVERNANCE.md (governance model)
+├── v1/ (version 1.0.0 documentation)
+├── v2/ (placeholder for v2.0.0)
+├── guides/ (step-by-step tutorials)
+│   ├── ABSOLUTE_BEGINNER_GUIDE.md
+│   ├── COMPLETE_SETUP_GUIDE.md
+│   └── README_GETTING_STARTED.md
+├── adr/ (architecture decision records)
+│   ├── TEMPLATE.md
+│   ├── STATUS_TAXONOMY.md
+│   ├── 001-dual-role-governance.md
+│   ├── 002-plan-based-authorization.md
+│   ├── 003-cryptographic-audit-logging.md
+│   ├── 004-zero-trust-execution.md
+│   ├── 005-role-based-access-control.md
+│   └── 006-content-integrity-verification.md
+├── diagrams/ (source + rendered)
+│   ├── EDITING_GUIDE.md
+│   ├── source/ (Mermaid .mmd files)
+│   └── rendered/ (generated SVG)
+├── audit/ (security and compliance audits)
+├── reference/ (quick references)
+├── standards/ (coding standards)
+├── examples/ (usage examples)
+├── plans/ (approved plans)
+└── reports/ (audit reports)
 ```
 
-## Building Documentation
+---
 
-### Local Development
+## Using This Documentation
 
-```bash
-# Install dependencies
-npm install
+### Finding Information
 
-# Build documentation from source
-npm run docs:build
+**Search by topic:**
+- Glossary: [Glossary.md](./GLOSSARY.md)
+- Architecture: [ARCHITECTURE.md](./ARCHITECTURE.md)
+- Security: [SAFETY_AND_DATA_HANDLING.md](./SAFETY_AND_DATA_HANDLING.md)
+- Governance: [SECURITY_AND_GOVERNANCE.md](./SECURITY_AND_GOVERNANCE.md)
 
-# Validate documentation structure and links
-npm run docs:validate
-```
+**Search by role:**
+- Beginner: [ABSOLUTE_BEGINNER_GUIDE.md](./guides/ABSOLUTE_BEGINNER_GUIDE.md)
+- Developer: [ARCHITECTURE.md](./ARCHITECTURE.md) + [MCP_USAGE_GUIDE.md](./MCP_USAGE_GUIDE.md)
+- Executive: [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md)
+- Decision maker: [MATURITY_MODEL.md](./MATURITY_MODEL.md)
 
-### Build Process
+**Search by task:**
+- Install KAIZA: [Bootstrap Setup Quick Start](./BOOTSTRAP_SETUP_QUICK_START.md)
+- Create first plan: [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md)
+- Troubleshoot issue: [Troubleshooting Guide](./TROUBLESHOOTING.md)
+- Understand architecture: [Architecture Decisions (ADRs)](./adr/)
 
-1. **Diagram Rendering**: Mermaid/P PlantUML sources → SVG/PNG
-2. **Structure Validation**: Verify required directories and files
-3. **Link Checking**: Validate internal and external links
-4. **Format Validation**: Markdown linting and style checks
+---
 
-### CI/CD Integration
+## Documentation Standards
 
-Documentation builds are automated in CI:
+All KAIZA MCP documentation:
 
-- **Source Validation**: Ensures docs can be built from source
-- **Build Artifact Generation**: Creates documentation in CI environment
-- **No Committed Builds**: Build artifacts are never committed to repository
-- **Fail-Fast**: Invalid documentation breaks the build
+✅ Has YAML metadata (title, version, audience)  
+✅ Is audience-appropriate (plain language for beginners, technical for engineers)  
+✅ Includes real examples and use cases  
+✅ Links to related documentation  
+✅ Is kept current with releases  
+✅ Follows consistent formatting and tone  
+✅ Is version-tracked and release-aligned  
 
-## Contributing to Documentation
+See [DOCUMENTATION_LIFECYCLE.md](./DOCUMENTATION_LIFECYCLE.md) for complete standards.
 
-### Source Discipline
+---
 
-- **Edit source files only** in `/docs/` directory
-- **Never edit generated files** in `/docs/build/` or `/docs/diagrams/rendered/`
-- **Run `npm run docs:validate`** before committing
-- **Build locally** to verify changes
+## Quick Links
 
-### File Organization
+**Most Popular Pages:**
+- [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) — Get started in 45 minutes
+- [Executive Overview](./EXECUTIVE_OVERVIEW.md) — Understand KAIZA in 5 minutes
+- [Bootstrap Secret Guide](./BOOTSTRAP_SECRET_GUIDE.md) — Understand bootstrap authentication
+- [Maturity Model](./MATURITY_MODEL.md) — See roadmap and capabilities
+- [Troubleshooting](./TROUBLESHOOTING.md) — Fix common issues
 
-- **Guides**: User-facing documentation in `/docs/guides/`
-- **Standards**: Internal standards in `/docs/standards/`
-- **Reference**: Technical reference in `/docs/reference/`
-- **Reports**: Time-bound reports in `/docs/reports/`
+**Community:**
+- [Contributing Guide](../CONTRIBUTING.md) — How to contribute
+- [Security Policy](../SECURITY.md) — Report vulnerabilities
+- [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues) — Ask questions
+- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions) — Discuss ideas
 
-### Diagram Workflow
+---
 
-1. Create/edit diagrams in `/docs/diagrams/source/`
-2. Use Mermaid (.mmd) or PlantUML (.puml) formats
-3. Run `npm run docs:build` to render diagrams
-4. Commit only source files; rendered files are ignored
+## Feedback & Suggestions
 
-## Governance Rationale
+Found an error or unclear explanation?
 
-### Build Artifact Exclusion
+- [Open an issue](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
+- [Start a discussion](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+- [Submit a PR](../CONTRIBUTING.md)
 
-Build artifacts are intentionally excluded from version control to:
+---
 
-- **Reduce Noise**: Prevent merge conflicts from generated files
-- **Enforce Source Truth**: Ensure single source of truth discipline
-- **CI Consistency**: Guarantee builds are reproducible in CI
-- **Repository Hygiene**: Maintain clean, audit-friendly repository surface
-
-### Enterprise Alignment
-
-This structure aligns with enterprise documentation practices:
-
-- **Separation of Concerns**: Clear distinction between source and build
-- **Automation-First**: All documentation generation is automated
-- **Quality Gates**: Built-in validation and quality checks
-- **Scalability**: Structure supports large documentation sets
-
-## Quick Reference
-
-| Task | Command |
-|------|---------|
-| Build docs | `npm run docs:build` |
-| Validate docs | `npm run docs:validate` |
-| Check links | `find docs -name "*.md" -exec markdown-link-check {} \;` |
-| Lint format | `find docs -name "*.md" -exec markdownlint {} \;` |
-
-For detailed development guidelines, see the main repository [CONTRIBUTING.md](../../CONTRIBUTING.md).
+**Last Updated:** 2026-01-20  
+**Version:** 1.0.0  
+**Audience:** All users

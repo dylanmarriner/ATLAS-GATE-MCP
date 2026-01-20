@@ -28,13 +28,15 @@ function parseAuditLog() {
   const content = fs.readFileSync(auditPath, "utf8");
   const lines = content.trim().split("\n").filter(l => l.length > 0);
 
-  return lines.map(line => {
+  const entries = [];
+  for (const line of lines) {
     try {
-      return JSON.parse(line);
+      entries.push(JSON.parse(line));
     } catch (e) {
-      return null;
+      throw new Error(`AUDIT_PARSE_ERROR: Failed to parse operator audit entry: ${e.message}`);
     }
-  }).filter(e => e !== null);
+  }
+  return entries;
 }
 
 /**

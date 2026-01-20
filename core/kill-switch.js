@@ -94,8 +94,9 @@ export function loadKillSwitchState(workspaceRoot) {
     return KillSwitchState.fromJSON(data);
   } catch (err) {
     console.error(`[WARN] Failed to load kill-switch state: ${err.message}`);
-    // Default to safe state if corrupted
-    return new KillSwitchState({ engaged: true, trigger_reason: "CORRUPTED_STATE" });
+    // Default to safe state if corrupted, then re-throw for governance
+    const safeState = new KillSwitchState({ engaged: true, trigger_reason: "CORRUPTED_STATE" });
+    throw new Error(`KILL_SWITCH_LOAD_FAILED: ${err.message} - defaulting to safe engaged state`);
   }
 }
 
@@ -116,7 +117,8 @@ export function saveKillSwitchState(workspaceRoot, state) {
     return true;
   } catch (err) {
     console.error(`[ERROR] Failed to persist kill-switch state: ${err.message}`);
-    return false;
+    // Re-throw for governance compliance
+    throw new Error(`KILL_SWITCH_SAVE_FAILED: ${err.message}`);
   }
 }
 

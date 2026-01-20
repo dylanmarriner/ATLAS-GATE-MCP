@@ -337,6 +337,8 @@ export async function unlockKillSwitch(
     );
   } catch (err) {
     console.error(`[WARN] Failed to audit unlock: ${err.message}`);
+    // Re-throw for governance - audit failures on recovery are critical
+    throw new Error(`RECOVERY_AUDIT_FAILED: ${err.message}`);
   }
 
   return {

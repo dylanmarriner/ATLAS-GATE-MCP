@@ -36,15 +36,17 @@ class ReleasePreparer {
   }
 
   validateCleanWorkingDirectory() {
-    try {
-      const status = execSync('git status --porcelain', { encoding: 'utf8' });
-      if (status.trim()) {
-        this.errors.push('Working directory not clean. Commit or stash changes first.');
-      }
-    } catch (error) {
-      this.errors.push('Failed to check git status');
-    }
-  }
+     try {
+       const status = execSync('git status --porcelain', { encoding: 'utf8' });
+       if (status.trim()) {
+         this.errors.push('Working directory not clean. Commit or stash changes first.');
+       }
+     } catch (error) {
+       this.errors.push('Failed to check git status');
+       // Re-throw for governance compliance - git errors must propagate
+       throw new Error(`GIT_STATUS_CHECK_FAILED: ${error.message}`);
+     }
+   }
 
   validateDocumentationBuild() {
     try {
@@ -53,6 +55,8 @@ class ReleasePreparer {
       console.log('✅ Documentation build successful');
     } catch (error) {
       this.errors.push('Documentation build failed');
+      // Re-throw for governance compliance - build errors must propagate
+      throw new Error(`DOCS_BUILD_FAILED: ${error.message}`);
     }
   }
 

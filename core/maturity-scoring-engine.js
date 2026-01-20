@@ -40,13 +40,15 @@ function parseAuditLog(auditLogPath) {
   }
   
   const lines = fs.readFileSync(auditLogPath, 'utf8').split('\n').filter(l => l.trim());
-  return lines.map(line => {
+  const entries = [];
+  for (const line of lines) {
     try {
-      return JSON.parse(line);
-    } catch {
-      return null;
+      entries.push(JSON.parse(line));
+    } catch (err) {
+      throw new Error(`AUDIT_PARSE_ERROR: Failed to parse audit line: ${err.message}`);
     }
-  }).filter(Boolean);
+  }
+  return entries;
 }
 
 /**

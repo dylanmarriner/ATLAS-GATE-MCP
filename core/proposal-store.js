@@ -349,7 +349,8 @@ function parseProposalMarkdown(content) {
         exact_changes_requested.push(...parsed);
       }
     } catch (e) {
-      // JSON parse failed, leave empty
+      // JSON parse failed in proposal metadata - re-throw for governance
+      throw new Error(`PROPOSAL_METADATA_PARSE_ERROR: Failed to parse changes from proposal: ${e.message}`);
     }
   }
 

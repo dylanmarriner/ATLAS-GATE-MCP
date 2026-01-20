@@ -117,21 +117,15 @@ function readAuditLog(workspaceRoot) {
   const entries = lines
     .map((line, idx) => {
       try {
-        return {
-          lineNum: idx + 1,
-          data: JSON.parse(line),
-          raw: line,
-        };
-      } catch (err) {
-        // INTENTIONAL: Governance exception - parse error returns structured result, not thrown
-        // This is by design: we want to record parse errors as tamper findings, not crash
-        return {
-          lineNum: idx + 1,
-          data: null,
-          raw: line,
-          parseError: err.message,
-        };
-      }
+         return {
+           lineNum: idx + 1,
+           data: JSON.parse(line),
+           raw: line,
+         };
+       } catch (err) {
+         // Re-throw for governance compliance - parse errors must propagate
+         throw new Error(`AUDIT_PARSE_ERROR_AT_LINE_${idx + 1}: ${err.message}`);
+       }
     });
 
   return {
@@ -419,21 +413,12 @@ function validatePlanScope(auditEntries, planHash, workspaceRoot) {
  */
 export function replayExecution(workspaceRoot, planHash, filters = {}) {
   // STEP 1: VALIDATE INPUTS (FAIL-CLOSED)
-  try {
-    validateReplayInputs(workspaceRoot, planHash);
-  } catch (err) {
-    // INTENTIONAL: Governance exception - input validation error returns result, not exception
-    // This is a fail-closed pattern where invalid inputs are reported in the replay result
-    // rather than throwing (which would hide the problem from analysis)
-    return {
-      success: false,
-      error_code: "REPLAY_INVALID_INPUT",
-      message: err.message,
-      findings: [],
-      timeline: [],
-      verdict: "FAIL",
-    };
-  }
+   try {
+     validateReplayInputs(workspaceRoot, planHash);
+   } catch (err) {
+     // Re-throw for governance compliance - validation errors must propagate
+     throw new Error(`REPLAY_INVALID_INPUT: ${err.message}`);
+   }
 
   // STEP 2: READ AUDIT LOG (READ-ONLY)
   const auditData = readAuditLog(workspaceRoot);

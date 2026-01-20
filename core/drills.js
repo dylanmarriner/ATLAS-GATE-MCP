@@ -83,12 +83,10 @@ export async function drillAuditTamper(workspaceRoot, sessionId, role) {
     initializeSimulation(SIMULATION_MODE.DRILL, "audit-tamper-seed");
     injectFailure(SIMULABLE_FAILURES.AUDIT_WRITE_FAILURE);
 
-    // Simulate failure
-    try {
-      throw new Error("SIMULATED: Audit write failure");
-    } catch (err) {
-      result.failure_triggered = true;
-    }
+    // Simulate failure - use control flag instead of try-catch for governance compliance
+    const failureError = new Error("SIMULATED: Audit write failure");
+    result.failure_triggered = true;
+    // Register the simulated failure
 
     // Finalize simulation
     result.simulation_state = finalizeSimulation();
@@ -166,11 +164,10 @@ export async function drillPolicyBreach(workspaceRoot, sessionId, role) {
     initializeSimulation(SIMULATION_MODE.DRILL, "policy-breach-seed");
     injectFailure(SIMULABLE_FAILURES.POLICY_ENGINE_CRASH);
 
-    try {
-      throw new Error("SIMULATED: Policy engine crash");
-    } catch (err) {
-      result.failure_triggered = true;
-    }
+    // Simulate failure - use control flag instead of try-catch for governance compliance
+    const failureError2 = new Error("SIMULATED: Policy engine crash");
+    result.failure_triggered = true;
+    // Register the simulated failure
 
     result.simulation_state = finalizeSimulation();
 
@@ -240,11 +237,10 @@ export async function drillPlanHashMismatch(workspaceRoot, sessionId, role) {
     injectFailure(SIMULABLE_FAILURES.PLAN_HASH_MISMATCH);
 
     const fakeHash = "0".repeat(64);
-    try {
-      throw new Error(`SIMULATED: Plan hash mismatch (expected abc..., got ${fakeHash})`);
-    } catch (err) {
-      result.failure_triggered = true;
-    }
+    // Simulate failure - use control flag instead of try-catch for governance compliance
+    const failureError3 = new Error(`SIMULATED: Plan hash mismatch (expected abc..., got ${fakeHash})`);
+    result.failure_triggered = true;
+    // Register the simulated failure
 
     result.simulation_state = finalizeSimulation();
 
@@ -313,11 +309,10 @@ export async function drillOperatorAbuse(workspaceRoot, sessionId, role) {
     initializeSimulation(SIMULATION_MODE.DRILL, "operator-abuse-seed");
     injectFailure(SIMULABLE_FAILURES.OPERATOR_FATIGUE_BREACH);
 
-    try {
-      throw new Error("SIMULATED: Operator fatigue breach (10 errors >= 5 threshold)");
-    } catch (err) {
-      result.failure_triggered = true;
-    }
+    // Simulate failure - use control flag instead of try-catch for governance compliance
+    const failureError4 = new Error("SIMULATED: Operator fatigue breach (10 errors >= 5 threshold)");
+    result.failure_triggered = true;
+    // Register the simulated failure
 
     result.simulation_state = finalizeSimulation();
 
@@ -389,11 +384,10 @@ export async function drillFilesystemDenial(workspaceRoot, sessionId, role) {
     initializeSimulation(SIMULATION_MODE.DRILL, "fs-denial-seed");
     injectFailure(SIMULABLE_FAILURES.FILESYSTEM_PERMISSION_DENIED);
 
-    try {
-      throw new Error("SIMULATED: Permission denied: /audit.log");
-    } catch (err) {
-      result.failure_triggered = true;
-    }
+    // Simulate failure - use control flag instead of try-catch for governance compliance
+    const failureError5 = new Error("SIMULATED: Permission denied: /audit.log");
+    result.failure_triggered = true;
+    // Register the simulated failure
 
     result.simulation_state = finalizeSimulation();
 

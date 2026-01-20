@@ -363,6 +363,8 @@ export function validateAllIntents(workspaceRoot) {
   } catch (err) {
     results.scanError = err.message;
     results.valid = false;
+    // Re-throw for governance compliance - intent scanning errors are critical
+    throw new Error(`INTENT_SCAN_FAILED: ${err.message}`);
   }
 
   return results;
@@ -423,6 +425,8 @@ function scanDirectory(dir, workspaceRoot, results) {
               error: err.message
             });
             results.valid = false;
+            // Re-throw for governance compliance - intent validation errors must propagate
+            throw new Error(`INTENT_VALIDATION_ERROR: ${err.message}`);
           }
         }
       }

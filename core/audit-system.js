@@ -320,7 +320,8 @@ export async function appendAuditEntry(entry, workspaceRoot) {
         await releaseLock(lockPath);
       } catch (unlockErr) {
         console.error(`[WARN] Failed to release audit lock: ${unlockErr.message}`);
-        // Don't throw - lock will eventually timeout
+        // Throw lock failure - infra errors must not be swallowed
+        throw new Error(`AUDIT_LOCK_CLEANUP_FAILED: ${unlockErr.message}`);
       }
     }
   }
@@ -359,7 +360,9 @@ export function verifyAuditLogIntegrity(workspaceRoot) {
         seq: lineNum,
         error: `INVALID_JSON: ${err.message}`
       });
-      continue;
+      // Continue processing remaining entries but mark the log as corrupted
+      // This is a verification-mode operation, not a mutation, so continuing is acceptable
+      throw new Error(`AUDIT_LOG_CORRUPTED: Invalid JSON at line ${lineNum}: ${err.message}`);
     }
 
     // Validate sequence
@@ -418,13 +421,14 @@ export function readAuditLog(workspaceRoot) {
   }
 
   const lines = fs.readFileSync(auditPath, "utf8").trim().split("\n").filter(l => l.length > 0);
-  const entries = lines.map(line => {
+  const entries = [];
+  for (const line of lines) {
     try {
-      return JSON.parse(line);
-    } catch {
-      return null;
+      entries.push(JSON.parse(line));
+    } catch (err) {
+      throw new Error(`AUDIT_LOG_PARSE_ERROR: Failed to parse audit entry: ${err.message}`);
     }
-  }).filter(e => e !== null);
+  }
 
   return {
     entries,

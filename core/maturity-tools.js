@@ -77,7 +77,8 @@ export async function toolComputeMaturityScore(input, workspaceRoot) {
     }, workspace_root);
   } catch (err) {
     console.error('Failed to append audit entry:', err.message);
-    // Continue even if audit fails (fail-open on audit)
+    // Re-throw for governance compliance - audit failures are critical
+    throw new Error(`AUDIT_APPEND_FAILED: ${err.message}`);
   }
 
   // Evidence summary (non-coder readable)

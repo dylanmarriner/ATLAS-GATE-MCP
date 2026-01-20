@@ -166,10 +166,8 @@ export function writeHaltReport(workspaceRoot, config = {}) {
     };
   } catch (err) {
     console.error(`[ERROR] Failed to write halt report: ${err.message}`);
-    return {
-      success: false,
-      error: err.message
-    };
+    // Re-throw for governance compliance - halt report write must not fail silently
+    throw new Error(`HALT_REPORT_WRITE_FAILED: ${err.message}`);
   }
 }
 
@@ -230,7 +228,8 @@ export function listHaltReports(workspaceRoot) {
       .reverse();
   } catch (err) {
     console.error(`[ERROR] Failed to list halt reports: ${err.message}`);
-    return [];
+    // Re-throw for governance compliance - listing errors must propagate
+    throw new Error(`HALT_REPORTS_LIST_FAILED: ${err.message}`);
   }
 }
 
@@ -248,6 +247,7 @@ export function readHaltReport(workspaceRoot, filename) {
     return fs.readFileSync(filePath, "utf8");
   } catch (err) {
     console.error(`[ERROR] Failed to read halt report: ${err.message}`);
-    return null;
+    // Re-throw for governance compliance - read errors must propagate
+    throw new Error(`HALT_REPORT_READ_FAILED: ${err.message}`);
   }
 }

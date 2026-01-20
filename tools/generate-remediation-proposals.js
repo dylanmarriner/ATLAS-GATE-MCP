@@ -66,6 +66,8 @@ export async function generateRemediationProposals(params) {
       } catch (err) {
         // Log error but continue with other findings
         console.warn(`Failed to process finding: ${err.message}`);
+        // Re-throw for governance compliance
+        throw new Error(`FORENSIC_FINDING_PROCESSING_FAILED: ${err.message}`);
       }
     }
 
@@ -76,6 +78,8 @@ export async function generateRemediationProposals(params) {
         engine.proposalFromSystemError(error);
       } catch (err) {
         console.warn(`Failed to process error: ${err.message}`);
+        // Re-throw for governance compliance
+        throw new Error(`SYSTEM_ERROR_PROCESSING_FAILED: ${err.message}`);
       }
     }
 
@@ -114,6 +118,8 @@ export async function generateRemediationProposals(params) {
         console.warn(
           `Failed to write proposal ${proposal.proposal_id}: ${err.message}`
         );
+        // Re-throw for governance compliance
+        throw new Error(`PROPOSAL_WRITE_FAILED: Failed to write proposal ${proposal.proposal_id}: ${err.message}`);
       }
     }
 

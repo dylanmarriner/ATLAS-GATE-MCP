@@ -34,6 +34,8 @@ export async function beginSessionHandler({ workspace_root }) {
                 }, workspace_root);
             } catch (flushErr) {
                 console.error(`[WARN] Failed to flush pre-session audit event: ${flushErr.message}`);
+                // Re-throw for governance compliance - audit failures must propagate
+                throw new Error(`PRE_SESSION_AUDIT_FLUSH_FAILED: ${flushErr.message}`);
             }
         }
 

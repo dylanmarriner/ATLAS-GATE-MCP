@@ -66,10 +66,22 @@ function extractRustAllowedPatterns(planContent) {
 }
 
 /**
- * ...
+ * Write File Handler - WINDSURF Role Only
+ * 
+ * Enforces comprehensive governance gates before writing any file:
+ * GATE 0: Prompt gate - canonical prompt must be fetched
+ * GATE 1: Intent and authority enforcement
+ * GATE 1.1: Input validation and normalization
+ * GATE 2: Plan enforcement - verify plan authorizes the write
+ * GATE 2.5: Write-time policy engine - universal denylist enforcement
+ * GATE 3: Role validation and metadata
+ * GATE 3.5: Rust static enforcement (for .rs files)
+ * GATE 4: Enterprise code enforcement - no stubs/TODOs/mocks
+ * GATE 4.5: Preflight check - verify code passes tests/lint
+ * GATE 5: Audit logging - record all writes
+ * 
+ * Returns success with plan, role, path, and preflight status
  */
-
-
 export async function writeFileHandler({
   path: filePath,
   content,

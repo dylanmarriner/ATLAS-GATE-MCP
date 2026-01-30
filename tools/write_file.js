@@ -20,6 +20,52 @@ import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 import { executeWriteTimePolicy, detectLanguage } from "../core/write-time-policy-engine.js";
 
 /**
+ * Extract Rust allowed patterns from plan content
+ * 
+ * Parses plan content for a section like:
+ * RUST_ALLOWED_PATTERNS:
+ * - unwrap
+ * - expect
+ * - unsafe
+ * 
+ * @param {string} planContent - The plan content to parse
+ * @returns {Set<string>} - Set of allowed pattern names
+ */
+function extractRustAllowedPatterns(planContent) {
+  const allowedPatterns = new Set();
+  const lines = planContent.split('\n');
+  let inRustSection = false;
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    
+    // Check for section start
+    if (trimmed.startsWith('RUST_ALLOWED_PATTERNS:') || 
+        trimmed.startsWith('RUST-ALLOWED-PATTERNS:') ||
+        trimmed.startsWith('rust_allowed_patterns:')) {
+      inRustSection = true;
+      continue;
+    }
+    
+    // Check for section end (next section starts)
+    if (inRustSection && trimmed.includes(':') && !trimmed.startsWith('-')) {
+      inRustSection = false;
+      continue;
+    }
+    
+    // Extract pattern names if in section
+    if (inRustSection && trimmed.startsWith('- ')) {
+      const pattern = trimmed.replace('- ', '').trim();
+      if (pattern) {
+        allowedPatterns.add(pattern);
+      }
+    }
+  }
+  
+  return allowedPatterns;
+}
+
+/**
  * ...
  */
 
@@ -244,8 +290,8 @@ export async function writeFileHandler({
     // Extract allowed patterns from plan if present
     const planAllowances = {};
     if (plan) {
-      // TODO: parse plan to extract rust-allowed-patterns section
-      // For now, empty set means all patterns forbidden by default
+      // Parse plan to extract rust-allowed-patterns section
+      planAllowances.allowedPatterns = extractRustAllowedPatterns(plan);
     }
     enforceRustPolicy(normalizedPath, contentToWrite, repoRoot, planAllowances);
   }

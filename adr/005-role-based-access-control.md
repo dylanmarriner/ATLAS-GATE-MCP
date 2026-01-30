@@ -1,9 +1,9 @@
 ---
 title: "ADR-005: Role-Based Access Control"
 description: "Decision to implement comprehensive role-based access control for AI agent operations"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
+version: "2.0.0"
+last_updated: "2026-01-31"
+review_date: "2026-04-30"
 owners: ["security-team"]
 tags: ["adr", "security", "rbac", "access-control"]
 audience: ["technical", "executive"]

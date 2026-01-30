@@ -1,12 +1,12 @@
 ---
-title: "KAIZA MCP Glossary for Humans"
-description: "Plain-English definitions of all technical terms used in KAIZA MCP"
-version: "1.0.0"
-last_updated: "2026-01-20"
+title: "ATLAS-GATE-MCP Glossary for Humans"
+description: "Plain-English definitions of all technical terms used in ATLAS-GATE-MCP"
+version: "2.0.0"
+last_updated: "2026-01-31"
 audience: ["all"]
 ---
 
-# KAIZA MCP Glossary for Humans
+# ATLAS-GATE-MCP Glossary for Humans
 
 Plain-English definitions of every technical term you'll encounter. Each term is defined on first use, but you can look them up here anytime.
 
@@ -15,26 +15,26 @@ Plain-English definitions of every technical term you'll encounter. Each term is
 ## A
 
 **Antigravity**
-One of two role types in KAIZA MCP. An AI agent running in Antigravity mode can create plans and read code, but cannot execute changes. Like a architect who designs buildings but doesn't build them.
+One of two role types in ATLAS-GATE-MCP. An AI agent running in Antigravity mode can create plans and read code, but cannot execute changes. Like a architect who designs buildings but doesn't build them.
 
 **API** (Application Programming Interface)
 A set of rules that lets different software programs talk to each other. Think of it as a phone number you call to ask a service to do something. Example: "Call the write_file API with these parameters."
 
 **Approval**
-The action of saying "Yes, this plan looks good. You can execute it." In KAIZA, approval happens when the Antigravity role creates a plan and the Windsurf role receives it.
+The action of saying "Yes, this plan looks good. You can execute it." In ATLAS-GATE-MCP, approval happens when the Antigravity role creates a plan and the Windsurf role receives it.
 
 **Audit Log**
-A permanent record of everything that happened: who did what, when they did it, and what changed. Like a security camera for your code. Every change in KAIZA is logged here.
+A permanent record of everything that happened: who did what, when they did it, and what changed. Like a security camera for your code. Every change in ATLAS-GATE-MCP is logged here.
 
 **Authorization**
-Permission. "Do I have permission to do this action?" In KAIZA, authorization is enforced by plans—you can only do what the plan allows.
+Permission. "Do I have permission to do this action?" In ATLAS-GATE-MCP, authorization is enforced by plans—you can only do what the plan allows.
 
 ---
 
 ## B
 
 **Bootstrap**
-To start something from scratch. In KAIZA, "bootstrapping a plan" means creating the very first plan that will guide all future changes.
+To start something from scratch. In ATLAS-GATE-MCP, "bootstrapping a plan" means creating the very first plan that will guide all future changes.
 
 **Boundary Tool** (in context of governance)
 A tool that can read and check things but can't modify them. Like a quality inspector—they look at your work but can't change it.
@@ -206,9 +206,9 @@ A bundle of code ready to install. Like a package from Amazon. `npm install {pac
 
 **Path**
 Address of a file or folder. Like a mailing address. Examples:
-- `/Users/yourname/KAIZA-MCP-server/` (macOS)
-- `C:\Users\yourname\KAIZA-MCP-server` (Windows)
-- `/home/yourname/KAIZA-MCP-server` (Linux)
+- `/Users/yourname/ATLAS-GATE-MCP-server/` (macOS)
+- `C:\Users\yourname\ATLAS-GATE-MCP-server` (Windows)
+- `/home/yourname/ATLAS-GATE-MCP-server` (Linux)
 
 **Permission**
 Can you do this action? Read (look at), write (change), execute (run)?
@@ -333,7 +333,7 @@ Zero-trust means: don't trust anything automatically. Verify everything. KAIZA i
 
 **URI** / **URL**
 Address on the internet. Examples:
-- `https://github.com/dylanmarriner/KAIZA-MCP-server`
+- `https://github.com/dylanmarriner/ATLAS-GATE-MCP-server`
 - `file:///docs/GLOSSARY.md`
 
 ---

@@ -1,9 +1,9 @@
 ---
 title: "ADR-002: Plan-Based Authorization System"
 description: "Decision to implement a plan-based authorization system using hash-addressed contracts"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
+version: "2.0.0"
+last_updated: "2026-01-31"
+review_date: "2026-04-30"
 owners: ["architecture-team"]
 tags: ["adr", "authorization", "security", "governance"]
 audience: ["technical", "executive"]

@@ -1,13 +1,14 @@
-# KAIZA MCP
+# ATLAS-GATE-MCP
 
-**Enterprise Governance Gateway for AI-Driven Development**
+**Enterprise MCP Security Gateway with MCP-Only Sandbox Enforcement**
 
-[![CI Status](https://github.com/dylanmarriner/KAIZA-MCP-server/workflows/CI/badge.svg)](https://github.com/dylanmarriner/KAIZA-MCP-server/actions)
+[![CI Status](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/workflows/CI/badge.svg)](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/actions)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
 [![Security Score](https://img.shields.io/badge/security-A-brightgreen.svg)](./SECURITY.md)
 
-KAIZA MCP is a production-grade Model Context Protocol implementation that transforms unconstrained AI agents into governed execution authorities. It provides enterprise-grade security, auditability, and role-based governance for AI-driven software development.
+ATLAS-GATE-MCP is a production-grade Model Context Protocol implementation that enforces strict MCP-only execution for AI agents (Windsurf, Antigravity) with process-level sandbox enforcement, tool parameter validation, and comprehensive audit trails. It transforms unconstrained AI agents into governed execution authorities with enterprise-grade security and auditability.
 
 ## 🚀 Quick Start
 
@@ -17,8 +18,8 @@ KAIZA MCP is a production-grade Model Context Protocol implementation that trans
 
 ### Installation
 ```bash
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 npm install
 ```
 
@@ -57,7 +58,7 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
   "mcpServers": {
     "kaiza-windsurf": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-windsurf.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -72,7 +73,7 @@ Add to your MCP client configuration:
   "mcpServers": {
     "kaiza-antigravity": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-antigravity.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-antigravity.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -80,7 +81,7 @@ Add to your MCP client configuration:
 }
 ```
 
-Replace `/absolute/path/to/KAIZA-MCP-server` with the actual installation path.
+Replace `/absolute/path/to/ATLAS-GATE-MCP-server` with the actual installation path.
 
 ### Verification
 ```bash
@@ -93,16 +94,24 @@ npm run verify
 - **Complete Beginner?** → [Absolute Beginner's Guide](./docs/ABSOLUTE_BEGINNER_GUIDE.md) (no computer experience needed)
 - **Decision-Maker?** → [Executive Overview](./EXECUTIVE_OVERVIEW.md) (1-page strategic summary)
 - **Technical Lead?** → [Architecture Overview](./docs/ARCHITECTURE.md) (system design)
+- **Want Documentation?** → **[Documentation Index](./DOCUMENTATION_INDEX.md)** (comprehensive index)
 
 ### 📚 Core Documentation
-- **[Full Documentation Index](./docs/README.md)** — All guides and references
+- **[Full Documentation Index](./DOCUMENTATION_INDEX.md)** — Complete documentation map
 - **[Quick Reference](./docs/MCP_QUICK_REFERENCE.md)** — One-page cheat sheet
 - **[Glossary](./docs/GLOSSARY.md)** — Plain-English definitions of 30+ terms
+
+### 🔒 New in v2.0: Enforcement & Security
+- **[Enforcement Summary](./ENFORCEMENT_SUMMARY.md)** — Overview of sandbox + tool validation
+- **[MCP Sandbox Enforcement](./MCP_SANDBOX_ENFORCEMENT.md)** — Process-level lockdown details
+- **[Tool Enforcement](./TOOL_ENFORCEMENT.md)** — Parameter validation details
+- **[Enforcement Quick Start](./ENFORCEMENT_QUICKSTART.md)** — Developer guide
+- **[Enforcement Reference](./ENFORCEMENT_REFERENCE.md)** — Quick facts and error codes
 
 ### For Different Audiences
 
 **I'm New to Computers**
-- [Absolute Beginner's Guide](./docs/guides/ABSOLUTE_BEGINNER_GUIDE.md) — Start here
+- [Absolute Beginner's Guide](./docs/ABSOLUTE_BEGINNER_GUIDE.md) — Start here
 - [Glossary for Humans](./docs/GLOSSARY.md) — Define unfamiliar terms
 - [Troubleshooting](./docs/TROUBLESHOOTING.md) — Help when stuck
 
@@ -199,8 +208,8 @@ Licensed under the [ISC License](./LICENSE).
 - [Glossary](./docs/GLOSSARY.md) — 30+ terms defined plainly
 
 **Help & Community**:
-- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions) — Ask questions
-- [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues) — Report bugs
+- [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions) — Ask questions
+- [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues) — Report bugs
 - [Security Policy](./SECURITY.md) — Report security issues
 
 **References**:
@@ -210,7 +219,7 @@ Licensed under the [ISC License](./LICENSE).
 
 ---
 
-**Repository**: https://github.com/dylanmarriner/KAIZA-MCP-server  
-**Issues**: https://github.com/dylanmarriner/KAIZA-MCP-server/issues  
-**Discussions**: https://github.com/dylanmarriner/KAIZA-MCP-server/discussions  
-**Security Reports**: https://github.com/dylanmarriner/KAIZA-MCP-server/security/advisories
+**Repository**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server  
+**Issues**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues  
+**Discussions**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions  
+**Security Reports**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/security/advisories

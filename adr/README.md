@@ -1,9 +1,9 @@
 ---
 title: "Architecture Decision Records"
-description: "Overview of KAIZA MCP architectural decision records and their lifecycle"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
+description: "Overview of ATLAS-GATE-MCP architectural decision records and their lifecycle"
+version: "2.0.0"
+last_updated: "2026-01-31"
+review_date: "2026-04-30"
 owners: ["architecture-team"]
 tags: ["adr", "architecture", "decisions"]
 audience: ["technical", "executive"]
@@ -13,7 +13,7 @@ audience: ["technical", "executive"]
 
 ## Purpose
 
-Architecture Decision Records (ADRs) capture important architectural decisions in the KAIZA MCP project. Each ADR documents the context, decision, alternatives considered, and consequences of architectural choices.
+Architecture Decision Records (ADRs) capture important architectural decisions in the ATLAS-GATE-MCP project. Each ADR documents the context, decision, alternatives considered, and consequences of architectural choices.
 
 ## ADR Lifecycle
 

@@ -1,6 +1,6 @@
-# KAIZA MCP Quick Reference Card
+# ATLAS-GATE-MCP Quick Reference Card
 
-**One-page guide for using KAIZA MCP tools.**
+**One-page guide for using ATLAS-GATE-MCP tools.**
 
 ---
 

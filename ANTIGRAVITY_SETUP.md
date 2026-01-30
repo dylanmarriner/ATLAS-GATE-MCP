@@ -1,11 +1,11 @@
 # Antigravity Setup for Plan Writing
 
-This document describes how to set up the KAIZA MCP repository so Antigravity can write plans.
+This document describes how to set up the ATLAS-GATE-MCP repository so Antigravity can write plans.
 
 ## Prerequisites
 
 - Node.js 18+ installed
-- Repository cloned: `git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git`
+- Repository cloned: `git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git`
 - Dependencies installed: `npm install`
 
 ## Step 1: Generate Bootstrap Secret
@@ -13,12 +13,12 @@ This document describes how to set up the KAIZA MCP repository so Antigravity ca
 The bootstrap secret enables creating the first plan in the system. Generate it using:
 
 ```bash
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS_GATE_MCP_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 ```
 
 Verify it's set:
 ```bash
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS_GATE_MCP_BOOTSTRAP_SECRET
 ```
 
 ## Step 2: Create .env File
@@ -68,7 +68,7 @@ This checks:
 Add KAIZA MCP to your Antigravity configuration. The MCP server is located at:
 
 ```
-bin/kaiza-mcp-antigravity.js
+bin/ATLAS-GATE-MCP-antigravity.js
 ```
 
 Example configuration for `~/.config/antigravity/mcp_config.json` or your client's MCP config:
@@ -78,7 +78,7 @@ Example configuration for `~/.config/antigravity/mcp_config.json` or your client
   "mcpServers": {
     "kaiza": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-antigravity.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-antigravity.js"],
       "type": "stdio",
       "disabled": false,
       "env": {
@@ -89,7 +89,7 @@ Example configuration for `~/.config/antigravity/mcp_config.json` or your client
 }
 ```
 
-Replace `/absolute/path/to/KAIZA-MCP-server` with the actual installation path.
+Replace `/absolute/path/to/ATLAS-GATE-MCP-server` with the actual installation path.
 
 ## Step 6: Create Your First Plan
 
@@ -198,4 +198,4 @@ npm run verify
 ---
 
 **Last Updated:** 2026-01-21
-**Repository:** https://github.com/dylanmarriner/KAIZA-MCP-server
+**Repository:** https://github.com/dylanmarriner/ATLAS-GATE-MCP-server

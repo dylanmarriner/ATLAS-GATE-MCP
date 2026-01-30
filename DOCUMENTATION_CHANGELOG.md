@@ -1,6 +1,6 @@
 # Documentation Changelog
 
-All notable changes to KAIZA MCP documentation are recorded here, aligned with software releases.
+All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned with software releases.
 
 **Format**: [Semantic Versioning](https://semver.org/)  
 **Docs-to-Code Mapping**: Each entry links documentation updates to software versions

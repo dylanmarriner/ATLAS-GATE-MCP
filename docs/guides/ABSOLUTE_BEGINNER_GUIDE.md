@@ -1,16 +1,16 @@
 ---
-title: "KAIZA MCP: Absolute Beginner's Guide"
-description: "Learn to use KAIZA MCP assuming zero computer experience"
-version: "1.0.0"
-last_updated: "2026-01-20"
+title: "ATLAS-GATE-MCP: Absolute Beginner's Guide"
+description: "Learn to use ATLAS-GATE-MCP assuming zero computer experience"
+version: "2.0.0"
+last_updated: "2026-01-31"
 audience: ["beginner", "non-technical", "learner"]
 ---
 
-# KAIZA MCP: Absolute Beginner's Guide
+# ATLAS-GATE-MCP: Absolute Beginner's Guide
 
 **Read this if:** You've never used a command line, you don't know what Git is, or you're just getting started with software development.
 
-**What you'll learn:** How to install, configure, and run KAIZA MCP—no computer science degree required.
+**What you'll learn:** How to install, configure, and run ATLAS-GATE-MCP—no computer science degree required.
 
 ---
 
@@ -104,7 +104,7 @@ KAIZA MCP works with tools like:
 
 1. ✅ [Learn about your command line](#understanding-your-command-line)
 2. ✅ [Install Node.js](#installation-step-by-step)
-3. ✅ [Download KAIZA MCP](#download-kaiza-mcp)
+3. ✅ [Download KAIZA MCP](#download-ATLAS-GATE-MCP)
 4. ✅ [Configure your client](#configure-your-mcp-client)
 5. ✅ [Create your first plan](#your-first-plan)
 6. ✅ [Review what you created](#reviewing-your-changes)
@@ -224,13 +224,13 @@ Think of it like buying a lamp:
 
 3. Copy and paste this command:
    ```bash
-   git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-   cd KAIZA-MCP-server
+   git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+   cd ATLAS-GATE-MCP-server
    ```
 
 4. Press Enter. **Success** looks like:
    ```
-   Cloning into 'KAIZA-MCP-server'...
+   Cloning into 'ATLAS-GATE-MCP-server'...
    remote: Enumerating objects: ... done
    ...
    ```
@@ -241,7 +241,7 @@ Think of it like buying a lamp:
 <summary><b>Option B: Download as ZIP (No Git required)</b></summary>
 
 1. Open your web browser
-2. Go to https://github.com/dylanmarriner/KAIZA-MCP-server
+2. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
 3. Click the green **"Code"** button (top right)
 4. Click **"Download ZIP"**
 5. Your browser downloads a file to your Downloads folder
@@ -251,7 +251,7 @@ Think of it like buying a lamp:
    - **Linux:** Right-click, select "Extract Here" (or use `unzip` command)
 7. Open your command line and navigate to the extracted folder:
    ```bash
-   cd KAIZA-MCP-server
+   cd ATLAS-GATE-MCP-server
    ```
 
 </details>
@@ -260,7 +260,7 @@ Think of it like buying a lamp:
 
 **What are "dependencies"?** Other software that KAIZA MCP needs to run.
 
-1. In your command line (still in the KAIZA-MCP-server folder), type:
+1. In your command line (still in the ATLAS-GATE-MCP-server folder), type:
    ```bash
    npm install
    ```
@@ -306,12 +306,12 @@ Instead of clicking buttons, you type commands.
 **Change Directory (Move to a Folder)**
 
 ```bash
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 
-- **What it does:** Opens the KAIZA-MCP-server folder
+- **What it does:** Opens the ATLAS-GATE-MCP-server folder
 - **Success looks like:** Your prompt changes to show you're inside the folder
-- **Example prompt:** `user@computer KAIZA-MCP-server % `
+- **Example prompt:** `user@computer ATLAS-GATE-MCP-server % `
 
 **List Files**
 
@@ -331,7 +331,7 @@ pwd
 ```
 
 - **What it does:** Shows the full path (address) of where you are
-- **Success looks like:** `/Users/yourname/KAIZA-MCP-server` (on macOS) or `C:\Users\yourname\KAIZA-MCP-server` (on Windows)
+- **Success looks like:** `/Users/yourname/ATLAS-GATE-MCP-server` (on macOS) or `C:\Users\yourname\ATLAS-GATE-MCP-server` (on Windows)
 
 ### Copy/Paste in Terminal
 
@@ -356,9 +356,9 @@ Your **MCP client** is the software that talks to KAIZA MCP. Examples:
 
 We'll use **Claude Desktop** as our example.
 
-### Step 1: Locate KAIZA-MCP-server Path
+### Step 1: Locate ATLAS-GATE-MCP-server Path
 
-You need the **full path** to your KAIZA-MCP-server folder.
+You need the **full path** to your ATLAS-GATE-MCP-server folder.
 
 In your command line, type:
 ```bash
@@ -366,9 +366,9 @@ pwd
 ```
 
 Press Enter. You'll see something like:
-- **macOS:** `/Users/yourname/KAIZA-MCP-server`
-- **Windows:** `C:\Users\yourname\KAIZA-MCP-server`
-- **Linux:** `/home/yourname/KAIZA-MCP-server`
+- **macOS:** `/Users/yourname/ATLAS-GATE-MCP-server`
+- **Windows:** `C:\Users\yourname\ATLAS-GATE-MCP-server`
+- **Linux:** `/home/yourname/ATLAS-GATE-MCP-server`
 
 **Copy this path.** You'll need it in the next step.
 
@@ -393,14 +393,14 @@ Press Enter. You'll see something like:
      "mcpServers": {
        "kaiza": {
          "command": "node",
-         "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+         "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-windsurf.js"],
          "type": "stdio",
          "disabled": false
        }
      }
    }
    ```
-8. **Replace** `/absolute/path/to/KAIZA-MCP-server` with the path you copied in Step 1
+8. **Replace** `/absolute/path/to/ATLAS-GATE-MCP-server` with the path you copied in Step 1
 9. Save the file (Command ⌘ + S)
 10. Restart Claude Desktop
 
@@ -418,7 +418,7 @@ Press Enter. You'll see something like:
 2. Locate `~/.codeium/windsurf/mcp_config.json`
 3. Edit the same way as above, but use this path:
    ```json
-   "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"]
+   "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-windsurf.js"]
    ```
 
 ---
@@ -442,14 +442,14 @@ For example:
 
 In Claude, type:
 ```
-Call the begin_session tool with workspace_root set to: /absolute/path/to/KAIZA-MCP-server
+Call the begin_session tool with workspace_root set to: /absolute/path/to/ATLAS-GATE-MCP-server
 ```
 
-(Replace `/absolute/path/to/KAIZA-MCP-server` with the actual path from earlier.)
+(Replace `/absolute/path/to/ATLAS-GATE-MCP-server` with the actual path from earlier.)
 
 **Claude will respond:**
 ```
-Session initialized. Workspace locked to /absolute/path/to/KAIZA-MCP-server
+Session initialized. Workspace locked to /absolute/path/to/ATLAS-GATE-MCP-server
 ```
 
 ✅ **Success:** You've initialized a session. This tells KAIZA which project you're working on.
@@ -502,7 +502,7 @@ Audit entry: [seq_123] user=windsurf, tool=write_file
 **Step 5: Check What Was Created**
 
 1. Open File Explorer / Finder
-2. Navigate to your KAIZA-MCP-server folder
+2. Navigate to your ATLAS-GATE-MCP-server folder
 3. Open the `docs/` folder
 4. You should see **TEST.md** with your content
 
@@ -616,7 +616,7 @@ You'll see:
 
 **Fix:** In Claude, call:
 ```
-begin_session with workspace_root: /path/to/KAIZA-MCP-server
+begin_session with workspace_root: /path/to/ATLAS-GATE-MCP-server
 ```
 
 ### Problem: My audit log shows an error
@@ -764,7 +764,7 @@ Someone is responsible for maintaining something.
 A bundle of code ready to install. Like a package from Amazon.
 
 **Path**
-Address of a file or folder. Example: `/Users/yourname/Documents/KAIZA-MCP-server/`
+Address of a file or folder. Example: `/Users/yourname/Documents/ATLAS-GATE-MCP-server/`
 
 **Permission**
 Can you do this action? Read, write, execute?
@@ -856,7 +856,7 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 
 **Use environment variables:**
 
-1. Create a file called `.env` (in your KAIZA-MCP-server folder)
+1. Create a file called `.env` (in your ATLAS-GATE-MCP-server folder)
 2. Put secrets there:
    ```
    API_KEY=sk-1234567890abcdefg
@@ -942,13 +942,13 @@ You've learned:
 2. **Review audit logs:** Get comfortable reading the history
 3. **Read advanced guides:** Check out [SETUP_GUIDE.md](./SETUP_GUIDE.md) for deeper learning
 4. **Explore architecture:** Understand how KAIZA works under the hood ([ARCHITECTURE.md](../ARCHITECTURE.md))
-5. **Join the community:** Ask questions in [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+5. **Join the community:** Ask questions in [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 
 ### Still Confused?
 
 - 📖 **Documentation:** Full docs at [docs/README.md](../README.md)
-- 💬 **Discussions:** Ask in [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- 🐛 **Bug Report:** Report issues in [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
+- 💬 **Discussions:** Ask in [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
+- 🐛 **Bug Report:** Report issues in [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
 - 🔒 **Security Question:** See [SECURITY.md](../../SECURITY.md)
 
 ---

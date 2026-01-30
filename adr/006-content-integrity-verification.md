@@ -1,9 +1,9 @@
 ---
 title: "ADR-006: Content Integrity Verification"
 description: "Decision to implement cryptographic content integrity verification for all operations"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
+version: "2.0.0"
+last_updated: "2026-01-31"
+review_date: "2026-04-30"
 owners: ["security-team"]
 tags: ["adr", "security", "integrity", "cryptography"]
 audience: ["technical", "executive"]

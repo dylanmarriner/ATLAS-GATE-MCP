@@ -1,12 +1,12 @@
-# KAIZA MCP Complete Usage Guide
+# ATLAS-GATE-MCP Complete Usage Guide
 
-**A step-by-step guide to using the KAIZA Model Context Protocol server for governed code development.**
+**A step-by-step guide to using the ATLAS-GATE-MCP Model Context Protocol server for governed code development.**
 
 ---
 
 ## Table of Contents
 
-1. [What is KAIZA MCP?](#what-is-kaiza-mcp)
+1. [What is ATLAS-GATE-MCP?](#what-is-atlas-gate-mcp)
 2. [Architecture Overview](#architecture-overview)
 3. [Getting Started](#getting-started)
 4. [The Three Core Tools](#the-three-core-tools)
@@ -17,9 +17,9 @@
 
 ---
 
-## What is KAIZA MCP?
+## What is ATLAS-GATE-MCP?
 
-**KAIZA MCP** is a governance and code enforcement system that:
+**ATLAS-GATE-MCP** is a governance and code enforcement system that:
 
 - ✅ **Requires plans**: All code changes must be authorized by an approved plan
 - ✅ **Enforces code quality**: Blocks non-real constructs (stubs, mocks, TODOs, hardcoded values)
@@ -100,10 +100,10 @@
 
 3. **MCP server must be running**
    ```bash
-   cd /path/to/KAIZA-MCP-server
+   cd /path/to/ATLAS-GATE-MCP-server
    npm install
    node server.js
-   # Output: [MCP] kaiza-mcp running | session=uuid
+   # Output: [MCP] ATLAS-GATE-MCP running | session=uuid
    ```
 
 ### Starting Your First Change

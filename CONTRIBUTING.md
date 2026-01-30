@@ -1,6 +1,6 @@
-# Contributing to KAIZA MCP
+# Contributing to ATLAS-GATE-MCP
 
-Thank you for considering contributing to KAIZA MCP. This document provides guidelines and workflows for all types of contributions.
+Thank you for considering contributing to ATLAS-GATE-MCP. This document provides guidelines and workflows for all types of contributions.
 
 ## Code of Conduct
 
@@ -56,11 +56,11 @@ This project is committed to providing a welcoming, inclusive environment. By pa
 # 1. Fork repository on GitHub
 
 # 2. Clone your fork
-git clone https://github.com/YOUR_USERNAME/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/YOUR_USERNAME/ATLAS-GATE-MCP.git
+cd ATLAS-GATE-MCP
 
 # 3. Add upstream remote
-git remote add upstream https://github.com/dylanmarriner/KAIZA-MCP-server.git
+git remote add upstream https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 
 # 4. Install dependencies
 npm install
@@ -396,7 +396,7 @@ Prioritization factors:
 
 - **Issues**: Technical discussions, bug reports
 - **Discussions**: Design proposals, questions
-- **Email**: For security issues (security@kaiza-mcp.org)
+- **Email**: For security issues (security@atlas-gate-mcp.org)
 
 ### Asking Questions
 

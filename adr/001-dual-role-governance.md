@@ -1,9 +1,9 @@
 ---
 title: "ADR-001: Dual-Role Governance Model"
 description: "Decision to implement a dual-role governance model separating planning and execution responsibilities"
-version: "1.0.0"
-last_updated: "2026-01-19"
-review_date: "2026-04-19"
+version: "2.0.0"
+last_updated: "2026-01-31"
+review_date: "2026-04-30"
 owners: ["architecture-team"]
 tags: ["adr", "governance", "roles", "security"]
 audience: ["technical", "executive"]

@@ -41,7 +41,7 @@ const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
 
 **Before:**
 ```javascript
-const planPath = "/media/linnyux/development3/developing/KAIZA-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
+const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
 ```
 
 **After:**

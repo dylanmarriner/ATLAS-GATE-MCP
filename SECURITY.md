@@ -4,6 +4,7 @@
 
 | Version | Supported | Security Updates |
 |---------|------------|-------------------|
+| 2.0.x   | ✅        | ✅                |
 | 1.0.x   | ✅        | ✅                |
 | 0.9.x   | ❌        | ❌                |
 | < 0.9   | ❌        | ❌                |
@@ -14,7 +15,7 @@
 
 **Do not open a public issue for security vulnerabilities.**
 
-Instead, please send an email to: **security@kaiza-mcp.org**
+Instead, please send an email to: **security@ATLAS-GATE-MCP.org**
 
 ### What to Include
 
@@ -44,13 +45,15 @@ The KAIZA MCP security team includes:
 
 ### Built-in Security Controls
 
-KAIZA MCP includes several security features:
+ATLAS-GATE-MCP includes several security features:
 
 - **Zero-Trust Architecture**: No implicit trust assumptions
 - **Role-Based Access Control**: Granular permission management
 - **Plan-Based Authorization**: All changes require approved plans
 - **Cryptographic Audit Logging**: Immutable operation history
 - **Content Integrity Verification**: SHA256-based content verification
+- **MCP-Only Sandbox** (v2.0): Process-level lockdown prevents filesystem/shell access
+- **Tool Parameter Enforcement** (v2.0): Strict validation at MCP boundary
 
 ### Security Best Practices
 
@@ -126,7 +129,7 @@ KAIZA MCP offers rewards for security vulnerability reports:
 
 ### Reward Process
 
-1. **Submission**: Send detailed report to security@kaiza-mcp.org
+1. **Submission**: Send detailed report to security@ATLAS-GATE-MCP.org
 2. **Validation**: Security team validates the vulnerability
 3. **Assessment**: Impact and severity assessed
 4. **Reward**: Reward amount determined and paid
@@ -135,23 +138,25 @@ KAIZA MCP offers rewards for security vulnerability reports:
 ## Security Contacts
 
 ### Primary Contact
-- **Email**: security@kaiza-mcp.org
+- **Email**: security@ATLAS-GATE-MCP.org
 - **PGP Key**: Available on request
 
 ### Emergency Contact
-- **Email**: emergency@kaiza-mcp.org
+- **Email**: emergency@ATLAS-GATE-MCP.org
 - **Response Time**: Within 24 hours
 
 ### General Inquiries
-- **Email**: info@kaiza-mcp.org
+- **Email**: info@ATLAS-GATE-MCP.org
 - **GitHub Issues**: Non-security issues only
 
 ## Security Resources
 
 ### Documentation
-- [Security Architecture](./docs/v1/security/overview.md)
-- [Best Practices](./docs/v1/security/best-practices.md)
-- [Configuration Guide](./docs/v1/security/configuration.md)
+- [MCP Sandbox Enforcement](./MCP_SANDBOX_ENFORCEMENT.md) — Process-level lockdown (v2.0)
+- [Tool Parameter Enforcement](./TOOL_ENFORCEMENT.md) — Parameter validation (v2.0)
+- [Enforcement Summary](./ENFORCEMENT_SUMMARY.md) — Complete enforcement overview
+- [Enforcement Quick Start](./ENFORCEMENT_QUICKSTART.md) — Developer guide
+- [Documentation Index](./DOCUMENTATION_INDEX.md) — All documentation
 
 ### Tools
 - [Security Scanner](./tools/security-scanner.js)
@@ -159,8 +164,8 @@ KAIZA MCP offers rewards for security vulnerability reports:
 - [Configuration Validator](./tools/config-validator.js)
 
 ### Community
-- [Security Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions/categories/security)
-- [Security Advisory Board](https://github.com/dylanmarriner/KAIZA-MCP-server/wiki/Security-Advisory-Board)
+- [Security Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions/categories/security)
+- [Security Advisory Board](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/wiki/Security-Advisory-Board)
 
 ## Compliance
 
@@ -181,6 +186,7 @@ KAIZA MCP complies with:
 
 ---
 
-**Last Updated**: 2026-01-19  
-**Security Team**: security@kaiza-mcp.org  
-**Version**: 1.0.0
+**Last Updated**: 2026-01-31  
+**Security Team**: security@ATLAS-GATE-MCP.org  
+**Version**: 2.0.0 (MCP-Only Sandbox Enforcement)  
+**Status**: Production-Ready

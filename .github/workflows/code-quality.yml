@@ -26,7 +26,7 @@ jobs:
       run: node verify_security.js
 
     - name: Run AST policy checks
-      run: node test-ast-policy.js
+      run: node tests/system/test-ast-policy.js
 
     - name: Verify audit log integrity
-      run: node verify-audit-log.js
+      run: node tools/verification/verify-audit-log.js

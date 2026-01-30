@@ -1,11 +1,11 @@
 # ATLAS-GATE-MCP
 
-**Enterprise Model Context Protocol Security Gateway with MCP-Only Sandbox Enforcement**
+## Enterprise Model Context Protocol Security Gateway with MCP-Only Sandbox Enforcement
 
 [![CI Status](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/workflows/CI/badge.svg)](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/actions)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server)
 [![Security Score](https://img.shields.io/badge/security-A-brightgreen.svg)](./SECURITY.md)
 
 ## High-Level Overview
@@ -16,23 +16,19 @@ The system addresses the fundamental security challenge of allowing AI agents to
 
 ATLAS-GATE-MCP operates as an MCP server/gateway in modern AI infrastructure, sitting between AI models/clients and target systems (filesystems, databases, APIs, development tools). It is designed for enterprise environments where security, auditability, and compliance are non-negotiable requirements.
 
+
 ## MCP Fundamentals
 
 The Model Context Protocol (MCP) is a standardized protocol for enabling AI models to securely interact with external systems, tools, and data sources. MCP provides a structured framework for AI agent operations that addresses the limitations of traditional integration approaches.
 
 ### Core Concepts and Terminology
 
-**MCP Server**: A process that exposes capabilities to AI models through standardized interfaces. ATLAS-GATE-MCP is an MCP server.
-
-**Tools**: Executable functions that AI models can invoke. Tools have defined schemas, parameters, and return values. Examples include file operations, API calls, database queries.
-
-**Resources**: Read-only data sources that AI models can access. Resources represent static or dynamic data like configuration files, documentation, or system state.
-
-**Prompts**: Reusable prompt templates that guide AI model behavior for specific tasks or contexts.
-
-**Transport Layer**: Communication mechanism between AI models and MCP servers, typically JSON-RPC 2.0 over stdio or HTTP.
-
-**Session**: A bounded interaction context between an AI model and MCP server with associated state and permissions.
+- **MCP Server**: A process that exposes capabilities to AI models through standardized interfaces. ATLAS-GATE-MCP is an MCP server.
+- **Tools**: Executable functions that AI models can invoke. Tools have defined schemas, parameters, and return values. Examples include file operations, API calls, database queries.
+- **Resources**: Read-only data sources that AI models can access. Resources represent static or dynamic data like configuration files, documentation, or system state.
+- **Prompts**: Reusable prompt templates that guide AI model behavior for specific tasks or contexts.
+- **Transport Layer**: Communication mechanism between AI models and MCP servers, typically JSON-RPC 2.0 over stdio or HTTP.
+- **Session**: A bounded interaction context between an AI model and MCP server with associated state and permissions.
 
 ### Design Philosophy
 
@@ -45,6 +41,7 @@ MCP exists to solve fundamental architectural problems in AI agent integration:
 5. **Observability**: Provides visibility into AI agent operations and decision-making
 
 Compared to traditional APIs, MCP offers:
+
 - **Schema Validation**: All tool inputs/outputs are validated against defined schemas
 - **Capability Discovery**: AI models can discover available capabilities dynamically
 - **Security Boundaries**: Built-in authentication, authorization, and audit mechanisms
@@ -64,47 +61,44 @@ ATLAS-GATE-MCP implements MCP through a multi-layered security architecture with
 
 ### Core Components
 
-**MCP Server Core** (`server.js`): Central request handling, tool registration, and session management. Implements JSON-RPC 2.0 transport, input normalization, and request routing.
+- **MCP Server Core** (`server.js`): Central request handling, tool registration, and session management. Implements JSON-RPC 2.0 transport, input normalization, and request routing.
+- **Dual-Role System**: Two distinct operational modes with different security boundaries:
+  - **Windsurf Role**: Execution and mutation capabilities with full audit logging
+  - **Antigravity Role**: Read-only analysis and planning capabilities
 
-**Dual-Role System**: Two distinct operational modes with different security boundaries:
-- **Windsurf Role**: Execution and mutation capabilities with full audit logging
-- **Antigravity Role**: Read-only analysis and planning capabilities
-
-**Tool Registry**: 17 specialized tools covering file operations, plan management, audit logging, and attestation services. Each tool implements comprehensive validation and enforcement.
-
-**Governance Engine**: Multi-layer policy enforcement including:
-- Input validation with Zod schemas
-- Plan-based authorization checking
-- Static analysis for forbidden patterns
-- Content integrity verification
-- Audit trail generation
-
-**Security Layers**:
-- Process-level sandbox enforcement
-- MCP-only operation restrictions
-- Session-based isolation
-- Cryptographic audit trails
-- Role-based access control
+- **Tool Registry**: 17 specialized tools covering file operations, plan management, audit logging, and attestation services. Each tool implements comprehensive validation and enforcement.
+- **Governance Engine**: Multi-layer policy enforcement including:
+  - Input validation with Zod schemas
+  - Plan-based authorization checking
+  - Static analysis for forbidden patterns
+  - Content integrity verification
+  - Audit trail generation
+- **Security Layers**:
+  - Process-level sandbox enforcement
+  - MCP-only operation restrictions
+  - Session-based isolation
+  - Cryptographic audit trails
+  - Role-based access control
 
 ### Trust and Authorization Boundaries
 
-**Trust Boundary 1**: Process isolation through MCP sandbox prevents direct system access
-**Trust Boundary 2**: Role separation ensures read-only operations cannot mutate data
-**Trust Boundary 3**: Plan authorization requires explicit approval for operations
-**Trust Boundary 4**: Content validation prevents injection of malicious code
-**Trust Boundary 5**: Audit logging provides non-repudiation and traceability
+- **Trust Boundary 1**: Process isolation through MCP sandbox prevents direct system access
+- **Trust Boundary 2**: Role separation ensures read-only operations cannot mutate data
+- **Trust Boundary 3**: Plan authorization requires explicit approval for operations
+- **Trust Boundary 4**: Content validation prevents injection of malicious code
+- **Trust Boundary 5**: Audit logging provides non-repudiation and traceability
 
 ### Component Security Responsibilities
 
-**Server Core**: Request validation, session management, transport security
-**Tool Handlers**: Input validation, business logic enforcement, audit generation
-**Governance Engine**: Policy enforcement, content analysis, authorization checking
-**Audit System**: Immutable logging, tamper detection, compliance reporting
-**Sandbox Layer**: Process isolation, resource restriction, capability limiting
+- **Server Core**: Request validation, session management, transport security
+- **Tool Handlers**: Input validation, business logic enforcement, audit generation
+- **Governance Engine**: Policy enforcement, content analysis, authorization checking
+- **Audit System**: Immutable logging, tamper detection, compliance reporting
+- **Sandbox Layer**: Process isolation, resource restriction, capability limiting
 
 ## Architecture Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                           AI Models / Clients                                    │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │

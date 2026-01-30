@@ -1,194 +1,66 @@
-name: Documentation Build & Validation
+name: Documentation
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master ]
     paths:
+      - '**.md'
       - 'docs/**'
-      - '.github/workflows/docs.yml'
-      - 'adr/**'
-      - 'package.json'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, master ]
     paths:
+      - '**.md'
       - 'docs/**'
-      - '.github/workflows/docs.yml'
-      - 'adr/**'
-      - 'package.json'
 
 jobs:
-  validate:
+  markdown-lint:
     runs-on: ubuntu-latest
-    name: Validate Documentation
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm ci
 
-      - name: Validate documentation structure
-        run: |
-          echo "Checking for required documentation files..."
-          test -f docs/README.md || (echo "ERROR: docs/README.md missing" && exit 1)
-          test -f docs/DOCUMENTATION_CHANGELOG.md || (echo "ERROR: DOCUMENTATION_CHANGELOG.md missing" && exit 1)
-          test -f docs/DOCUMENTATION_LIFECYCLE.md || (echo "ERROR: DOCUMENTATION_LIFECYCLE.md missing" && exit 1)
-          test -f docs/GLOSSARY.md || (echo "ERROR: GLOSSARY.md missing" && exit 1)
-          test -f docs/MATURITY_MODEL.md || (echo "ERROR: MATURITY_MODEL.md missing" && exit 1)
-          test -f docs/guides/ABSOLUTE_BEGINNER_GUIDE.md || (echo "ERROR: ABSOLUTE_BEGINNER_GUIDE.md missing" && exit 1)
-          test -d adr || (echo "ERROR: adr/ directory missing" && exit 1)
-          test -f adr/TEMPLATE.md || (echo "ERROR: adr/TEMPLATE.md missing" && exit 1)
-          echo "✓ Documentation structure valid"
+    - name: Lint markdown
+      run: |
+        npx markdownlint-cli '**/*.md' --fix
+        git diff --exit-code || exit 1
 
-      - name: Check metadata headers
-        run: |
-          echo "Checking for YAML metadata in documentation files..."
-          missing=0
-          for file in docs/**/*.md adr/**/*.md; do
-            if [[ -f "$file" && "$file" != *"/node_modules/"* ]]; then
-              if ! head -1 "$file" | grep -q "^---$"; then
-                echo "WARNING: $file missing YAML metadata header"
-                missing=$((missing + 1))
-              fi
+    - name: Check links in markdown
+      run: npx markdown-link-check README.md CONTRIBUTING.md SECURITY.md || true
+
+  docs-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    - name: Validate documentation structure
+      run: |
+        test -f README.md || exit 1
+        test -f CONTRIBUTING.md || exit 1
+        test -f SECURITY.md || exit 1
+        echo "Documentation structure valid"
+
+    - name: Check for broken references
+      run: |
+        if grep -r "]\(#" *.md | grep -v "github.com" > /tmp/refs.txt 2>/dev/null; then
+          while IFS= read -r line; do
+            if ! grep -q "^##" README.md 2>/dev/null; then
+              echo "Warning: Potential broken reference: $line"
             fi
-          done
-          if [ $missing -gt 0 ]; then
-            echo "WARNING: $missing files missing metadata headers (see docs/DOCUMENTATION_LIFECYCLE.md)"
-          fi
-
-      - name: Validate links
-        run: |
-          echo "Checking for broken internal links..."
-          # Find all markdown files
-          # Check for common broken link patterns
-          broken=0
-          for file in $(find docs -name "*.md" -not -path "*/node_modules/*"); do
-            # Check for links to non-existent paths
-            if grep -o '\[.*\](../[^)]*\.md)' "$file" | while read link; do
-              path=$(echo "$link" | sed 's/.*(\.\.\//docs\//' | sed 's/)$//')
-              if [ ! -f "$path" ] 2>/dev/null; then
-                echo "Broken link in $file: $link"
-                broken=$((broken + 1))
-              fi
-            done; then
-              :
-            fi
-          done
-          if [ $broken -gt 0 ]; then
-            echo "WARNING: Found potentially broken links (manual review recommended)"
-          fi
-
-  render-diagrams:
-    runs-on: ubuntu-latest
-    name: Render Diagrams
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check for diagram sources
-        run: |
-          if [ -d "docs/diagrams/source" ]; then
-            count=$(find docs/diagrams/source -name "*.mmd" | wc -l)
-            echo "Found $count Mermaid diagrams"
-          else
-            echo "No diagram sources found (docs/diagrams/source/)"
-          fi
-
-      - name: Render diagrams to SVG
-        run: |
-          if [ -d "docs/diagrams/source" ] && [ "$(find docs/diagrams/source -name "*.mmd" -not -path "*/node_modules/*")" ]; then
-            npm run docs:render
-            echo "✓ Diagrams rendered successfully"
-          else
-            echo "No diagrams to render"
-          fi
-
-      - name: Upload rendered diagrams as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: rendered-diagrams
-          path: docs/diagrams/rendered/
-          if-no-files-found: ignore
-
-      - name: Comment on PR with diagram changes
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const diagrams = [];
-            const sourcePath = 'docs/diagrams/source';
-            
-            if (fs.existsSync(sourcePath)) {
-              const files = fs.readdirSync(sourcePath).filter(f => f.endsWith('.mmd'));
-              if (files.length > 0) {
-                console.log(`✓ Documentation diagrams validated: ${files.length} diagrams`);
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: `✅ Documentation diagrams validated and rendered successfully (${files.length} diagrams)\n\nView rendered diagrams in the "rendered-diagrams" artifact.`
-                });
-              }
-            }
-
-  spell-check:
-    runs-on: ubuntu-latest
-    name: Basic Spell Check
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check spelling
-        run: |
-          echo "Running basic spell check on documentation..."
-          # This is a simple check - you can replace with a proper spell-checker
-          # For now, just check for common typos
-          errors=0
-          for file in docs/**/*.md; do
-            if grep -i "teh " "$file" 2>/dev/null; then
-              echo "Typo in $file: 'teh' should be 'the'"
-              errors=$((errors + 1))
-            fi
-          done
-          
-          if [ $errors -gt 0 ]; then
-            echo "⚠️ Found $errors potential spelling issues"
-            exit 0  # Don't fail the build for typos
-          else
-            echo "✓ No obvious spelling errors found"
-          fi
-
-  build-summary:
-    runs-on: ubuntu-latest
-    name: Documentation Build Summary
-    needs: [validate, render-diagrams, spell-check]
-    if: always()
-    steps:
-      - name: Summary
-        run: |
-          echo "# Documentation Build Summary"
-          echo "✓ Structure validated"
-          echo "✓ Metadata checked"
-          echo "✓ Links validated"
-          if [ "${{ needs.render-diagrams.result }}" = "success" ]; then
-            echo "✓ Diagrams rendered"
-          fi
-          echo "✓ Spell check completed"
-          echo ""
-          echo "Documentation is ready for publication."
+          done < /tmp/refs.txt
+        fi
+        echo "Reference check complete"

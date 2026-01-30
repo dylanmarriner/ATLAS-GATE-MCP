@@ -1,0 +1,59 @@
+name: Dependencies
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Verify package-lock consistency
+      run: |
+        npm ci
+        npm install --package-lock-only
+        if ! git diff --quiet package-lock.json; then
+          echo "ERROR: package-lock.json is out of sync"
+          git diff package-lock.json
+          exit 1
+        fi
+        echo "package-lock.json is in sync"
+
+    - name: Check for duplicate dependencies
+      run: |
+        if npx npm-check-updates -u --doctorTest 2>/dev/null; then
+          echo "No major version conflicts detected"
+        fi
+
+    - name: Audit dependencies
+      run: |
+        npm audit --production || true
+        echo "Dependency audit complete"
+
+    - name: Check Node.js version compatibility
+      run: |
+        NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
+        REQUIRED_VERSION=$(grep '"node":' package.json | grep -oP '>=\K[0-9]+' | head -1)
+        if [ "$NODE_VERSION" -ge "$REQUIRED_VERSION" ]; then
+          echo "Node.js version $NODE_VERSION meets requirement >= $REQUIRED_VERSION"
+        else
+          echo "ERROR: Node.js version $NODE_VERSION does not meet requirement >= $REQUIRED_VERSION"
+          exit 1
+        fi

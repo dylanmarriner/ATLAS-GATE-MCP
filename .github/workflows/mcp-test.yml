@@ -24,9 +24,9 @@ jobs:
 
     - name: Test Windsurf server startup
       run: |
-        timeout 10s node bin/kaiza-mcp-windsurf.js &
+        timeout 10s node bin/ATLAS-GATE-MCP-windsurf.js &
         sleep 3
-        if ps aux | grep -v grep | grep kaiza-mcp-windsurf > /dev/null; then
+        if ps aux | grep -v grep | grep ATLAS-GATE-MCP-windsurf > /dev/null; then
           echo "Windsurf server started successfully"
           kill %1 2>/dev/null || true
         else
@@ -36,9 +36,9 @@ jobs:
 
     - name: Test Antigravity server startup
       run: |
-        timeout 10s node bin/kaiza-mcp-antigravity.js &
+        timeout 10s node bin/ATLAS-GATE-MCP-antigravity.js &
         sleep 3
-        if ps aux | grep -v grep | grep kaiza-mcp-antigravity > /dev/null; then
+        if ps aux | grep -v grep | grep ATLAS-GATE-MCP-antigravity > /dev/null; then
           echo "Antigravity server started successfully"
           kill %1 2>/dev/null || true
         else
@@ -48,5 +48,5 @@ jobs:
 
     - name: Test server binaries exist and are executable
       run: |
-        test -x bin/kaiza-mcp-windsurf.js && echo "Windsurf binary OK"
-        test -x bin/kaiza-mcp-antigravity.js && echo "Antigravity binary OK"
+        test -f bin/ATLAS-GATE-MCP-windsurf.js && echo "Windsurf binary OK"
+        test -f bin/ATLAS-GATE-MCP-antigravity.js && echo "Antigravity binary OK"

@@ -1,239 +1,126 @@
----
-title: "KAIZA MCP Documentation Index"
-description: "Complete documentation guide and navigation"
-version: "1.0.0"
-last_updated: "2026-01-20"
----
+# ATLAS-GATE-MCP Documentation
 
-# KAIZA MCP Documentation
-
-Complete reference for KAIZA Model Context Protocol.
-
----
+Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page helps you find the right guide for your role and needs.
 
 ## Quick Navigation
 
-**New to KAIZA?** Start here:
-- [📘 Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) — Zero computer knowledge assumed
-- [🚀 Bootstrap Setup Quick Start](./BOOTSTRAP_SETUP_QUICK_START.md) — 5-minute bootstrap secret setup
-- [🔐 Bootstrap Secret Guide](./BOOTSTRAP_SECRET_GUIDE.md) — Understand the bootstrap secret
+### **I'm New Here — Where Do I Start?**
+- **Never heard of this project?** → [START_HERE.md](../START_HERE.md) (5-minute overview)
+- **Non-technical stakeholder?** → [Executive Summary](#for-executives--decision-makers)
+- **Want to understand what it does?** → [BEGINNER_GUIDE.md](./user-guide/BEGINNER_GUIDE.md)
 
-**For Decision-Makers:**
-- [📊 Executive Overview](./EXECUTIVE_OVERVIEW.md) — One-page strategic summary
-- [📈 Maturity Model](./MATURITY_MODEL.md) — Capabilities and 18-month roadmap
-- [🎯 Level 5 Roadmap](./LEVEL_5_ROADMAP.md) — Path to world-class maturity
+### **For End Users**
+- [Installation & Setup](./user-guide/INSTALLATION.md) — Get it running step-by-step
+- [Configuration Guide](./user-guide/CONFIGURATION.md) — All options explained
+- [Usage Guide](./user-guide/USAGE_GUIDE.md) — Daily operations
+- [Examples & Scenarios](./user-guide/EXAMPLES.md) — Real-world use cases
+- [Troubleshooting](./user-guide/TROUBLESHOOTING.md) — Common problems & fixes
+- [FAQ](./user-guide/FAQ.md) — Frequently asked questions
 
-**For Developers & Operators:**
-- [🏗️ Architecture Overview](./ARCHITECTURE.md) — System design and concepts
-- [📖 Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use KAIZA effectively
-- [⚡ Quick Reference](./MCP_QUICK_REFERENCE.md) — One-page cheat sheet
-- [🔧 Troubleshooting Guide](./TROUBLESHOOTING.md) — Common issues and fixes
-- [🛡️ Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Secrets, API keys, privacy
+### **For Contributors**
+- [Contributing Guide](./contributor-guide/CONTRIBUTING.md) — How to contribute
+- [Development Setup](./contributor-guide/DEVELOPMENT_SETUP.md) — Set up your dev environment
+- [Code Standards](./contributor-guide/CODE_STANDARDS.md) — Style & conventions
+- [Testing Guide](./contributor-guide/TESTING.md) — Writing tests
+- [Pull Request Guide](./contributor-guide/PULL_REQUEST_GUIDE.md) — Submitting PRs
 
-**For Contributors:**
-- [🤝 Contributing Guide](../CONTRIBUTING.md) — How to contribute to KAIZA
-- [📋 Architecture Decisions (ADRs)](./adr/) — Technical decision records
-- [📝 ADR Template](./adr/TEMPLATE.md) — How to write an ADR
-- [🏷️ ADR Status Taxonomy](./adr/STATUS_TAXONOMY.md) — Decision lifecycle
+### **For Maintainers**
+- [Release Process](./maintainer-guide/RELEASE_PROCESS.md) — How to cut releases
+- [Triage Guide](./maintainer-guide/TRIAGE_GUIDE.md) — Managing issues
+- [Security Response](./maintainer-guide/SECURITY_RESPONSE.md) — Security incidents
+- [Governance](./maintainer-guide/GOVERNANCE.md) — Decision-making
+- [Roadmap](./maintainer-guide/ROADMAP.md) — Future direction
 
-**System & Process Documentation:**
-- [📚 Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Versioning and support policy
-- [📝 Documentation Changelog](./DOCUMENTATION_CHANGELOG.md) — Version-by-version updates
-- [🎨 Diagram Editing Guide](./diagrams/EDITING_GUIDE.md) — Create and render diagrams
-- [🔒 Security Policy](../SECURITY.md) — Vulnerability reporting
+### **For Architects & Enterprise Adopters**
+- [Deployment Guide](./enterprise-guide/DEPLOYMENT.md) — Production deployment
+- [Compliance & Audit](./enterprise-guide/COMPLIANCE.md) — SOC 2, ISO 27001, GDPR
+- [Audit Readiness](./enterprise-guide/AUDIT_READINESS.md) — Audit procedures
+- [Security Controls](./enterprise-guide/SECURITY_CONTROLS.md) — Control mapping
+- [Disaster Recovery](./enterprise-guide/DISASTER_RECOVERY.md) — Business continuity
 
-**Reference & Audit:**
-- [📖 Glossary for Humans](./GLOSSARY.md) — Plain-English term definitions
-- [📊 Security & Governance](./SECURITY_AND_GOVERNANCE.md) — Governance model and security
-- [📋 Enterprise Upgrade Summary](./ENTERPRISE_UPGRADE_SUMMARY.md) — What was upgraded
-- [📦 Upgrade Manifest](./UPGRADE_MANIFEST.txt) — Complete file inventory
+### **For Understanding the System**
+- [Architecture Overview](./architecture/ARCHITECTURE.md) — How the system is designed
+- [System Design](./architecture/SYSTEM_DESIGN.md) — Component breakdown
+- [Data Flows](./architecture/DATA_FLOWS.md) — Data movement
+- [Security Model](./architecture/SECURITY_MODEL.md) — Security architecture
+- [Performance](./architecture/PERFORMANCE.md) — Performance characteristics
+
+### **Reference Materials**
+- [Architecture Decision Records (ADRs)](./adr/) — Why we made certain decisions
+- [Changelog](./changelog/CHANGELOG.md) — Version history
+- [Glossary](./GLOSSARY.md) — Terms explained for non-technical readers
 
 ---
 
 ## Documentation by Audience
 
-### I'm New to KAIZA
+### For Non-Technical Users (Business, Legal, Executive)
+1. **Start**: [What is ATLAS-GATE-MCP?](../START_HERE.md) — Plain English explanation
+2. **Understand**: [GLOSSARY.md](./GLOSSARY.md) — No jargon
+3. **Evaluate**: [Use Cases](./user-guide/EXAMPLES.md) — Real-world scenarios
+4. **Deploy**: [Enterprise Deployment](./enterprise-guide/DEPLOYMENT.md) — IT/ops focused
 
-**Time commitment:** 45 minutes
+### For First-Time Developers
+1. **Understand**: [BEGINNER_GUIDE.md](./user-guide/BEGINNER_GUIDE.md) — No assumptions
+2. **Install**: [INSTALLATION.md](./user-guide/INSTALLATION.md) — Step-by-step
+3. **Try**: [EXAMPLES.md](./user-guide/EXAMPLES.md) — Run examples
+4. **Learn**: [Architecture](./architecture/ARCHITECTURE.md) — How it works
 
-1. Read [Executive Overview](./EXECUTIVE_OVERVIEW.md) (5 min)
-2. Follow [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) (40 min)
-3. Reference [Glossary](./GLOSSARY.md) as needed
+### For Experienced Engineers
+1. **Quick**: [QUICK_REFERENCE.md](./reference/QUICK_REFERENCE.md) — Fast lookup
+2. **Deep Dive**: [SYSTEM_DESIGN.md](./architecture/SYSTEM_DESIGN.md) — Architecture details
+3. **Code**: [CODE_STANDARDS.md](./contributor-guide/CODE_STANDARDS.md) — Development rules
+4. **Contribute**: [CONTRIBUTING.md](./contributor-guide/CONTRIBUTING.md) — How to contribute
 
-**Result:** You'll have KAIZA installed and understand what it does.
+### For Security & Compliance Teams
+1. **Overview**: [Security Model](./architecture/SECURITY_MODEL.md) — Architecture perspective
+2. **Controls**: [SECURITY_CONTROLS.md](./enterprise-guide/SECURITY_CONTROLS.md) — Control mapping
+3. **Audit**: [AUDIT_READINESS.md](./enterprise-guide/AUDIT_READINESS.md) — Audit procedures
+4. **Compliance**: [COMPLIANCE.md](./enterprise-guide/COMPLIANCE.md) — Standards compliance
+5. **Incident**: [SECURITY_RESPONSE.md](./maintainer-guide/SECURITY_RESPONSE.md) — Incident procedures
 
----
-
-### I'm a Developer or Operator
-
-**Time commitment:** 2–4 hours
-
-1. [Architecture Overview](./ARCHITECTURE.md) — System design
-2. [Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use it
-3. [Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Security practices
-4. [Troubleshooting Guide](./TROUBLESHOOTING.md) — Common issues
-5. [ADRs](./adr/) — Why we made key decisions
-
-**Result:** You can deploy KAIZA, create plans, and troubleshoot issues.
-
----
-
-### I'm Making Business Decisions
-
-**Time commitment:** 30 minutes
-
-1. [Executive Overview](./EXECUTIVE_OVERVIEW.md) (5 min)
-2. [Maturity Model](./MATURITY_MODEL.md) (15 min)
-3. [Security Policy](../SECURITY.md) (10 min)
-
-**Result:** You understand KAIZA's capabilities, roadmap, and risk posture.
-
----
-
-### I'm Contributing Code
-
-**Time commitment:** 1–2 hours (once)
-
-1. [Contributing Guide](../CONTRIBUTING.md)
-2. [ADR Process](./adr/TEMPLATE.md)
-3. [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md)
-4. [Architecture Decisions](./adr/) — Read relevant ADRs
-
-**Result:** You can contribute code that meets standards and follows decisions.
-
----
-
-### I'm Responsible for Governance
-
-**Time commitment:** 3–4 hours
-
-1. [Governance Model](./SECURITY_AND_GOVERNANCE.md)
-2. [ADRs](./adr/) — All architecture decisions
-3. [Maturity Model](./MATURITY_MODEL.md) — Audit capabilities
-4. [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Process documentation
-
-**Result:** You can audit KAIZA deployments and governance compliance.
-
----
-
-## Documentation Structure
-
-```
-docs/
-├── README.md (this file - documentation index)
-├── ABSOLUTE_BEGINNER_GUIDE.md (new users)
-├── BOOTSTRAP_SECRET_GUIDE.md (bootstrap authentication)
-├── BOOTSTRAP_SETUP_QUICK_START.md (quick setup)
-├── EXECUTIVE_OVERVIEW.md (one-page summary)
-├── MATURITY_MODEL.md (capabilities and roadmap)
-├── LEVEL_5_ROADMAP.md (path to level 5 maturity)
-├── GLOSSARY.md (plain-English definitions)
-├── SAFETY_AND_DATA_HANDLING.md (secrets, privacy)
-├── TROUBLESHOOTING.md (common issues)
-├── DOCUMENTATION_LIFECYCLE.md (versioning policy)
-├── DOCUMENTATION_CHANGELOG.md (release notes)
-├── ENTERPRISE_UPGRADE_SUMMARY.md (what was upgraded)
-├── UPGRADE_MANIFEST.txt (complete file inventory)
-├── ARCHITECTURE.md (system design)
-├── MCP_USAGE_GUIDE.md (how to use)
-├── MCP_QUICK_REFERENCE.md (one-page cheat sheet)
-├── SECURITY_AND_GOVERNANCE.md (governance model)
-├── v1/ (version 1.0.0 documentation)
-├── v2/ (placeholder for v2.0.0)
-├── guides/ (step-by-step tutorials)
-│   ├── ABSOLUTE_BEGINNER_GUIDE.md
-│   ├── COMPLETE_SETUP_GUIDE.md
-│   └── README_GETTING_STARTED.md
-├── adr/ (architecture decision records)
-│   ├── TEMPLATE.md
-│   ├── STATUS_TAXONOMY.md
-│   ├── 001-dual-role-governance.md
-│   ├── 002-plan-based-authorization.md
-│   ├── 003-cryptographic-audit-logging.md
-│   ├── 004-zero-trust-execution.md
-│   ├── 005-role-based-access-control.md
-│   └── 006-content-integrity-verification.md
-├── diagrams/ (source + rendered)
-│   ├── EDITING_GUIDE.md
-│   ├── source/ (Mermaid .mmd files)
-│   └── rendered/ (generated SVG)
-├── audit/ (security and compliance audits)
-├── reference/ (quick references)
-├── standards/ (coding standards)
-├── examples/ (usage examples)
-├── plans/ (approved plans)
-└── reports/ (audit reports)
-```
-
----
-
-## Using This Documentation
-
-### Finding Information
-
-**Search by topic:**
-- Glossary: [Glossary.md](./GLOSSARY.md)
-- Architecture: [ARCHITECTURE.md](./ARCHITECTURE.md)
-- Security: [SAFETY_AND_DATA_HANDLING.md](./SAFETY_AND_DATA_HANDLING.md)
-- Governance: [SECURITY_AND_GOVERNANCE.md](./SECURITY_AND_GOVERNANCE.md)
-
-**Search by role:**
-- Beginner: [ABSOLUTE_BEGINNER_GUIDE.md](./guides/ABSOLUTE_BEGINNER_GUIDE.md)
-- Developer: [ARCHITECTURE.md](./ARCHITECTURE.md) + [MCP_USAGE_GUIDE.md](./MCP_USAGE_GUIDE.md)
-- Executive: [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md)
-- Decision maker: [MATURITY_MODEL.md](./MATURITY_MODEL.md)
-
-**Search by task:**
-- Install KAIZA: [Bootstrap Setup Quick Start](./BOOTSTRAP_SETUP_QUICK_START.md)
-- Create first plan: [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md)
-- Troubleshoot issue: [Troubleshooting Guide](./TROUBLESHOOTING.md)
-- Understand architecture: [Architecture Decisions (ADRs)](./adr/)
+### For DevOps & Operations
+1. **Deploy**: [DEPLOYMENT.md](./enterprise-guide/DEPLOYMENT.md) — Production setup
+2. **Configure**: [CONFIGURATION.md](./user-guide/CONFIGURATION.md) — All options
+3. **Monitor**: [Architecture](./architecture/ARCHITECTURE.md) — System overview
+4. **Recover**: [DISASTER_RECOVERY.md](./enterprise-guide/DISASTER_RECOVERY.md) — DR procedures
 
 ---
 
 ## Documentation Standards
 
-All KAIZA MCP documentation:
+All documentation follows these principles:
 
-✅ Has YAML metadata (title, version, audience)  
-✅ Is audience-appropriate (plain language for beginners, technical for engineers)  
-✅ Includes real examples and use cases  
-✅ Links to related documentation  
-✅ Is kept current with releases  
-✅ Follows consistent formatting and tone  
-✅ Is version-tracked and release-aligned  
-
-See [DOCUMENTATION_LIFECYCLE.md](./DOCUMENTATION_LIFECYCLE.md) for complete standards.
+- **Clear Language**: Written for the stated audience; no unexplained jargon
+- **Progressive Complexity**: Basic concepts first, then advanced topics
+- **Examples**: Every major concept has working examples
+- **Links**: Cross-references to related topics
+- **Maintenance**: Kept in sync with code changes
 
 ---
 
-## Quick Links
+## Contributing to Documentation
 
-**Most Popular Pages:**
-- [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) — Get started in 45 minutes
-- [Executive Overview](./EXECUTIVE_OVERVIEW.md) — Understand KAIZA in 5 minutes
-- [Bootstrap Secret Guide](./BOOTSTRAP_SECRET_GUIDE.md) — Understand bootstrap authentication
-- [Maturity Model](./MATURITY_MODEL.md) — See roadmap and capabilities
-- [Troubleshooting](./TROUBLESHOOTING.md) — Fix common issues
+Documentation improvements are always welcome:
 
-**Community:**
-- [Contributing Guide](../CONTRIBUTING.md) — How to contribute
-- [Security Policy](../SECURITY.md) — Report vulnerabilities
-- [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues) — Ask questions
-- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions) — Discuss ideas
+- Found a typo? Submit a fix
+- Unclear section? Suggest rewording
+- Missing example? Add one
+- Better diagram? We'll use it
+
+See [Contributing Guide](./contributor-guide/CONTRIBUTING.md) for details.
 
 ---
 
-## Feedback & Suggestions
+## Documentation Maintenance
 
-Found an error or unclear explanation?
-
-- [Open an issue](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
-- [Start a discussion](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- [Submit a PR](../CONTRIBUTING.md)
+- **Updated**: Regularly reviewed and kept current with code
+- **Versioned**: Major versions have separate doc branches
+- **Archived**: Older versions available in [changelog](./changelog/)
+- **Validated**: All links and examples tested
 
 ---
 
-**Last Updated:** 2026-01-20  
-**Version:** 1.0.0  
-**Audience:** All users
+**Last Updated**: February 2026  
+**Version**: 2.0.0  
+**Contact**: documentation@atlas-gate-mcp.org

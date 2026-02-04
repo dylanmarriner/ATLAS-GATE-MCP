@@ -1,51 +1,48 @@
 ---
 name: Security Report
-about: Report a security vulnerability (PRIVATE)
+about: Report a security vulnerability (please read SECURITY.md first)
 title: "[SECURITY] "
-labels: ['security']
+labels: ["type:security"]
 assignees: ''
 ---
 
-## ⚠️ IMPORTANT: Security Reporting
+## DO NOT USE THIS FORM FOR ACTIVE SECURITY ISSUES
 
-**Do not discuss security vulnerabilities publicly.** This issue template is for private reporting to maintainers.
+**If you discovered a security vulnerability:**
 
-If you've found a security issue, please:
+❌ **DO NOT** open a public issue on GitHub  
+✅ **DO** report privately to: **security@atlas-gate-mcp.org**
 
-1. **Do NOT open a public issue**
-2. **Email us privately:** security@kaiza-mcp.org
-3. **Include details:** vulnerability type, affected versions, impact, proof-of-concept
-
-See [SECURITY.md](../../SECURITY.md) for full responsible disclosure guidelines.
+See [SECURITY.md](../../SECURITY.md) for details on our vulnerability disclosure process.
 
 ---
 
-## For Maintainers Only
+## If This Is a General Security Question
 
-This section is for core team use when handling security reports via private channels.
+If this is a question about security practices or features (not reporting a vulnerability), you can fill out the form below:
 
-### Vulnerability Details
+## Type of Security Question
 
-- **Type**: [e.g., SQL Injection, XSS, Authentication Bypass]
-- **Affected Versions**: [e.g., 1.0.0, 1.0.1]
-- **Severity**: [Critical/High/Medium/Low]
-- **Impact**: [Describe potential impact]
+- [ ] How to securely configure ATLAS-GATE-MCP?
+- [ ] Question about security features
+- [ ] Best practices for deployment
+- [ ] Compliance or audit question
+- [ ] Other (describe below)
 
-### Proof of Concept
+## Question
 
-[Description of how to reproduce]
+Describe your security question or concern.
 
-### Proposed Fix
+## Context
 
-[If you have a fix in mind]
+Any relevant context (your use case, environment, compliance requirements)?
 
-### Timeline
+## Additional Resources
 
-- **Reported**: [Date]
-- **Acknowledged**: [Date]
-- **Fix Released**: [Date]
-- **Public Disclosure**: [Date]
+Links to relevant documentation or standards?
 
 ---
 
-**Questions?** Contact: security@kaiza-mcp.org
+**Reminder**: For actual security vulnerabilities, please report privately to security@atlas-gate-mcp.org
+
+We take security seriously and appreciate responsible disclosure.

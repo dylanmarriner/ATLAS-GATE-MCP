@@ -1,0 +1,242 @@
+version: '3.8'
+
+services:
+  # Load Balancer (Nginx)
+  nginx:
+    image: nginx:alpine
+    container_name: atlas-gate-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - mcp-server-1
+      - mcp-server-2
+    networks:
+      - atlas-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # MCP Server 1 (Antigravity)
+  mcp-server-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atlas-gate-mcp-1
+    environment:
+      - MCP_PORT=3000
+      - MCP_BIND=0.0.0.0
+      - MCP_ROLE=ANTIGRAVITY
+      - AUDIT_BACKEND=postgres
+      - SESSION_BACKEND=redis
+      - DATABASE_URL=postgresql://atlas_user:atlas_password@postgres:5432/atlas_gate
+      - REDIS_URL=redis://redis:6379
+      - WORKSPACE_ROOT=/workspace
+      - NODE_ENV=production
+    volumes:
+      - mcp_workspace:/workspace
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - atlas-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # MCP Server 2 (Windsurf)
+  mcp-server-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atlas-gate-mcp-2
+    environment:
+      - MCP_PORT=3000
+      - MCP_BIND=0.0.0.0
+      - MCP_ROLE=WINDSURF
+      - AUDIT_BACKEND=postgres
+      - SESSION_BACKEND=redis
+      - DATABASE_URL=postgresql://atlas_user:atlas_password@postgres:5432/atlas_gate
+      - REDIS_URL=redis://redis:6379
+      - WORKSPACE_ROOT=/workspace
+      - NODE_ENV=production
+    volumes:
+      - mcp_workspace:/workspace
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - atlas-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis (Session Store & Cache)
+  redis:
+    image: redis:7-alpine
+    container_name: atlas-gate-redis
+    command: redis-server --appendonly yes --requirepass redis_password
+    volumes:
+      - redis_data:/data
+    networks:
+      - atlas-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # PostgreSQL (Audit Log & Plan Storage)
+  postgres:
+    image: postgres:15-alpine
+    container_name: atlas-gate-postgres
+    environment:
+      - POSTGRES_USER=atlas_user
+      - POSTGRES_PASSWORD=atlas_password
+      - POSTGRES_DB=atlas_gate
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    networks:
+      - atlas-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas_user -d atlas_gate"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # PostgreSQL Backup Service
+  pg-backup:
+    image: postgres:15-alpine
+    container_name: atlas-gate-pg-backup
+    environment:
+      - PGPASSWORD=atlas_password
+    volumes:
+      - postgres_backups:/backups
+    networks:
+      - atlas-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: |
+      sh -c '
+        echo "Starting daily backup service..."
+        while true; do
+          backup_file="/backups/atlas_gate_$$(date +\%Y\%m\%d_\%H\%M\%S).sql.gz"
+          pg_dump -h postgres -U atlas_user -d atlas_gate | gzip > $$backup_file
+          echo "Backup completed: $$backup_file"
+          # Keep only last 7 backups
+          ls -t /backups/*.sql.gz | tail -n +8 | xargs rm -f
+          # Sleep 24 hours
+          sleep 86400
+        done
+      '
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "1"
+
+  # Prometheus (Metrics)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: atlas-gate-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    ports:
+      - "9090:9090"
+    networks:
+      - atlas-net
+    depends_on:
+      - mcp-server-1
+      - mcp-server-2
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Grafana (Visualization)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: atlas-gate-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=atlas_admin_password
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+    ports:
+      - "3001:3000"
+    networks:
+      - atlas-net
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+# Networks
+networks:
+  atlas-net:
+    driver: bridge
+
+# Volumes
+volumes:
+  postgres_data:
+  postgres_backups:
+  redis_data:
+  mcp_workspace:
+  prometheus_data:
+  grafana_data:

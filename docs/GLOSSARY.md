@@ -1,400 +1,287 @@
----
-title: "ATLAS-GATE-MCP Glossary for Humans"
-description: "Plain-English definitions of all technical terms used in ATLAS-GATE-MCP"
-version: "2.0.0"
-last_updated: "2026-01-31"
-audience: ["all"]
----
+# GLOSSARY: Terms Explained for Non-Technical Users
 
-# ATLAS-GATE-MCP Glossary for Humans
-
-Plain-English definitions of every technical term you'll encounter. Each term is defined on first use, but you can look them up here anytime.
+This glossary explains technical terms used throughout ATLAS-GATE-MCP documentation in plain, everyday language. **No jargon. No assumptions about technical knowledge.**
 
 ---
 
 ## A
 
-**Antigravity**
-One of two role types in ATLAS-GATE-MCP. An AI agent running in Antigravity mode can create plans and read code, but cannot execute changes. Like a architect who designs buildings but doesn't build them.
+### **AI (Artificial Intelligence)**
+A computer program that can think, learn, and make decisions. Examples: ChatGPT, Claude, Windsurf. Think of it like a very smart assistant that can understand language and solve problems.
 
-**API** (Application Programming Interface)
-A set of rules that lets different software programs talk to each other. Think of it as a phone number you call to ask a service to do something. Example: "Call the write_file API with these parameters."
+### **API (Application Programming Interface)**
+A standardized way for programs to talk to each other. Like a telephone system—the phone company doesn't need to know what you're saying, just how to route the call correctly. ATLAS-GATE-MCP is an API that AI assistants use.
 
-**Approval**
-The action of saying "Yes, this plan looks good. You can execute it." In ATLAS-GATE-MCP, approval happens when the Antigravity role creates a plan and the Windsurf role receives it.
+### **Authorization**
+Permission to do something. Before the AI can write a file, ATLAS-GATE-MCP checks: "Do we have permission?" If yes, it proceeds. If no, it stops.
 
-**Audit Log**
-A permanent record of everything that happened: who did what, when they did it, and what changed. Like a security camera for your code. Every change in ATLAS-GATE-MCP is logged here.
-
-**Authorization**
-Permission. "Do I have permission to do this action?" In ATLAS-GATE-MCP, authorization is enforced by plans—you can only do what the plan allows.
+### **Audit / Audit Trail**
+A complete, detailed record of what happened. Like a security camera recording everything that occurs. **Key feature: You can't erase or hide audit records.** If something goes wrong, auditors can review exactly what the AI did.
 
 ---
 
 ## B
 
-**Bootstrap**
-To start something from scratch. In ATLAS-GATE-MCP, "bootstrapping a plan" means creating the very first plan that will guide all future changes.
+### **Backup**
+A copy of important data or files stored in a safe place. If something breaks, you can restore from backup. Like having a duplicate set of house keys in case you lose the original.
 
-**Boundary Tool** (in context of governance)
-A tool that can read and check things but can't modify them. Like a quality inspector—they look at your work but can't change it.
+### **Baseline**
+The starting point for comparison. "What did the system look like before the AI made changes?" That's the baseline.
 
 ---
 
 ## C
 
-**CLI** / **Command Line Interface**
-Text-based way to tell your computer what to do. You type commands instead of clicking buttons. Example: `npm install`
+### **Compliance / Compliant**
+Following the rules. A company is "compliant" with GDPR if it follows GDPR's rules. ATLAS-GATE-MCP helps organizations be compliant by keeping records and controlling access.
 
-**Client**
-Software that connects to another service. Your MCP client (Claude Desktop, Windsurf) is a "client" that connects to KAIZA MCP "server."
+### **Cryptographic / Cryptography**
+A mathematical way to make sure something hasn't been changed. Like a unique fingerprint on a document—if anyone modifies the document, the fingerprint changes and you know it's been tampered with.
 
-**Compliance**
-Following the rules. In KAIZA, "compliance" means all changes follow the governance model (you have plans, audits, approvals).
-
-**Cryptographic** / **Cryptography**
-Advanced math used to lock and verify data. Like an unbreakable code. Used in KAIZA to create secure signatures on audit logs.
-
-**Cursor**
-The blinking line in your terminal showing where you are (where the next character you type will appear).
+### **Control / Security Control**
+A rule or process that prevents bad things from happening. Example: "No AI can write code without approval"—that's a control. Controls reduce risk.
 
 ---
 
 ## D
 
-**Deprecate** / **Deprecated**
-Mark something as old and no longer recommended. "We're deprecating this feature—it still works, but we have something better. Stop using this in new code." Deprecation usually happens before something is removed entirely.
+### **Database**
+An organized collection of information. Like a filing cabinet where data is stored in a way that's easy to find and update. ATLAS-GATE-MCP can keep audit logs in a database.
 
-**Directory**
-A folder. Contains files or other folders. Example: `/docs/guides/` is a directory.
+### **Deployment**
+Installing and running software in a production environment (the real, live system that people use). Before deployment, you test locally. After deployment, it's live.
 
-**Dual-Role**
-KAIZA's core design: two separate roles with different permissions. Antigravity (planning) and Windsurf (execution) cannot be the same entity—they're separate checks and balances.
+### **Disaster Recovery (DR)**
+The plan for what happens when something goes catastrophically wrong. "If the server catches fire, how do we restore service?" A good DR plan means you never lose critical data.
 
 ---
 
 ## E
 
-**Enforcement**
-Making sure rules are followed. In KAIZA, "enforcement" means the system actually prevents you from doing unauthorized things—not just warns you.
+### **Encryption**
+Scrambling information so only authorized people can read it. Like writing a secret code—without the key, the message looks like gibberish. Even if someone steals the encrypted file, they can't read it.
 
-**Epoch** / **Unix Timestamp**
-A specific moment in time, usually measured as seconds since January 1, 1970. Computers use this for consistent time tracking. KAIZA logs use Unix timestamps so events can be sequenced precisely.
+### **Enterprise / Enterprise-Grade**
+Large organization (like a Fortune 500 company). "Enterprise-grade" means built to handle the demands of large organizations: high security, lots of users, compliance requirements, 24/7 availability.
 
-**Error**
-Something went wrong. The program is telling you what broke and (hopefully) how to fix it.
+---
 
-**Execute** / **Execution**
-Run a command or program. "Execute the plan" means "Run the plan and make the authorized changes."
+## F
+
+### **Firewall**
+A security system that controls what data can enter or leave a network. Like a security guard at a building entrance—they check each person to make sure they're allowed in.
+
+### **Framework**
+A structure or system that provides the foundation for building something. ATLAS-GATE-MCP is a framework for controlling AI assistants.
 
 ---
 
 ## G
 
-**Governance**
-Rules and controls. "Who can do what, and how do we prove it happened?" KAIZA enforces governance—it makes sure the right people approved the right changes in the right way.
+### **Governance**
+The rules, processes, and authority structure for making decisions. "Who approves changes?" "What happens if someone breaks a rule?" Those are governance questions.
 
-**Git**
-Version control system. Tracks changes to code over time. Like "Track Changes" in Microsoft Word, but for code and programmers. Every change is recorded; you can rewind.
+### **GDPR (General Data Protection Regulation)**
+European Union law protecting personal data. If your company handles data of EU residents, you must follow GDPR. Violations can result in massive fines. ATLAS-GATE-MCP helps with GDPR compliance.
 
-**GitHub**
-Website where code is stored and shared (Git + Hub = GitHub). https://github.com/ is where KAIZA MCP's code lives.
+---
 
-**Hash** / **Hashing**
-A math function that turns data into a unique fingerprint. Same data = same hash. Change one character = completely different hash. Used in KAIZA to prove data hasn't been tampered with.
+## H
 
-**Hex** / **Hexadecimal**
-Numbering system using 0–9 and A–F. Easier for computers than decimal (0–9). Example: the plan hash might be `a1b2c3d4e5f6...` (all hex).
+### **Hash / Hashing**
+A mathematical function that converts any data into a unique code (like a fingerprint). Two identical files will always produce the same hash. If even one character changes, the hash changes. This helps detect unauthorized modifications.
+
+### **HIPAA (Health Insurance Portability and Accountability Act)**
+US law protecting health information privacy. If you handle health data, you must follow HIPAA. ATLAS-GATE-MCP can help organizations achieve HIPAA compliance.
 
 ---
 
 ## I
 
-**Immutable**
-Cannot be changed. "An immutable audit log" means once something is logged, it cannot be deleted or edited.
+### **Immutable / Immutability**
+Cannot be changed. An immutable audit log means records can't be edited or deleted—only new records can be added. Like a security camera footage you can't modify.
 
-**Initialize** / **Initialization**
-Set up or start. "Initialize a session" means "Start a work session." In KAIZA, initialization happens with `begin_session`.
+### **ISO 27001**
+International standard for managing information security. Organizations can be "certified" as following ISO 27001. It's a global standard for "we take data security seriously."
 
-**Infrastructure Tool** (in context of governance)
-A tool used for system setup and maintenance, not for changing production code. Like the scaffolding on a construction site—it's part of the project but not the final building.
-
-**Integrity**
-Data hasn't been tampered with. "Verify integrity" means "Make sure nothing was secretly changed." KAIZA uses hash chains to verify integrity.
-
-**Intent**
-Your purpose or reason. "What's your intent for this change?" means "Why are you making this change?" KAIZA requires you to state your intent in plans.
+### **Integration**
+Connecting different systems so they work together. Like connecting your phone to your car—they're separate systems but now integrated to share information.
 
 ---
 
 ## J
 
-**JSON** (JavaScript Object Notation)
-Human-readable format for storing data. Looks like:
-```json
-{
-  "name": "John",
-  "age": 30,
-  "roles": ["admin", "user"]
-}
-```
+### **JSON (JavaScript Object Notation)**
+A standard format for storing and sharing data between systems. Like a universal language computers use to exchange information. Not important to understand the details unless you're a developer.
+
+---
+
+## K
+
+### **Key** (In Context of Cryptography)
+A secret code needed to encrypt or decrypt information. Like a password for a safe. Without the key, encrypted data is useless.
 
 ---
 
 ## L
 
-**Lock** / **Locking**
-Preventing something from being changed. When KAIZA "locks" a session, it means no more changes can happen until certain conditions are met. Like putting a file in read-only mode.
+### **Load Balancing**
+Spreading work across multiple servers so no single server gets overwhelmed. Like having multiple checkout lines at a grocery store instead of one long line.
 
-**LTS** (Long-Term Support)
-Version supported for a long time (usually 2+ years) with bug fixes. KAIZA 1.0.0 is LTS—you can rely on it for 24 months.
+### **Log / Logging**
+Recording what happens. When the AI writes a file, the system logs: "At 3:45 PM, AI wrote file X." Logging is how audit trails are created.
 
 ---
 
 ## M
 
-**Metadata**
-Data about data. Information that describes something else. Example: a file's metadata includes its creation date, size, owner—information about the file itself, not its contents.
+### **MCP (Model Context Protocol)**
+A standard language/format for AI assistants to talk to tools. Think of it like USB—it's a universal standard so different devices can connect to each other. ATLAS-GATE-MCP speaks MCP.
 
-**MCP** (Model Context Protocol)
-Standard way for AI assistants (like Claude) to interact with tools and systems. KAIZA MCP = KAIZA using the MCP standard. This lets KAIZA work with multiple AI clients.
+### **Metadata**
+Information about information. Example: A file has content (the actual text) and metadata (when it was created, who created it, what size it is).
 
-**Mermaid**
-A tool for creating diagrams using text-based syntax. KAIZA diagrams are written in Mermaid format.
-
-**Metrics**
-Measurements. "What are your success metrics?" means "How will we know if this worked?"
-
-**Migration**
-Moving from one system to another. "Migrate from v1 to v2" means "Switch to the new version and move your data."
-
-**Module**
-A piece of code that does one job. Like a module in a building (electrical, plumbing)—each module handles one function.
+### **Monitoring**
+Continuously watching a system to make sure it's working correctly. Like a hospital monitoring a patient's vital signs.
 
 ---
 
 ## N
 
-**Node.js**
-Runtime that lets JavaScript (a programming language) run on computers, outside web browsers. KAIZA is written in Node.js.
-
-**npm** (Node Package Manager)
-Tool to download and manage code libraries. Like an app store for programmers. Commands like `npm install` download packages.
+### **Non-repudiation**
+The inability to deny something happened. If there's an audit trail proving you did something, you can't claim you didn't—that's non-repudiation. Important for accountability.
 
 ---
 
 ## O
 
-**OAuth**
-Secure way to give an app permission to access your account without sharing your password. "Login with Google" uses OAuth.
+### **OAuth / OAuth2**
+A standard way for services to verify your identity without sharing passwords. When you "log in with Google," that's often OAuth. A secure, standardized approach to authentication.
 
-**Operation**
-An action or change. "What operation did you perform?" = "What did you do?" In KAIZA, operations are logged (write_file, read_file, etc.).
-
-**Operability**
-Ease of running and maintaining something. "How operable is this system?" = "How hard is it to keep this running?"
-
-**Ownership**
-Someone is responsible for maintaining something. "Who owns this code?" = "Who is responsible for fixing bugs in this code?"
+### **Open-Source**
+Software where the source code is publicly available. Anyone can view it, modify it, and redistribute it. ATLAS-GATE-MCP is open-source.
 
 ---
 
 ## P
 
-**Package**
-A bundle of code ready to install. Like a package from Amazon. `npm install {package-name}` downloads a package.
+### **Parameter**
+An input to a function or system. Like a recipe ingredient. "Create a file with these parameters: filename=report.txt, content='Hello'"
 
-**Path**
-Address of a file or folder. Like a mailing address. Examples:
-- `/Users/yourname/ATLAS-GATE-MCP-server/` (macOS)
-- `C:\Users\yourname\ATLAS-GATE-MCP-server` (Windows)
-- `/home/yourname/ATLAS-GATE-MCP-server` (Linux)
+### **Plan** (In ATLAS-GATE-MCP context)
+A document that authorizes the AI to do certain work. Before the AI modifies production code, there should be a "plan" approved by someone in authority saying "Yes, this work is approved."
 
-**Permission**
-Can you do this action? Read (look at), write (change), execute (run)?
+### **Policy**
+A set of rules about how things should be done. "All code changes require approval"—that's a policy. ATLAS-GATE-MCP enforces policies.
 
-**Plan** / **Plan Hash**
-In KAIZA MCP, a detailed instruction for what changes should happen. Plans are identified by a hash (unique fingerprint). Example: A plan to "Add login feature" gets a hash like `a1b2c3d4...` that proves which exact plan you approved.
-
-**Policy**
-Rules about how things work. "Our policy is that all changes require approval" means "We require approval for all changes."
-
-**Prompt**
-Text you send to Claude (or another AI) asking it to do something. Your words asking the AI for help.
-
-**Provisioning**
-Setting up resources or systems. "Provisioning a server" means creating and configuring a server.
+### **Protocol**
+A standard way of doing something. Like "the protocol for landing a plane" or "the protocol for responding to security breaches." In computing, a protocol is how systems communicate.
 
 ---
 
 ## R
 
-**RBAC** (Role-Based Access Control)
-System where people have roles (e.g., "Admin", "User") and roles have permissions. Admin can do everything; User can do less. KAIZA uses RBAC with roles like Antigravity and Windsurf.
+### **RBAC (Role-Based Access Control)**
+A system where permissions are based on your role. A "Manager" role might have different permissions than a "Developer" role. ATLAS-GATE-MCP uses roles to control what AI assistants can do.
 
-**Replay** / **Forensic Replay**
-Playing back events in order to see what happened. KAIZA can replay execution from the audit log: "Show me exactly what happened in step 1, 2, 3..."
+### **Remediation**
+Fixing a problem. If a security issue is discovered, the fix is "remediation."
 
-**Repo** / **Repository**
-A folder containing a project (usually code). On GitHub, a repo is like a folder shared online.
+### **Repository / Repo**
+A centralized storage location for code and files. This GitHub project is a repository—it stores all the code and documentation in one place.
 
-**Resource**
-Something that consumes computer power: memory, CPU, disk space, network. "This operation uses a lot of resources" = "This operation needs a powerful computer."
-
-**Role**
-A job title with specific permissions. Examples: Admin, User, Editor. KAIZA has roles like Antigravity (planning) and Windsurf (execution).
-
-**Rollback**
-Undoing changes. "If the deployment fails, we can rollback to the previous version" means "We can undo the changes and go back to what we had before."
+### **Resilience**
+The ability to bounce back from failures. A resilient system continues working even when something breaks.
 
 ---
 
 ## S
 
-**Schema**
-Structure or blueprint. "This data follows this schema" = "The data is shaped like I expect." Like a template.
+### **Sandbox**
+A restricted environment where code runs safely without affecting the main system. Like a sandbox at the beach—things that happen inside don't affect the world outside. ATLAS-GATE-MCP runs in a sandbox for security.
 
-**Scope**
-The boundaries of something. "What's the scope of this plan?" = "What will this plan do and what will it NOT do?"
+### **Schema**
+A structure or blueprint. "What fields does this data have?" That's defined by the schema. Like a blueprint for a house.
 
-**SDKs** (Software Development Kits)
-Tools and code libraries for building software. The MCP SDK is code that helps build MCP clients and servers.
+### **SOC 2 (Service Organization Control 2)**
+An audit framework proving a company has good security controls. Companies get "SOC 2 certified" to prove to customers they take security seriously. ATLAS-GATE-MCP is designed to help organizations achieve SOC 2 compliance.
 
-**Security**
-Protection against bad actors. In KAIZA, security includes encryption, authorization, audit trails.
-
-**Self-Audit** / **Self-Testing**
-Testing your own code. KAIZA runs self-audits to make sure it's following its own rules.
-
-**Session**
-A work period. When you start working until you stop. In KAIZA, a session begins with `begin_session` and continues until you close your client.
-
-**SHA** / **SHA256**
-Specific type of hash function (very secure, standardized). KAIZA uses SHA256 to create plan hashes and audit log signatures.
-
-**Signature** / **Signed**
-Cryptographic proof that something is authentic. "This document is signed" = "I promise this is real and hasn't been edited."
-
-**SLA** (Service Level Agreement)
-A promise about availability. "99.99% SLA" means "We promise the service is available 99.99% of the time."
-
-**SOC 2**
-Security standard for companies handling customer data. "SOC 2 compliance" means "We've been audited and meet security standards."
-
-**Source** (in diagram context)
-The editable, human-readable file. The "source" diagram is the `.mmd` file you edit; the "rendered" diagram is the `.svg` output for viewing.
-
-**Stack**
-Technology layers used in a system. "Tech stack: Node.js, Express, MongoDB" = "We use Node.js for runtime, Express for web server, MongoDB for database."
-
-**Stakeholder**
-Someone with interest in a decision. "Who are the stakeholders?" = "Who will be affected by this decision?"
-
-**State**
-Current condition. "The state of the system is running" = "The system is currently running."
-
-**Supersede** / **Superseded**
-Replace with something newer. "This API is superseded by API v2" = "Use API v2 instead; the old API is outdated."
-
-**SVG** (Scalable Vector Graphics)
-Image format for diagrams and logos. Unlike PNG/JPG (pixels), SVG is math-based so it scales to any size without getting blurry.
+### **Session**
+A period of interaction with a system. Like a phone call—it starts, stuff happens, then it ends. Each AI-ATLAS-GATE interaction is one session with its own context and permissions.
 
 ---
 
 ## T
 
-**TAM** (Total Addressable Market)
-Total market size. "What's the TAM for this product?" = "How many customers could possibly use this?"
+### **Tamper-proof / Tamper-evident**
+Can't be secretly changed, or any changes are immediately obvious. Like a security seal on a package—you can tell if someone opened it. An immutable audit log is tamper-proof.
 
-**Tamper-Proof**
-Cannot be secretly changed without detection. KAIZA's audit log is tamper-proof because changes would break the hash chain.
+### **Threat Model**
+Identifying and planning for bad things that could happen. "What if an attacker tries to modify the audit log?" The answer to that is part of the threat model.
 
-**Terminal**
-Command-line interface. The program where you type commands (like Command Prompt on Windows or Terminal on macOS).
+### **Token** (In Authentication)
+A credential proving you're allowed to do something. Like a ticket to an event—it proves you're authorized. Some AI systems use tokens to authenticate.
 
-**Threat Model**
-Analysis of "What bad things could happen and how can we prevent them?" Security teams create threat models.
-
-**Timestamp**
-Date and time something happened. Example: `2026-01-20T15:30:00Z` (ISO format).
-
-**Traceability**
-Ability to trace something. "Can you trace this change back to the original request?" KAIZA provides traceability through audit logs.
-
-**Tool**
-In KAIZA MCP context, a callable function. Examples: write_file, read_file, generate_attestation_bundle are tools.
-
-**Trust** / **Zero-Trust**
-Zero-trust means: don't trust anything automatically. Verify everything. KAIZA is zero-trust: every operation requires authorization.
-
----
-
-## U
-
-**URI** / **URL**
-Address on the internet. Examples:
-- `https://github.com/dylanmarriner/ATLAS-GATE-MCP-server`
-- `file:///docs/GLOSSARY.md`
+### **Traceability**
+The ability to trace what happened and why. Complete audit logs provide traceability—you can follow the chain: who did what, when, and why.
 
 ---
 
 ## V
 
-**Validation**
-Check that something is correct. "Validate this data" = "Check that it's in the right format."
+### **Validation**
+Checking that something is correct and safe before proceeding. Before the AI executes code, ATLAS-GATE-MCP validates it: "Is this safe? Is this allowed?"
 
-**Verify** / **Verification**
-Prove something is true. "Verify your email" = "Prove you own this email." KAIZA verifies attestation bundles to prove they're authentic.
-
-**Versioning**
-Tracking different versions. v1.0, v1.1, v2.0, etc. KAIZA uses semantic versioning: major.minor.patch.
-
-**Vulnerability**
-A weakness that could be exploited. "This code has a SQL injection vulnerability" = "Someone could exploit this to attack the system."
+### **Vulnerability**
+A weakness in security that could be exploited by an attacker. Like an unlocked window in a house. Security teams actively look for and fix vulnerabilities.
 
 ---
 
 ## W
 
-**Windsurf**
-One of two role types in KAIZA MCP (also an MCP client application). An AI agent running in Windsurf mode can execute approved plans and make changes. Like a contractor who builds according to an architect's blueprints.
+### **Whitelist / Blacklist**
+A whitelist is a list of allowed things (allow these and reject everything else). A blacklist is a list of forbidden things (reject these and allow everything else). ATLAS-GATE-MCP might whitelist certain operations.
 
-**Workflow**
-A series of steps to accomplish something. "Our deployment workflow: test → review → approve → deploy"
-
-**Workspace**
-Your project folder. Everything for one project lives here. The workspace root is the top-level folder.
-
----
-
-## X
-
-(No terms starting with X in KAIZA MCP glossary)
-
----
-
-## Y
-
-(No terms starting with Y in KAIZA MCP glossary)
+### **Workflow**
+A series of steps to accomplish a task. "The approval workflow is: Developer requests → Manager approves → System executes."
 
 ---
 
 ## Z
 
-**Zero-Trust**
-Security philosophy: assume nothing is trustworthy. Verify everything. Don't give implicit permission—require explicit authorization for every action.
+### **Zero-Trust**
+A security philosophy that assumes nothing is trustworthy by default. Every request must be verified. Don't trust that the AI is safe just because it's an AI—verify every action. ATLAS-GATE-MCP uses zero-trust principles.
 
 ---
 
-## Related Documents
+## Common Acronyms
 
-- [Absolute Beginner's Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md) — Definitions are used throughout
-- [DOCUMENTATION_CHANGELOG.md](./DOCUMENTATION_CHANGELOG.md) — Explains versioning terms
-- [SECURITY.md](../SECURITY.md) — Security-specific terms
-- [adr/STATUS_TAXONOMY.md](../adr/STATUS_TAXONOMY.md) — ADR-specific terms
+| Acronym | Full Name | Simple Explanation |
+|---------|-----------|-------------------|
+| **AI** | Artificial Intelligence | Smart computer programs |
+| **API** | Application Programming Interface | How programs talk to each other |
+| **GDPR** | General Data Protection Regulation | EU privacy law |
+| **HIPAA** | Health Insurance Portability Act | US health privacy law |
+| **ISO 27001** | Information Security Management | International security standard |
+| **MCP** | Model Context Protocol | Language AI tools use |
+| **OAuth** | Open Authorization | Secure login standard |
+| **RBAC** | Role-Based Access Control | Permission system based on roles |
+| **SOC 2** | Service Organization Control 2 | Security audit certification |
+| **TLS/SSL** | Transport Layer Security | Encrypts internet connections |
 
 ---
 
-**Document Owner:** KAIZA MCP Documentation Team  
-**Last Updated:** 2026-01-20  
-**Version:** 1.0.0
+## When You See Jargon
+
+If you encounter a term not in this glossary:
+
+1. **Search this glossary** (Ctrl+F or Cmd+F)
+2. **Check [START_HERE.md](../START_HERE.md)** for basic concepts
+3. **Look in the relevant documentation** (likely explained there)
+4. **Ask in [Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP/discussions)** — we're happy to explain
+
+---
+
+**Version**: 2.0.0  
+**Last Updated**: February 2026  
+**Audience**: Non-technical readers, decision-makers, business stakeholders

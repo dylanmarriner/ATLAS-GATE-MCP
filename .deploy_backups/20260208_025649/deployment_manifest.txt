@@ -1,0 +1,25 @@
+ATLAS-GATE-MCP Deployment Manifest
+Generated: $(date)
+Project Root: /home/linnyux/Documents/ATLAS-GATE-MCP
+
+Windsurf Server:
+  Config: /home/linnyux/.codeium/windsurf/mcp_config.json
+  Entrypoint: /home/linnyux/Documents/ATLAS-GATE-MCP/bin/ATLAS-GATE-MCP-windsurf.js
+  Mode: Mutation/Execution with MCP-Only Sandbox
+  Status: DEPLOYED
+  
+Antigravity Server:
+  Config: /home/linnyux/.gemini/antigravity/mcp_config.json
+  Entrypoint: /home/linnyux/Documents/ATLAS-GATE-MCP/bin/ATLAS-GATE-MCP-antigravity.js
+  Mode: Read-Only with MCP-Only Sandbox
+  Status: DEPLOYED
+
+Backup Location: (backup files stored in .deploy_backups/)
+
+Deployment Status: SUCCESS
+
+Next Steps:
+1. Restart Windsurf IDE to load the new configuration
+2. Restart Gemini/Antigravity to load the new configuration
+3. Verify MCP servers are connected in IDE settings
+4. Check audit logs at: /home/linnyux/Documents/ATLAS-GATE-MCP/audit-log.jsonl

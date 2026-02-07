@@ -114,7 +114,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 - ✅ Session management: `session=045033b8-9a16-4a05-94b8-77a4524f2838`
 - ✅ Tool manifestation: "manifesting execution tools"
 - ✅ Sandbox lockdown: Process exit attempts blocked
-- ✅ MCP server: `kaiza-mcp-windsurf running`
+- ✅ MCP server: `atlas-gate-mcp-windsurf running`
 
 #### **Antigravity Role Contract**
 **Status**: ✅ **PASS**
@@ -123,7 +123,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 - ✅ Session management: `session=f1b440fe-9adb-4bbd-8286-c1e4e596cb93`
 - ✅ Tool manifestation: "manifesting planning tools"
 - ✅ Read-only restrictions enforced
-- ✅ MCP server: `kaiza-mcp-antigravity running`
+- ✅ MCP server: `atlas-gate-mcp-antigravity running`
 
 ---
 

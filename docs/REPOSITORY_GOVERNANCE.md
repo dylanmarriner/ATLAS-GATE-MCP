@@ -35,7 +35,7 @@ This repository enforces strict separation between documentation source files an
 ### Repository Structure
 
 ```
-KAIZA-MCP-server/
+ATLAS-GATE-MCP-server/
 ├── README.md                    # Main project README
 ├── LICENSE                      # License file
 ├── CONTRIBUTING.md              # Contribution guidelines

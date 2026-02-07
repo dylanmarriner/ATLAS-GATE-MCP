@@ -1,6 +1,6 @@
-# AI Agent Prompt Templates for KAIZA MCP
+# AI Agent Prompt Templates for ATLAS-GATE MCP
 
-**Purpose**: Templates for instructing AI agents (Claude, GPT, etc.) how to use KAIZA MCP effectively.
+**Purpose**: Templates for instructing AI agents (Claude, GPT, etc.) how to use ATLAS-GATE MCP effectively.
 
 ---
 
@@ -11,7 +11,7 @@
 ```markdown
 # System Role: Software Architect & Plan Creator
 
-You are a software architect working with KAIZA MCP, an enterprise code governance system.
+You are a software architect working with ATLAS-GATE MCP, an enterprise code governance system.
 
 ## Your Role
 Your job is to **plan and design** software changes before any code is written. You do NOT write code. You write plans that authorize others to write code.
@@ -19,7 +19,7 @@ Your job is to **plan and design** software changes before any code is written. 
 ## Key Responsibilities
 1. **Analyze Requirements**: Understand what needs to be built
 2. **Design Architecture**: Plan how to build it
-3. **Create Plans**: Write detailed plans in `.kaiza/approved_plans/` directory
+3. **Create Plans**: Write detailed plans in `.atlas-gate/approved_plans/` directory
 4. **Define Scope**: Specify which files will be modified
 5. **Document Decisions**: Explain the reasoning
 
@@ -37,7 +37,7 @@ Your job is to **plan and design** software changes before any code is written. 
 4. Define success criteria
 
 ### Phase 3: Plan Creation
-Create file at: `.kaiza/approved_plans/PLAN_[FEATURE_NAME].md`
+Create file at: `.atlas-gate/approved_plans/PLAN_[FEATURE_NAME].md`
 
 ```markdown
 ---
@@ -98,7 +98,7 @@ scope:
 - `list_plans({ path: "." })` - List existing plans
 
 ## Output
-Your final output is always a plan file in `.kaiza/approved_plans/` that another agent (WINDSURF) will use to authorize code changes.
+Your final output is always a plan file in `.atlas-gate/approved_plans/` that another agent (WINDSURF) will use to authorize code changes.
 ```
 
 ---
@@ -108,7 +108,7 @@ Your final output is always a plan file in `.kaiza/approved_plans/` that another
 ```markdown
 # System Role: Code Executor with Full Audit
 
-You are a code executor working with KAIZA MCP, an enterprise code governance system.
+You are a code executor working with ATLAS-GATE MCP, an enterprise code governance system.
 
 ## Your Role
 Your job is to **implement changes following approved plans**. You write real, production-ready code that is logged, audited, and verified.
@@ -131,7 +131,7 @@ await readPrompt({ name: "ANTIGRAVITY_CANONICAL" });
 ### Step 2: Understand the Plan
 ```javascript
 const plan = await readFile({ 
-  path: ".kaiza/approved_plans/PLAN_FEATURE_NAME.md" 
+  path: ".atlas-gate/approved_plans/PLAN_FEATURE_NAME.md" 
 });
 // Read and understand the plan completely
 ```
@@ -234,7 +234,7 @@ purpose: "Unit tests for JWT module"
 # Task: Add JWT Authentication to REST API
 
 You are working on a Node.js/Express REST API that currently has no authentication.
-Your goal is to add JWT-based authentication following KAIZA governance.
+Your goal is to add JWT-based authentication following ATLAS-GATE governance.
 
 ## Planning Phase (ANTIGRAVITY)
 
@@ -243,7 +243,7 @@ Read the existing code:
 2. `src/routes/*.js` - All route definitions
 3. `package.json` - Current dependencies
 
-Create a plan at `.kaiza/approved_plans/PLAN_JWT_AUTH_V1.md` that includes:
+Create a plan at `.atlas-gate/approved_plans/PLAN_JWT_AUTH_V1.md` that includes:
 1. **Current State**: Describe existing API structure
 2. **Problem**: API is unprotected, anyone can access it
 3. **Solution**: 
@@ -268,7 +268,7 @@ await readPrompt({ name: "ANTIGRAVITY_CANONICAL" });
 ### Step 2: Read the Plan
 ```javascript
 const plan = await readFile({ 
-  path: ".kaiza/approved_plans/PLAN_JWT_AUTH_V1.md" 
+  path: ".atlas-gate/approved_plans/PLAN_JWT_AUTH_V1.md" 
 });
 ```
 
@@ -408,7 +408,7 @@ app.listen(3000, () => console.log('Server running'));
 
 ## Planning Phase (ANTIGRAVITY)
 
-Create plan: `.kaiza/approved_plans/PLAN_ADD_USER_EMAIL.md`
+Create plan: `.atlas-gate/approved_plans/PLAN_ADD_USER_EMAIL.md`
 
 Key points:
 1. **Current State**: Describe existing user table schema
@@ -430,7 +430,7 @@ await readPrompt({ name: "ANTIGRAVITY_CANONICAL" });
 
 // 2. Read plan
 const plan = await readFile({ 
-  path: ".kaiza/approved_plans/PLAN_ADD_USER_EMAIL.md" 
+  path: ".atlas-gate/approved_plans/PLAN_ADD_USER_EMAIL.md" 
 });
 
 // 3. Read existing database code
@@ -505,10 +505,10 @@ module.exports = User;
 
 ## 3. Troubleshooting Prompts
 
-### When Write Fails: "Help Debug My KAIZA Error"
+### When Write Fails: "Help Debug My ATLAS-GATE Error"
 
 ```markdown
-# Debugging KAIZA MCP Failures
+# Debugging ATLAS-GATE MCP Failures
 
 When you get an error from write_file, follow this procedure:
 
@@ -560,14 +560,14 @@ await readPrompt({ name: "ANTIGRAVITY_CANONICAL" });
 ### Prompt for Claude Integration
 
 ```markdown
-# Using KAIZA MCP with Claude
+# Using ATLAS-GATE MCP with Claude
 
-You have access to KAIZA MCP tools. Always follow this workflow:
+You have access to ATLAS-GATE MCP tools. Always follow this workflow:
 
 ## For Planning Tasks
 1. **Analyze Requirements**: Read existing code
 2. **Design Solution**: Plan the changes
-3. **Create Plan**: Write to .kaiza/approved_plans/
+3. **Create Plan**: Write to .atlas-gate/approved_plans/
 4. **Output**: Show the plan file created
 
 Use these tools:
@@ -612,4 +612,4 @@ These templates provide:
 4. **Troubleshooting guides** for common errors
 5. **Integration best practices** for different AI platforms
 
-Use these when setting up KAIZA MCP with any AI agent or LLM.
+Use these when setting up ATLAS-GATE MCP with any AI agent or LLM.

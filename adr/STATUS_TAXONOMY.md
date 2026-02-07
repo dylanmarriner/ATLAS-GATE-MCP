@@ -7,7 +7,7 @@ last_updated: "2026-01-20"
 
 # ADR Status Taxonomy
 
-Standardized status definitions for Architecture Decision Records (ADRs) in KAIZA MCP.
+Standardized status definitions for Architecture Decision Records (ADRs) in ATLAS-GATE MCP.
 
 ---
 
@@ -296,12 +296,12 @@ grep 'status: "Proposed"' adr/*.md
 
 ## Governance
 
-**Owner:** KAIZA MCP Architecture Team  
+**Owner:** ATLAS-GATE MCP Architecture Team  
 **Review Schedule:** Quarterly status review  
 **Updates Required:** When new status patterns emerge  
 
 ---
 
-**Document Owner:** KAIZA MCP Architecture Team  
+**Document Owner:** ATLAS-GATE MCP Architecture Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

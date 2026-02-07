@@ -1,10 +1,10 @@
 <!--
-KAIZA_PLAN_HASH: d1c7db0646ebc8481e2b9fe824afe9aab4fb7c62fcdebaab0cae6fdfe2cd9ee1
+ATLAS-GATE_PLAN_HASH: d1c7db0646ebc8481e2b9fe824afe9aab4fb7c62fcdebaab0cae6fdfe2cd9ee1
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
 
-# KAIZA Level 5 Execution Master Plan
+# ATLAS-GATE Level 5 Execution Master Plan
 
 **Plan Hash**: d1c7db0646ebc8481e2b9fe824afe9aab4fb7c62fcdebaab0cae6fdfe2cd9ee1
 **Role Authority**: ANTIGRAVITY (Planning) / WINDSURF (Execution)
@@ -14,7 +14,7 @@ STATUS: APPROVED
 
 ## Executive Objective
 
-To transform the KAIZA MCP Server from a Level 3 (Managed) system to a Level 5 (Optimized) Enterprise authority. This plan enforces the multi-year vision defined in `LEVEL_5_ROADMAP.md` through strict, gated phases.
+To transform the ATLAS-GATE MCP Server from a Level 3 (Managed) system to a Level 5 (Optimized) Enterprise authority. This plan enforces the multi-year vision defined in `LEVEL_5_ROADMAP.md` through strict, gated phases.
 
 ---
 

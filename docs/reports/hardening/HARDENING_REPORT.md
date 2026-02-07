@@ -277,7 +277,7 @@ await writeFileHandler({
 1. Backup current `server.js` and tool files
 2. Deploy modified files
 3. Run MCP server: `node server.js`
-4. Verify in logs: `[MCP] kaiza-mcp running | session=...`
+4. Verify in logs: `[MCP] atlas-gate-mcp running | session=...`
 5. Test each objective
 
 ---

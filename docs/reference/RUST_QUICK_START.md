@@ -2,7 +2,7 @@
 
 ## What's New?
 
-KAIZA MCP now enforces mandatory Rust safety gates:
+ATLAS-GATE MCP now enforces mandatory Rust safety gates:
 
 1. **Pre-Write Static Gate** - Blocks forbidden patterns before code is written
 2. **Post-Write Verification** - Verifies cargo fmt, clippy, build, and compiler flags
@@ -192,7 +192,7 @@ A: Test files can use `cfg(test)`. Other patterns still forbidden (tests should 
 A: Include it in your plan with clear justification. All exceptions are audited.
 
 **Q: Is this permanent?**  
-A: Yes. These gates are mandatory for Rust projects in KAIZA MCP.
+A: Yes. These gates are mandatory for Rust projects in ATLAS-GATE MCP.
 
 ---
 

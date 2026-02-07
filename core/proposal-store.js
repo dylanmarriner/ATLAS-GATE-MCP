@@ -1,7 +1,7 @@
 /**
  * ROLE: EXECUTABLE
  * PURPOSE: Proposal persistence and retrieval (read-only queries, write-only for new proposals)
- * AUTHORITY: KAIZA MCP REMEDIATION PROPOSAL STORE
+ * AUTHORITY: ATLAS-GATE MCP REMEDIATION PROPOSAL STORE
  *
  * Manages proposal lifecycle:
  * - Write new proposals to docs/proposals/PROPOSAL_*.md
@@ -9,7 +9,7 @@
  * - Update approval status (human gate only)
  * 
  * INVARIANT: Proposals are immutable once created (only status transitions allowed)
- * INVARIANT: All proposal metadata tracked in .kaiza/proposals-index.jsonl
+ * INVARIANT: All proposal metadata tracked in .atlas-gate/proposals-index.jsonl
  */
 
 import fs from "fs";
@@ -23,14 +23,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  * Proposal store directory relative to workspace
  */
 const PROPOSALS_DIR = "docs/proposals";
-const PROPOSALS_INDEX = ".kaiza/proposals-index.jsonl";
+const PROPOSALS_INDEX = ".atlas-gate/proposals-index.jsonl";
 
 /**
  * Write a new proposal to disk
  * 
  * Creates:
  * - docs/proposals/PROPOSAL_<proposal_id>.md (human-readable)
- * - Appends entry to .kaiza/proposals-index.jsonl
+ * - Appends entry to .atlas-gate/proposals-index.jsonl
  * 
  * Returns: { file_path, index_entry }
  * Throws: PROPOSAL_WRITE_FAILED if I/O error
@@ -39,10 +39,10 @@ export function writeProposal(workspace_root, proposal) {
   try {
     // Ensure proposals directory
     const proposalsDir = path.join(workspace_root, PROPOSALS_DIR);
-    const kaizaDir = path.join(workspace_root, ".kaiza");
+    const atlas-gateDir = path.join(workspace_root, ".atlas-gate");
 
     fs.mkdirSync(proposalsDir, { recursive: true });
-    fs.mkdirSync(kaizaDir, { recursive: true });
+    fs.mkdirSync(atlas-gateDir, { recursive: true });
 
     // Write proposal markdown file
     const proposalFile = path.join(proposalsDir, `PROPOSAL_${proposal.proposal_id}.md`);
@@ -59,7 +59,7 @@ export function writeProposal(workspace_root, proposal) {
       file_path: proposalFile,
     };
 
-    const indexPath = path.join(kaizaDir, "proposals-index.jsonl");
+    const indexPath = path.join(atlas-gateDir, "proposals-index.jsonl");
     fs.appendFileSync(indexPath, JSON.stringify(indexEntry) + "\n", "utf8");
 
     return { file_path: proposalFile, index_entry: indexEntry };
@@ -184,8 +184,8 @@ export function updateProposalStatus(
       reason,
     };
 
-    const kaizaDir = path.join(workspace_root, ".kaiza");
-    const auditPath = path.join(kaizaDir, "proposal-approvals.jsonl");
+    const atlas-gateDir = path.join(workspace_root, ".atlas-gate");
+    const auditPath = path.join(atlas-gateDir, "proposal-approvals.jsonl");
     fs.appendFileSync(auditPath, JSON.stringify(auditEntry) + "\n", "utf8");
 
     return proposal;

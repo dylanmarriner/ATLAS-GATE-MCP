@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-The KAIZA MCP Server has been successfully hardened with:
+The ATLAS-GATE MCP Server has been successfully hardened with:
 
 1. ✅ **Canonical Path Resolver** - Single source of truth for all filesystem paths
 2. ✅ **Comprehensive Invariant System** - 40+ non-negotiable correctness assertions
@@ -355,7 +355,7 @@ plan-enforcer.js
 
 ## Guarantees
 
-The KAIZA MCP Server now **guarantees**:
+The ATLAS-GATE MCP Server now **guarantees**:
 
 ✅ All filesystem paths are absolute, normalized, and within repo  
 ✅ Plans are written to exactly one canonical location  
@@ -371,7 +371,7 @@ The KAIZA MCP Server now **guarantees**:
 
 ## Conclusion
 
-The KAIZA MCP Server hardening is **complete, tested, and production-ready**.
+The ATLAS-GATE MCP Server hardening is **complete, tested, and production-ready**.
 
 The system is now provably correct by construction. Bugs that would have been silent data corruption are now prevented structurally. The implementation achieves the stated goal:
 

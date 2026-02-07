@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * KAIZA MCP SERVER - Antigravity (Read-Only/Analysis)
+ * ATLAS-GATE MCP SERVER - Antigravity (Read-Only/Analysis)
  * 
  * SECURITY: Antigravity runs in MCP-ONLY SANDBOX MODE
  * - Cannot access filesystem directly (only via MCP tools)

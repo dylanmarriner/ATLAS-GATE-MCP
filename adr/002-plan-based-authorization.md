@@ -152,6 +152,6 @@ Each plan is a markdown document containing:
 ---
 
 **Decision Date**: 2026-01-19  
-**Decision Maker**: KAIZA MCP Architecture Team  
+**Decision Maker**: ATLAS-GATE MCP Architecture Team  
 **Review Date**: 2026-04-19  
 **Status**: Accepted and Implemented

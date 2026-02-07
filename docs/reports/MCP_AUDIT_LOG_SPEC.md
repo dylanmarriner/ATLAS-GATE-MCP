@@ -1,7 +1,7 @@
 # MCP AUDIT LOG SPECIFICATION
 
 **Document**: PROMPT 03 Implementation  
-**Purpose**: Append-only, hash-chained, tamper-evident audit logging for KAIZA MCP server  
+**Purpose**: Append-only, hash-chained, tamper-evident audit logging for ATLAS-GATE MCP server  
 **Authority**: PROMPT 03 - MCP-Enforced Execution Boundary Audit Logging  
 **Last Updated**: 2026-01-19
 
@@ -9,7 +9,7 @@
 
 ## 1. OVERVIEW
 
-The KAIZA MCP audit system provides non-repudiable, forensically-auditable logging of all tool invocations and system events. The system is designed with fail-closed semantics: **if the audit log cannot be written, the tool call must be refused**.
+The ATLAS-GATE MCP audit system provides non-repudiable, forensically-auditable logging of all tool invocations and system events. The system is designed with fail-closed semantics: **if the audit log cannot be written, the tool call must be refused**.
 
 ### Core Guarantees
 
@@ -29,14 +29,14 @@ The KAIZA MCP audit system provides non-repudiable, forensically-auditable loggi
 
 ```
 [workspace_root]/
-  .kaiza/
+  .atlas-gate/
     audit.log         ← JSON Lines audit entries (append-only)
     audit.lock/       ← Directory used for file-based locking
 ```
 
 **Rules**:
-- The audit directory `.kaiza/` is created automatically on first `appendAuditEntry()` call
-- The audit log is created in `.kaiza/` when the first entry is written
+- The audit directory `.atlas-gate/` is created automatically on first `appendAuditEntry()` call
+- The audit log is created in `.atlas-gate/` when the first entry is written
 - Both paths are bound to the locked `workspace_root` from `begin_session`
 - No audit writes occur before `begin_session` (events are buffered instead)
 
@@ -276,7 +276,7 @@ Because multiple tools may run concurrently:
 4. **Write atomically** with single `appendFileSync()`
 5. **Release lock** (always, via finally block)
 
-**Lock Mechanism**: File-based locking using `.kaiza/audit.lock/` directory + exclusive lock files.
+**Lock Mechanism**: File-based locking using `.atlas-gate/audit.lock/` directory + exclusive lock files.
 
 ---
 
@@ -316,10 +316,10 @@ For each line in the audit log:
 
 **To manually verify audit log integrity:**
 
-1. Export `.kaiza/audit.log` to readable format:
+1. Export `.atlas-gate/audit.log` to readable format:
    ```bash
    # Pretty-print audit log (one entry per line)
-   cat .kaiza/audit.log | jq -R 'fromjson'
+   cat .atlas-gate/audit.log | jq -R 'fromjson'
    ```
 
 2. Check for suspicious patterns:
@@ -558,7 +558,7 @@ Planning operation (ANTIGRAVITY only):
 ## 14. REFERENCES
 
 - **PROMPT 03**: MCP-Enforced Execution Boundary Audit Logging
-- **AGENTS.md**: KAIZA MCP Server build/test commands
+- **AGENTS.md**: ATLAS-GATE MCP Server build/test commands
 - **core/audit-system.js**: Implementation
 - **test-audit-system.js**: Test suite
 

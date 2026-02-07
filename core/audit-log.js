@@ -11,10 +11,10 @@ function getAuditLogPath() {
 
 /**
  * Get the path for the audit log lock directory.
- * Stored in .kaiza/audit.lock relative to repo root.
+ * Stored in .atlas-gate/audit.lock relative to repo root.
  */
 function getAuditLockPath() {
-  return path.join(getRepoRoot(), ".kaiza", "audit.lock");
+  return path.join(getRepoRoot(), ".atlas-gate", "audit.lock");
 }
 
 function sha256(input) {

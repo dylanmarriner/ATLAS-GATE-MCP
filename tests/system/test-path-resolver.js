@@ -91,8 +91,8 @@ test("Get cached repository root", () => {
   assert(repoRoot, "Repo root should be set");
   assert(fs.existsSync(repoRoot), "Repo root should exist");
   assert(
-    repoRoot.includes("KAIZA-MCP-server"),
-    "Repo root should contain KAIZA-MCP-server"
+    repoRoot.includes("ATLAS-GATE-MCP-server"),
+    "Repo root should contain ATLAS-GATE-MCP-server"
   );
 });
 
@@ -125,10 +125,10 @@ test("Resolve audit log path to repo root", () => {
 });
 
 // TEST 6: Governance path
-test("Resolve governance path to .kaiza/governance.json", () => {
+test("Resolve governance path to .atlas-gate/governance.json", () => {
   const govPath = getGovernancePath();
   assert(govPath, "Governance path should be resolved");
-  assert(govPath.includes(".kaiza"), "Should be in .kaiza directory");
+  assert(govPath.includes(".atlas-gate"), "Should be in .atlas-gate directory");
   assert(
     govPath.includes("governance.json"),
     "Should be governance.json"
@@ -236,7 +236,7 @@ test("Resolve plan path by SHA256 hash", () => {
   ensureDirectoryExists(plansDir);
   const hash = "f03a830891441f2f255af3f47e9c69db52f391eae76f8747a2f1624ed73997da";
   const testPlanPath = path.join(plansDir, `${hash}.md`);
-  fs.writeFileSync(testPlanPath, `<!--\nKAIZA_PLAN_HASH: ${hash}\nSTATUS: APPROVED\n-->\n`, "utf8");
+  fs.writeFileSync(testPlanPath, `<!--\nATLAS-GATE_PLAN_HASH: ${hash}\nSTATUS: APPROVED\n-->\n`, "utf8");
 
   const resolved = resolvePlanPath(hash);
   assertEqual(

@@ -1,4 +1,4 @@
-# 🚨 KAIZA MCP WRITE_FILE VALIDATOR - RUTHLESS AUDIT RESULTS
+# 🚨 ATLAS-GATE MCP WRITE_FILE VALIDATOR - RUTHLESS AUDIT RESULTS
 
 **AUDIT COMPLETE** ✅  
 **7 ISSUES FOUND** ⚠️  
@@ -35,7 +35,7 @@ You have just received a **comprehensive security audit** of the Kaiza MCP write
 - Role requirements checklist
 
 ### 🏗️ I'm a technical lead (20 min read)
-→ Read: **KAIZA_AUDIT_REPORT.md**
+→ Read: **ATLAS-GATE_AUDIT_REPORT.md**
 - Full technical findings
 - Plan-by-plan analysis
 - Enforcement mechanism breakdown
@@ -51,7 +51,7 @@ You have just received a **comprehensive security audit** of the Kaiza MCP write
 ### 📋 I want the complete picture (60 min read)
 → Read all documents in order:
 1. AUDIT_EXECUTIVE_SUMMARY.md
-2. KAIZA_AUDIT_REPORT.md
+2. ATLAS-GATE_AUDIT_REPORT.md
 3. AUDIT_FINDINGS_DETAILED.md
 4. QUICK_AUDIT_REFERENCE.md
 
@@ -197,7 +197,7 @@ Recommended:
 | Document | Pages | Words | Read Time | Purpose |
 |----------|-------|-------|-----------|---------|
 | AUDIT_EXECUTIVE_SUMMARY.md | 6 | 2.5K | 5 min | Decision makers |
-| KAIZA_AUDIT_REPORT.md | 15 | 6.5K | 20 min | Technical leads |
+| ATLAS-GATE_AUDIT_REPORT.md | 15 | 6.5K | 20 min | Technical leads |
 | AUDIT_FINDINGS_DETAILED.md | 20 | 8.0K | 30 min | Security team |
 | QUICK_AUDIT_REFERENCE.md | 8 | 2.5K | 5 min | Developers |
 | AUDIT_DOCUMENTATION_INDEX.md | 4 | 1.5K | 5 min | Navigation |
@@ -269,7 +269,7 @@ A: For JavaScript, yes. For other languages, no.
 
 - **Specific issue questions?** → AUDIT_FINDINGS_DETAILED.md
 - **How to use the tool?** → QUICK_AUDIT_REFERENCE.md
-- **Full technical details?** → KAIZA_AUDIT_REPORT.md
+- **Full technical details?** → ATLAS-GATE_AUDIT_REPORT.md
 - **Metrics and timeline?** → AUDIT_EXECUTIVE_SUMMARY.md
 - **Navigation help?** → AUDIT_DOCUMENTATION_INDEX.md
 

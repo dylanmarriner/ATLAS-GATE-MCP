@@ -1,8 +1,8 @@
-# KAIZA-MCP-server Adversarial Audit Verification
+# ATLAS-GATE-MCP-server Adversarial Audit Verification
 
 ## Overview
 This document serves as proof-of-work for the Red Team Audit conducted on `2026-01-05`.
-We executed a suite of 13 adversarial attacks against the KAIZA-MCP-server governance engine.
+We executed a suite of 13 adversarial attacks against the ATLAS-GATE-MCP-server governance engine.
 
 **Result**: 13/13 Passed (Attacks Blocked or Controls Verified).
 

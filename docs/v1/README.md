@@ -1,19 +1,19 @@
 ---
-title: "KAIZA MCP Documentation v1.0"
-description: "Complete documentation for KAIZA MCP version 1.0.x"
+title: "ATLAS-GATE MCP Documentation v1.0"
+description: "Complete documentation for ATLAS-GATE MCP version 1.0.x"
 version: "1.0.0"
 last_updated: "2026-01-19"
 review_date: "2026-04-19"
-owners: ["kaiza-team"]
+owners: ["atlas-gate-team"]
 tags: ["documentation", "v1", "stable"]
 audience: ["technical", "executive"]
 ---
 
-# KAIZA MCP Documentation v1.0
+# ATLAS-GATE MCP Documentation v1.0
 
 ## Overview
 
-KAIZA MCP v1.0 represents the stable, production-ready release of the enterprise governance gateway for LLM-driven development. This documentation provides comprehensive guidance for implementation, operation, and governance.
+ATLAS-GATE MCP v1.0 represents the stable, production-ready release of the enterprise governance gateway for LLM-driven development. This documentation provides comprehensive guidance for implementation, operation, and governance.
 
 ## Quick Start
 
@@ -61,9 +61,9 @@ Upgrading from pre-1.0 releases:
 
 ## Support
 
-- [Issue Reporting](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
-- [Community Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- [Security Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/security)
+- [Issue Reporting](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
+- [Community Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
+- [Security Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/security)
 
 ---
 

@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Comprehensive Audit Findings
+# ATLAS-GATE MCP Server: Comprehensive Audit Findings
 
 **Date**: January 12, 2026  
 **Scope**: Complete system audit for deterministic behavior, production readiness, and zero accidental failures  
@@ -302,7 +302,7 @@ This means:
 
 **Severity**: MEDIUM  
 **Component**: `core/governance.js`, line 41  
-**Description**: Bootstrap signature verification depends on environment variable `KAIZA_BOOTSTRAP_SECRET` but there's no validation at startup
+**Description**: Bootstrap signature verification depends on environment variable `ATLAS-GATE_BOOTSTRAP_SECRET` but there's no validation at startup
 
 **Root Cause**:
 - The secret is only checked when bootstrap is attempted

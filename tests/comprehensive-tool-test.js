@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * COMPREHENSIVE KAIZA MCP TOOL TEST SUITE
+ * COMPREHENSIVE ATLAS-GATE MCP TOOL TEST SUITE
  * 
  * Tests all critical tools for both WINDSURF and ANTIGRAVITY roles
  * to ensure they work correctly without mock data or stubs.
@@ -27,7 +27,7 @@ import { readFileHandler } from "../tools/read_file.js";
 import { readAuditLogHandler } from "../tools/read_audit_log.js";
 
 console.log("\n╔════════════════════════════════════════════════════════════╗");
-console.log("║  COMPREHENSIVE KAIZA MCP TOOL TEST SUITE                  ║");
+console.log("║  COMPREHENSIVE ATLAS-GATE MCP TOOL TEST SUITE                  ║");
 console.log("║  Testing: WINDSURF (executor) & ANTIGRAVITY (planner)    ║");
 console.log("╚════════════════════════════════════════════════════════════╝\n");
 
@@ -174,7 +174,7 @@ Test scope only. No production changes.
 # Path Allowlist
 
 - docs/test.md
-- .kaiza/**
+- .atlas-gate/**
 
 # Verification Gates
 
@@ -225,7 +225,7 @@ logSection("TEST 6: Read-Only Tools");
 // Test read_file
 try {
   const result = await readFileHandler({ path: "package.json" });
-  if (result.content && result.content[0].text.includes("kaiza")) {
+  if (result.content && result.content[0].text.includes("atlas-gate")) {
     logTest("read_file", "PASS", "Can read package.json");
   } else {
     logTest("read_file", "FAIL", "Package.json content missing");
@@ -257,10 +257,10 @@ logSection("TEST 7: Plan Creation & Governance");
 
 // Test that bootstrap works with valid plan
 const SECRET = "test-secret-for-comprehensive-test";
-process.env.KAIZA_BOOTSTRAP_SECRET = SECRET;
+process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
 
 // Clean governance state
-const govPath = path.join(REPO_ROOT, ".kaiza", "governance.json");
+const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");
 if (fs.existsSync(govPath)) {
   const state = JSON.parse(fs.readFileSync(govPath, "utf8"));
   if (!state.bootstrap_enabled) {
@@ -317,7 +317,7 @@ logSection("TEST 9: Infrastructure");
 
 try {
   const dirs = [
-    ".kaiza",
+    ".atlas-gate",
     "docs",
     "docs/plans",
     "core",

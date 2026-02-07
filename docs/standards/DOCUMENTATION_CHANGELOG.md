@@ -193,7 +193,7 @@ This changelog tracks all documentation changes aligned with software releases. 
 
 ---
 
-**Document Owner**: KAIZA MCP Documentation Team  
+**Document Owner**: ATLAS-GATE MCP Documentation Team  
 **Review Frequency**: With each release  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

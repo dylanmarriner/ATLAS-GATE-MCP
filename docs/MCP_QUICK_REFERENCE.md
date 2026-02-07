@@ -15,7 +15,7 @@ await readPrompt({ name: "ANTIGRAVITY_CANONICAL" })
 ### 2. read_file (Understand Code)
 ```javascript
 await readFile({ path: "src/auth.js" })
-await readFile({ path: ".kaiza/approved_plans/PLAN_NAME.md" })
+await readFile({ path: ".atlas-gate/approved_plans/PLAN_NAME.md" })
 // Read any file in repo | No side effects
 ```
 
@@ -43,7 +43,7 @@ await writeFile({
 **Example**:
 ```javascript
 // Step 1: Verify plan exists
-const plan = await readFile({ path: ".kaiza/approved_plans/PLAN_JWT.md" });
+const plan = await readFile({ path: ".atlas-gate/approved_plans/PLAN_JWT.md" });
 
 // Step 2: Read existing auth code
 const auth = await readFile({ path: "src/auth.js" });
@@ -61,7 +61,7 @@ await writeFile({
 
 ## Plan Format
 
-Create `.kaiza/approved_plans/YOUR_PLAN.md`:
+Create `.atlas-gate/approved_plans/YOUR_PLAN.md`:
 
 ```markdown
 ---
@@ -112,7 +112,7 @@ function auth() { return true; }                // C5: Bypass
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `PLAN_NOT_FOUND` | Plan doesn't exist | Use existing plan name: `ls .kaiza/approved_plans/` |
+| `PLAN_NOT_FOUND` | Plan doesn't exist | Use existing plan name: `ls .atlas-gate/approved_plans/` |
 | `CONSTRUCT_VIOLATION` | TODO/DEMO/stub/mock found | Remove non-real code |
 | `PREFLIGHT_FAILED` | Tests or lints failed | Fix locally: `npm test && npm run lint` |
 | `PROMPT_GATE_LOCKED` | read_prompt not called | Call `readPrompt("ANTIGRAVITY_CANONICAL")` first |
@@ -177,7 +177,7 @@ Then reference the plan in write_file.
 await readPrompt({ name: "ANTIGRAVITY_CANONICAL" });
 
 // 2. Check the plan
-const plan = await readFile({ path: ".kaiza/approved_plans/PLAN_BILLING.md" });
+const plan = await readFile({ path: ".atlas-gate/approved_plans/PLAN_BILLING.md" });
 console.log("Plan status:", plan); // Verify APPROVED
 
 // 3. Read existing code

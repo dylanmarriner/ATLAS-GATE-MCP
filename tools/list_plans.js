@@ -17,19 +17,43 @@ export async function listPlansHandler() {
       const filePath = path.join(plansDir, f);
       const content = fs.readFileSync(filePath, 'utf8');
       
-      // Extract metadata from plan
-      const statusMatch = content.match(/STATUS:\s*(\w+)/i);
+      let status = "UNKNOWN";
+      let scope = "UNKNOWN";
+      let version = "UNKNOWN";
+      
+      // Try parsing ATLAS-GATE_PLAN_HASH format (HTML comment header)
+      const headerMatch = content.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})\s+ROLE:\s*(\w+)\s+STATUS:\s*(\w+)\s*-->/);
+      if (headerMatch) {
+        status = headerMatch[3];
+      }
+
+      // Fall back to inline STATUS: format
+      if (status === "UNKNOWN") {
+        const statusMatch = content.match(/STATUS:\s*(\w+)/i);
+        if (statusMatch) {
+          status = statusMatch[1];
+        }
+      }
+
       const scopeMatch = content.match(/SCOPE:\s*([^\n]+)/i);
+      if (scopeMatch) {
+        scope = scopeMatch[1].trim();
+      }
+
       const versionMatch = content.match(/VERSION:\s*([^\n]+)/i);
+      if (versionMatch) {
+        version = versionMatch[1].trim();
+      }
       
       return {
         hash,
         file: f,
-        status: statusMatch ? statusMatch[1] : "UNKNOWN",
-        scope: scopeMatch ? scopeMatch[1].trim() : "UNKNOWN",
-        version: versionMatch ? versionMatch[1].trim() : "UNKNOWN"
+        status,
+        scope,
+        version
       };
-    });
+    })
+    .filter(p => p.status === "APPROVED"); // Only include approved plans
 
   const plansList = plans
     .map(p => `• ${p.hash} (${p.status}) [${p.scope}] v${p.version}`)

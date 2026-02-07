@@ -1,4 +1,4 @@
-# KAIZA MCP Implementation Summary
+# ATLAS-GATE MCP Implementation Summary
 
 **Complete implementation of governance, code enforcement, and audit system for production code quality.**
 
@@ -72,9 +72,9 @@ Phase 3: **AST Analysis** (JavaScript/TypeScript)
 **Supports multiple plan locations:**
 
 Priority order:
-1. `.kaiza/approved_plans/` (with underscore)
-2. `.kaiza/plans/`
-3. `.kaiza/approvedplans/` (no underscore)
+1. `.atlas-gate/approved_plans/` (with underscore)
+2. `.atlas-gate/plans/`
+3. `.atlas-gate/approvedplans/` (no underscore)
 4. `docs/plans/`
 
 **Files updated**:
@@ -189,7 +189,7 @@ GATE 4 Enforcement:
 ```
 STEP 1: PLAN
 └─ Create or reference approved plan
-   └─ Plan must exist in .kaiza/approved_plans/ (or alternate location)
+   └─ Plan must exist in .atlas-gate/approved_plans/ (or alternate location)
    └─ Plan must have status: APPROVED
 
 STEP 2: READ
@@ -387,7 +387,7 @@ await writeFile({
 
 ## Summary
 
-**KAIZA MCP now provides:**
+**ATLAS-GATE MCP now provides:**
 
 1. ✅ Hard block enforcement (C2, C3, C5, C8, nulls)
 2. ✅ 15-language construct taxonomy

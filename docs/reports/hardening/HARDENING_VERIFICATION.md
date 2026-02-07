@@ -257,7 +257,7 @@ All TODOs, stubs, mocks, placeholders, and hardcoded values must be removed.
 ### Post-Deployment Verification
 
 1. ✅ MCP server starts: `node server.js`
-2. ✅ Log shows: `[MCP] kaiza-mcp running | session=...`
+2. ✅ Log shows: `[MCP] atlas-gate-mcp running | session=...`
 3. ✅ Test plan discovery: read `/docs/plans/*.md`
 4. ✅ Test input normalization: try both string and object
 5. ✅ Test enforcement: write code with TODO (should block)

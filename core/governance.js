@@ -41,17 +41,17 @@ export function isBootstrapEnabled(repoRoot) {
 }
 
 export function verifyBootstrapAuth(payload, signature) {
-     let secret = process.env.KAIZA_BOOTSTRAP_SECRET;
+     let secret = process.env.ATLAS-GATE_BOOTSTRAP_SECRET;
      
      if (!secret) {
-         // Fallback: Try to read from the workspace's .kaiza/bootstrap_secret.json
+         // Fallback: Try to read from the workspace's .atlas-gate/bootstrap_secret.json
          try {
              const repoRoot = getRepoRoot();
-             const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+             const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
              if (fs.existsSync(fallbackPath)) {
                  const data = JSON.parse(fs.readFileSync(fallbackPath, "utf8"));
                  secret = data.bootstrap_secret;
-                 console.error("[BOOTSTRAP] Loaded secret from .kaiza/bootstrap_secret.json");
+                 console.error("[BOOTSTRAP] Loaded secret from .atlas-gate/bootstrap_secret.json");
              }
          } catch (err) {
              // If workspace not initialized yet, continue to error check below

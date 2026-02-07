@@ -7,7 +7,7 @@ owners: ["product-team", "architecture-team"]
 audience: ["executive", "technical", "manager"]
 ---
 
-# Path to Level 5 Maturity: World-Class KAIZA MCP
+# Path to Level 5 Maturity: World-Class ATLAS-GATE MCP
 
 **Current State:** 3.5/5 (Managed-to-Optimized)  
 **Target State:** 5.0/5 (Leading, World-Class)  
@@ -203,7 +203,7 @@ What's missing to reach L5:
    - Year 1: 10–20 vulnerabilities from researchers
    - Year 2: 20–50 vulnerabilities, reputation established
    - Publish hall of fame, show commitment to researchers
-   - Success: Top researchers target KAIZA as high-value target
+   - Success: Top researchers target ATLAS-GATE as high-value target
 
 **Effort:** 1–2 security engineers full-time + external consultants/auditors  
 **Cost:** High ($300k–$800k including certifications and bounties)
@@ -229,7 +229,7 @@ To reach L5, must pass through L3 and L4 first:
 
 1. **Centralized Logging Infrastructure** (6 weeks)
    - Deploy ELK stack (Elasticsearch, Logstash, Kibana) or equivalent (Loki, Grafana)
-   - Ship all KAIZA logs (audit, application, system) to central location
+   - Ship all ATLAS-GATE logs (audit, application, system) to central location
    - Retention: 90 days hot, 1 year cold storage
    - Success: All logs searchable in single dashboard
 
@@ -242,13 +242,13 @@ To reach L5, must pass through L3 and L4 first:
 3. **Audit Log Analysis Tools** (4 weeks)
    - Build: Query tool for audit logs (SQL or Elasticsearch)
    - Build: Reports (daily summaries, trends, anomalies)
-   - Build: CLI for engineers (`kaiza-audit-query --since 24h --role WINDSURF`)
+   - Build: CLI for engineers (`atlas-gate-audit-query --since 24h --role WINDSURF`)
    - Success: Engineers can answer "what changed in last 24 hours?" in seconds
 
 **Phase 2: L3→L4 (Months 5–10)**
 
 1. **Distributed Tracing** (8 weeks)
-   - Integrate OpenTelemetry SDK into KAIZA
+   - Integrate OpenTelemetry SDK into ATLAS-GATE
    - Trace: begin_session → plan creation → execution → completion
    - Export: Jaeger or Tempo backend
    - Success: Can trace single request across all components
@@ -358,10 +358,10 @@ To reach L5, must pass through L3 and L4 first:
 **Phase 3: L4→L5 (Months 10–18)**
 
 1. **Container & Kubernetes Deployment** (8 weeks)
-   - Docker: Package KAIZA as container image
+   - Docker: Package ATLAS-GATE as container image
    - Kubernetes: Helm charts for deployment
    - Orchestration: Auto-scaling, self-healing pods, rolling updates
-   - Success: KAIZA deployable to any Kubernetes cluster
+   - Success: ATLAS-GATE deployable to any Kubernetes cluster
 
 2. **GitOps Workflow (ArgoCD or Flux)** (6 weeks)
    - Process: Git is source of truth for running system
@@ -486,10 +486,10 @@ What's missing:
 
 1. **Interactive Documentation** (8 weeks)
    - Platform: DocuSaurus or MkDocs + custom components
-   - Feature: Runnable KAIZA examples in browser (WebAssembly or remote sandbox)
+   - Feature: Runnable ATLAS-GATE examples in browser (WebAssembly or remote sandbox)
    - Feature: "Try it now" buttons that execute real plans
    - Use case: "See plan creation in action without installing"
-   - Success: Users can learn KAIZA without local setup
+   - Success: Users can learn ATLAS-GATE without local setup
 
 2. **Live Playgrounds** (6 weeks)
    - Sandbox: Containerized environment for each doc section
@@ -513,7 +513,7 @@ What's missing:
 
 3. **Documentation Search & AI** (8 weeks)
    - Integration: Full-text search with relevance ranking
-   - AI: "Ask KAIZA" chatbot (fine-tuned LLM on docs)
+   - AI: "Ask ATLAS-GATE" chatbot (fine-tuned LLM on docs)
    - Feature: Semantic search ("How do I create a plan?" → find relevant pages)
    - Success: Users find what they need in < 30 seconds
 
@@ -567,7 +567,7 @@ What's missing:
 
 ## Team Structure for Level 5
 
-**Current Team:** 3–4 engineers (core KAIZA)  
+**Current Team:** 3–4 engineers (core ATLAS-GATE)  
 **Required for L5:** 12–15 engineers
 
 ### Recommended Additions
@@ -671,6 +671,6 @@ What's missing:
 
 ---
 
-**Document Owner:** KAIZA MCP Product & Architecture Team  
+**Document Owner:** ATLAS-GATE MCP Product & Architecture Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

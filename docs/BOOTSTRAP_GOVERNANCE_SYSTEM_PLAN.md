@@ -11,7 +11,7 @@ AUDIENCE: [architects, engineers, auditors]
 
 ## Executive Summary
 
-This plan defines the minimal, enforceable bootstrap system that transforms KAIZA MCP from a code execution server into a **governance-first system** where **plans are law**. 
+This plan defines the minimal, enforceable bootstrap system that transforms ATLAS-GATE MCP from a code execution server into a **governance-first system** where **plans are law**. 
 
 The bootstrap system enables the creation of the **first approved plan** in a fresh workspace (solving the classic bootstrap problem: how do you approve the first plan if plans require approval?). After the first plan is created, bootstrap mode disables and all subsequent operations require explicit plan authority.
 
@@ -25,7 +25,7 @@ The bootstrap system enables the creation of the **first approved plan** in a fr
 
 - ✅ **Solve the bootstrap paradox**: Allow creation of the first approved plan in a fresh workspace without a pre-existing plan
 - ✅ **Establish plan authority as immutable law**: After bootstrap, no write may occur without citing an approved plan
-- ✅ **Require cryptographic authentication**: Only the holder of `KAIZA_BOOTSTRAP_SECRET` can create the first plan
+- ✅ **Require cryptographic authentication**: Only the holder of `ATLAS-GATE_BOOTSTRAP_SECRET` can create the first plan
 - ✅ **Establish workspace governance state**: Bootstrap creates `governance.json` marking transition from unrestricted to plan-gated execution
 - ✅ **Create auditable plan registry**: Bootstrap creates the canonical plans registry that all future writes reference
 - ✅ **Prevent bootstrap misuse**: Bootstrap can only succeed once per workspace; subsequent uses are rejected
@@ -45,7 +45,7 @@ The bootstrap system enables the creation of the **first approved plan** in a fr
 
 ### Definition: What Is a "Plan"?
 
-A **plan** is an immutable, cryptographically-addressed document that grants execution authority. In KAIZA MCP:
+A **plan** is an immutable, cryptographically-addressed document that grants execution authority. In ATLAS-GATE MCP:
 
 - A plan is the **only** legal justification for a write operation
 - A plan is **stored as a markdown file** with a specific metadata header
@@ -99,7 +99,7 @@ workspace-root/
 │   │   ├── 8f1a2b3c4d5e6f7g8h9...md
 │   │   └── ...
 │   └── [other docs]
-├── .kaiza/
+├── .atlas-gate/
 │   ├── governance.json                 # GOVERNANCE STATE
 │   ├── plans/                          # LOCAL PLANS REGISTRY (OPTIONAL)
 │   └── ROOT                            # Marker file for repo root detection
@@ -109,7 +109,7 @@ workspace-root/
 ### File Naming Rules
 
 - **Plan filename format**: `<SHA256_HASH>.md` (lowercase hex, no dashes, no prefix)
-- **Governance state file**: `.kaiza/governance.json` (exact filename, canonical location)
+- **Governance state file**: `.atlas-gate/governance.json` (exact filename, canonical location)
 - **Plan discovery scope**: Search `docs/plans/`, `docs/planning/`, and `docs/antigravity/` directories
 - **Duplicate detection**: If two plans have identical content hash, they are the same plan (only one file needed)
 - **No plan collision**: Two different plans cannot have the same hash (cryptographically enforced)
@@ -148,7 +148,7 @@ The registry serves as:
 
 ### Registry Storage & Format
 
-**Location**: `.kaiza/governance.json` (co-located with `.kaiza/ROOT` marker)
+**Location**: `.atlas-gate/governance.json` (co-located with `.atlas-gate/ROOT` marker)
 
 **Structure**:
 ```json
@@ -213,7 +213,7 @@ Bootstrap is available if and only if:
 
 **Blocking conditions** (bootstrap fails immediately):
 
-- ❌ Bootstrap secret not set (neither `KAIZA_BOOTSTRAP_SECRET` env var nor `.kaiza/bootstrap_secret.json`)
+- ❌ Bootstrap secret not set (neither `ATLAS-GATE_BOOTSTRAP_SECRET` env var nor `.atlas-gate/bootstrap_secret.json`)
 - ❌ Signature verification fails (HMAC doesn't match or timing attack attempted)
 - ❌ Plan content fails linting (violates plan structure requirements)
 - ❌ Plan doesn't declare `STATUS: APPROVED` in frontmatter
@@ -235,7 +235,7 @@ Bootstrap is available if and only if:
 **Signature generation**:
 ```
 signature = HMAC-SHA256(
-  key = KAIZA_BOOTSTRAP_SECRET,
+  key = ATLAS-GATE_BOOTSTRAP_SECRET,
   message = JSON.stringify(payload)  // Canonical JSON (deterministic order)
 )
 ```
@@ -271,7 +271,7 @@ Bootstrap request is REJECTED if:
 
 | Condition | Error Code | HTTP Status | Message |
 |-----------|-----------|-------------|---------|
-| Secret missing | BOOTSTRAP_SECRET_MISSING | 401 | Set KAIZA_BOOTSTRAP_SECRET environment variable |
+| Secret missing | BOOTSTRAP_SECRET_MISSING | 401 | Set ATLAS-GATE_BOOTSTRAP_SECRET environment variable |
 | Signature invalid | INVALID_BOOTSTRAP_SIGNATURE | 401 | HMAC verification failed; secret mismatch or tampering |
 | Request expired | BOOTSTRAP_REQUEST_EXPIRED | 400 | Timestamp older than 5 minutes; create new payload |
 | Plan linting failed | PLAN_LINT_FAILED | 400 | Plan violates structure requirements; fix and retry |
@@ -383,7 +383,7 @@ These conditions cause immediate rejection with no filesystem modification:
 ### Human Authority Boundaries
 
 - **Bootstrap secret holder** can trigger first plan creation (one-time authority)
-- **Organization policy** determines who holds the secret (external to KAIZA MCP)
+- **Organization policy** determines who holds the secret (external to ATLAS-GATE MCP)
 - **Plan approval authority** is external (humans approve plans before bootstrap)
 - **Role assignment** is external (determined by MCP client configuration)
 - **Session management** is external (MCP client starts Windsurf vs Antigravity session)
@@ -409,7 +409,7 @@ After bootstrap completes, the following must be independently verifiable:
 
 ```
 docs/plans/<HASH>.md           # The approved foundation plan (immutable)
-.kaiza/governance.json         # State file marking bootstrap complete
+.atlas-gate/governance.json         # State file marking bootstrap complete
 audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_plan", "plan_hash": "<HASH>", ...}
 ```
 
@@ -458,7 +458,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Missing Governance State
 
 **Detection**:
-- `.kaiza/governance.json` file not found
+- `.atlas-gate/governance.json` file not found
 - OR governance.json exists but is unparseable JSON
 
 **Impact**:
@@ -469,7 +469,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 **Recovery**:
 1. Check if plan file exists in `docs/plans/` (manually verify)
 2. If plan exists: manually recreate governance.json with `bootstrap_enabled: false` and correct plan_index
-3. If plan missing: delete .kaiza/ directory and restart bootstrap from beginning
+3. If plan missing: delete .atlas-gate/ directory and restart bootstrap from beginning
 
 **Prevention**:
 - Create governance.json atomically during bootstrap
@@ -560,14 +560,14 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 
 **Recovery**:
 1. Generate new secret: `openssl rand -base64 32`
-2. Update environment variable: `export KAIZA_BOOTSTRAP_SECRET=<new-secret>`
-3. Delete old secret from `.kaiza/bootstrap_secret.json` (if file-based)
+2. Update environment variable: `export ATLAS-GATE_BOOTSTRAP_SECRET=<new-secret>`
+3. Delete old secret from `.atlas-gate/bootstrap_secret.json` (if file-based)
 4. Document secret rotation in audit trail
 5. If needed, bootstrap new workspace with new secret
 
 **Prevention**:
 - Store secret in environment variable (not hardcoded)
-- Restrict file permissions on .kaiza/bootstrap_secret.json to 0600
+- Restrict file permissions on .atlas-gate/bootstrap_secret.json to 0600
 - Rotate secret after successful bootstrap (no longer needed)
 - Use different secrets per environment (dev, staging, prod)
 
@@ -582,7 +582,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 - ✅ Secret verification (HMAC-SHA256 with timing-safe comparison)
 - ✅ Plan linting (reject stubs, incomplete code)
 - ✅ File creation (plan file at `docs/plans/<HASH>.md`)
-- ✅ Governance state write (create/update `.kaiza/governance.json`)
+- ✅ Governance state write (create/update `.atlas-gate/governance.json`)
 - ✅ Audit logging (append entry to `audit-log.jsonl`)
 - ✅ Error handling (return structured errors, no filesystem corruption on failure)
 
@@ -591,7 +591,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 - ✅ `verifyBootstrapAuth()` - HMAC verification
 - ✅ `bootstrapCreateFoundationPlan()` - orchestrate bootstrap flow
 
-**Plan registry** (in `.kaiza/governance.json`):
+**Plan registry** (in `.atlas-gate/governance.json`):
 - ✅ Initialize with `bootstrap_enabled: true`, empty plan_index
 - ✅ Update after first plan with `bootstrap_enabled: false`, filled plan_index
 - ✅ Maintain consistency with plan files on disk
@@ -657,7 +657,7 @@ This plan enables (unlocks):
 **Scope**: BOOTSTRAP ONLY  
 **Version**: 1.0.0  
 **Created**: 2026-01-20  
-**Author**: Antigravity (KAIZA MCP Foundational Governance Architect)  
+**Author**: Antigravity (ATLAS-GATE MCP Foundational Governance Architect)  
 **Authority**: This plan is the sole authority for bootstrap system design and implementation. All bootstrap code must implement this plan verbatim with zero deviation.
 
 ---

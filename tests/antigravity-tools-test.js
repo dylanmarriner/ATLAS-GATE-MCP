@@ -107,10 +107,10 @@ section("TEST 2: Read File");
 
 try {
   const result = await readFileHandler({ path: "package.json" });
-  if (result.content && result.content[0].text.includes("kaiza")) {
+  if (result.content && result.content[0].text.includes("atlas-gate")) {
     logTest("read_file - package.json", "PASS");
   } else {
-    logTest("read_file - package.json", "FAIL", "Package.json missing kaiza");
+    logTest("read_file - package.json", "FAIL", "Package.json missing atlas-gate");
   }
 } catch (err) {
   logTest("read_file - package.json", "FAIL", err.message);
@@ -118,7 +118,7 @@ try {
 
 // Test reading a plan
 try {
-  const result = await readFileHandler({ path: ".kaiza/governance.json" });
+  const result = await readFileHandler({ path: ".atlas-gate/governance.json" });
   if (result.content && result.content[0].text.includes("bootstrap")) {
     logTest("read_file - governance.json", "PASS");
   } else {
@@ -356,7 +356,7 @@ try {
 section("TEST 8: Antigravity Governance");
 
 try {
-  const govPath = path.join(REPO_ROOT, ".kaiza", "governance.json");
+  const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");
   if (fs.existsSync(govPath)) {
     const state = JSON.parse(fs.readFileSync(govPath, "utf8"));
     if (state.bootstrap_enabled === false) {

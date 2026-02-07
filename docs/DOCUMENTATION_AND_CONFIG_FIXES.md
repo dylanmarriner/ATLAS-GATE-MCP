@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document summarizes all fixes made to KAIZA MCP documentation and configuration to ensure users can properly set up and use the system.
+This document summarizes all fixes made to ATLAS-GATE MCP documentation and configuration to ensure users can properly set up and use the system.
 
 ---
 
@@ -46,7 +46,7 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
 1. ❌ Referenced `server.js` directly instead of role-specific entry points
 2. ❌ Missing `"type": "stdio"` (required for MCP protocol)
 3. ❌ No role distinction (WINDSURF vs ANTIGRAVITY)
-4. ❌ Referenced non-existent environment variable `KAIZA_BOOTSTRAP_SECRET`
+4. ❌ Referenced non-existent environment variable `ATLAS-GATE_BOOTSTRAP_SECRET`
 
 **Status**: ✅ FIXED
 
@@ -54,11 +54,11 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
 ```json
 {
   "mcpServers": {
-    "kaiza": {
+    "atlas-gate": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/server.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/server.js"],
       "env": {
-        "KAIZA_BOOTSTRAP_SECRET": "your-secure-secret"
+        "ATLAS-GATE_BOOTSTRAP_SECRET": "your-secure-secret"
       }
     }
   }
@@ -69,9 +69,9 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
 ```json
 {
   "mcpServers": {
-    "kaiza-windsurf": {
+    "atlas-gate-windsurf": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/atlas-gate-mcp-windsurf.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -83,9 +83,9 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
 ```json
 {
   "mcpServers": {
-    "kaiza-antigravity": {
+    "atlas-gate-antigravity": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-antigravity.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/atlas-gate-mcp-antigravity.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -104,7 +104,7 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
 
 ### 3. New Documentation: AI Agent Prompt Templates
 
-**Issue**: Missing guidance for AI agents on how to use KAIZA MCP.
+**Issue**: Missing guidance for AI agents on how to use ATLAS-GATE MCP.
 
 **Status**: ✅ CREATED
 
@@ -134,7 +134,7 @@ This document summarizes all fixes made to KAIZA MCP documentation and configura
    - Generic MCP client guide
    - Key rules and restrictions
 
-**Purpose**: These templates enable AI agents and LLMs to effectively use KAIZA MCP by providing clear instructions on:
+**Purpose**: These templates enable AI agents and LLMs to effectively use ATLAS-GATE MCP by providing clear instructions on:
 - What role to play (planning vs execution)
 - Which tools to use and when
 - How to structure code and plans
@@ -206,7 +206,7 @@ Both MCP configurations verified to:
 
 ### For AI Agents/LLMs
 - **Clear instructions**: System role definitions tell agents what to do
-- **Example workflows**: Real task examples show exactly how to use KAIZA
+- **Example workflows**: Real task examples show exactly how to use ATLAS-GATE
 - **Troubleshooting guide**: Common errors documented with solutions
 - **Best practices**: Clear rules about code quality and plan creation
 
@@ -251,7 +251,7 @@ Both MCP configurations verified to:
 
 - ✅ ./docs/guides/BEGINNER_GUIDE.md
 - ✅ ./docs/guides/COMPLETE_SETUP_GUIDE.md
-- ✅ ./docs/guides/KAIZA_COMPLETE_GUIDE.md
+- ✅ ./docs/guides/ATLAS-GATE_COMPLETE_GUIDE.md
 - ✅ ./docs/guides/README_GETTING_STARTED.md
 - ✅ ./docs/ARCHITECTURE.md
 - ✅ ./docs/MCP_USAGE_GUIDE.md
@@ -285,7 +285,7 @@ Both MCP configurations verified to:
 All broken links have been fixed, configuration examples are now correct, and comprehensive AI agent guidance has been added. Users can now:
 1. Follow working documentation links
 2. Copy configuration examples that actually work
-3. Properly instruct AI agents to use KAIZA MCP
+3. Properly instruct AI agents to use ATLAS-GATE MCP
 4. Track documentation status and quality
 
 The system is ready for production use with proper documentation support.

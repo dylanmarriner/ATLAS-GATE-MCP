@@ -2,7 +2,7 @@
 
 **PROMPT 03**: Append-Only, Tamper-Evident Audit Log (Workspace-Local) + Failure-Proof Writes  
 **Status**: ✓ COMPLETE  
-**Audit Log Location**: `[workspace_root]/.kaiza/audit.log`
+**Audit Log Location**: `[workspace_root]/.atlas-gate/audit.log`
 
 ---
 
@@ -33,7 +33,7 @@
 
 1. **Audit Log Access**
    ```bash
-   cat [workspace_root]/.kaiza/audit.log | jq -R 'fromjson'
+   cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson'
    ```
 
 2. **Verify Integrity**
@@ -148,16 +148,16 @@ AUDIT_LOG_IMPLEMENTATION_INDEX.md (this file)
 
 ```bash
 # Pretty-print all entries
-cat [workspace_root]/.kaiza/audit.log | jq -R 'fromjson'
+cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson'
 
 # Count entries
-cat [workspace_root]/.kaiza/audit.log | wc -l
+cat [workspace_root]/.atlas-gate/audit.log | wc -l
 
 # Search for specific tool
-cat [workspace_root]/.kaiza/audit.log | jq -R 'fromjson' | grep '"write_file"'
+cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson' | grep '"write_file"'
 
 # Find failed entries
-cat [workspace_root]/.kaiza/audit.log | jq -R 'fromjson' | grep '"error"'
+cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson' | grep '"error"'
 ```
 
 ### 2. Verify Audit Integrity
@@ -179,20 +179,20 @@ node -e "
 
 ```bash
 # Show one entry (formatted)
-cat [workspace_root]/.kaiza/audit.log | head -1 | jq -R 'fromjson' | jq '.'
+cat [workspace_root]/.atlas-gate/audit.log | head -1 | jq -R 'fromjson' | jq '.'
 
 # Show all field names
-cat [workspace_root]/.kaiza/audit.log | head -1 | jq -R 'fromjson' | keys
+cat [workspace_root]/.atlas-gate/audit.log | head -1 | jq -R 'fromjson' | keys
 ```
 
 ### 4. Monitor Audit Writes
 
 ```bash
 # Watch for audit errors
-tail -f [workspace_root]/.kaiza/audit.log | jq -R 'fromjson | select(.error_code != null)'
+tail -f [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson | select(.error_code != null)'
 
 # Count by tool
-cat [workspace_root]/.kaiza/audit.log | jq -R 'fromjson' | jq -s 'group_by(.tool) | map({tool: .[0].tool, count: length})'
+cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson' | jq -s 'group_by(.tool) | map({tool: .[0].tool, count: length})'
 ```
 
 ### 5. Run Tests
@@ -302,7 +302,7 @@ Tool calls may arrive before `begin_session`:
 
 ### Audit Log Not Created
 
-**Issue**: `.kaiza/audit.log` doesn't exist
+**Issue**: `.atlas-gate/audit.log` doesn't exist
 
 **Solution**:
 1. Ensure `begin_session` has been called
@@ -326,7 +326,7 @@ Tool calls may arrive before `begin_session`:
 
 **Solution**:
 1. Check disk space (`df [workspace_root]`)
-2. Check permissions (`ls -ld [workspace_root]/.kaiza`)
+2. Check permissions (`ls -ld [workspace_root]/.atlas-gate`)
 3. Check file handles limit (`ulimit -n`)
 4. Clear temp files if needed
 5. Restart MCP server
@@ -352,7 +352,7 @@ Tool calls may arrive before `begin_session`:
 
 ### No External Dependencies
 
-The audit system uses only Node.js standard library and existing KAIZA modules.
+The audit system uses only Node.js standard library and existing ATLAS-GATE modules.
 
 ---
 
@@ -374,7 +374,7 @@ The audit system uses only Node.js standard library and existing KAIZA modules.
 
 - ✓ Append-only (never truncate)
 - ✓ Hash-chained (tamper-evident)
-- ✓ Workspace-local (.kaiza/)
+- ✓ Workspace-local (.atlas-gate/)
 - ✓ Fail-closed (audit failure = tool failure)
 - ✓ Deterministic (no UUIDs in seq)
 - ✓ Redacted (sensitive data masked)

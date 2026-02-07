@@ -1,4 +1,4 @@
-# KAIZA MCP Documentation Audit
+# ATLAS-GATE MCP Documentation Audit
 
 **Date**: January 20, 2026  
 **Status**: FIXED ✅  
@@ -44,7 +44,7 @@ The README.md was referencing documentation files that did not exist in the repo
 ### User Guides (in `/docs/guides/`)
 - ✅ `./docs/guides/BEGINNER_GUIDE.md` - Complete beginner's guide (660+ lines)
 - ✅ `./docs/guides/COMPLETE_SETUP_GUIDE.md` - Detailed setup
-- ✅ `./docs/guides/KAIZA_COMPLETE_GUIDE.md` - Comprehensive guide
+- ✅ `./docs/guides/ATLAS-GATE_COMPLETE_GUIDE.md` - Comprehensive guide
 - ✅ `./docs/guides/README_GETTING_STARTED.md` - Getting started
 
 ### Technical Reference (in `/docs/`)
@@ -67,10 +67,10 @@ The README.md was referencing documentation files that did not exist in the repo
 ```json
 {
   "mcpServers": {
-    "kaiza": {
+    "atlas-gate": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/server.js"],
-      "env": { "KAIZA_BOOTSTRAP_SECRET": "your-secure-secret" }
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/server.js"],
+      "env": { "ATLAS-GATE_BOOTSTRAP_SECRET": "your-secure-secret" }
     }
   }
 }
@@ -88,9 +88,9 @@ For Windsurf:
 ```json
 {
   "mcpServers": {
-    "kaiza-windsurf": {
+    "atlas-gate-windsurf": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/atlas-gate-mcp-windsurf.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -102,9 +102,9 @@ For Antigravity:
 ```json
 {
   "mcpServers": {
-    "kaiza-antigravity": {
+    "atlas-gate-antigravity": {
       "command": "node",
-      "args": ["/absolute/path/to/KAIZA-MCP-server/bin/kaiza-mcp-antigravity.js"],
+      "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/atlas-gate-mcp-antigravity.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -155,7 +155,7 @@ For Antigravity:
    - Error recovery patterns
 
 3. **Quick Start for AI Agents**
-   - Missing: "How to instruct an LLM to use KAIZA"
+   - Missing: "How to instruct an LLM to use ATLAS-GATE"
    - No template prompts
    - No best practices for agent integration
 
@@ -172,11 +172,11 @@ Create `./docs/PROMPT_TEMPLATES.md`:
 
 ## For Planning (ANTIGRAVITY Role)
 "You are a software architect planning changes to a codebase. 
-Your job is to create detailed plans in .kaiza/approved_plans/ 
+Your job is to create detailed plans in .atlas-gate/approved_plans/ 
 directory before any code is written..."
 
 ## For Execution (WINDSURF Role)
-"You are a code executor with access to the KAIZA MCP server.
+"You are a code executor with access to the ATLAS-GATE MCP server.
 Always follow this workflow:
 1. Call read_prompt('ANTIGRAVITY_CANONICAL') first
 2. Read existing code with read_file
@@ -235,7 +235,7 @@ Create `./docs/TROUBLESHOOTING.md`:
 
 **Documentation Status: FIXED ✅**
 
-All broken references in README.md have been corrected to point to actual documentation files. The configuration examples now match the actual bin file structure (kaiza-mcp-windsurf.js and kaiza-mcp-antigravity.js).
+All broken references in README.md have been corrected to point to actual documentation files. The configuration examples now match the actual bin file structure (atlas-gate-mcp-windsurf.js and atlas-gate-mcp-antigravity.js).
 
 **Key Improvements Made**:
 1. ✅ Fixed all 7 broken documentation links

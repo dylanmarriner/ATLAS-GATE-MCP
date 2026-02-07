@@ -30,11 +30,11 @@ export function enforcePlan(planHash, targetPath) {
   // Extract the embedded hash from the canonical header.
   // We expect:
   // <!--
-  // KAIZA_PLAN_HASH: <hash>
+  // ATLAS-GATE_PLAN_HASH: <hash>
   // ROLE: <role>
   // STATUS: APPROVED
   // -->
-  const headerMatch = fileContent.match(/<!--\s*KAIZA_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
+  const headerMatch = fileContent.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
   if (!headerMatch) {
     throw new Error(`REFUSE: Plan ${planHash} is not APPROVED or has invalid header format.`);

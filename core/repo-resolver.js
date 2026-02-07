@@ -16,8 +16,8 @@ export function resolveRepoRoot(targetPath) {
     const plansDir = path.join(current, "docs", "plans");
     const gitDir = path.join(current, ".git");
 
-    // PRIORITY 1: Governance Marker (.kaiza/ROOT)
-    if (fs.existsSync(path.join(current, ".kaiza", "ROOT"))) {
+    // PRIORITY 1: Governance Marker (.atlas-gate/ROOT)
+    if (fs.existsSync(path.join(current, ".atlas-gate", "ROOT"))) {
       return current;
     }
 

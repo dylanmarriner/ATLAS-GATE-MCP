@@ -2,7 +2,7 @@
 
 ## Overview
 
-The KAIZA MCP Server uses a **Docs-as-a-Product** approach with strict separation between documentation source files and generated build artifacts.
+The ATLAS-GATE MCP Server uses a **Docs-as-a-Product** approach with strict separation between documentation source files and generated build artifacts.
 
 ## Architecture
 

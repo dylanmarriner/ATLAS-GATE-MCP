@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * KAIZA MCP SERVER - Antigravity (Read-Only/Analysis)
+ * ATLAS-GATE MCP SERVER - Antigravity (Read-Only/Analysis)
  */
 
 import { startServer } from "../server.js";

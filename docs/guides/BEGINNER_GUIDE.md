@@ -1,5 +1,5 @@
 ---
-title: "Complete Beginner's Guide to KAIZA MCP"
+title: "Complete Beginner's Guide to ATLAS-GATE MCP"
 description: "Step-by-step guide for complete beginners who have never used a computer before"
 version: "1.0.0"
 last_updated: "2026-01-19"
@@ -9,19 +9,19 @@ tags: ["beginner", "guide", "tutorial", "getting-started"]
 audience: ["beginner", "non-technical"]
 ---
 
-# Complete Beginner's Guide to KAIZA MCP
+# Complete Beginner's Guide to ATLAS-GATE MCP
 
 ## Purpose
 
-This guide teaches you how to use KAIZA MCP starting from absolute zero computer experience. No prior knowledge is assumed. Every term is explained the first time it appears.
+This guide teaches you how to use ATLAS-GATE MCP starting from absolute zero computer experience. No prior knowledge is assumed. Every term is explained the first time it appears.
 
 ## What You Will Learn
 
 - How to turn on a computer and connect to the internet
 - How to install and use a web browser
 - How to install required software tools
-- How to download and set up KAIZA MCP
-- How to use KAIZA MCP step by step
+- How to download and set up ATLAS-GATE MCP
+- How to use ATLAS-GATE MCP step by step
 - How to troubleshoot common problems
 
 ## Learning Paths
@@ -29,7 +29,7 @@ This guide teaches you how to use KAIZA MCP starting from absolute zero computer
 ### 🚀 Fast Path (30 minutes)
 If you're comfortable with computers, follow the highlighted sections:
 - **Section 1**: Quick Setup
-- **Section 3**: Install KAIZA MCP
+- **Section 3**: Install ATLAS-GATE MCP
 - **Section 5**: First Use
 
 ### 📚 Step-by-Step with Explanations (2 hours)
@@ -139,7 +139,7 @@ New to computers? Follow this path:
 **Command**: An instruction you type to tell the computer what to do.
 
 #### Why We Need Terminal:
-KAIZA MCP installation requires typing commands. This is normal for developer tools.
+ATLAS-GATE MCP installation requires typing commands. This is normal for developer tools.
 
 ### 3.2 Opening Terminal
 
@@ -160,7 +160,7 @@ KAIZA MCP installation requires typing commands. This is normal for developer to
 
 ### 3.3 Installing Node.js
 
-**Node.js**: A program that runs JavaScript code on computers. KAIZA MCP needs this to work.
+**Node.js**: A program that runs JavaScript code on computers. ATLAS-GATE MCP needs this to work.
 
 #### Step 1: Check if Node.js is Already Installed
 Type this command in terminal and press Enter:
@@ -250,11 +250,11 @@ You should see a version number. If so, installation was successful.
 
 ---
 
-## Section 4: Downloading KAIZA MCP
+## Section 4: Downloading ATLAS-GATE MCP
 
-### 4.1 What is KAIZA MCP?
+### 4.1 What is ATLAS-GATE MCP?
 
-**KAIZA MCP**: A security tool that controls how AI assistants write code. It makes sure AI assistants only make approved changes.
+**ATLAS-GATE MCP**: A security tool that controls how AI assistants write code. It makes sure AI assistants only make approved changes.
 
 ### 4.2 Creating a Project Folder
 
@@ -266,26 +266,26 @@ You should see a version number. If so, installation was successful.
 2. Click "This PC" or "Documents"
 3. Right-click in empty space
 4. Select "New" → "Folder"
-5. Type `kaiza-project` and press Enter
+5. Type `atlas-gate-project` and press Enter
 
 **On macOS/Linux:**
 1. Open Finder (file cabinet icon)
 2. Go to Documents folder
 3. Right-click in empty space
 4. Select "New Folder"
-5. Type `kaiza-project` and press Enter
+5. Type `atlas-gate-project` and press Enter
 
 #### Step 2: Navigate to Folder in Terminal
 Type this command and press Enter:
 
 **On Windows:**
 ```bash
-cd Documents\kaiza-project
+cd Documents\atlas-gate-project
 ```
 
 **On macOS/Linux:**
 ```bash
-cd Documents/kaiza-project
+cd Documents/atlas-gate-project
 ```
 
 **What this does:**
@@ -293,44 +293,44 @@ cd Documents/kaiza-project
 - The path tells it which folder to go to
 - You should now be in your project folder
 
-### 4.3 Downloading KAIZA MCP
+### 4.3 Downloading ATLAS-GATE MCP
 
 #### Method 1: Using Git (Recommended)
 Type this command exactly as shown:
 
 ```bash
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 ```
 
 **What this does:**
 - `git clone` downloads code from GitHub
 - The long web address is where the code is stored
-- This creates a folder called `KAIZA-MCP-server`
+- This creates a folder called `ATLAS-GATE-MCP-server`
 
 #### Method 2: Using ZIP File (If Git Doesn't Work)
 1. Open web browser
-2. Go to https://github.com/dylanmarriner/KAIZA-MCP-server
+2. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
 3. Click green "Code" button
 4. Click "Download ZIP"
 5. Wait for download to complete
 6. Find the downloaded file (usually in Downloads folder)
 7. Right-click the file and select "Extract All" or "Unzip"
-8. Move the extracted folder to your kaiza-project folder
+8. Move the extracted folder to your atlas-gate-project folder
 
-### 4.4 Navigating to KAIZA MCP Folder
+### 4.4 Navigating to ATLAS-GATE MCP Folder
 Type this command:
 
 **On Windows:**
 ```bash
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 
 **On macOS/Linux:**
 ```bash
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 
-You should now be in the KAIZA MCP folder. To verify, type:
+You should now be in the ATLAS-GATE MCP folder. To verify, type:
 
 ```bash
 ls
@@ -345,7 +345,7 @@ You should see a list of files and folders including `package.json`, `README.md`
 
 ---
 
-## Section 5: Installing KAIZA MCP
+## Section 5: Installing ATLAS-GATE MCP
 
 ### 5.1 What is npm?
 
@@ -353,7 +353,7 @@ You should see a list of files and folders including `package.json`, `README.md`
 
 ### 5.2 Installing Dependencies
 
-**Dependencies**: Additional programs that KAIZA MCP needs to work.
+**Dependencies**: Additional programs that ATLAS-GATE MCP needs to work.
 
 Type this command and press Enter:
 
@@ -394,26 +394,26 @@ npm run verify
 
 ---
 
-## Section 6: First Use of KAIZA MCP
+## Section 6: First Use of ATLAS-GATE MCP
 
 ### 6.1 Understanding the Concept
 
-KAIZA MCP works with AI assistants like Claude Desktop or Windsurf. It acts as a security guard between the AI and your files.
+ATLAS-GATE MCP works with AI assistants like Claude Desktop or Windsurf. It acts as a security guard between the AI and your files.
 
 ### 6.2 Basic Configuration
 
 #### Step 1: Create Configuration File
-KAIZA MCP needs a configuration file to work with your AI assistant.
+ATLAS-GATE MCP needs a configuration file to work with your AI assistant.
 
 Type this command to create a basic configuration:
 
 ```bash
-echo '{"mcpServers": {"kaiza": {"command": "node", "args": ["'"$(pwd)"'/server.js"]}}}' > config.json
+echo '{"mcpServers": {"atlas-gate": {"command": "node", "args": ["'"$(pwd)"'/server.js"]}}}' > config.json
 ```
 
 **What this does:**
 - Creates a file called `config.json`
-- Tells AI assistants how to find KAIZA MCP
+- Tells AI assistants how to find ATLAS-GATE MCP
 - Uses the current folder path automatically
 
 #### Step 2: Test Configuration
@@ -432,7 +432,7 @@ node server.js
 
 ### 6.3 Understanding the Two Roles
 
-KAIZA MCP has two roles:
+ATLAS-GATE MCP has two roles:
 
 **ANTIGRAVITY (Planning Role):**
 - For planning and designing changes
@@ -447,12 +447,12 @@ KAIZA MCP has two roles:
 ### 6.4 Your First Session
 
 #### Step 1: Start a Session
-In your AI assistant (Claude Desktop/Windsurf), configure it to use KAIZA MCP using the `config.json` file you created.
+In your AI assistant (Claude Desktop/Windsurf), configure it to use ATLAS-GATE MCP using the `config.json` file you created.
 
 #### Step 2: Begin Session
 Type this to your AI assistant:
 ```
-"Please use KAIZA MCP to begin a session in this folder. Use the begin_session tool to lock the workspace."
+"Please use ATLAS-GATE MCP to begin a session in this folder. Use the begin_session tool to lock the workspace."
 ```
 
 #### Step 3: Plan Something (ANTIGRAVITY Role)
@@ -509,7 +509,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 1. Make sure Node.js is properly installed (Section 3.3)
 2. Try `npm cache clean --force` then `npm install` again
 3. Check if you're in the correct folder
-4. Try downloading a fresh copy of KAIZA MCP
+4. Try downloading a fresh copy of ATLAS-GATE MCP
 
 ### 7.5 Tests Fail
 
@@ -527,14 +527,14 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 
 ### 8.1 Learning More
 
-Now that you have KAIZA MCP working, you can:
+Now that you have ATLAS-GATE MCP working, you can:
 
 1. **Read the main README.md file** for more advanced features
 2. **Try the examples** in the documentation
 3. **Join the community** for help and discussions
 4. **Explore the ADRs** to understand design decisions
 
-### 8.2 Using KAIZA MCP in Projects
+### 8.2 Using ATLAS-GATE MCP in Projects
 
 **For personal projects:**
 - Use it to control AI assistants in your coding projects
@@ -613,7 +613,7 @@ If you need help:
 
 ### 10.3 Safe Defaults
 
-KAIZA MCP is designed to be safe by default:
+ATLAS-GATE MCP is designed to be safe by default:
 - It requires explicit approval for all changes
 - It logs everything that happens
 - It prevents dangerous operations automatically
@@ -643,11 +643,11 @@ Congratulations! You now have:
 ✅ Installed a web browser  
 ✅ Used the terminal for the first time  
 ✅ Installed Node.js and Git  
-✅ Downloaded and installed KAIZA MCP  
-✅ Used KAIZA MCP for the first time  
+✅ Downloaded and installed ATLAS-GATE MCP  
+✅ Used ATLAS-GATE MCP for the first time  
 ✅ Learned troubleshooting basics  
 
-You're ready to use KAIZA MCP to safely control AI assistants in your projects!
+You're ready to use ATLAS-GATE MCP to safely control AI assistants in your projects!
 
 ---
 

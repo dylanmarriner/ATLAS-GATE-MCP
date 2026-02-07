@@ -249,7 +249,7 @@ Code must be production-grade and enterprise-ready.
 ### Deployment
 1. Deploy 4 modified files (~186 lines)
 2. Start MCP: `node server.js`
-3. Verify: `[MCP] kaiza-mcp running | session=...` in logs
+3. Verify: `[MCP] atlas-gate-mcp running | session=...` in logs
 
 ### Post-Deployment Testing
 1. Plan discovery: `readFile({ path: "/docs/plans/test.md" })`

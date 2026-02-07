@@ -9,7 +9,7 @@
 
 ## 1. Objective
 
-Implement canonical intent artifact schema for KAIZA MCP write operations, enforcing deterministic intent validation with fail-closed semantics. Intent artifacts are non-negotiable governance artifacts that document WHY every file change exists.
+Implement canonical intent artifact schema for ATLAS-GATE MCP write operations, enforcing deterministic intent validation with fail-closed semantics. Intent artifacts are non-negotiable governance artifacts that document WHY every file change exists.
 
 ## 2. Deliverables
 
@@ -330,7 +330,7 @@ All paths resolved through path-resolver.js (no path traversal).
 
 The MCP Intent Artifact Schema implementation is complete, tested, documented, and ready for production. All 12+ tests pass. No regressions detected. Fail-closed semantics are enforced throughout. Intent drift is detected and refused. Audit logging is comprehensive.
 
-Intent artifacts are now a non-negotiable governance requirement for all file writes in KAIZA MCP.
+Intent artifacts are now a non-negotiable governance requirement for all file writes in ATLAS-GATE MCP.
 
 ---
 

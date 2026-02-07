@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Hardening Execution Report
+# ATLAS-GATE MCP Server: Hardening Execution Report
 
 **Date**: January 12, 2026  
 **Status**: COMPLETED  
@@ -8,7 +8,7 @@
 
 ## EXECUTIVE SUMMARY
 
-The KAIZA MCP Server has been comprehensively audited, debugged, and hardened to achieve production-grade determinism, reliability, and security. All critical defects have been identified and fixed. The system is now ready for deployment across arbitrary repository structures with zero manual configuration.
+The ATLAS-GATE MCP Server has been comprehensively audited, debugged, and hardened to achieve production-grade determinism, reliability, and security. All critical defects have been identified and fixed. The system is now ready for deployment across arbitrary repository structures with zero manual configuration.
 
 **Key Results**:
 - ✅ 14 critical/high-priority issues identified and fixed
@@ -442,7 +442,7 @@ if (requiredPlanId && frontmatter.plan_id) {
 
 ## DETERMINISM GUARANTEES
 
-The KAIZA MCP Server now guarantees deterministic behavior across:
+The ATLAS-GATE MCP Server now guarantees deterministic behavior across:
 
 1. **Different working directories**
    - Path resolution uses repo root discovery
@@ -470,7 +470,7 @@ The KAIZA MCP Server now guarantees deterministic behavior across:
 
 ### Area 1: Preflight Testing
 The preflight system requires configured test commands. Recommend:
-- Add optional preflight configuration to `.kaiza/governance.json`
+- Add optional preflight configuration to `.atlas-gate/governance.json`
 - Clear error message if preflight is not configured
 - Document expected format for test scripts
 
@@ -487,7 +487,7 @@ Synchronous I/O operations have no timeout. Consider:
 - Warning logs for slow operations
 
 ### Area 4: Environment Variable Validation
-Bootstrap signature verification depends on `KAIZA_BOOTSTRAP_SECRET`. Recommend:
+Bootstrap signature verification depends on `ATLAS-GATE_BOOTSTRAP_SECRET`. Recommend:
 - Add validation at server startup
 - Clear error if secret is missing but bootstrap is enabled
 - Document environment setup requirements
@@ -520,9 +520,9 @@ Bootstrap signature verification depends on `KAIZA_BOOTSTRAP_SECRET`. Recommend:
 
 Before production deployment:
 
-- [ ] Configure `.kaiza/governance.json` with initial bootstrap_enabled flag
-- [ ] Set `KAIZA_BOOTSTRAP_SECRET` environment variable
-- [ ] Configure preflight test scripts in `.kaiza/preflight/`
+- [ ] Configure `.atlas-gate/governance.json` with initial bootstrap_enabled flag
+- [ ] Set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable
+- [ ] Configure preflight test scripts in `.atlas-gate/preflight/`
 - [ ] Create initial foundation plan via bootstrap tool
 - [ ] Verify `docs/plans/` directory exists and is writable
 - [ ] Test plan lifecycle: create → approve → discover → execute
@@ -537,7 +537,7 @@ Before production deployment:
 
 **System Status**: PRODUCTION READY
 
-The KAIZA MCP Server is now:
+The ATLAS-GATE MCP Server is now:
 1. **Deterministic**: Behaves identically across repo structures
 2. **Secure**: Enforces all policies consistently
 3. **Reliable**: No accidental errors, only policy violations

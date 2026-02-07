@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Getting Started
+# ATLAS-GATE MCP Server: Getting Started
 
 **Welcome!** This document guides you to the right resources for what you need to do.
 
@@ -62,9 +62,9 @@
 
 ## Quick Overview
 
-### What is KAIZA MCP Server?
+### What is ATLAS-GATE MCP Server?
 
-KAIZA is a Model Context Protocol (MCP) server that enforces governance on code generation by AI agents. It:
+ATLAS-GATE is a Model Context Protocol (MCP) server that enforces governance on code generation by AI agents. It:
 
 - ✅ **Works anywhere** - No setup required, works in any directory
 - ✅ **Enforces quality** - Rejects stub code, TODOs, mocks
@@ -82,7 +82,7 @@ KAIZA is a Model Context Protocol (MCP) server that enforces governance on code 
 ### How Does It Work?
 
 ```
-Agent ─── MCP Request ──→ KAIZA Server
+Agent ─── MCP Request ──→ ATLAS-GATE Server
                             ↓
                         Validate Input
                             ↓
@@ -103,14 +103,14 @@ Agent ←─── MCP Response ─── Confirmation
 
 ```bash
 # 1. Clone
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 
 # 2. Install & Test
 npm install && npm test
 
 # 3. Set secret
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 
 # 4. Run
 node server.js
@@ -201,7 +201,7 @@ These patterns are **ALWAYS ALLOWED**:
 ## Common Questions
 
 ### Q: Do I need to configure anything?
-**A:** Only set `KAIZA_BOOTSTRAP_SECRET` environment variable. Everything else is automatic.
+**A:** Only set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable. Everything else is automatic.
 
 ### Q: Will it work in my repo structure?
 **A:** Yes. Works in any directory, auto-detects repo root, creates directories as needed.
@@ -303,16 +303,16 @@ You'll know you're ready when you can:
 
 ```
 1. Clone (1 min)
-   git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
+   git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 
 2. Install (2 min)
-   cd KAIZA-MCP-server && npm install
+   cd ATLAS-GATE-MCP-server && npm install
 
 3. Test (1 min)
    npm test
 
 4. Set secret (1 min)
-   export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+   export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 
 5. Run (continuous)
    node server.js
@@ -337,11 +337,11 @@ You'll know you're ready when you can:
 
 ---
 
-## What's Different About KAIZA?
+## What's Different About ATLAS-GATE?
 
-Most MCP servers are **passive tools**. KAIZA is an **enforcement authority**.
+Most MCP servers are **passive tools**. ATLAS-GATE is an **enforcement authority**.
 
-| Aspect | Other MCP Servers | KAIZA |
+| Aspect | Other MCP Servers | ATLAS-GATE |
 |--------|-------------------|-------|
 | Code Quality | Allowed | Enforced |
 | Authorization | Optional | Required |

@@ -1,15 +1,15 @@
 ---
-title: "KAIZA MCP Documentation v2.0 (Development)"
-description: "Documentation for KAIZA MCP version 2.0.x (in development)"
+title: "ATLAS-GATE MCP Documentation v2.0 (Development)"
+description: "Documentation for ATLAS-GATE MCP version 2.0.x (in development)"
 version: "2.0.0-alpha"
 last_updated: "2026-01-19"
 review_date: "2026-04-19"
-owners: ["kaiza-team"]
+owners: ["atlas-gate-team"]
 tags: ["documentation", "v2", "development"]
 audience: ["technical", "executive"]
 ---
 
-# KAIZA MCP Documentation v2.0 (Development)
+# ATLAS-GATE MCP Documentation v2.0 (Development)
 
 ## Status
 
@@ -117,9 +117,9 @@ audience: ["technical", "executive"]
 ## Feedback and Input
 
 We welcome feedback on the v2.0 development plans:
-- [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
-- [Issue Tracker](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
-- [Security Feedback](https://github.com/dylanmarriner/KAIZA-MCP-server/security)
+- [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
+- [Issue Tracker](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
+- [Security Feedback](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/security)
 
 ---
 

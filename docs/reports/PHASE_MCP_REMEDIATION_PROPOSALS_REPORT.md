@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Implemented a complete propose-only remediation engine for the KAIZA MCP server. The system:
+Implemented a complete propose-only remediation engine for the ATLAS-GATE MCP server. The system:
 
 ✅ **Generates evidence-bound proposals** from forensic findings, SystemError records, and audit entries  
 ✅ **Enforces human approval gate** — all proposals remain PENDING until explicit human decision  
@@ -96,7 +96,7 @@ Example: Broken audit hash chain (potential tampering).
 }
 ```
 
-**Constraints**: Read-only. Writes only to docs/proposals/ and .kaiza/proposals-index.jsonl.
+**Constraints**: Read-only. Writes only to docs/proposals/ and .atlas-gate/proposals-index.jsonl.
 
 ---
 
@@ -222,7 +222,7 @@ proposal is valid if plan_hash matches abc123...
 ```
 
 ### Proposal Index
-**Location**: `.kaiza/proposals-index.jsonl` (append-only)
+**Location**: `.atlas-gate/proposals-index.jsonl` (append-only)
 
 One JSON object per line:
 ```json
@@ -230,7 +230,7 @@ One JSON object per line:
 ```
 
 ### Approval Audit Log
-**Location**: `.kaiza/proposal-approvals.jsonl` (append-only)
+**Location**: `.atlas-gate/proposal-approvals.jsonl` (append-only)
 
 ```json
 {"timestamp":"2026-01-19T10:15:00.000Z","event":"PROPOSAL_STATUS_UPDATE","proposal_id":"PROP-abc","new_status":"APPROVED","approver":"alice@company.com"}
@@ -431,7 +431,7 @@ These are separate concerns, requiring separate plans:
 
 **Implementation**: WINDSURF (execution role)  
 **Specification**: PROMPT 08 - MCP REMEDIATION PROPOSALS  
-**Authority**: KAIZA MCP REMEDIATION PROPOSAL SYSTEM  
+**Authority**: ATLAS-GATE MCP REMEDIATION PROPOSAL SYSTEM  
 **Status**: READY FOR DEPLOYMENT  
 
 All tests pass. All constraints enforced. Human gate operational. Audit trail complete.

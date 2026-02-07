@@ -28,7 +28,7 @@ Every plan MUST contain these seven sections in this order:
 - Example:
   ```
   # Plan Metadata
-  Foundation plan for KAIZA MCP linting system
+  Foundation plan for ATLAS-GATE MCP linting system
   ```
 
 ### 2. Scope & Constraints
@@ -184,7 +184,7 @@ hash = SHA256(canonicalized_plan_text)
 
 ### Hash Immutability
 - Plan hash is computed once during proposal
-- Hash is embedded in plan header as `KAIZA_PLAN_HASH`
+- Hash is embedded in plan header as `ATLAS-GATE_PLAN_HASH`
 - Plan header also includes `STATUS: APPROVED`
 - If plan content is modified after approval, hash changes
 - Execution validates hash matches: if mismatch → refuse

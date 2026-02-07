@@ -1,6 +1,6 @@
 /**
  * ROLE: INFRASTRUCTURE
- * PURPOSE: Canonical, unified path resolution for the entire KAIZA MCP Server
+ * PURPOSE: Canonical, unified path resolution for the entire ATLAS-GATE MCP Server
  * AUTHORITY: This module is the sole source of truth for all filesystem paths
  * 
  * MANDATORY REFACTOR (RF1-RF3):
@@ -143,7 +143,7 @@ export function getAuditLogPath() {
 }
 
 export function getGovernancePath() {
-  return path.join(getRepoRoot(), ".kaiza", "governance.json");
+  return path.join(getRepoRoot(), ".atlas-gate", "governance.json");
 }
 
 export function normalizePathForDisplay(absolutePath) {

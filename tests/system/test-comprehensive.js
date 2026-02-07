@@ -200,13 +200,13 @@ import {
 test("getRepoRoot returns current repo", () => {
   const root = getRepoRoot();
   assert(fs.existsSync(root), `Repo root does not exist: ${root}`);
-  assertIncludes(root, "KAIZA-MCP-server");
+  assertIncludes(root, "ATLAS-GATE-MCP-server");
 });
 
 test("getPlansDir returns valid directory", () => {
   const plansDir = getPlansDir();
   assert(typeof plansDir === "string", "Plans dir must be a string");
-  // Should end with either docs/plans or .kaiza/plans
+  // Should end with either docs/plans or .atlas-gate/plans
   assert(plansDir.includes("plans"), "Plans dir should contain 'plans'");
 });
 

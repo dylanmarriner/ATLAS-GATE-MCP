@@ -3,13 +3,13 @@
 **Status**: IMPLEMENTED  
 **Version**: 1.0  
 **Date**: January 19, 2026  
-**Target**: KAIZA MCP Server (WINDSURF Execution Role)
+**Target**: ATLAS-GATE MCP Server (WINDSURF Execution Role)
 
 ---
 
 ## Executive Summary
 
-This specification defines human-factor defenses and operator trust boundaries for the KAIZA MCP server. It implements mandatory safeguards against operator error, social engineering, fatigue, and accidental high-risk approvals.
+This specification defines human-factor defenses and operator trust boundaries for the ATLAS-GATE MCP server. It implements mandatory safeguards against operator error, social engineering, fatigue, and accidental high-risk approvals.
 
 The implementation uses fail-closed semantics: ambiguous or risky actions are refused until operators provide structured, verifiable acknowledgement.
 
@@ -564,7 +564,7 @@ node test-operator-trust-boundary.js
 
 ## References
 
-- Requirement Document: WINDSURF EXECUTION PROMPT - KAIZA MCP OPERATOR TRUST BOUNDARY
+- Requirement Document: WINDSURF EXECUTION PROMPT - ATLAS-GATE MCP OPERATOR TRUST BOUNDARY
 - Audit Log: `audit-log.jsonl`
 - Session State: `session.js`
 - Path Resolution: `core/path-resolver.js`

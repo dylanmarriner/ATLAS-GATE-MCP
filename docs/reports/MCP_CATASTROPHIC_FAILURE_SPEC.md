@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-This specification defines the catastrophic failure handling system for the KAIZA MCP Server. When critical invariants are violated, the system engages a global kill-switch that:
+This specification defines the catastrophic failure handling system for the ATLAS-GATE MCP Server. When critical invariants are violated, the system engages a global kill-switch that:
 
 - **Immediately** stops all write operations
 - **Persists** across process restarts (survives crashes)
@@ -72,7 +72,7 @@ export const FAILURE_TAXONOMY = {
 
 When triggered, the kill-switch:
 
-1. **Sets engaged flag** to `true` in `/.kaiza/kill_switch.json`
+1. **Sets engaged flag** to `true` in `/.atlas-gate/kill_switch.json`
 2. **Records trigger reason**, failure IDs, and invariant IDs
 3. **Persists state** to disk immediately (survives process crashes)
 4. **Blocks ALL non-read tools** from execution

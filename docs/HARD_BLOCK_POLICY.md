@@ -107,7 +107,7 @@ return "";                     // ❌ HARD BLOCK (empty string)
 
 ### Detection
 
-KAIZA scans all code writes for these patterns:
+ATLAS-GATE scans all code writes for these patterns:
 
 1. **Text scan**: Looks for literal patterns in code comments and strings
 2. **AST scan** (JavaScript/TypeScript): Analyzes code structure

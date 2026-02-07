@@ -1,7 +1,7 @@
 /**
  * ROLE: INFRASTRUCTURE
  * PURPOSE: Canonical Hard-Error Schema enforcement
- * AUTHORITY: KAIZA MCP GOVERNANCE LAW
+ * AUTHORITY: ATLAS-GATE MCP GOVERNANCE LAW
  */
 
 export const ERROR_CODES = {

@@ -18,7 +18,7 @@ if (isMainThread) {
     autoInitializePathResolver(process.cwd());
     const repoRoot = getRepoRoot();
     const logsPath = getAuditLogPath(); // Resolved path
-    const lockPath = path.join(repoRoot, ".kaiza", "audit.lock");
+    const lockPath = path.join(repoRoot, ".atlas-gate", "audit.lock");
 
     // Cleanup stale lock from previous runs
     if (fs.existsSync(lockPath)) {

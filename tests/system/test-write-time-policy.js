@@ -27,9 +27,9 @@ function sha256(data) {
 }
 
 function createTempWorkspace() {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "kaiza-policy-test-"));
-  // Create .kaiza directory for audit logging
-  fs.mkdirSync(path.join(tmpDir, ".kaiza"), { recursive: true });
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "atlas-gate-policy-test-"));
+  // Create .atlas-gate directory for audit logging
+  fs.mkdirSync(path.join(tmpDir, ".atlas-gate"), { recursive: true });
   return tmpDir;
 }
 
@@ -444,7 +444,7 @@ await test("Policy creates audit entry on violation", async () => {
       assert(err instanceof SystemError);
 
       // Check that audit log was created
-      const auditPath = `${tmpDir}/.kaiza/audit.log`;
+      const auditPath = `${tmpDir}/.atlas-gate/audit.log`;
       assert(fs.existsSync(auditPath), "Audit log should exist");
 
       const entries = fs

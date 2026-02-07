@@ -108,10 +108,10 @@ section("TEST 2: Read File");
 
 try {
   const result = await readFileHandler({ path: "package.json" });
-  if (result.content && result.content[0].text.includes("kaiza")) {
+  if (result.content && result.content[0].text.includes("atlas-gate")) {
     logTest("read_file - package.json", "PASS");
   } else {
-    logTest("read_file - package.json", "FAIL", "Package.json missing kaiza");
+    logTest("read_file - package.json", "FAIL", "Package.json missing atlas-gate");
   }
 } catch (err) {
   logTest("read_file - package.json", "FAIL", err.message);

@@ -1,7 +1,7 @@
 /**
  * ROLE: EXECUTABLE
  * PURPOSE: Propose-only remediation engine - generates evidence-bound proposals without mutations
- * AUTHORITY: KAIZA MCP REMEDIATION PROPOSAL SYSTEM (PROPOSE-ONLY)
+ * AUTHORITY: ATLAS-GATE MCP REMEDIATION PROPOSAL SYSTEM (PROPOSE-ONLY)
  *
  * Consumes forensic/audit/error evidence and emits structured proposals for human review.
  * All proposals are evidence-bound: every change maps to cited forensic finding.

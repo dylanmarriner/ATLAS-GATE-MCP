@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Implemented a comprehensive startup self-audit system that validates KAIZA MCP Server governance enforcement before boot. The audit is a hard gate: if any check fails, the server immediately terminates with exit code 1 and a diagnostic report.
+Implemented a comprehensive startup self-audit system that validates ATLAS-GATE MCP Server governance enforcement before boot. The audit is a hard gate: if any check fails, the server immediately terminates with exit code 1 and a diagnostic report.
 
 **Key Achievement**: All 8 invariants checked with deterministic, stable error codes. No partial startup. No degraded modes.
 
@@ -299,7 +299,7 @@ Modules checked:
 [STARTUP_AUDIT] Completed 8 checks
 [STARTUP_AUDIT] Passed: 8, Failed: 0
 [STARTUP_AUDIT] ✓ All checks passed. Server cleared to boot.
-[MCP] kaiza-mcp-windsurf running | session=<uuid>
+[MCP] atlas-gate-mcp-windsurf running | session=<uuid>
 ```
 
 ### When Audit Fails
@@ -404,7 +404,7 @@ cat docs/reports/MCP_STARTUP_SELF_AUDIT.md
 
 ### Check Boot Integration
 ```bash
-bin/kaiza-mcp-windsurf.js  # Audit runs at startup
+bin/atlas-gate-mcp-windsurf.js  # Audit runs at startup
 # [STARTUP_AUDIT] ✓ All checks passed. Server cleared to boot.
 ```
 

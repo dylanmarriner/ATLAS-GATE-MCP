@@ -324,4 +324,4 @@ server.registerTool(
 **Documentation**: Complete  
 **Ready for Integration**: YES
 
-The Plan Linter foundation is ready for integration into the KAIZA MCP approval and execution gates.
+The Plan Linter foundation is ready for integration into the ATLAS-GATE MCP approval and execution gates.

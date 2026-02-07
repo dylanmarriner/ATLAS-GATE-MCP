@@ -9,7 +9,7 @@ import { SESSION_STATE } from './session.js';
 import os from 'os';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TEST_ROOT = path.join(os.tmpdir(), 'kaiza-mcp-test-universal');
+const TEST_ROOT = path.join(os.tmpdir(), 'atlas-gate-mcp-test-universal');
 
 // Helpers
 function cleanup() {
@@ -92,11 +92,11 @@ async function testUniversalAccess() {
     console.log("\n[SCENARIO 3] Git Repo + Valid Plan");
     const plansDir = path.join(TEST_ROOT, 'docs', 'plans');
     fs.mkdirSync(plansDir, { recursive: true });
-    // Audit log needs .kaiza for locking
-    fs.mkdirSync(path.join(TEST_ROOT, '.kaiza'), { recursive: true });
+    // Audit log needs .atlas-gate for locking
+    fs.mkdirSync(path.join(TEST_ROOT, '.atlas-gate'), { recursive: true });
     const PLAN_HASH = "6448139d0c27b8c485e89ecb44839e3130a18d9505be9c97103557d74164637d";
     fs.writeFileSync(path.join(plansDir, `${PLAN_HASH}.md`), `<!--
-KAIZA_PLAN_HASH: ${PLAN_HASH}
+ATLAS-GATE_PLAN_HASH: ${PLAN_HASH}
 ROLE: EXECUTABLE
 STATUS: APPROVED
 -->

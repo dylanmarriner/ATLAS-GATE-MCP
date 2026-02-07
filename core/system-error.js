@@ -1,7 +1,7 @@
 /**
  * ROLE: INFRASTRUCTURE
  * PURPOSE: Canonical MCP protocol error envelope with deterministic serialization
- * AUTHORITY: KAIZA MCP CANONICAL ERROR CONTRACT
+ * AUTHORITY: ATLAS-GATE MCP CANONICAL ERROR CONTRACT
  * 
  * Every tool failure produces a SystemError envelope with all required fields,
  * ensuring client receives stable, auditable error information instead of raw Error objects.

@@ -4,7 +4,7 @@
  * AUTHORITY: PROMPT 03 - MCP-Enforced Execution Boundary Audit Logging
  * 
  * This module implements:
- * 1. Append-only JSON Lines audit log at /.kaiza/audit.log
+ * 1. Append-only JSON Lines audit log at /.atlas-gate/audit.log
  * 2. Hash-chaining for tamper-evidence detection
  * 3. Deterministic canonicalization + redaction
  * 4. Concurrency-safe sequence allocation with file locking
@@ -29,7 +29,7 @@ import { acquireLock, releaseLock } from "./file-lock.js";
 // CONSTANTS & CONFIG
 // ============================================================================
 
-const AUDIT_DIR_RELATIVE = ".kaiza";
+const AUDIT_DIR_RELATIVE = ".atlas-gate";
 const AUDIT_LOG_FILENAME = "audit.log";
 const AUDIT_INDEX_FILENAME = "audit.index";
 const AUDIT_LOCK_DIR = "audit.lock";

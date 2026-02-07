@@ -1,4 +1,4 @@
-# KAIZA MCP Maturity Model & Roadmap
+# ATLAS-GATE MCP Maturity Model & Roadmap
 
 **Enterprise Capability Assessment and Multi-Year Vision**
 
@@ -494,7 +494,7 @@ Quality, completeness, and maintainability of documentation.
 - Plan resource allocation
 
 ### For Evaluation
-- Assess KAIZA MCP fitness for your environment
+- Assess ATLAS-GATE MCP fitness for your environment
 - Identify features you need
 - Understand commitment levels
 
@@ -512,7 +512,7 @@ This roadmap is **not** set in stone. Community feedback shapes priorities:
 - **Unsure about a phase?** Open an issue
 - **Want to help?** See [CONTRIBUTING.md](../CONTRIBUTING.md)
 - **Disagree with priorities?** Start a discussion
-- **Have enterprise needs?** Contact security@kaiza-mcp.org
+- **Have enterprise needs?** Contact security@atlas-gate-mcp.org
 
 ---
 

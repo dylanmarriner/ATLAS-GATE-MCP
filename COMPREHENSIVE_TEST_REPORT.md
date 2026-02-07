@@ -1,4 +1,4 @@
-# KAIZA MCP Comprehensive Test Report
+# ATLAS-GATE MCP Comprehensive Test Report
 
 **Date:** 2026-01-20  
 **Status:** ✅ ALL TESTS PASSING  
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The KAIZA MCP system has been comprehensively tested and fixed to ensure both **WINDSURF** (executor) and **ANTIGRAVITY** (planner) roles work correctly without errors or mock data.
+The ATLAS-GATE MCP system has been comprehensively tested and fixed to ensure both **WINDSURF** (executor) and **ANTIGRAVITY** (planner) roles work correctly without errors or mock data.
 
 **Test Results:**
 - ✅ **19/19 master integration tests passed**
@@ -283,9 +283,9 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Directory structure | ✅ READY | All required dirs exist (core, tools, docs, .kaiza) |
+| Directory structure | ✅ READY | All required dirs exist (core, tools, docs, .atlas-gate) |
 | Plans directory | ✅ READY | docs/plans/ contains 2 approved plans |
-| Governance state | ✅ READY | .kaiza/governance.json initialized |
+| Governance state | ✅ READY | .atlas-gate/governance.json initialized |
 | Audit log | ✅ READY | audit-log.jsonl with 585 entries |
 | Session management | ✅ READY | lockWorkspaceRoot enforces workspace authority |
 | Path resolution | ✅ READY | Workspace-relative paths, no hardcoded paths |
@@ -382,7 +382,7 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 
 ## Summary
 
-The KAIZA MCP system is **fully operational and production-ready**:
+The ATLAS-GATE MCP system is **fully operational and production-ready**:
 
 ✅ Both WINDSURF and ANTIGRAVITY roles work correctly  
 ✅ All critical tools are tested and passing  

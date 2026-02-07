@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the standards, conventions, and style guidelines for all KAIZA MCP documentation to ensure consistency, quality, and maintainability.
+This document defines the standards, conventions, and style guidelines for all ATLAS-GATE MCP documentation to ensure consistency, quality, and maintainability.
 
 ## Writing Standards
 
@@ -186,7 +186,7 @@ audience: ["technical", "executive"]
 
 ---
 
-**Document Owner**: KAIZA MCP Documentation Team  
+**Document Owner**: ATLAS-GATE MCP Documentation Team  
 **Review Frequency**: Monthly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

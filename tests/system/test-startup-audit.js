@@ -1,7 +1,7 @@
 /**
  * ROLE: VERIFICATION
  * PURPOSE: Comprehensive tests for MCP Startup Self-Audit
- * AUTHORITY: KAIZA Governance - Refusal-to-boot enforcement
+ * AUTHORITY: ATLAS-GATE Governance - Refusal-to-boot enforcement
  */
 
 import { SESSION_STATE } from './session.js';

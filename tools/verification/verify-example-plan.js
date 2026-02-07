@@ -19,7 +19,7 @@ const hash = computePlanHash(planContent);
 console.log(`\nComputed plan hash: ${hash}`);
 
 // Update PENDING_HASH with actual hash
-planContent = planContent.replace("KAIZA_PLAN_HASH: PENDING_HASH", `KAIZA_PLAN_HASH: ${hash}`);
+planContent = planContent.replace("ATLAS-GATE_PLAN_HASH: PENDING_HASH", `ATLAS-GATE_PLAN_HASH: ${hash}`);
 
 // Lint the plan
 const result = lintPlan(planContent, hash);

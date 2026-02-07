@@ -1,4 +1,4 @@
-# KAIZA MCP Documentation Index
+# ATLAS-GATE MCP Documentation Index
 
 **Complete guide to all documentation organized by audience and purpose.**
 
@@ -16,7 +16,7 @@ Start here if you have no computer experience:
 ### 👨‍💻 Developer / Engineer
 For technical implementation and usage:
 1. [Architecture Overview](./ARCHITECTURE.md) — System design and concepts
-2. [MCP Usage Guide](./MCP_USAGE_GUIDE.md) — How to use KAIZA MCP
+2. [MCP Usage Guide](./MCP_USAGE_GUIDE.md) — How to use ATLAS-GATE MCP
 3. [Security & Governance](./SECURITY_AND_GOVERNANCE.md) — Technical security model
 4. [ADRs](../adr/) — Design decisions and rationale
 5. [API Reference](./reference/) — Tool definitions and schemas
@@ -62,7 +62,7 @@ For code and documentation contributions:
   - [ADR-006: Content Integrity Verification](../adr/006-content-integrity-verification.md)
 
 ### Usage & Integration
-- [Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use KAIZA MCP
+- [Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use ATLAS-GATE MCP
 - [MCP Quick Reference](./MCP_QUICK_REFERENCE.md) — Commands and options
 - [Usage Examples](./examples/) — Real-world scenarios
 - [Prompt Templates](./PROMPT_TEMPLATES.md) — Template prompts for common tasks
@@ -97,7 +97,7 @@ For code and documentation contributions:
 ## 🗂️ Directory Structure
 
 ```
-KAIZA-MCP-server/
+ATLAS-GATE-MCP-server/
 ├── docs/
 │   ├── v1/                             ← Production version (v1.x)
 │   ├── v2/                             ← Development version (v2.x)
@@ -176,7 +176,7 @@ KAIZA-MCP-server/
 **Q: How do I get started?**  
 A: See [Absolute Beginner's Guide](./ABSOLUTE_BEGINNER_GUIDE.md)
 
-**Q: What does KAIZA MCP do?**  
+**Q: What does ATLAS-GATE MCP do?**  
 A: See [Executive Overview](../EXECUTIVE_OVERVIEW.md) (quick) or [Architecture Overview](./ARCHITECTURE.md) (detailed)
 
 **Q: How do I use it?**  
@@ -259,8 +259,8 @@ A: See [Maturity Model & Roadmap](./MATURITY_MODEL.md)
 ## 🆘 Still Can't Find What You Need?
 
 1. **Check Glossary**: [GLOSSARY.md](./GLOSSARY.md)
-2. **Search Issues**: [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
-3. **Ask in Discussions**: [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+2. **Search Issues**: [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
+3. **Ask in Discussions**: [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 4. **Report a Bug**: [Bug Report Template](./.github/ISSUE_TEMPLATE/bug_report.md)
 
 ---

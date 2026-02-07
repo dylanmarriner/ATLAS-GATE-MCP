@@ -2,7 +2,7 @@
  * MCP TOOL: approve_proposal
  * ROLE: WINDSURF (human-gate, propose-only)
  * PURPOSE: Human approval gate - mark proposal as APPROVED or REJECTED
- * AUTHORITY: KAIZA MCP REMEDIATION APPROVAL GATE
+ * AUTHORITY: ATLAS-GATE MCP REMEDIATION APPROVAL GATE
  *
  * CONSTRAINT: This is a HUMAN gate. Tool verifies approver identity but does NOT apply changes.
  * CONSTRAINT: Approval ONLY transitions status. Execution of changes requires separate plan/tool.

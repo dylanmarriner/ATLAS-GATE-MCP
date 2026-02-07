@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Complete Delivery Summary
+# ATLAS-GATE MCP Server: Complete Delivery Summary
 
 **Delivery Date**: January 12, 2026  
 **Status**: ✅ COMPLETE & READY FOR PRODUCTION
@@ -326,10 +326,10 @@ A **production-ready, fully hardened, comprehensively documented MCP server** th
 
 ### Step 1: Install
 ```bash
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 npm install
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 node server.js
 ```
 
@@ -440,5 +440,5 @@ This system has been audited to principal engineering standards and is ready for
 
 ---
 
-**Welcome to KAIZA MCP Server. Build with confidence. 🚀**
+**Welcome to ATLAS-GATE MCP Server. Build with confidence. 🚀**
 

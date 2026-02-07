@@ -9,7 +9,7 @@
 
 ## EXECUTIVE SUMMARY
 
-Implemented a production-grade, append-only, hash-chained audit logging system for the KAIZA MCP server. The system provides non-repudiable forensic audit trails for all tool invocations with fail-closed semantics: **audit write failure causes tool invocation failure** (no silent losses).
+Implemented a production-grade, append-only, hash-chained audit logging system for the ATLAS-GATE MCP server. The system provides non-repudiable forensic audit trails for all tool invocations with fail-closed semantics: **audit write failure causes tool invocation failure** (no silent losses).
 
 **Key Achievement**: Every tool call now produces exactly one deterministic audit entry with tamper-evident hash chaining, redacted sensitive data, and concurrency-safe serialization.
 
@@ -244,7 +244,7 @@ Any modification to Entry 1 changes its hash, breaking the chain for Entries 2+ 
 
 ### 5.4 Concurrency Protection
 
-- **Lock mechanism**: File-based locking on `.kaiza/audit.lock/`
+- **Lock mechanism**: File-based locking on `.atlas-gate/audit.lock/`
 - **Atomic reads**: Read current seq/hash while holding lock
 - **Atomic writes**: Single `fs.appendFileSync()` (POSIX atomic)
 - **Lock release**: Always via finally block (non-negotiable)
@@ -356,7 +356,7 @@ The schema supports forward-compatible additions:
 The audit system is **automatically active** once deployed:
 
 1. All tool calls (success/failure) now produce audit entries
-2. Audit log located at `[workspace_root]/.kaiza/audit.log`
+2. Audit log located at `[workspace_root]/.atlas-gate/audit.log`
 3. Pre-session events buffered and flushed at begin_session
 
 ### 9.2 Verification
@@ -368,7 +368,7 @@ To verify audit system is working:
 node test-audit-system.js
 
 # Inspect audit log (after running tools)
-cat .kaiza/audit.log | jq -R 'fromjson'
+cat .atlas-gate/audit.log | jq -R 'fromjson'
 
 # Verify integrity
 node -e "
@@ -496,5 +496,5 @@ tools/begin_session.js             (MODIFIED, +25 lines)
 ---
 
 **Generated**: 2026-01-19 T 14:30:45.123Z  
-**Audit Log Path**: `[workspace_root]/.kaiza/audit.log`  
+**Audit Log Path**: `[workspace_root]/.atlas-gate/audit.log`  
 **Implementation Complete**: YES

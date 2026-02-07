@@ -61,7 +61,7 @@ The client was double-encoding the arguments: serializing them to JSON, then pla
 ### Before
 ```javascript
 const server = new McpServer({
-  name: "kaiza-mcp",
+  name: "atlas-gate-mcp",
   version: "1.0.0",
 });
 
@@ -71,7 +71,7 @@ const server = new McpServer({
 ### After
 ```javascript
 const server = new McpServer({
-  name: "kaiza-mcp",
+  name: "atlas-gate-mcp",
   version: "1.0.0",
 });
 
@@ -149,10 +149,10 @@ All existing tool handlers continue to work:
 
 ## Acceptance Criteria Verification
 
-✓ **Criterion 1:** `kaiza-mcp.read` succeeds with `{ "path": "some/file.md" }`  
+✓ **Criterion 1:** `atlas-gate-mcp.read` succeeds with `{ "path": "some/file.md" }`  
    - Direct object arguments work (existing behavior maintained)
 
-✓ **Criterion 2:** `kaiza-mcp.read` succeeds with stringified `"{\"path\": \"some/file.md\"}"`  
+✓ **Criterion 2:** `atlas-gate-mcp.read` succeeds with stringified `"{\"path\": \"some/file.md\"}"`  
    - Stringified arguments now automatically parsed and accepted
 
 ✓ **Criterion 3:** No "expected object, received string" errors  

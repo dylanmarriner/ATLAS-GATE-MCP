@@ -98,7 +98,7 @@ Include:
 
 - [Related ADR](./ADR-{NUMBER}.md)
 - [External Reference](https://example.com)
-- [Issue #123](https://github.com/dylanmarriner/KAIZA-MCP-server/issues/123)
+- [Issue #123](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues/123)
 
 ## History
 
@@ -123,6 +123,6 @@ See ADR-001 for a good example of a minimal but complete ADR.
 
 ---
 
-**Document Owner:** KAIZA MCP Architecture Team  
+**Document Owner:** ATLAS-GATE MCP Architecture Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

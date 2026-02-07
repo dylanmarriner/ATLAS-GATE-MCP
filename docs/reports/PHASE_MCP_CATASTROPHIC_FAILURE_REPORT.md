@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-Implemented a comprehensive catastrophic failure handling system for the KAIZA MCP Server with:
+Implemented a comprehensive catastrophic failure handling system for the ATLAS-GATE MCP Server with:
 
 - **Failure Taxonomy**: 14 stable failure IDs mapped to invariants and responses
 - **Global Kill-Switch**: Persistent, non-negotiable state machine that blocks all writes on critical failures
@@ -39,7 +39,7 @@ All code is production-ready, auditable, and non-negotiable.
 
 2. **core/kill-switch.js** (308 lines)
    - Global kill-switch state machine
-   - Persistent state to `/.kaiza/kill_switch.json`
+   - Persistent state to `/.atlas-gate/kill_switch.json`
    - Tool permission checking
    - Recovery verification tracking
    - Kill-switch engagement logic
@@ -483,7 +483,7 @@ Plus: 480 lines specification, 250+ lines documentation updates
 
 ## Conclusion
 
-Successfully implemented a production-ready catastrophic failure and kill-switch system for the KAIZA MCP Server. The system is:
+Successfully implemented a production-ready catastrophic failure and kill-switch system for the ATLAS-GATE MCP Server. The system is:
 
 - ✓ **Complete** - All 13 requirements delivered
 - ✓ **Tested** - 20 comprehensive tests (100% pass)

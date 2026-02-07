@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-# KAIZA-MCP Portability Verification Script
+# ATLAS-GATE-MCP Portability Verification Script
 
 REPO_ROOT=$(pwd)
-SERVER_BIN="$REPO_ROOT/bin/kaiza-mcp.js"
+SERVER_BIN="$REPO_ROOT/bin/atlas-gate-mcp.js"
 
-echo "=== KAIZA-MCP Portability Check ==="
+echo "=== ATLAS-GATE-MCP Portability Check ==="
 echo "Repo Root: $REPO_ROOT"
 echo "Server Bin: $SERVER_BIN"
 

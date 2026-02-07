@@ -87,7 +87,7 @@ function test(name, fn) {
 }
 
 function createTestWorkspace() {
-  const testDir = path.join(os.tmpdir(), `kaiza-test-${Date.now()}`);
+  const testDir = path.join(os.tmpdir(), `atlas-gate-test-${Date.now()}`);
   if (!fs.existsSync(testDir)) {
     fs.mkdirSync(testDir, { recursive: true });
   }

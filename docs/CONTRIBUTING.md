@@ -28,7 +28,7 @@ In AI-assisted development, it is trivial to generate 80% of a solution. The las
 
 ## Contributing to the MCP Server Codebase
 
-If you are modifying the `kaiza-mcp` server itself (e.g., editing `server.js` or `core/`):
+If you are modifying the `atlas-gate-mcp` server itself (e.g., editing `server.js` or `core/`):
 
 1. **Respect the Invariants**: Do not remove the `stub-detector.js` logic.
 2. **Maintain Determinism**: Do not add stateful logic that persists across sessions (except for the audit log).

@@ -6,7 +6,7 @@
 
 ## 1. Overview
 
-Every file write in KAIZA MCP requires a corresponding intent artifact that explains WHY the change exists and what it does. This specification defines the canonical schema for intent artifacts.
+Every file write in ATLAS-GATE MCP requires a corresponding intent artifact that explains WHY the change exists and what it does. This specification defines the canonical schema for intent artifacts.
 
 Intent artifacts are:
 - **Deterministic**: Identical content produces identical hash

@@ -1,4 +1,4 @@
-# KAIZA-MCP Server: Concrete Bug Fixes
+# ATLAS-GATE-MCP Server: Concrete Bug Fixes
 
 **Status**: Production-Ready Fixes
 **Format**: Exact code changes with file paths and line numbers
@@ -73,7 +73,7 @@ export const SESSION_ID = crypto.randomUUID();
 export const WORKSPACE_ROOT = process.cwd();
 
 const server = new McpServer({
-  name: "kaiza-mcp",
+  name: "atlas-gate-mcp",
   version: "1.0.0",
 });
 
@@ -168,12 +168,12 @@ registerAllTools();
 const transport = new StdioServerTransport();
 server.connect(transport);
 
-console.error(`[MCP] kaiza-mcp running | session=${SESSION_ID}`);
+console.error(`[MCP] atlas-gate-mcp running | session=${SESSION_ID}`);
 ```
 
 **Verification**:
 ```bash
-node server.js  # Should print: [MCP] kaiza-mcp running | session=...
+node server.js  # Should print: [MCP] atlas-gate-mcp running | session=...
 ```
 
 ---
@@ -230,13 +230,13 @@ function getAuditLogPath() {
 **Verification**:
 ```bash
 # Should always write to same location regardless of cwd
-cd /media/ubuntux/DEVELOPMENT/KAIZA-MCP-server
+cd /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server
 node -e "import('./core/audit-log.js').then(m => console.log(m.getAuditLogPath()))"
-# Output: /media/ubuntux/DEVELOPMENT/KAIZA-MCP-server/audit-log.jsonl
+# Output: /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server/audit-log.jsonl
 
-cd /media/ubuntux/DEVELOPMENT/KAIZA-MCP-server/docs
+cd /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server/docs
 node -e "import('./core/audit-log.js').then(m => console.log(m.getAuditLogPath()))"
-# Output: /media/ubuntux/DEVELOPMENT/KAIZA-MCP-server/audit-log.jsonl (same!)
+# Output: /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server/audit-log.jsonl (same!)
 ```
 
 ---
@@ -256,16 +256,16 @@ import path from "path";
  * CANONICAL: Single source of truth for plan discovery locations
  * 
  * Search order:
- * 1. .kaiza/approved_plans (governed repo with explicit approval dir)
- * 2. .kaiza/plans (alternate naming)
- * 3. .kaiza/approvedplans (alternate naming)
+ * 1. .atlas-gate/approved_plans (governed repo with explicit approval dir)
+ * 2. .atlas-gate/plans (alternate naming)
+ * 3. .atlas-gate/approvedplans (alternate naming)
  * 4. docs/plans (standard location)
  */
 export function getPlanLocations(repoRoot) {
   return [
-    path.join(repoRoot, ".kaiza", "approved_plans"),
-    path.join(repoRoot, ".kaiza", "plans"),
-    path.join(repoRoot, ".kaiza", "approvedplans"),
+    path.join(repoRoot, ".atlas-gate", "approved_plans"),
+    path.join(repoRoot, ".atlas-gate", "plans"),
+    path.join(repoRoot, ".atlas-gate", "approvedplans"),
     path.join(repoRoot, "docs", "plans"),
   ];
 }
@@ -353,9 +353,9 @@ export async function listPlansHandler({ path: targetPath }) {
     absPath = path.resolve(WORKSPACE_ROOT, targetPath);
   }
 
-  const kaizaRootMarker = path.join(absPath, ".kaiza", "ROOT");
-  if (!fs.existsSync(kaizaRootMarker)) {
-    throw new Error(`NOT_GOVERNED_REPO: ${absPath} does not have .kaiza/ROOT marker`);
+  const atlas-gateRootMarker = path.join(absPath, ".atlas-gate", "ROOT");
+  if (!fs.existsSync(atlas-gateRootMarker)) {
+    throw new Error(`NOT_GOVERNED_REPO: ${absPath} does not have .atlas-gate/ROOT marker`);
   }
 
   // Use canonical discovery
@@ -429,7 +429,7 @@ import path from "path";
 /**
  * Resolve repo root for a given path by walking upward
  * Priority:
- * 1. .kaiza/ROOT governance marker
+ * 1. .atlas-gate/ROOT governance marker
  * 2. docs/plans (standard structure)
  * 3. .git directory (git repo)
  * @param {string} targetPath - Starting path for resolution
@@ -453,8 +453,8 @@ export function resolveRepoRoot(targetPath) {
   while (current !== lastDir) {
     lastDir = current;
 
-    // PRIORITY 1: Governance Marker (.kaiza/ROOT)
-    const govMarker = path.join(current, ".kaiza", "ROOT");
+    // PRIORITY 1: Governance Marker (.atlas-gate/ROOT)
+    const govMarker = path.join(current, ".atlas-gate", "ROOT");
     if (fs.existsSync(govMarker)) {
       return current;
     }
@@ -482,7 +482,7 @@ export function resolveRepoRoot(targetPath) {
   // No repo root found
   throw new Error(
     `NO_GOVERNED_REPO_FOUND: Could not find repo root for ${targetPath}. ` +
-    `Path must be inside a directory with .kaiza/ROOT, docs/plans, or .git`
+    `Path must be inside a directory with .atlas-gate/ROOT, docs/plans, or .git`
   );
 }
 
@@ -553,7 +553,7 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 **Current Code** (line 7-13):
 ```javascript
 function readGovernanceState(repoRoot) {
-  const govPath = path.join(repoRoot, ".kaiza", "governance.json");  // HARDCODED
+  const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");  // HARDCODED
   if (!fs.existsSync(govPath)) {
     return { bootstrap_enabled: false, approved_plans_count: 0, auto_register_plans: false };
   }
@@ -670,7 +670,7 @@ import { WORKSPACE_ROOT } from "../server.js";
 import path from "path";
 import fs from "fs";
 
-const PROMPT_GATE_DIR = path.join(WORKSPACE_ROOT, ".kaiza", "sessions");
+const PROMPT_GATE_DIR = path.join(WORKSPACE_ROOT, ".atlas-gate", "sessions");
 
 function getSessionLockPath(sessionId) {
   return path.join(PROMPT_GATE_DIR, `${sessionId}.lock`);
@@ -736,8 +736,8 @@ if (!hasPromptBeenFetched(SESSION_ID)) {
 
 **Verification**:
 ```bash
-# Prompt gate now persisted in .kaiza/sessions/{SESSION_ID}.lock
-ls -la /media/ubuntux/DEVELOPMENT/KAIZA-MCP-server/.kaiza/sessions/
+# Prompt gate now persisted in .atlas-gate/sessions/{SESSION_ID}.lock
+ls -la /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server/.atlas-gate/sessions/
 ```
 
 ---
@@ -880,12 +880,12 @@ export function bootstrapCreateFoundationPlan(repoRoot = WORKSPACE_ROOT, planCon
     verifyBootstrapAuth(payload, signature);
 
     // NEW: 3. Validate repository structure
-    const kaizaDir = path.join(repoRoot, ".kaiza");
-    const rootMarker = path.join(kaizaDir, "ROOT");
+    const atlas-gateDir = path.join(repoRoot, ".atlas-gate");
+    const rootMarker = path.join(atlas-gateDir, "ROOT");
     
-    // Ensure .kaiza directory exists
-    if (!fs.existsSync(kaizaDir)) {
-        fs.mkdirSync(kaizaDir, { recursive: true });
+    // Ensure .atlas-gate directory exists
+    if (!fs.existsSync(atlas-gateDir)) {
+        fs.mkdirSync(atlas-gateDir, { recursive: true });
     }
     
     // Create ROOT marker to indicate this is a governed repo
@@ -932,8 +932,8 @@ export function bootstrapCreateFoundationPlan(repoRoot = WORKSPACE_ROOT, planCon
 
 ```bash
 #!/bin/bash
-# KAIZA-MCP Pre-commit Hook
-# Prevents committing files that weren't written through KAIZA-MCP
+# ATLAS-GATE-MCP Pre-commit Hook
+# Prevents committing files that weren't written through ATLAS-GATE-MCP
 
 set -e
 
@@ -947,7 +947,7 @@ fi
 # Read audit log
 AUDIT_LOG="audit-log.jsonl"
 if [ ! -f "$AUDIT_LOG" ]; then
-    echo "ERROR: KAIZA audit-log.jsonl not found"
+    echo "ERROR: ATLAS-GATE audit-log.jsonl not found"
     exit 1
 fi
 
@@ -966,12 +966,12 @@ for FILE in $STAGED_FILES; do
 done
 
 if [ ${#REJECTED_FILES[@]} -gt 0 ]; then
-    echo "❌ COMMIT REJECTED - Files not written through KAIZA-MCP:"
+    echo "❌ COMMIT REJECTED - Files not written through ATLAS-GATE-MCP:"
     for FILE in "${REJECTED_FILES[@]}"; do
         echo "   ❌ $FILE (NOT IN AUDIT LOG - rejected)"
     done
     echo ""
-    echo "All production code must be written through KAIZA-MCP write_file tool."
+    echo "All production code must be written through ATLAS-GATE-MCP write_file tool."
     echo "Use: write_file(path, content, plan) to commit code."
     exit 1
 fi
@@ -988,7 +988,7 @@ chmod +x .git/hooks/pre-commit
 
 ```bash
 #!/bin/bash
-# Install KAIZA pre-commit hook on clone
+# Install ATLAS-GATE pre-commit hook on clone
 cp .githooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
@@ -1075,7 +1075,7 @@ This is a large change requiring careful testing. The key is:
 | 7 | server.js + plan-enforcer.js | Make planId/Hash required | 15 | MEDIUM |
 | 8 | core/plan-discovery.js | Validate plan names | 25 | MEDIUM |
 | 9 | core/plan-enforcer.js | More lenient YAML parsing | 20 | LOW-MED |
-| 10 | core/governance.js | Validate .kaiza/ROOT before plan creation | 15 | MEDIUM |
+| 10 | core/governance.js | Validate .atlas-gate/ROOT before plan creation | 15 | MEDIUM |
 | 11 | .git/hooks/pre-commit | Implement hook script | 40 | LOW-MED |
 | 12 | Multiple | Async/await for concurrency | ~200+ | MEDIUM |
 

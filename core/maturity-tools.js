@@ -1,7 +1,7 @@
 /**
  * ROLE: BOUNDARY (read-only)
  * PURPOSE: MCP-compatible read-only tools for maturity scoring
- * AUTHORITY: KAIZA MCP Maturity Scoring Specification v1.0
+ * AUTHORITY: ATLAS-GATE MCP Maturity Scoring Specification v1.0
  * 
  * These tools are:
  * - Read-only (no state mutations)

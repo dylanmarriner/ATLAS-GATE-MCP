@@ -109,7 +109,7 @@ async function main() {
         fs.mkdirSync(path.dirname(PLAN_PATH), { recursive: true });
     }
     fs.writeFileSync(PLAN_PATH, `<!--
-KAIZA_PLAN_HASH: ${PLAN_HASH}
+ATLAS-GATE_PLAN_HASH: ${PLAN_HASH}
 ROLE: INFRASTRUCTURE
 STATUS: APPROVED
 -->
@@ -325,7 +325,7 @@ export function validateUser() {
     // We need a file that exists but has a different internal hash
     const mismatchHash = "1111111111111111111111111111111111111111111111111111111111111111";
     fs.writeFileSync(path.join(REPO_ROOT, "docs", "plans", `${mismatchHash}.md`), `<!--
-KAIZA_PLAN_HASH: 2222222222222222222222222222222222222222222222222222222222222222
+ATLAS-GATE_PLAN_HASH: 2222222222222222222222222222222222222222222222222222222222222222
 ROLE: INFRASTRUCTURE
 STATUS: APPROVED
 -->`);

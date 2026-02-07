@@ -1,11 +1,11 @@
-# Security Assessment Report: KAIZA-MCP-server Governance
+# Security Assessment Report: ATLAS-GATE-MCP-server Governance
 
 **Date**: 2026-01-05
 **Auditor**: Antigravity (Adversarial Red Team Mode)
-**Target**: KAIZA-MCP-server (write_file.js, policy-engine.js)
+**Target**: ATLAS-GATE-MCP-server (write_file.js, policy-engine.js)
 
 ## Executive Summary
-A comprehensive adversarial audit was conducted to verify the governance enforcement enforcement of KAIZA-MCP-server. The audit simulated a hostile coding agent attempting to bypass security controls.
+A comprehensive adversarial audit was conducted to verify the governance enforcement enforcement of ATLAS-GATE-MCP-server. The audit simulated a hostile coding agent attempting to bypass security controls.
 
 **Status**: **SECURE**
 - **Total Attacks Attempted**: 13
@@ -45,6 +45,6 @@ We successfully verified the "Prove It Runs" mechanism:
 - **Conclusion**: The system effectively prevents breaking header/main/test files.
 
 ## Conclusion
-The KAIZA-MCP-server governance engine is robust against common agentic shortcuts and adversarial writes. The combination of AST analysis, Diff compliance, and Preflight verification provides a strong defense-in-depth architecture.
+The ATLAS-GATE-MCP-server governance engine is robust against common agentic shortcuts and adversarial writes. The combination of AST analysis, Diff compliance, and Preflight verification provides a strong defense-in-depth architecture.
 
 **Recommendation**: Regularly update `TEXT_PATTERNS` in `stub-detector.js` as new evasion techniques (e.g. `nocheck`) emerge.

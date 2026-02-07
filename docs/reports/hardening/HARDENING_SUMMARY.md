@@ -1,4 +1,4 @@
-# KAIZA MCP Server Hardening - Executive Summary
+# ATLAS-GATE MCP Server Hardening - Executive Summary
 
 **Completed**: January 12, 2026  
 **Status**: ✅ PRODUCTION READY
@@ -7,7 +7,7 @@
 
 ## What Was Done
 
-Principal-level audit and hardening of the entire KAIZA MCP Server codebase. Identified and fixed 14 critical/high-priority issues. Added comprehensive test suite covering all major systems. Verified deterministic behavior across arbitrary repository structures.
+Principal-level audit and hardening of the entire ATLAS-GATE MCP Server codebase. Identified and fixed 14 critical/high-priority issues. Added comprehensive test suite covering all major systems. Verified deterministic behavior across arbitrary repository structures.
 
 ---
 
@@ -131,8 +131,8 @@ All tests pass. Test suite is portable and can be run in any environment.
 
 Recommended pre-deployment steps:
 1. Review HARDENING_EXECUTION_DETAILED.md for full analysis
-2. Configure `.kaiza/governance.json` bootstrap settings
-3. Set KAIZA_BOOTSTRAP_SECRET environment variable
+2. Configure `.atlas-gate/governance.json` bootstrap settings
+3. Set ATLAS-GATE_BOOTSTRAP_SECRET environment variable
 4. Create initial foundation plan
 5. Verify all 22 tests pass in target environment
 6. Test plan lifecycle end-to-end
@@ -170,7 +170,7 @@ Recommended pre-deployment steps:
 
 ## Bottom Line
 
-The KAIZA MCP Server is now **production-ready** with **zero known defects**. The system will:
+The ATLAS-GATE MCP Server is now **production-ready** with **zero known defects**. The system will:
 
 - Work correctly across any repository structure
 - Function identically whether paths are symlinked or not

@@ -31,10 +31,10 @@ resetWorkspaceRootForTesting();
 lockWorkspaceRoot(REPO_ROOT);
 
 const SECRET = "test-bootstrap-secret";
-process.env.KAIZA_BOOTSTRAP_SECRET = SECRET;
+process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
 
 // Clean state for testing
-const govPath = path.join(REPO_ROOT, ".kaiza", "governance.json");
+const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");
 if (fs.existsSync(govPath)) {
   const state = JSON.parse(fs.readFileSync(govPath, "utf8"));
   if (!state.bootstrap_enabled) {
@@ -78,7 +78,7 @@ Bootstrap only. No hardcoded paths. Uses workspace-relative resolution.
 # Path Allowlist
 
 - docs/plans/**
-- .kaiza/governance.json
+- .atlas-gate/governance.json
 
 # Verification Gates
 
@@ -178,7 +178,7 @@ async function testValidBootstrap() {
 
     // Verify governance state
     const govState = JSON.parse(
-      fs.readFileSync(path.join(REPO_ROOT, ".kaiza", "governance.json"), "utf8")
+      fs.readFileSync(path.join(REPO_ROOT, ".atlas-gate", "governance.json"), "utf8")
     );
     if (govState.bootstrap_enabled === false && govState.approved_plans_count === 1) {
       console.log("✓ Governance state correct (bootstrap_enabled=false)");

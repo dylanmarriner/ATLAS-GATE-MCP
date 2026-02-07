@@ -204,6 +204,6 @@ Implement a comprehensive cryptographic content integrity verification system wi
 ---
 
 **Decision Date**: 2026-01-19  
-**Decision Maker**: KAIZA MCP Security Team  
+**Decision Maker**: ATLAS-GATE MCP Security Team  
 **Review Date**: 2026-04-19  
 **Status**: Accepted and Implemented

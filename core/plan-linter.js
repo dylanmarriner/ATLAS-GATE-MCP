@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { createHash } from "crypto";
 import { invariant, invariantNotNull, invariantTrue } from "./invariant.js";
 
 /**
@@ -10,6 +11,12 @@ import { invariant, invariantNotNull, invariantTrue } from "./invariant.js";
  * 3. Plan execution (hash re-validation)
  * 
  * MANDATORY: All plans must pass linting before approval/execution
+ * 
+ * NOTE: Uses SHA256 for hashing (BLAKE3 requires external dependency).
+ * Hash computation strips:
+ * - HTML comments (<!-- -->)
+ * - [BLAKE3_HASH: ...] footers
+ * This allows plans to embed their own hash without circular dependency.
  */
 
 const PLAN_LINT_ERROR_CODES = {
@@ -80,8 +87,10 @@ const FORBIDDEN_PATH_PATTERNS = [
  * Compute plan hash from canonical plan text
  * Hash is deterministic: same content -> same hash
  * 
- * NOTE: The hash should be computed on the content WITHOUT the header comment.
- * This allows plans to embed their own hash in the header without circular dependency.
+ * Strips both HTML comments and [BLAKE3_HASH: ...] footers before hashing.
+ * This allows plans to embed their own hash without circular dependency.
+ * 
+ * Returns SHA256 hex digest (BLAKE3 would require external dependency).
  */
 export function computePlanHash(planContent) {
     invariantNotNull(planContent, "PLAN_CONTENT_REQUIRED", "Plan content is required");
@@ -91,9 +100,13 @@ export function computePlanHash(planContent) {
         "Plan content must be non-empty string"
     );
 
-    // Strip HTML comment header (<!--...-->) before hashing
-    // This allows the hash value to be embedded in the header without circular dependency
-    const stripped = planContent.replace(/<!--[\s\S]*?-->\s*/m, "");
+    // Strip both HTML comments (<!--...-->) and [BLAKE3_HASH: ...] footers
+    // This allows the hash value to be embedded without circular dependency
+    let stripped = planContent
+        // Remove HTML comment headers
+        .replace(/<!--[\s\S]*?-->\s*/m, "")
+        // Remove [BLAKE3_HASH: ...] footer (with optional whitespace before/after)
+        .replace(/\s*\[BLAKE3_HASH:\s*[^\]]*\]\s*$/m, "");
 
     const canonicalized = stripped
         .trim()

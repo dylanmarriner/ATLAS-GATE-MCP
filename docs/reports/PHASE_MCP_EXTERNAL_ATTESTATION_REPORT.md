@@ -3,13 +3,13 @@
 **Status**: ✅ COMPLETE  
 **Date**: 2026-01-19  
 **Role**: WINDSURF (Execution)  
-**Target**: KAIZA MCP Server (Core Infrastructure)
+**Target**: ATLAS-GATE MCP Server (Core Infrastructure)
 
 ---
 
 ## 1. Executive Summary
 
-Successfully implemented a **read-only external attestation system** for KAIZA MCP Server that provides cryptographically signed bundles proving workspace integrity and maturity. The system is deterministic, fail-closed, and fully audited.
+Successfully implemented a **read-only external attestation system** for ATLAS-GATE MCP Server that provides cryptographically signed bundles proving workspace integrity and maturity. The system is deterministic, fail-closed, and fully audited.
 
 ### Deliverables Met
 
@@ -86,8 +86,8 @@ All 3 tools are **read-only** and registered with both WINDSURF and ANTIGRAVITY 
 
 **Algorithm**: HMAC-SHA256  
 **Secret Source**: 
-- Environment: `KAIZA_ATTESTATION_SECRET`
-- File: `.kaiza/attestation_secret.json`
+- Environment: `ATLAS-GATE_ATTESTATION_SECRET`
+- File: `.atlas-gate/attestation_secret.json`
 - Ephemeral: Random 32-byte secret (warning issued)
 
 **Coverage**: All fields except `bundle_id`, `generated_timestamp`, `signature`
@@ -364,7 +364,7 @@ The **MCP External Attestation system** is production-ready. It provides:
 ✅ **Full audit trail** (every operation logged)  
 ✅ **Non-coder friendly** (Markdown reports)  
 
-All requirements from the WINDSURF prompt have been met. The system integrates cleanly with existing evidence systems and maintains the governance principles of KAIZA MCP.
+All requirements from the WINDSURF prompt have been met. The system integrates cleanly with existing evidence systems and maintains the governance principles of ATLAS-GATE MCP.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Diagram Rendering Guide"
-description: "Comprehensive guide for rendering and maintaining KAIZA MCP diagrams"
+description: "Comprehensive guide for rendering and maintaining ATLAS-GATE MCP diagrams"
 version: "1.0.0"
 last_updated: "2026-01-19"
 review_date: "2026-04-19"
@@ -13,7 +13,7 @@ audience: ["technical", "maintainer"]
 
 ## Purpose
 
-This guide provides comprehensive instructions for rendering, maintaining, and updating diagrams in the KAIZA MCP documentation system.
+This guide provides comprehensive instructions for rendering, maintaining, and updating diagrams in the ATLAS-GATE MCP documentation system.
 
 ## Supported Diagram Formats
 
@@ -275,7 +275,7 @@ function validateDiagrams() {
 
 ---
 
-**Document Owner**: KAIZA MCP Documentation Team  
+**Document Owner**: ATLAS-GATE MCP Documentation Team  
 **Review Frequency**: Monthly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

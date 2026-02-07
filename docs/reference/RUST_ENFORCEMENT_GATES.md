@@ -2,7 +2,7 @@
 
 ## Overview
 
-KAIZA MCP enforces mandatory Rust policy gates at two critical phases:
+ATLAS-GATE MCP enforces mandatory Rust policy gates at two critical phases:
 
 1. **Pre-Write Gate (STATIC)** - Analyzes code before it's committed
 2. **Post-Write Gate (VERIFICATION)** - Verifies compiler compliance after write
@@ -199,7 +199,7 @@ cargo clippy -- -D warnings failed:
 
 ### Automatic Detection
 
-KAIZA automatically detects Rust projects via `Cargo.toml` presence:
+ATLAS-GATE automatically detects Rust projects via `Cargo.toml` presence:
 
 - If `Cargo.toml` exists → Run all Rust gates
 - If no `Cargo.toml` → Skip Rust enforcement (not a Rust project)

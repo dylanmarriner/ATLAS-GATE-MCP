@@ -51,13 +51,13 @@ function sha256(input) {
 async function createTestWorkspace() {
   const testDir = path.join(
     __dirname,
-    ".kaiza-test-remediation",
+    ".atlas-gate-test-remediation",
     `ws-${Date.now()}`
   );
   fs.mkdirSync(testDir, { recursive: true });
 
-  // Initialize .kaiza directory
-  fs.mkdirSync(path.join(testDir, ".kaiza"), { recursive: true });
+  // Initialize .atlas-gate directory
+  fs.mkdirSync(path.join(testDir, ".atlas-gate"), { recursive: true });
 
   return testDir;
 }
@@ -481,7 +481,7 @@ export async function testAuditEntryOnApproval() {
     );
 
     // Read proposal-approvals log
-    const approvalsPath = path.join(workspaceRoot, ".kaiza/proposal-approvals.jsonl");
+    const approvalsPath = path.join(workspaceRoot, ".atlas-gate/proposal-approvals.jsonl");
     assert(fs.existsSync(approvalsPath), "Approvals log should exist");
 
     const lines = fs

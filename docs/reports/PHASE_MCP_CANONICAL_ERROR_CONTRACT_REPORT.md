@@ -1,6 +1,6 @@
 # PHASE: MCP Canonical Error Contract Implementation Report
 
-**Phase**: KAIZA MCP ERROR ENVELOPE STANDARDIZATION  
+**Phase**: ATLAS-GATE MCP ERROR ENVELOPE STANDARDIZATION  
 **Status**: COMPLETE  
 **Date**: 2026-01-19  
 **Authority**: WINDSURF EXECUTION MODE
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Implemented a canonical error envelope contract for the KAIZA MCP server that guarantees every tool failure produces a deterministic `SystemError` instance with all required fields, logged to the audit trail, and serialized as JSON-safe protocol response.
+Implemented a canonical error envelope contract for the ATLAS-GATE MCP server that guarantees every tool failure produces a deterministic `SystemError` instance with all required fields, logged to the audit trail, and serialized as JSON-safe protocol response.
 
 **Result**: Raw Error objects can no longer reach the MCP transport layer. All tool failures follow canonical semantics.
 

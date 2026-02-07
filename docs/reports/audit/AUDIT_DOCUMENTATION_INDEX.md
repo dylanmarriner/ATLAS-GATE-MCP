@@ -1,4 +1,4 @@
-# KAIZA MCP WRITE_FILE VALIDATOR - AUDIT DOCUMENTATION INDEX
+# ATLAS-GATE MCP WRITE_FILE VALIDATOR - AUDIT DOCUMENTATION INDEX
 
 Complete audit of the Kaiza MCP write_file tool including all test results, findings, and recommendations.
 
@@ -22,7 +22,7 @@ Complete audit of the Kaiza MCP write_file tool including all test results, find
 
 ---
 
-### 2. **KAIZA_AUDIT_REPORT.md** 
+### 2. **ATLAS-GATE_AUDIT_REPORT.md** 
 **Purpose**: Comprehensive technical audit  
 **Length**: ~20 minutes to read  
 **Contents**:
@@ -150,7 +150,7 @@ Root Cause of Failures: JavaScript-only AST parser
 
 ### For Technical Leads
 1. **AUDIT_EXECUTIVE_SUMMARY.md** (5 min)
-2. **KAIZA_AUDIT_REPORT.md** → Finding sections (10 min)
+2. **ATLAS-GATE_AUDIT_REPORT.md** → Finding sections (10 min)
 3. → Estimate: Fix effort? Timeline?
 
 ### For Developers
@@ -160,7 +160,7 @@ Root Cause of Failures: JavaScript-only AST parser
 
 ### For Security Team
 1. **AUDIT_FINDINGS_DETAILED.md** (20 min)
-2. **KAIZA_AUDIT_REPORT.md** → Security Analysis (10 min)
+2. **ATLAS-GATE_AUDIT_REPORT.md** → Security Analysis (10 min)
 3. → Review: Acceptable risk level?
 
 ---
@@ -177,7 +177,7 @@ Root Cause of Failures: JavaScript-only AST parser
 → Read: **AUDIT_FINDINGS_DETAILED.md** → Workarounds section
 
 ### Task: "I need to implement Plan 5"
-→ Read: **KAIZA_AUDIT_REPORT.md** → Plan 05 section
+→ Read: **ATLAS-GATE_AUDIT_REPORT.md** → Plan 05 section
 
 ### Concern: "Is this secure?"
 → Read: **AUDIT_FINDINGS_DETAILED.md** → Issue #3 (String bypass)
@@ -316,7 +316,7 @@ Root Cause of Failures: JavaScript-only AST parser
 
 ## 📚 RELATED DOCUMENTATION
 
-- `/KAIZA_AUDIT_REPORT.md` - Full technical report
+- `/ATLAS-GATE_AUDIT_REPORT.md` - Full technical report
 - `/AUDIT_FINDINGS_DETAILED.md` - Deep-dive analysis
 - `/QUICK_AUDIT_REFERENCE.md` - Quick reference guide  
 - `/AUDIT_EXECUTIVE_SUMMARY.md` - Executive summary

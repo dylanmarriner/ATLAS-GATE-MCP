@@ -1,4 +1,4 @@
-# KAIZA WRITE_FILE VALIDATOR - QUICK REFERENCE GUIDE
+# ATLAS-GATE WRITE_FILE VALIDATOR - QUICK REFERENCE GUIDE
 
 ## ✅ WHAT PASSES VALIDATION
 
@@ -135,7 +135,7 @@ handleCallback() {
 
 **Example**:
 ```javascript
-mcp__kaiza__write_file({
+mcp__atlas-gate__write_file({
   path: "src/auth.js",
   content: "real code here",
   plan: "01-javascript-strings",

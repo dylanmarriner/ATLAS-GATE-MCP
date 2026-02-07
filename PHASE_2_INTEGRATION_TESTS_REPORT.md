@@ -39,8 +39,8 @@
 
 **Evidence**: Server startup logs show successful MCP initialization:
 ```
-[MCP] kaiza-mcp-windsurf running | session=045033b8-9a16-4a05-94b8-77a4524f2838
-[MCP] kaiza-mcp-antigravity running | session=f1b440fe-9adb-4bbd-8286-c1e4e596cb93
+[MCP] atlas-gate-mcp-windsurf running | session=045033b8-9a16-4a05-94b8-77a4524f2838
+[MCP] atlas-gate-mcp-antigravity running | session=f1b440fe-9adb-4bbd-8286-c1e4e596cb93
 ```
 
 #### **B. Core Modules ↔ Server Integration**
@@ -143,7 +143,7 @@
 **Evidence**: Plan files created with proper structure:
 ```markdown
 <!--
-KAIZA_PLAN_HASH: 3249c908daa76ef24742884505c541098ee3a9f9d88c2ca69c9a1f0365956911
+ATLAS-GATE_PLAN_HASH: 3249c908daa76ef24742884505c541098ee3a9f9d88c2ca69c9a1f0365956911
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -153,7 +153,7 @@ STATUS: APPROVED
 **Status**: ✅ **PASS**
 
 **Validated Components**:
-- ✅ Governance state persistence in `.kaiza/governance.json`
+- ✅ Governance state persistence in `.atlas-gate/governance.json`
 - ✅ Bootstrap state management
 - ✅ Approved plans tracking
 - ✅ Configuration persistence

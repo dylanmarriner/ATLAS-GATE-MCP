@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Complete Setup & Usage Guide
+# ATLAS-GATE MCP Server: Complete Setup & Usage Guide
 
 **Last Updated**: January 12, 2026  
 **Status**: Production Ready  
@@ -51,22 +51,22 @@ If you need to install Node.js, go to [nodejs.org](https://nodejs.org) and downl
 
 ### Step 1: Clone the Repository
 
-The KAIZA MCP Server is designed to work anywhere. Choose any location:
+The ATLAS-GATE MCP Server is designed to work anywhere. Choose any location:
 
 ```bash
 # Option A: Clone to your home directory (recommended)
 cd ~
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 
 # Option B: Clone to a project directory
 cd ~/projects
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 
 # Option C: Clone to /opt (system-wide installation)
-sudo git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git /opt/kaiza-mcp
-cd /opt/kaiza-mcp
+sudo git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git /opt/atlas-gate-mcp
+cd /opt/atlas-gate-mcp
 ```
 
 **After cloning, verify the structure:**
@@ -88,7 +88,7 @@ ls -la
 
 ```bash
 # Navigate to the repository
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 
 # Install all required packages
 npm install
@@ -137,17 +137,17 @@ Now set the environment variable:
 
 ```bash
 # Option A: Temporary (for current terminal session)
-export KAIZA_BOOTSTRAP_SECRET="A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."
+export ATLAS-GATE_BOOTSTRAP_SECRET="A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."
 
 # Option B: Permanent (add to ~/.bashrc or ~/.zshrc)
-echo 'export KAIZA_BOOTSTRAP_SECRET="A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."' >> ~/.bashrc
+echo 'export ATLAS-GATE_BOOTSTRAP_SECRET="A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."' >> ~/.bashrc
 source ~/.bashrc
 
 # Option C: Windows (PowerShell)
-$env:KAIZA_BOOTSTRAP_SECRET = "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6..."
 
 # Verify
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 ### Step 4: Run Tests (Verify Installation)
@@ -185,13 +185,13 @@ node test-comprehensive.js
 
 ```bash
 # Navigate to repository
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 
 # Start the server
 node server.js
 
 # Expected output:
-# [MCP] kaiza-mcp running | session=a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
+# [MCP] atlas-gate-mcp running | session=a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
 ```
 
 **The server is now running and listening on stdin/stdout**
@@ -205,7 +205,7 @@ The MCP server uses **stdio protocol** (standard input/output). You need a clien
 Windsurf is a user-friendly IDE that works with MCP servers:
 
 1. Install Windsurf from [codeium.com/windsurf](https://codeium.com/windsurf)
-2. Configure it to use the KAIZA MCP server
+2. Configure it to use the ATLAS-GATE MCP server
 3. The server will be automatically started when needed
 
 #### Option B: Use with Claude in Cline
@@ -214,7 +214,7 @@ If you're using Claude API through Cline:
 
 1. Install Cline VSCode extension
 2. Configure MCP server in settings
-3. Point to your `KAIZA-MCP-server/server.js`
+3. Point to your `ATLAS-GATE-MCP-server/server.js`
 
 #### Option C: Manual Testing
 
@@ -222,7 +222,7 @@ For testing purposes, you can test the server manually:
 
 ```bash
 # Terminal 1: Start the server
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 node server.js
 
 # Terminal 2: Send a test request
@@ -245,7 +245,7 @@ node server.js
 
 ## Understanding the Tools
 
-KAIZA MCP exposes 6 main tools that work together:
+ATLAS-GATE MCP exposes 6 main tools that work together:
 
 ### Tool 1: `bootstrap_create_foundation_plan`
 **Purpose**: Create the very first governance plan in a fresh repository  
@@ -297,7 +297,7 @@ KAIZA MCP exposes 6 main tools that work together:
 - After this, use `write_file` to create additional plans
 
 **Prerequisites**:
-- KAIZA_BOOTSTRAP_SECRET environment variable set
+- ATLAS-GATE_BOOTSTRAP_SECRET environment variable set
 - Fresh repository (no existing plans)
 
 **Parameters**:
@@ -322,7 +322,7 @@ KAIZA MCP exposes 6 main tools that work together:
 User Prompt:
 "I need to create the initial governance plan for this repository. 
 Please bootstrap with a basic plan that allows modifications to src/ and docs/ folders.
-The environment has KAIZA_BOOTSTRAP_SECRET set to my-secret-key."
+The environment has ATLAS-GATE_BOOTSTRAP_SECRET set to my-secret-key."
 
 Expected Response:
 - Plan created: FOUNDATION-{uuid}.md
@@ -376,7 +376,7 @@ User Prompt:
 
 Expected Response:
 ---
-# KAIZA MCP CANONICAL PROMPT
+# ATLAS-GATE MCP CANONICAL PROMPT
 This is the authoritative prompt.
 You must respect the plan.
 ---
@@ -758,7 +758,7 @@ Expected Response:
 
 ### Workflow 1: Fresh Repository Setup
 
-**Goal**: Set up a new repository with KAIZA governance
+**Goal**: Set up a new repository with ATLAS-GATE governance
 
 **Step 1: Bootstrap**
 ```
@@ -1177,7 +1177,7 @@ npm list  # Should show all packages
 npm install
 
 # 4. Check current directory
-pwd  # Should be in KAIZA-MCP-server repo
+pwd  # Should be in ATLAS-GATE-MCP-server repo
 
 # 5. Check permissions
 ls -la server.js  # Should be readable
@@ -1438,14 +1438,14 @@ Once you complete this guide:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 
 # 2. Install
 npm install
 
 # 3. Set environment variable
-export KAIZA_BOOTSTRAP_SECRET="your-secret-here"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 
 # 4. Start server
 node server.js

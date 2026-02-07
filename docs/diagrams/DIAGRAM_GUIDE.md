@@ -1,6 +1,6 @@
 # Diagram Management Guide
 
-**How to create, edit, and regenerate diagrams in KAIZA MCP.**
+**How to create, edit, and regenerate diagrams in ATLAS-GATE MCP.**
 
 ## Quick Start
 
@@ -337,7 +337,7 @@ Or use online editor and export manually.
 [See docs](./docs/ARCHITECTURE.md)
 
 # ✓ Good:
-[See ADR](https://github.com/dylanmarriner/KAIZA-MCP-server/blob/main/adr/001-dual-role-governance.md)
+[See ADR](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/blob/main/adr/001-dual-role-governance.md)
 ```
 
 ### Problem: Diagram is too large/unreadable
@@ -371,7 +371,7 @@ Or use online editor and export manually.
 ```markdown
 ## Architecture
 
-![KAIZA MCP Architecture](./docs/diagrams/rendered/architecture.svg)
+![ATLAS-GATE MCP Architecture](./docs/diagrams/rendered/architecture.svg)
 
 See [Architecture Document](./docs/ARCHITECTURE.md) for details.
 ```

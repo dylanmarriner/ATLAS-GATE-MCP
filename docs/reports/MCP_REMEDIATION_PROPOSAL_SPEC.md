@@ -3,7 +3,7 @@
 **Version**: 1.0  
 **Status**: ACTIVE  
 **Last Updated**: 2026-01-19  
-**Authority**: KAIZA MCP REMEDIATION PROPOSAL SYSTEM (PROPOSE-ONLY)
+**Authority**: ATLAS-GATE MCP REMEDIATION PROPOSAL SYSTEM (PROPOSE-ONLY)
 
 ---
 
@@ -43,7 +43,7 @@ The MCP Remediation Proposal System is a **propose-only** remediation engine tha
 ┌──────────────────▼──────────────────────────────────┐
 │ 3. PROPOSAL PERSISTENCE                             │
 │  - Write to docs/proposals/PROPOSAL_<id>.md         │
-│  - Append to .kaiza/proposals-index.jsonl           │
+│  - Append to .atlas-gate/proposals-index.jsonl           │
 │  - Audit entry: "PROPOSAL_GENERATED"                │
 └──────────────────┬──────────────────────────────────┘
                    │
@@ -304,7 +304,7 @@ Before approving, verify:
 
 **Constraints**:
 - No mutations to workspace
-- Writes only to `docs/proposals/` and `.kaiza/proposals-index.jsonl`
+- Writes only to `docs/proposals/` and `.atlas-gate/proposals-index.jsonl`
 - Appends one audit entry: `tool=generate_remediation_proposals`
 - All evidence must be provided; tool does NOT fetch from disk
 
@@ -440,7 +440,7 @@ proposal is valid if plan_hash matches abc123def456...
 
 ### Proposal Index
 
-**Location**: `.kaiza/proposals-index.jsonl`
+**Location**: `.atlas-gate/proposals-index.jsonl`
 
 **Format**: One JSON object per line, append-only.
 
@@ -450,7 +450,7 @@ proposal is valid if plan_hash matches abc123def456...
 
 ### Approval Audit Log
 
-**Location**: `.kaiza/proposal-approvals.jsonl`
+**Location**: `.atlas-gate/proposal-approvals.jsonl`
 
 **Format**: One JSON object per line, append-only.
 
@@ -612,7 +612,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
    File: docs/proposals/PROPOSAL_PROP-abc123.md
    Status: PENDING
-   Index: .kaiza/proposals-index.jsonl (appended)
+   Index: .atlas-gate/proposals-index.jsonl (appended)
    Audit: generate_remediation_proposals entry written
    ```
 

@@ -30,7 +30,7 @@ node server.js
 
 **Stdio Communication:**
 The server listens on `stdin` and writes to `stdout`. You will not see a UI.
-*Startup Log (stderr)*: `[MCP] kaiza-mcp running | session=<uuid>`
+*Startup Log (stderr)*: `[MCP] atlas-gate-mcp running | session=<uuid>`
 
 ## Tool Usage
 

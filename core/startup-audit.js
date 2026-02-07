@@ -1,7 +1,7 @@
 /**
  * ROLE: INFRASTRUCTURE
- * PURPOSE: Startup Self-Audit - Validates KAIZA MCP Server integrity before boot
- * AUTHORITY: KAIZA Governance - REFUSE_TO_BOOT enforcement
+ * PURPOSE: Startup Self-Audit - Validates ATLAS-GATE MCP Server integrity before boot
+ * AUTHORITY: ATLAS-GATE Governance - REFUSE_TO_BOOT enforcement
  */
 
 import { KaizaError, ERROR_CODES } from './error.js';

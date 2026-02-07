@@ -5,7 +5,7 @@
 
 ## Overview
 
-This document defines how documentation is maintained, versioned, and evolved in KAIZA MCP. It establishes a Docs-as-a-Product discipline with clear ownership, lifecycle rules, and quality standards.
+This document defines how documentation is maintained, versioned, and evolved in ATLAS-GATE MCP. It establishes a Docs-as-a-Product discipline with clear ownership, lifecycle rules, and quality standards.
 
 ---
 
@@ -13,7 +13,7 @@ This document defines how documentation is maintained, versioned, and evolved in
 
 ### 1.1 Version Strategy
 
-KAIZA MCP uses **semantic versioning for documentation**, aligned with software releases:
+ATLAS-GATE MCP uses **semantic versioning for documentation**, aligned with software releases:
 
 ```
 docs/
@@ -62,7 +62,7 @@ This file tracks **documentation-level changes** (not code changes).
 ```markdown
 # Documentation Changelog
 
-All notable changes to KAIZA MCP documentation are recorded here.
+All notable changes to ATLAS-GATE MCP documentation are recorded here.
 
 ## [1.0.2] - 2026-02-10
 
@@ -187,8 +187,8 @@ npm install
 
 # Include descriptive comments
 \`\`\`javascript
-// Initialize KAIZA MCP with security context
-const kaiza = new KaizaMCP(config);
+// Initialize ATLAS-GATE MCP with security context
+const atlas-gate = new KaizaMCP(config);
 \`\`\`
 
 # Callouts for important notes
@@ -201,7 +201,7 @@ const kaiza = new KaizaMCP(config);
 
 #### Links
 - **Internal**: `[Guide](./GUIDE.md)` (relative)
-- **External**: `[GitHub](https://github.com/dylanmarriner/KAIZA-MCP-server)` (absolute)
+- **External**: `[GitHub](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server)` (absolute)
 - **Anchors**: `[Section](#section-heading)`
 
 #### Tables
@@ -220,7 +220,7 @@ Use 3-column maximum for GitHub rendering clarity. For complex data, split into 
 > The system provides a cutting-edge governance layer that enables seamless orchestration of AI-driven workflows.
 
 **Good example:**
-> KAIZA MCP controls which AI tools can make changes and records every action they take.
+> ATLAS-GATE MCP controls which AI tools can make changes and records every action they take.
 
 ---
 

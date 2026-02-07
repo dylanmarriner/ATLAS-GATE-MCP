@@ -1,5 +1,5 @@
 ---
-title: "KAIZA MCP Governance Index"
+title: "ATLAS-GATE MCP Governance Index"
 description: "Comprehensive index of governance documentation, standards, and compliance frameworks"
 version: "1.0.0"
 last_updated: "2026-01-19"
@@ -9,11 +9,11 @@ tags: ["governance", "compliance", "standards", "index"]
 audience: ["technical", "executive", "compliance"]
 ---
 
-# KAIZA MCP Governance Index
+# ATLAS-GATE MCP Governance Index
 
 ## Purpose
 
-This document provides a comprehensive index of all governance, compliance, and standards documentation for the KAIZA MCP project. It serves as the central navigation point for all governance-related information.
+This document provides a comprehensive index of all governance, compliance, and standards documentation for the ATLAS-GATE MCP project. It serves as the central navigation point for all governance-related information.
 
 ## Governance Framework
 
@@ -206,20 +206,20 @@ This document provides a comprehensive index of all governance, compliance, and 
 ## Contact and Support
 
 ### Governance Team
-- **Documentation Team**: documentation@kaiza-mcp.org
-- **Architecture Team**: architecture@kaiza-mcp.org
-- **Security Team**: security@kaiza-mcp.org
-- **Compliance Team**: compliance@kaiza-mcp.org
+- **Documentation Team**: documentation@atlas-gate-mcp.org
+- **Architecture Team**: architecture@atlas-gate-mcp.org
+- **Security Team**: security@atlas-gate-mcp.org
+- **Compliance Team**: compliance@atlas-gate-mcp.org
 
 ### Reporting Channels
 - **Issues**: GitHub Issues for technical and documentation issues
-- **Security**: Security@kaiza-mcp.org for security concerns
-- **Compliance**: Compliance@kaiza-mcp.org for compliance questions
-- **Executive**: executive@kaiza-mcp.org for strategic inquiries
+- **Security**: Security@atlas-gate-mcp.org for security concerns
+- **Compliance**: Compliance@atlas-gate-mcp.org for compliance questions
+- **Executive**: executive@atlas-gate-mcp.org for strategic inquiries
 
 ---
 
-**Document Owner**: KAIZA MCP Governance Team  
+**Document Owner**: ATLAS-GATE MCP Governance Team  
 **Review Frequency**: Monthly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0  

@@ -98,7 +98,7 @@ function validateReplayInputs(workspaceRoot, planHash) {
 // ============================================================================
 
 function readAuditLog(workspaceRoot) {
-  const auditPath = path.join(workspaceRoot, ".kaiza", "audit.log");
+  const auditPath = path.join(workspaceRoot, ".atlas-gate", "audit.log");
 
   if (!fs.existsSync(auditPath)) {
     return {

@@ -8,7 +8,7 @@ audience: ["all", "security-conscious"]
 
 # Safety & Data Handling Guide
 
-How to use KAIZA MCP securely without accidentally leaking secrets, exposing API keys, or compromising sensitive data.
+How to use ATLAS-GATE MCP securely without accidentally leaking secrets, exposing API keys, or compromising sensitive data.
 
 ---
 
@@ -18,7 +18,7 @@ How to use KAIZA MCP securely without accidentally leaking secrets, exposing API
 2. [Secret Management](#secret-management)
 3. [API Key Safety](#api-key-safety)
 4. [Safe Defaults](#safe-defaults)
-5. [What KAIZA Stores](#what-kaiza-stores)
+5. [What ATLAS-GATE Stores](#what-atlas-gate-stores)
 6. [Incident Recovery](#incident-recovery)
 7. [Privacy & Compliance](#privacy--compliance)
 
@@ -165,7 +165,7 @@ const stripeKey = 'sk_live_1234567890abcdef';
 
 #### Unsafe: Don't Put Keys in Plans
 
-When creating a KAIZA plan, don't include actual API keys:
+When creating a ATLAS-GATE plan, don't include actual API keys:
 
 ```
 ❌ WRONG:
@@ -272,9 +272,9 @@ app.get('/auth/google', (req, res) => {
 
 ---
 
-## What KAIZA Stores
+## What ATLAS-GATE Stores
 
-### Data KAIZA Logs
+### Data ATLAS-GATE Logs
 
 ✅ **Audit Trail** (Safe to store):
 - Timestamp of each operation
@@ -284,23 +284,23 @@ app.get('/auth/google', (req, res) => {
 - Hash of content changed (but not the content itself in some cases)
 - Success/error status
 
-### Data KAIZA DOES NOT Log (Safe)
+### Data ATLAS-GATE DOES NOT Log (Safe)
 
-❌ **KAIZA doesn't capture:**
+❌ **ATLAS-GATE doesn't capture:**
 - Your `.env` file contents (environment variables)
-- API keys (unless you put them in a file KAIZA modifies)
-- Private thoughts in your prompts (only what Claude sends to KAIZA tools)
+- API keys (unless you put them in a file ATLAS-GATE modifies)
+- Private thoughts in your prompts (only what Claude sends to ATLAS-GATE tools)
 - Keyboard input or clipboard
 - Network traffic to third parties
 
 ### Audit Log Privacy
 
-**KAIZA audit logs are:**
+**ATLAS-GATE audit logs are:**
 - Stored locally (not sent to external services)
 - Append-only (cannot be retroactively deleted)
 - Accessible only to whoever has access to the folder
 
-**KAIZA audit logs contain:**
+**ATLAS-GATE audit logs contain:**
 - File operations (which files were changed)
 - Metadata (timestamps, roles, session info)
 - Plan hashes (not secret, just identifiers)
@@ -319,9 +319,9 @@ app.get('/auth/google', (req, res) => {
 
 This is fine—it doesn't expose secrets.
 
-### What NOT to Store in KAIZA
+### What NOT to Store in ATLAS-GATE
 
-Don't use KAIZA to manage:
+Don't use ATLAS-GATE to manage:
 - ❌ SSH private keys (use ssh-keygen, store in `~/.ssh/`)
 - ❌ Database passwords (use `.env` + password manager)
 - ❌ OAuth tokens (use environment variables)
@@ -365,7 +365,7 @@ Watch for:
 
 If you see suspicious activity:
 
-1. **Stop using KAIZA** (shut down your session)
+1. **Stop using ATLAS-GATE** (shut down your session)
 2. **Review the changes** (check what was modified)
 3. **Rollback if needed** (use git to undo: `git reset --hard`)
 4. **Rotate secrets** (if any were exposed, regenerate them immediately)
@@ -410,12 +410,12 @@ If you see suspicious activity:
 
 ### Data Residency
 
-**KAIZA stores data:**
+**ATLAS-GATE stores data:**
 - Locally in your workspace folder
 - Not sent to external servers (unless you configure it)
 - Accessible only to users with access to the folder
 
-**If you deploy KAIZA to a server:**
+**If you deploy ATLAS-GATE to a server:**
 - Audit logs remain on that server
 - Server security is your responsibility
 - Consider encryption at rest
@@ -426,17 +426,17 @@ If you see suspicious activity:
 **If you handle:**
 - **GDPR data** (EU residents): Audit logs might contain user identifiers—ensure you can delete them upon request
 - **HIPAA data** (healthcare): Audit logs must be encrypted, access-controlled, and retained per regulations
-- **PCI-DSS data** (credit cards): Don't store card data in KAIZA; use tokenized payment processor
-- **SOC 2**: KAIZA helps with SOC 2 compliance (audit trails, access control)
+- **PCI-DSS data** (credit cards): Don't store card data in ATLAS-GATE; use tokenized payment processor
+- **SOC 2**: ATLAS-GATE helps with SOC 2 compliance (audit trails, access control)
 
-**Best practice:** Consult your compliance officer before using KAIZA with regulated data.
+**Best practice:** Consult your compliance officer before using ATLAS-GATE with regulated data.
 
 ### User Privacy
 
-**If using KAIZA in a team:**
+**If using ATLAS-GATE in a team:**
 - Inform team members that changes are logged and auditable
 - Be transparent about who has access to audit logs
-- Don't use KAIZA logs to spy on developers (use for security, not surveillance)
+- Don't use ATLAS-GATE logs to spy on developers (use for security, not surveillance)
 - Comply with employment laws in your jurisdiction
 
 ---
@@ -463,7 +463,7 @@ If you see suspicious activity:
 
 ### "Someone Executed an Unauthorized Plan"
 
-1. **Immediately lock down** (stop using KAIZA, change any exposed credentials)
+1. **Immediately lock down** (stop using ATLAS-GATE, change any exposed credentials)
 2. **Review audit log** (understand what was changed)
 3. **Use git to rollback** (undo the changes)
 4. **Investigate** (check how the plan was created—who authorized it)
@@ -473,9 +473,9 @@ If you see suspicious activity:
 ### "I'm Worried About Security"
 
 Report security concerns:
-- 📧 **Email:** security@kaiza-mcp.org
-- 🐛 **GitHub Issue:** [Security report](https://github.com/dylanmarriner/KAIZA-MCP-server/security/advisories)
-- 💬 **Discussion:** [GitHub Discussions - Security](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions/categories/security)
+- 📧 **Email:** security@atlas-gate-mcp.org
+- 🐛 **GitHub Issue:** [Security report](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/security/advisories)
+- 💬 **Discussion:** [GitHub Discussions - Security](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions/categories/security)
 
 ---
 
@@ -529,14 +529,14 @@ npm run deploy
 
 ## Further Reading
 
-- [KAIZA Security Policy](../SECURITY.md)
+- [ATLAS-GATE Security Policy](../SECURITY.md)
 - [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)
 - [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
 - [dotenv library documentation](https://github.com/motdotla/dotenv)
 
 ---
 
-**Document Owner:** KAIZA MCP Security Team  
+**Document Owner:** ATLAS-GATE MCP Security Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0
 

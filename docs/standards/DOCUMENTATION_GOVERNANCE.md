@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document establishes the governance framework for KAIZA MCP documentation as a first-class product with explicit ownership, standards, and lifecycle management.
+This document establishes the governance framework for ATLAS-GATE MCP documentation as a first-class product with explicit ownership, standards, and lifecycle management.
 
 ## Documentation Principles
 
@@ -200,7 +200,7 @@ Automated testing for documentation links, code examples, and formatting.
 
 ---
 
-**Document Owner**: KAIZA MCP Documentation Team  
+**Document Owner**: ATLAS-GATE MCP Documentation Team  
 **Review Frequency**: Quarterly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

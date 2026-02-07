@@ -9,13 +9,13 @@ The bootstrap tool is now correctly set up to be called in other repositories wi
 
 **Before:**
 ```javascript
-const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
+const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.atlas-gate/bootstrap_secret.json";
 ```
 
 **After:**
 ```javascript
 const repoRoot = getRepoRoot();
-const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
 
 **Impact:** Bootstrap now works in ANY repository, using workspace-relative path resolution.
@@ -71,7 +71,7 @@ Results: 5/5 passed
 ```
 
 ### Test: Bootstrap Portability ✓
-**Verified in:** `/tmp/test-kaiza-bootstrap` and `/tmp/other-repo`
+**Verified in:** `/tmp/test-atlas-gate-bootstrap` and `/tmp/other-repo`
 
 ```
 ✓ Fresh repository bootstrap succeeds
@@ -89,8 +89,8 @@ All paths now use the unified path resolver:
 ```javascript
 const repoRoot = getRepoRoot();  // Locked at session start
 const planPath = path.join(repoRoot, "docs", "plans", `${hash}.md`);
-const govPath = path.join(repoRoot, ".kaiza", "governance.json");
-const secretPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");
+const secretPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
 
 ### Stub Detection Algorithm
@@ -110,7 +110,7 @@ const secretPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
 
 These changes implement the **BOOTSTRAP_GOVERNANCE_SYSTEM_PLAN** specification:
 
-- ✅ Section 4: Plan Registry Design - Governance state stored at `.kaiza/governance.json`
+- ✅ Section 4: Plan Registry Design - Governance state stored at `.atlas-gate/governance.json`
 - ✅ Section 5: Bootstrap Creation Path - Valid path resolution, secret verification, plan linting
 - ✅ Section 6: Plan Validation - Reject stubs, incomplete code, non-enforceable language
 - ✅ Section 8: Execution Gates - Plan linting at approval time
@@ -123,11 +123,11 @@ All code implements the specification **verbatim with zero deviation**.
 
 1. **Set Bootstrap Secret:**
    ```bash
-   export KAIZA_BOOTSTRAP_SECRET="your-secret-here"
+   export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
    # OR
-   mkdir -p .kaiza
-   echo '{"bootstrap_secret":"your-secret-here"}' > .kaiza/bootstrap_secret.json
-   chmod 600 .kaiza/bootstrap_secret.json
+   mkdir -p .atlas-gate
+   echo '{"bootstrap_secret":"your-secret-here"}' > .atlas-gate/bootstrap_secret.json
+   chmod 600 .atlas-gate/bootstrap_secret.json
    ```
 
 2. **Create Foundation Plan** (in `docs/plans/`):
@@ -180,7 +180,7 @@ All code implements the specification **verbatim with zero deviation**.
      action: "BOOTSTRAP_CREATE_FOUNDATION_PLAN"
    };
    
-   const hmac = crypto.createHmac("sha256", process.env.KAIZA_BOOTSTRAP_SECRET);
+   const hmac = crypto.createHmac("sha256", process.env.ATLAS-GATE_BOOTSTRAP_SECRET);
    hmac.update(JSON.stringify(payload));
    
    const result = await bootstrapPlanHandler({

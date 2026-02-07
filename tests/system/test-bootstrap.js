@@ -17,23 +17,23 @@ const __filename = fileURLToPath(import.meta.url);
 
 // Mock environment
 const SECRET = "test-secret-123";
-process.env.KAIZA_BOOTSTRAP_SECRET = SECRET;
+process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
 
 const PLAN_CONTENT = `<!--
-KAIZA_PLAN_HASH: PENDING_HASH
+ATLAS-GATE_PLAN_HASH: PENDING_HASH
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
 
 # Plan Metadata
 
-This is the foundation plan that bootstraps the KAIZA MCP governance system.
+This is the foundation plan that bootstraps the ATLAS-GATE MCP governance system.
 
 ---
 
 # Scope & Constraints
 
-This plan is scoped to the KAIZA MCP server repository and establishes baseline governance.
+This plan is scoped to the ATLAS-GATE MCP server repository and establishes baseline governance.
 
 Operations MUST NOT:
 - Modify files outside the workspace
@@ -65,7 +65,7 @@ Failure stop conditions: Any system failure
 
 # Path Allowlist
 
-- .kaiza/
+- .atlas-gate/
 - docs/
 - core/
 - tools/
@@ -127,7 +127,7 @@ async function testBootstrap() {
         }
 
         // Verify governance state
-        const govState = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ".kaiza", "governance.json"), "utf8"));
+        const govState = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, ".atlas-gate", "governance.json"), "utf8"));
         if (govState.bootstrap_enabled === false && govState.approved_plans_count === 1) {
             console.log("Governance state updated correctly.");
         } else {
@@ -142,7 +142,7 @@ async function testBootstrap() {
 }
 
 // Reset state for test
-const govPath = path.join(REPO_ROOT, ".kaiza", "governance.json");
+const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");
 fs.writeFileSync(govPath, JSON.stringify({
     bootstrap_enabled: true,
     approved_plans_count: 0

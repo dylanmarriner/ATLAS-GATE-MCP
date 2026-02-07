@@ -112,7 +112,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
 
 ### Software Version Alignment
 
-**KAIZA MCP v1.0.0** includes:
+**ATLAS-GATE MCP v1.0.0** includes:
 - Core dual-role governance (ANTIGRAVITY/WINDSURF)
 - Plan-based authorization with cryptographic verification
 - Comprehensive audit logging and replay

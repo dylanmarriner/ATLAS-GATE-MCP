@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document specifies the fail-closed write-time policy engine that is invoked on **every write attempt** in the KAIZA MCP Server. The policy engine enforces four layers of validation:
+This document specifies the fail-closed write-time policy engine that is invoked on **every write attempt** in the ATLAS-GATE MCP Server. The policy engine enforces four layers of validation:
 
 1. **Plan-Scoped Path Enforcement** — writes must be within workspace bounds and authorized paths
 2. **Universal Denylist** — language-agnostic patterns (TODOs, empty catches, debug bypasses)
@@ -398,7 +398,7 @@ You didn't include an intent artifact explaining your change. Every write must h
 
 ## Audit Logging
 
-Every write attempt (success or failure) produces an audit entry in `/.kaiza/audit.log`:
+Every write attempt (success or failure) produces an audit entry in `/.atlas-gate/audit.log`:
 
 ```json
 {

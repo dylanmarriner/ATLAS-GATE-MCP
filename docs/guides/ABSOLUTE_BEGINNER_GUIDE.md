@@ -31,14 +31,14 @@ audience: ["beginner", "non-technical", "learner"]
 
 ### The Simple Explanation
 
-Imagine you have a very smart assistant (an AI agent like Claude) who can write code and modify your project files. KAIZA MCP is like a **permission slip system** for that assistant.
+Imagine you have a very smart assistant (an AI agent like Claude) who can write code and modify your project files. ATLAS-GATE MCP is like a **permission slip system** for that assistant.
 
-**Without KAIZA MCP:**
+**Without ATLAS-GATE MCP:**
 - The assistant can change any file it wants
 - You have no record of what changed or why
 - If something breaks, you don't know what happened
 
-**With KAIZA MCP:**
+**With ATLAS-GATE MCP:**
 - The assistant must ask for permission (create a "plan") before making changes
 - You approve or reject the plan
 - Every change is recorded in a tamper-proof logbook
@@ -77,7 +77,7 @@ You need to edit configuration files. Options:
 
 ### 4. Your MCP Client
 
-KAIZA MCP works with tools like:
+ATLAS-GATE MCP works with tools like:
 - [Claude Desktop](https://claude.ai/desktop) (Most common)
 - [Windsurf IDE](https://www.codeium.com/windsurf) (Code editor + AI)
 - [Antigravity](https://antigrav.ai/) (AI coding assistant)
@@ -93,8 +93,8 @@ KAIZA MCP works with tools like:
 **Goal:** Get it running and understand the basic workflow.
 
 1. ✅ Install Node.js ([Fast Path Instructions](#fast-path-install))
-2. ✅ Download KAIZA MCP
-3. ✅ Configure your MCP client (add KAIZA)
+2. ✅ Download ATLAS-GATE MCP
+3. ✅ Configure your MCP client (add ATLAS-GATE)
 4. ✅ Run one test plan
 5. ✅ Done!
 
@@ -104,7 +104,7 @@ KAIZA MCP works with tools like:
 
 1. ✅ [Learn about your command line](#understanding-your-command-line)
 2. ✅ [Install Node.js](#installation-step-by-step)
-3. ✅ [Download KAIZA MCP](#download-ATLAS-GATE-MCP)
+3. ✅ [Download ATLAS-GATE MCP](#download-ATLAS-GATE-MCP)
 4. ✅ [Configure your client](#configure-your-mcp-client)
 5. ✅ [Create your first plan](#your-first-plan)
 6. ✅ [Review what you created](#reviewing-your-changes)
@@ -205,7 +205,7 @@ Think of it like buying a lamp:
 
 </details>
 
-#### Step 2: Download KAIZA MCP
+#### Step 2: Download ATLAS-GATE MCP
 
 **What is Git?** A tool that downloads and manages code. It's like Dropbox for programmers.
 
@@ -258,7 +258,7 @@ Think of it like buying a lamp:
 
 #### Step 3: Install Dependencies
 
-**What are "dependencies"?** Other software that KAIZA MCP needs to run.
+**What are "dependencies"?** Other software that ATLAS-GATE MCP needs to run.
 
 1. In your command line (still in the ATLAS-GATE-MCP-server folder), type:
    ```bash
@@ -289,7 +289,7 @@ Think of it like buying a lamp:
    ✅ All checks passed!
    ```
 
-   **Congratulations! KAIZA MCP is installed.**
+   **Congratulations! ATLAS-GATE MCP is installed.**
 
 ---
 
@@ -349,7 +349,7 @@ pwd
 
 ### What Is an MCP Client?
 
-Your **MCP client** is the software that talks to KAIZA MCP. Examples:
+Your **MCP client** is the software that talks to ATLAS-GATE MCP. Examples:
 - Claude Desktop
 - Windsurf
 - Antigravity
@@ -387,11 +387,11 @@ Press Enter. You'll see something like:
      "mcpServers": {}
    }
    ```
-7. Edit it to add KAIZA:
+7. Edit it to add ATLAS-GATE:
    ```json
    {
      "mcpServers": {
-       "kaiza": {
+       "atlas-gate": {
          "command": "node",
          "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-windsurf.js"],
          "type": "stdio",
@@ -452,7 +452,7 @@ Call the begin_session tool with workspace_root set to: /absolute/path/to/ATLAS-
 Session initialized. Workspace locked to /absolute/path/to/ATLAS-GATE-MCP-server
 ```
 
-✅ **Success:** You've initialized a session. This tells KAIZA which project you're working on.
+✅ **Success:** You've initialized a session. This tells ATLAS-GATE which project you're working on.
 
 **Step 3: Create a Simple Plan**
 
@@ -460,7 +460,7 @@ Ask Claude:
 ```
 Create a plan that adds a file called TEST.md to the docs/ folder with content:
 ---
-This is a test file created with KAIZA MCP.
+This is a test file created with ATLAS-GATE MCP.
 ---
 ```
 
@@ -656,7 +656,7 @@ Permission. "Do I have permission to do this action?"
 The most basic language computers understand: 1s and 0s.
 
 **Bootstrap**
-To start something from scratch. In KAIZA, "bootstrapping a plan" means creating the first plan.
+To start something from scratch. In ATLAS-GATE, "bootstrapping a plan" means creating the first plan.
 
 ### C
 
@@ -770,7 +770,7 @@ Address of a file or folder. Example: `/Users/yourname/Documents/ATLAS-GATE-MCP-
 Can you do this action? Read, write, execute?
 
 **Plan**
-In KAIZA MCP, a detailed instruction for what changes should happen.
+In ATLAS-GATE MCP, a detailed instruction for what changes should happen.
 
 **Prompt**
 Text you send to Claude (or another AI) asking it to do something.
@@ -825,7 +825,7 @@ Tracking different versions. Version 1.0, 1.1, 2.0, etc.
 ### W
 
 **Windsurf**
-An MCP client (tool that uses KAIZA MCP). Like an IDE with AI built-in.
+An MCP client (tool that uses ATLAS-GATE MCP). Like an IDE with AI built-in.
 
 **Workspace**
 Your project folder. Everything for one project lives here.
@@ -880,12 +880,12 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 
 ### Data Privacy
 
-**KAIZA MCP stores:**
+**ATLAS-GATE MCP stores:**
 - Audit logs (file changes, who made them, when)
 - Plan files (descriptions of intended changes)
 - Workspace configuration
 
-**KAIZA MCP does NOT:**
+**ATLAS-GATE MCP does NOT:**
 - Send your code anywhere
 - Share your secrets
 - Upload to external services (unless you configure it)
@@ -896,7 +896,7 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 1. **Review plans before execution:** Always read what the AI is planning to do
 2. **Check audit logs regularly:** Look for unexpected changes
 3. **Use git to track everything:** Commit to git after verified changes
-4. **Back up regularly:** Don't rely on KAIZA as your only backup
+4. **Back up regularly:** Don't rely on ATLAS-GATE as your only backup
 
 ### File Permissions
 
@@ -929,7 +929,7 @@ You'll see something like:
 ### Congratulations! 🎉
 
 You've learned:
-✅ What KAIZA MCP is  
+✅ What ATLAS-GATE MCP is  
 ✅ How to install it  
 ✅ How to create your first plan  
 ✅ How to execute it  
@@ -941,7 +941,7 @@ You've learned:
 1. **Try more complex plans:** Ask Claude to make realistic changes (add features, fix bugs)
 2. **Review audit logs:** Get comfortable reading the history
 3. **Read advanced guides:** Check out [SETUP_GUIDE.md](./SETUP_GUIDE.md) for deeper learning
-4. **Explore architecture:** Understand how KAIZA works under the hood ([ARCHITECTURE.md](../ARCHITECTURE.md))
+4. **Explore architecture:** Understand how ATLAS-GATE works under the hood ([ARCHITECTURE.md](../ARCHITECTURE.md))
 5. **Join the community:** Ask questions in [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 
 ### Still Confused?
@@ -953,7 +953,7 @@ You've learned:
 
 ---
 
-**Document Owner:** KAIZA MCP Documentation Team  
+**Document Owner:** ATLAS-GATE MCP Documentation Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0
 

@@ -1,4 +1,4 @@
-# KAIZA MCP Server Hardening: Complete Implementation Index
+# ATLAS-GATE MCP Server Hardening: Complete Implementation Index
 
 ## Project Overview
 
@@ -385,7 +385,7 @@ Total Production Code:         1050+ lines
 
 ## Summary
 
-The KAIZA MCP Server is now hardened with:
+The ATLAS-GATE MCP Server is now hardened with:
 
 1. **Single Canonical Path Resolver**
    - All filesystem operations unified

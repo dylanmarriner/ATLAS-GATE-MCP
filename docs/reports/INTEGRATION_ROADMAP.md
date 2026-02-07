@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Plan Linter foundation is complete and tested. This document specifies exactly where and how to integrate it into the KAIZA MCP approval and execution flows.
+The Plan Linter foundation is complete and tested. This document specifies exactly where and how to integrate it into the ATLAS-GATE MCP approval and execution flows.
 
 ---
 
@@ -174,7 +174,7 @@ export function enforcePlan(planHash, targetPath) {
     const planFile = resolvePlanPath(planHash);
     const fileContent = fs.readFileSync(planFile, "utf8");
 
-    const headerMatch = fileContent.match(/<!--\s*KAIZA_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
+    const headerMatch = fileContent.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
     if (!headerMatch) {
         throw new Error(`REFUSE: Plan ${planHash} is not APPROVED or has invalid header format.`);

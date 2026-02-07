@@ -1,4 +1,4 @@
-# KAIZA-MCP Complete Guide
+# ATLAS-GATE-MCP Complete Guide
 
 
 ## Table of Contents
@@ -13,7 +13,7 @@
 
 ## System Overview
 
-KAIZA-MCP is a three-role governance system:
+ATLAS-GATE-MCP is a three-role governance system:
 
 ```
 AMP/Antigravity (Planners)
@@ -41,7 +41,7 @@ Production Code
 - ❌ Windsurf (executor - BLOCKED)
 
 **What tool do they use?**
-- `bootstrap_create_foundation_plan` via KAIZA-MCP
+- `bootstrap_create_foundation_plan` via ATLAS-GATE-MCP
 
 ---
 
@@ -122,7 +122,7 @@ Date: 2026-01-07
 This is how AMP/Antigravity creates plans:
 
 ```javascript
-// Example: Creating a plan via KAIZA-MCP
+// Example: Creating a plan via ATLAS-GATE-MCP
 const planContent = `---
 status: APPROVED
 plan_id: plan-auth-2026-01-07
@@ -171,7 +171,7 @@ const payload = {
   action: 'BOOTSTRAP_CREATE_FOUNDATION_PLAN'
 };
 
-const secret = process.env.KAIZA_BOOTSTRAP_SECRET; // Set this!
+const secret = process.env.ATLAS-GATE_BOOTSTRAP_SECRET; // Set this!
 const hmac = crypto.createHmac('sha256', secret);
 hmac.update(JSON.stringify(payload));
 const signature = hmac.digest('hex');
@@ -326,14 +326,14 @@ When all files for a plan are written successfully:
 
 ```bash
 git add .
-git commit -m "Implement PLAN_AUTHENTICATION per KAIZA-MCP"
+git commit -m "Implement PLAN_AUTHENTICATION per ATLAS-GATE-MCP"
 ```
 
 **Important**: The pre-commit hook will verify:
-- ✅ All files were written via KAIZA-MCP (in audit log)
+- ✅ All files were written via ATLAS-GATE-MCP (in audit log)
 - ✅ No bypass of governance
 
-If commit fails, it means a file wasn't written through KAIZA-MCP. Use `write_file` for that file.
+If commit fails, it means a file wasn't written through ATLAS-GATE-MCP. Use `write_file` for that file.
 
 ---
 
@@ -480,7 +480,7 @@ BOOTSTRAP_FAILED: Invalid signature
 
 **Solution**:
 ```
-Step 1: Verify KAIZA_BOOTSTRAP_SECRET is set correctly
+Step 1: Verify ATLAS-GATE_BOOTSTRAP_SECRET is set correctly
 Step 2: Verify payload JSON stringification is exact
 Step 3: Verify signature calculation:
    const hmac = crypto.createHmac('sha256', secret);
@@ -559,11 +559,11 @@ Include in write_file:
 
 **Message**:
 ```
-❌ COMMIT REJECTED - Files not written through KAIZA-MCP:
+❌ COMMIT REJECTED - Files not written through ATLAS-GATE-MCP:
    ❌ src/file.js (NOT IN AUDIT LOG - rejected)
 ```
 
-**Cause**: File was written without KAIZA-MCP.
+**Cause**: File was written without ATLAS-GATE-MCP.
 
 **Solution**:
 ```
@@ -648,7 +648,7 @@ Step 3: Try commit again
                       ▼  └────────────┬───────────────┘
               ┌──────────────────┐    ▼
               │ Clarification    │  ┌────────────────────┐
-              │ received         │  │ KAIZA validates:   │
+              │ received         │  │ ATLAS-GATE validates:   │
               └────────┬─────────┘  │ - No mock data    │
                        │            │ - No TODOs        │
                        │            │ - No type bypass  │
@@ -713,7 +713,7 @@ Step 3: Try commit again
 - [ ] Plan status is `APPROVED`
 - [ ] Plan has unique ID
 - [ ] Plan has clear, descriptive name
-- [ ] Bootstrap secret is set (`KAIZA_BOOTSTRAP_SECRET`)
+- [ ] Bootstrap secret is set (`ATLAS-GATE_BOOTSTRAP_SECRET`)
 - [ ] Called `bootstrap_create_foundation_plan` with proper signature
 - [ ] Plan exists in `docs/plans/`
 
@@ -759,7 +759,7 @@ Step 3: Try commit again
 - Plans are made by AMP/Antigravity
 - Code is written by Windsurf
 - All code is production-ready (no mocks, TODOs, type bypasses)
-- All code is audited (written via KAIZA-MCP)
+- All code is audited (written via ATLAS-GATE-MCP)
 - All commits are traced (must be in audit log)
 
-That's KAIZA-MCP. Follow these steps. It will work perfectly.
+That's ATLAS-GATE-MCP. Follow these steps. It will work perfectly.

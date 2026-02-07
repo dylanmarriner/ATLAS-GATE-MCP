@@ -3,7 +3,7 @@
 /**
  * MASTER INTEGRATION TEST SUITE
  * 
- * Comprehensive testing of KAIZA MCP system:
+ * Comprehensive testing of ATLAS-GATE MCP system:
  * - Both WINDSURF (executor) and ANTIGRAVITY (planner) roles
  * - All critical tools and their interactions
  * - Governance enforcement and security gates
@@ -50,7 +50,7 @@ let skippedTests = 0;
 
 function printHeader() {
   console.log(`\n${COLORS.bold}╔═══════════════════════════════════════════════════════════════════╗${COLORS.reset}`);
-  console.log(`${COLORS.bold}║                 KAIZA MCP MASTER INTEGRATION TEST                   ║${COLORS.reset}`);
+  console.log(`${COLORS.bold}║                 ATLAS-GATE MCP MASTER INTEGRATION TEST                   ║${COLORS.reset}`);
   console.log(`${COLORS.bold}║  Comprehensive validation of WINDSURF & ANTIGRAVITY roles           ║${COLORS.reset}`);
   console.log(`${COLORS.bold}╚═══════════════════════════════════════════════════════════════════╝${COLORS.reset}\n`);
 }
@@ -153,7 +153,7 @@ try {
 // 3. Read files
 try {
   const result = await readFileHandler({ path: "package.json" });
-  if (result.content && result.content[0].text.includes("kaiza")) {
+  if (result.content && result.content[0].text.includes("atlas-gate")) {
     logTest("WINDSURF", "read_file (workspace access)", "PASS");
   } else {
     logTest("WINDSURF", "read_file (workspace access)", "FAIL", "Invalid content");
@@ -306,7 +306,7 @@ try {
 
 // 6. Governance enforcement
 try {
-  const govPath = path.join(REPO_ROOT, ".kaiza", "governance.json");
+  const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");
   if (fs.existsSync(govPath)) {
     const state = JSON.parse(fs.readFileSync(govPath, "utf8"));
     if (state.bootstrap_enabled === false) {
@@ -329,7 +329,7 @@ printSection("SHARED INFRASTRUCTURE");
 
 // 1. Repository structure
 try {
-  const requiredDirs = ["core", "tools", "docs", ".kaiza"];
+  const requiredDirs = ["core", "tools", "docs", ".atlas-gate"];
   let allExist = true;
   for (const dir of requiredDirs) {
     if (!fs.existsSync(path.join(REPO_ROOT, dir))) {

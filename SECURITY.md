@@ -36,7 +36,7 @@ Please include the following information in your report:
 
 ### Security Team
 
-The KAIZA MCP security team includes:
+The ATLAS-GATE MCP security team includes:
 - Security engineers
 - Core developers
 - External security advisors (when needed)
@@ -69,7 +69,7 @@ Users should follow these security practices:
 
 ### Internal Audits
 
-The KAIZA MCP team conducts regular security audits:
+The ATLAS-GATE MCP team conducts regular security audits:
 
 - **Code Reviews**: Security-focused code reviews
 - **Penetration Testing**: Regular penetration testing
@@ -113,7 +113,7 @@ Third-party security audits are conducted:
 
 ### Bug Bounty Program
 
-KAIZA MCP offers rewards for security vulnerability reports:
+ATLAS-GATE MCP offers rewards for security vulnerability reports:
 
 - **Critical**: Up to $5,000
 - **High**: Up to $2,000
@@ -171,7 +171,7 @@ KAIZA MCP offers rewards for security vulnerability reports:
 
 ### Standards Compliance
 
-KAIZA MCP complies with:
+ATLAS-GATE MCP complies with:
 
 - **OWASP Top 10**: Web application security risks
 - **NIST Cybersecurity Framework**: Security best practices

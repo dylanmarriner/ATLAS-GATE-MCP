@@ -67,7 +67,7 @@ Tests:
 **File**: `docs/reports/MCP_AUDIT_LOG_SPEC.md` (600+ lines)
 
 Includes:
-- File locations (.kaiza/audit.log)
+- File locations (.atlas-gate/audit.log)
 - Complete schema (18 required fields)
 - Field definitions and descriptions
 - Canonicalization rules (deterministic hashing)
@@ -127,7 +127,7 @@ Automatically redacts:
 
 ### Concurrency Safety
 
-- File-based locking (.kaiza/audit.lock)
+- File-based locking (.atlas-gate/audit.lock)
 - Atomic read of current seq/hash while locked
 - Atomic append (single fs.appendFileSync call)
 - Lock timeout: 25 seconds
@@ -179,7 +179,7 @@ If audit fails, tool fails (no silent losses).
 ### Audit Location
 
 ```
-[workspace_root]/.kaiza/audit.log
+[workspace_root]/.atlas-gate/audit.log
 ```
 
 - JSON Lines format (one entry per line)
@@ -225,11 +225,11 @@ RESULTS: 12/12 passed, 0 failed
 
 ### For Operators
 
-**Audit log location**: `[workspace_root]/.kaiza/audit.log`
+**Audit log location**: `[workspace_root]/.atlas-gate/audit.log`
 
 **To inspect**:
 ```bash
-cat .kaiza/audit.log | jq -R 'fromjson'
+cat .atlas-gate/audit.log | jq -R 'fromjson'
 ```
 
 **To verify integrity**:
@@ -264,7 +264,7 @@ node -e "
 - ✓ No code written inline in chat
 - ✓ No code blocks emitted
 - ✓ No filesystem location guessing
-- ✓ No audit logging to MCP repo (audit in workspace_root/.kaiza)
+- ✓ No audit logging to MCP repo (audit in workspace_root/.atlas-gate)
 - ✓ No in-memory-only audit
 - ✓ Audit writes required for every tool
 - ✓ No UUIDs in audit entries (deterministic seq)
@@ -280,8 +280,8 @@ node -e "
 
 ### 2) Audit Log Location
 
-- ✓ Directory: workspace_root/.kaiza
-- ✓ Primary log: workspace_root/.kaiza/audit.log
+- ✓ Directory: workspace_root/.atlas-gate
+- ✓ Primary log: workspace_root/.atlas-gate/audit.log
 - ✓ Auto-created on first use
 - ✓ Bound to workspace_root
 
@@ -413,7 +413,7 @@ tools/begin_session.js                        (+25 lines)
 ---
 
 **Date**: 2026-01-19  
-**Workspace**: /media/linnyux/development3/developing/KAIZA-MCP-server  
-**Audit Log Location**: `.kaiza/audit.log` (under workspace_root)  
+**Workspace**: /media/linnyux/development3/developing/ATLAS-GATE-MCP-server  
+**Audit Log Location**: `.atlas-gate/audit.log` (under workspace_root)  
 **Test Results**: 12/12 PASSING  
 **Ready for Deployment**: YES

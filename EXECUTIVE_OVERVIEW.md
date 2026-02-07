@@ -1,12 +1,12 @@
-# KAIZA MCP: Executive Overview
+# ATLAS-GATE MCP: Executive Overview
 
 **One-Page Strategic Summary for Decision-Makers**
 
 ---
 
-## What Is KAIZA MCP?
+## What Is ATLAS-GATE MCP?
 
-KAIZA MCP is an **enterprise governance gateway** that safely integrates AI assistants into software development workflows. It transforms unconstrained AI agents into governed execution authorities through role-based access control, mandatory approval workflows, and cryptographic audit trails.
+ATLAS-GATE MCP is an **enterprise governance gateway** that safely integrates AI assistants into software development workflows. It transforms unconstrained AI agents into governed execution authorities through role-based access control, mandatory approval workflows, and cryptographic audit trails.
 
 **In Plain Terms**: It's a security layer that lets you use AI to help with code while maintaining complete control, visibility, and accountability.
 
@@ -106,7 +106,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Adoption Path
 
 ### Phase 1: Foundation (Weeks 1-2)
-1. Install KAIZA MCP
+1. Install ATLAS-GATE MCP
 2. Configure with your MCP client (Claude Desktop, Windsurf, etc.)
 3. Run initial tests and verify audit logging
 4. Train a pilot team (2-3 developers)
@@ -147,7 +147,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 
 ## Competitive Advantages
 
-| Aspect | KAIZA MCP | Traditional Review | No Controls |
+| Aspect | ATLAS-GATE MCP | Traditional Review | No Controls |
 |--------|-----------|-------------------|-------------|
 | **Approval Control** | Cryptographically enforced | Manual, human-dependent | None |
 | **Audit Trail** | Complete, tamper-proof | Partial, human-recorded | None |
@@ -158,20 +158,20 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 
 ---
 
-## Case Study: Why Choose KAIZA MCP
+## Case Study: Why Choose ATLAS-GATE MCP
 
 **Scenario**: Financial services company using AI to accelerate development.
 
 **Challenge**: How to maintain compliance while enabling AI productivity?
 
-**Solution with KAIZA MCP**:
+**Solution with ATLAS-GATE MCP**:
 - ✅ Developers create plans with AI (architecture first)
 - ✅ Security team reviews and approves plans
 - ✅ Execution is automatic and audited
 - ✅ Compliance team has complete visibility
 - ✅ Result: 3x faster development, 100% audit trail
 
-**Without KAIZA MCP**:
+**Without ATLAS-GATE MCP**:
 - ❌ AI makes unauthorized changes
 - ❌ No clear approval process
 - ❌ Audit trail is incomplete
@@ -203,7 +203,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 
 **Step 1**: Download and install
 ```bash
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 npm install
 ```
 
@@ -217,14 +217,14 @@ npm install
 
 ## Key Questions Answered
 
-### Q: Is KAIZA MCP production-ready?
+### Q: Is ATLAS-GATE MCP production-ready?
 **A**: Yes. It's currently deployed in enterprise environments and has been thoroughly tested.
 
 ### Q: What's the learning curve?
 **A**: Moderate. Most developers understand the model in 1-2 hours. The beginner's guide covers everything.
 
 ### Q: Can it integrate with our existing tools?
-**A**: Yes. KAIZA MCP works with any MCP-compatible client (Claude Desktop, Windsurf, custom integrations).
+**A**: Yes. ATLAS-GATE MCP works with any MCP-compatible client (Claude Desktop, Windsurf, custom integrations).
 
 ### Q: What happens if something goes wrong?
 **A**: The audit log has a complete history. You can replay operations, identify the issue, and recover.
@@ -239,16 +239,16 @@ npm install
 
 ## Contact & Support
 
-- **GitHub**: https://github.com/dylanmarriner/KAIZA-MCP-server
-- **Discussions**: https://github.com/dylanmarriner/KAIZA-MCP-server/discussions
-- **Security Reports**: security@kaiza-mcp.org
+- **GitHub**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+- **Discussions**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions
+- **Security Reports**: security@atlas-gate-mcp.org
 - **Documentation**: [Full Docs](./docs/)
 
 ---
 
 ## Summary
 
-**KAIZA MCP enables you to:**
+**ATLAS-GATE MCP enables you to:**
 1. **Use AI safely** — Approve plans before execution
 2. **Stay compliant** — Complete audit trail for regulators
 3. **Maintain control** — Role-based separation of duties

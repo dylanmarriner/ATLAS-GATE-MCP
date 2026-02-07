@@ -1,4 +1,4 @@
-# KAIZA MCP Server - Hardening Documentation Index
+# ATLAS-GATE MCP Server - Hardening Documentation Index
 
 **Hardening Date**: January 12, 2026  
 **Principal Auditor**: Claude (Anthropic) - Principal-Level Autonomous Debugging Agent  
@@ -216,8 +216,8 @@ AST Policy Verified.       # First test passes
 - [ ] Run: `node test-comprehensive.js`
 - [ ] Review AUDIT_FINDINGS.md (critical issues section)
 - [ ] Review code changes in HARDENING_EXECUTION_DETAILED.md
-- [ ] Configure `.kaiza/governance.json`
-- [ ] Set `KAIZA_BOOTSTRAP_SECRET` environment variable
+- [ ] Configure `.atlas-gate/governance.json`
+- [ ] Set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable
 - [ ] Create initial foundation plan via bootstrap
 - [ ] Test plan lifecycle end-to-end
 
@@ -238,7 +238,7 @@ AST Policy Verified.       # First test passes
 
 ## Architecture Overview
 
-The KAIZA MCP Server consists of:
+The ATLAS-GATE MCP Server consists of:
 
 ### Core Components
 1. **Path Resolver** (`core/path-resolver.js`)
@@ -328,7 +328,7 @@ A: No. Every write requires a valid APPROVED plan. This is not configurable.
 A: The system detects corruption via the hash chain and reports it clearly.
 
 **Q: Do I need to configure anything special?**  
-A: Set `KAIZA_BOOTSTRAP_SECRET` environment variable and create initial plan. See deployment checklist.
+A: Set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable and create initial plan. See deployment checklist.
 
 ---
 
@@ -342,14 +342,14 @@ For questions about the hardening:
 
 For deployment questions:
 - See deployment preparation section above
-- Review `.kaiza/governance.json` structure
+- Review `.atlas-gate/governance.json` structure
 - Review plan file format requirements
 
 ---
 
 ## Summary
 
-The KAIZA MCP Server has undergone principal-level audit and hardening. All critical issues are fixed. The system is deterministic, secure, reliable, and ready for production deployment.
+The ATLAS-GATE MCP Server has undergone principal-level audit and hardening. All critical issues are fixed. The system is deterministic, secure, reliable, and ready for production deployment.
 
 **Quality Assurance**: COMPLETE ✅  
 **Status**: PRODUCTION READY ✅  

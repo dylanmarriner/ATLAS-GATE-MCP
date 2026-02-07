@@ -1,4 +1,4 @@
-# KAIZA MCP: Complete Enterprise Upgrade Manifest
+# ATLAS-GATE MCP: Complete Enterprise Upgrade Manifest
 
 **Upgrade Date**: 2026-01-21  
 **Target Audience**: Repository Maintainers, DevOps, Documentation Leads  
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This manifest documents the complete enterprise-grade documentation upgrade to KAIZA MCP repository. All 8 core deliverables have been implemented with 11 new files, 1 enhanced file, and a comprehensive governance system.
+This manifest documents the complete enterprise-grade documentation upgrade to ATLAS-GATE MCP repository. All 8 core deliverables have been implemented with 11 new files, 1 enhanced file, and a comprehensive governance system.
 
 **Key Achievements**:
 - ✅ Docs-as-a-Product discipline with versioning
@@ -40,7 +40,7 @@ This manifest documents the complete enterprise-grade documentation upgrade to K
   - Troubleshooting (10+ scenarios)
   - Glossary (30+ terms)
 - **Target Audience**: Complete beginners
-- **Expected Outcome**: User successfully installs and verifies KAIZA MCP
+- **Expected Outcome**: User successfully installs and verifies ATLAS-GATE MCP
 - **Status**: ✅ Complete
 
 #### docs/DOCUMENTATION_LIFECYCLE.md
@@ -96,7 +96,7 @@ This manifest documents the complete enterprise-grade documentation upgrade to K
 - **Size**: 1200 words, exactly 1 page
 - **Purpose**: Strategic summary for decision-makers
 - **Sections**:
-  - What is KAIZA MCP (one sentence)
+  - What is ATLAS-GATE MCP (one sentence)
   - Problem it solves (challenges table)
   - Business benefits (4 pillars)
   - Technical architecture (diagram)
@@ -181,7 +181,7 @@ This manifest documents the complete enterprise-grade documentation upgrade to K
   - Steps to reproduce
   - Expected behavior
   - Actual behavior
-  - Environment (OS, Node version, KAIZA version, MCP client)
+  - Environment (OS, Node version, ATLAS-GATE version, MCP client)
   - Error messages
   - Additional context
   - Related issue
@@ -293,7 +293,7 @@ This manifest documents the complete enterprise-grade documentation upgrade to K
 ## Directory Tree: New Structure
 
 ```
-KAIZA-MCP-server/
+ATLAS-GATE-MCP-server/
 │
 ├── README.md                           (UPDATED)
 ├── SECURITY.md                         (verified, unchanged)
@@ -613,7 +613,7 @@ See `docs/INDEX.md` for:
 
 - **Upgrade Version**: 1.0.0
 - **Upgrade Date**: 2026-01-21
-- **Compatibility**: Works with KAIZA MCP v1.0.0+
+- **Compatibility**: Works with ATLAS-GATE MCP v1.0.0+
 - **Browser Support**: Any (Markdown)
 - **Rendering**: GitHub-native, MkDocs, Docusaurus compatible
 
@@ -628,6 +628,6 @@ See `docs/INDEX.md` for:
 
 ---
 
-**This manifest is the source of truth for the enterprise documentation upgrade to KAIZA MCP. All deliverables listed are complete and ready for production deployment.**
+**This manifest is the source of truth for the enterprise documentation upgrade to ATLAS-GATE MCP. All deliverables listed are complete and ready for production deployment.**
 
 For any questions or clarifications, refer to the specific documentation files or open a GitHub discussion.

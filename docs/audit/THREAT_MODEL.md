@@ -1,7 +1,7 @@
-# Threat Model: KAIZA-MCP-server Governance Audit
+# Threat Model: ATLAS-GATE-MCP-server Governance Audit
 
 ## Goal
-To rigorously audit the KAIZA-MCP-server governance enforcement by simulating a hostile coding agent.
+To rigorously audit the ATLAS-GATE-MCP-server governance enforcement by simulating a hostile coding agent.
 
 ## Governance Surface Analysis
 

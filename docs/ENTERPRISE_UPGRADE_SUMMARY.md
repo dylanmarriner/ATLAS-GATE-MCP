@@ -1,13 +1,13 @@
 ---
 title: "Enterprise Upgrade Summary"
-description: "Complete overview of documentation and structural upgrades applied to KAIZA MCP"
+description: "Complete overview of documentation and structural upgrades applied to ATLAS-GATE MCP"
 version: "1.0.0"
 date: "2026-01-20"
 ---
 
-# KAIZA MCP: Enterprise Upgrade Summary
+# ATLAS-GATE MCP: Enterprise Upgrade Summary
 
-**Comprehensive transformation of KAIZA MCP to flagship, enterprise-grade standard with Docs-as-a-Product discipline.**
+**Comprehensive transformation of ATLAS-GATE MCP to flagship, enterprise-grade standard with Docs-as-a-Product discipline.**
 
 **Completed:** 2026-01-20  
 **Scope:** Complete documentation infrastructure upgrade + repository polish  
@@ -100,7 +100,7 @@ docs/diagrams/
 - `docs/EXECUTIVE_OVERVIEW.md` — Strategic summary for non-technical stakeholders
 
 **Content:**
-- What KAIZA MCP is (plain English)
+- What ATLAS-GATE MCP is (plain English)
 - Business value proposition (compliance, risk mitigation, auditability)
 - Operational confidence signals (security posture, reliability, governance)
 - High-level technology (tech stack, architecture)
@@ -111,7 +111,7 @@ docs/diagrams/
 
 **Audience:** Executives, C-suite, board members, business stakeholders
 
-**Success:** Non-technical decision-makers can quickly understand KAIZA's value and risk posture.
+**Success:** Non-technical decision-makers can quickly understand ATLAS-GATE's value and risk posture.
 
 ---
 
@@ -167,7 +167,7 @@ docs/diagrams/
 
 **Audience:** Complete beginners, non-technical team members, anyone new to development
 
-**Success:** Anyone can follow this guide and get KAIZA MCP running, even with zero computer experience.
+**Success:** Anyone can follow this guide and get ATLAS-GATE MCP running, even with zero computer experience.
 
 ---
 
@@ -183,7 +183,7 @@ docs/diagrams/
 **`docs/SAFETY_AND_DATA_HANDLING.md`**
 - Secret management (API keys, passwords, tokens)
 - Safe defaults (environment variables, file permissions)
-- What KAIZA stores (audit logs) and what it doesn't
+- What ATLAS-GATE stores (audit logs) and what it doesn't
 - Incident recovery (exposed secrets, unauthorized changes)
 - Privacy & compliance (GDPR, HIPAA, PCI-DSS, SOC 2)
 - Quick reference commands
@@ -444,7 +444,7 @@ docs/latest → /docs/v1        # Symlink to stable version
 ```
 
 **Support Lifecycle:**
-- KAIZA 1.0.0 documentation: LTS until 2028-01-20
+- ATLAS-GATE 1.0.0 documentation: LTS until 2028-01-20
 - Active maintenance: 2026-01-20 → 2028-01-20
 - Extended support: 2028-01-20 → 2029-01-20
 
@@ -457,7 +457,7 @@ docs/latest → /docs/v1        # Symlink to stable version
 
 ## Conclusion
 
-KAIZA MCP has been transformed from a technically solid but documentation-light project into an **enterprise-grade, documentation-first system**. 
+ATLAS-GATE MCP has been transformed from a technically solid but documentation-light project into an **enterprise-grade, documentation-first system**. 
 
 Key achievements:
 - ✅ **Instant credibility** (executive overview, maturity model, security clarity)

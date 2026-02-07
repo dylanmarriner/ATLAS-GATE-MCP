@@ -284,7 +284,7 @@ Every lint operation appends to `audit-log.jsonl`:
    - Test audit trail completeness
 
 3. **Documentation** (Next Phase):
-   - Add linter section to KAIZA_COMPLETE_GUIDE.md
+   - Add linter section to ATLAS-GATE_COMPLETE_GUIDE.md
    - Create "How to Write a Valid Plan" guide
    - Add examples of valid/invalid plans
 

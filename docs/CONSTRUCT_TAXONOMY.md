@@ -2,7 +2,7 @@
 
 **Purpose**: Audit specification for detecting code that simulates, stubs, or bypasses production requirements across 15 programming languages.
 
-**Governance Context**: This taxonomy is the basis for enterprise code enforcement gates in KAIZA MCP write operations.
+**Governance Context**: This taxonomy is the basis for enterprise code enforcement gates in ATLAS-GATE MCP write operations.
 
 ---
 
@@ -1136,7 +1136,7 @@ if ($env:SIMULATE) { return @{ ok=$true } }
 
 ---
 
-## Integration with KAIZA Governance
+## Integration with ATLAS-GATE Governance
 
 ### How to Use This Taxonomy
 
@@ -1167,5 +1167,5 @@ Shipping C1-C8 without governance oversight leads to:
 ## Version
 
 - **Created**: Jan 2026
-- **Status**: Canonical audit specification for KAIZA MCP v2.0
+- **Status**: Canonical audit specification for ATLAS-GATE MCP v2.0
 - **Updates**: Append construct examples; never remove existing signals (for backward compatibility with audit logs)

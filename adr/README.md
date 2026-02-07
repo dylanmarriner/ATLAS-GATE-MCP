@@ -145,7 +145,7 @@ When decisions are replaced:
 
 ---
 
-**Document Owner**: KAIZA MCP Architecture Team  
+**Document Owner**: ATLAS-GATE MCP Architecture Team  
 **Review Frequency**: Quarterly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

@@ -5,7 +5,7 @@
  * 
  * Kill-switch behavior (NON-NEGOTIABLE):
  * - Triggered by critical invariant breach, audit tamper, or operator abuse
- * - Persists to /.kaiza/kill_switch.json (survives process restart)
+ * - Persists to /.atlas-gate/kill_switch.json (survives process restart)
  * - On trigger: refuse ALL non-read tools
  * - On trigger: allow ONLY read-only inspection tools
  * - Startup gate: check kill-switch before serving tools
@@ -17,7 +17,7 @@ import path from "path";
 import { getRepoRoot } from "./path-resolver.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "./system-error.js";
 
-const KILL_SWITCH_DIR = ".kaiza";
+const KILL_SWITCH_DIR = ".atlas-gate";
 const KILL_SWITCH_FILE = "kill_switch.json";
 
 // Kill-switch responses
@@ -28,7 +28,7 @@ export const KILL_SWITCH_RESPONSES = {
 };
 
 /**
- * Kill-switch state object stored in /.kaiza/kill_switch.json
+ * Kill-switch state object stored in /.atlas-gate/kill_switch.json
  */
 export class KillSwitchState {
   constructor(config = {}) {

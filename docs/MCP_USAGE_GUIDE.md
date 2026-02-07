@@ -38,7 +38,7 @@
 │                    Your Repository                          │
 │                                                             │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  .kaiza/                                             │  │
+│  │  .atlas-gate/                                             │  │
 │  │  ├── ROOT                (governance marker)         │  │
 │  │  ├── governance.json     (bootstrap status)          │  │
 │  │  └── approved_plans/     (authorized plans)          │  │
@@ -60,7 +60,7 @@
                 ┌──────────┴──────────┐
                 │                     │
          ┌──────▼──────┐      ┌──────▼──────┐
-         │ KAIZA MCP   │      │ Audit Log   │
+         │ ATLAS-GATE MCP   │      │ Audit Log   │
          │ Server      │      │ (immutable) │
          │             │      │             │
          │ read_file   │      │ All writes  │
@@ -73,7 +73,7 @@
 
 **Flow**:
 1. **You** → request via MCP tool (read_file, write_file, etc.)
-2. **KAIZA** → validates plan, checks constructs, runs preflight tests
+2. **ATLAS-GATE** → validates plan, checks constructs, runs preflight tests
 3. **Filesystem** → changes persisted
 4. **Audit Log** → record created (immutable)
 
@@ -85,7 +85,7 @@
 
 1. **Repository must be governed**
    ```bash
-   ls -la .kaiza/
+   ls -la .atlas-gate/
    # Should show:
    # ROOT
    # governance.json
@@ -94,7 +94,7 @@
 
 2. **At least one approved plan must exist**
    ```bash
-   ls .kaiza/approved_plans/ | head
+   ls .atlas-gate/approved_plans/ | head
    # PLAN_SOMETHING.md
    ```
 
@@ -178,7 +178,7 @@ await readFile({ path: "src/auth.js" });
 await readFile({ path: "docs/ARCHITECTURE.md" });
 
 // Read an approved plan
-await readFile({ path: ".kaiza/approved_plans/PLAN_AUTH_SYSTEM.md" });
+await readFile({ path: ".atlas-gate/approved_plans/PLAN_AUTH_SYSTEM.md" });
 
 // Read from anywhere in repo
 await readFile({ path: "package.json" });
@@ -250,7 +250,7 @@ Let's walk through a real scenario: **Adding JWT validation to the auth system**
 
 **Step 1a: Create the Plan**
 
-Create `.kaiza/approved_plans/PLAN_JWT_VALIDATION.md`:
+Create `.atlas-gate/approved_plans/PLAN_JWT_VALIDATION.md`:
 
 ```markdown
 ---
@@ -317,7 +317,7 @@ Implement production-grade JWT validation with RS256 support.
 **Step 1b: Verify the Plan is Approved**
 
 ```javascript
-await readFile({ path: ".kaiza/approved_plans/PLAN_JWT_VALIDATION.md" });
+await readFile({ path: ".atlas-gate/approved_plans/PLAN_JWT_VALIDATION.md" });
 // Should return plan with "status: APPROVED"
 ```
 
@@ -339,7 +339,7 @@ await readFile({ path: "tests/auth.test.js" });
 **Step 2b: Verify plan details**
 
 ```javascript
-await readFile({ path: ".kaiza/approved_plans/PLAN_JWT_VALIDATION.md" });
+await readFile({ path: ".atlas-gate/approved_plans/PLAN_JWT_VALIDATION.md" });
 // Double-check scope and requirements
 ```
 
@@ -585,7 +585,7 @@ args: { path: "src/config/index.js" }
 
 // Step 4: Review plan requirements
 tool: "read_file"
-args: { path: ".kaiza/approved_plans/PLAN_JWT_VALIDATION.md" }
+args: { path: ".atlas-gate/approved_plans/PLAN_JWT_VALIDATION.md" }
 ```
 
 ---
@@ -742,14 +742,14 @@ await writeFile({
 
 **Error message**:
 ```
-PLAN_NOT_APPROVED: PLAN_WRONG_NAME not found in /path/to/.kaiza/approved_plans
+PLAN_NOT_APPROVED: PLAN_WRONG_NAME not found in /path/to/.atlas-gate/approved_plans
 ```
 
 **What happened**: You referenced a plan that doesn't exist.
 
 **Fix**:
 1. Check plan name spelling
-2. Verify plan exists: `ls .kaiza/approved_plans/ | grep PLAN_NAME`
+2. Verify plan exists: `ls .atlas-gate/approved_plans/ | grep PLAN_NAME`
 3. Use correct plan name in write_file call
 
 ```javascript
@@ -1022,7 +1022,7 @@ const plans = await listPlans({
 3. Create/review an approved plan
 4. Write real, production-ready code
 5. Reference the plan in write_file calls
-6. Let KAIZA validate and record the change
+6. Let ATLAS-GATE validate and record the change
 
 **The principle**: All code must be real, complete, and auditable. No shortcuts.
 
@@ -1042,7 +1042,7 @@ Only if explicitly authorized in your plan. Default: blocked.
 Complete it before writing. Or add to plan explaining the timeline.
 
 **"How do I get a plan approved?"**
-Plans default to APPROVED if placed in `.kaiza/approved_plans/` with correct frontmatter.
+Plans default to APPROVED if placed in `.atlas-gate/approved_plans/` with correct frontmatter.
 
 **"What if I make a mistake?"**
 Every write is audited. Audit log is immutable. Create a new plan to fix.

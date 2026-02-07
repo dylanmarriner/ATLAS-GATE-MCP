@@ -88,7 +88,7 @@ Each release section includes:
 ## Release Notes by Version
 
 ### Doc Version 1.0.0
-- **Scope**: Enterprise-grade documentation for KAIZA MCP 1.0.0 production release
+- **Scope**: Enterprise-grade documentation for ATLAS-GATE MCP 1.0.0 production release
 - **Audience**: Beginners (absolute zero), operators, developers, architects
 - **Coverage**: System design, governance model, security posture, complete usage guides
 - **Support Policy**: LTS (Long-Term Support) - 24 months maintenance
@@ -119,6 +119,6 @@ Each release section includes:
 
 ---
 
-**Maintainer**: KAIZA MCP Documentation Team  
+**Maintainer**: ATLAS-GATE MCP Documentation Team  
 **Review Schedule**: With each software release  
 **Last Updated**: 2026-01-20

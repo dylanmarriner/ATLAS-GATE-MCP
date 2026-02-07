@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Quick Reference Card
+# ATLAS-GATE MCP Server: Quick Reference Card
 
 **Print this and keep it handy!**
 
@@ -8,14 +8,14 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
-cd KAIZA-MCP-server
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
+cd ATLAS-GATE-MCP-server
 
 # 2. Install dependencies
 npm install
 
 # 3. Set secret (get from: openssl rand -base64 32)
-export KAIZA_BOOTSTRAP_SECRET="your-secret-here"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 
 # 4. Test (should pass)
 npm test
@@ -242,7 +242,7 @@ function getValue() { return undefined; }
 ```
 1. Clone repo
 2. npm install
-3. export KAIZA_BOOTSTRAP_SECRET="..."
+3. export ATLAS-GATE_BOOTSTRAP_SECRET="..."
 4. node server.js (keep running)
 5. In another terminal/IDE:
    - Call: read_prompt
@@ -284,7 +284,7 @@ function getValue() { return undefined; }
 
 ### Required
 ```bash
-export KAIZA_BOOTSTRAP_SECRET="your-secret-32-chars-or-more"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-32-chars-or-more"
 ```
 
 ### How to Generate Secret
@@ -299,7 +299,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ### Make Permanent
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-echo 'export KAIZA_BOOTSTRAP_SECRET="your-secret"' >> ~/.bashrc
+echo 'export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -329,7 +329,7 @@ your-repo/
 ├── docs/
 │   └── plans/           ← Plan files stored here
 ├── audit-log.jsonl      ← Immutable operation log
-└── .kaiza/              ← Governance metadata
+└── .atlas-gate/              ← Governance metadata
 ```
 
 All auto-created. No manual setup needed.
@@ -352,10 +352,10 @@ All auto-created. No manual setup needed.
 
 ```bash
 cd ~/my-project && \
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git && \
-cd KAIZA-MCP-server && \
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git && \
+cd ATLAS-GATE-MCP-server && \
 npm install && \
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32) && \
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32) && \
 npm test && \
 node server.js
 ```
@@ -380,7 +380,7 @@ pwd
 # (should see in other terminal)
 
 # Check environment
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 ### Errors writing
@@ -418,7 +418,7 @@ Before using in production:
 
 - [ ] Node.js 18+ installed
 - [ ] Dependencies installed (npm install)
-- [ ] KAIZA_BOOTSTRAP_SECRET set
+- [ ] ATLAS-GATE_BOOTSTRAP_SECRET set
 - [ ] Tests passing (npm test)
 - [ ] Server starts (node server.js)
 - [ ] Can read prompt (read_prompt)

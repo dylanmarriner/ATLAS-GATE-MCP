@@ -1,6 +1,6 @@
 ---
 title: "Bootstrap Secret Guide"
-description: "Understanding and managing KAIZA_BOOTSTRAP_SECRET"
+description: "Understanding and managing ATLAS-GATE_BOOTSTRAP_SECRET"
 version: "1.0.0"
 last_updated: "2026-01-20"
 audience: ["developer", "operator", "security"]
@@ -10,14 +10,14 @@ audience: ["developer", "operator", "security"]
 
 ## What Is the Bootstrap Secret?
 
-The **bootstrap secret** (`KAIZA_BOOTSTRAP_SECRET`) is a cryptographic key used to authenticate and authorize the **creation of the first approved plan** in a KAIZA MCP workspace.
+The **bootstrap secret** (`ATLAS-GATE_BOOTSTRAP_SECRET`) is a cryptographic key used to authenticate and authorize the **creation of the first approved plan** in a ATLAS-GATE MCP workspace.
 
 ### Purpose
 
 The bootstrap secret enables **secure plan creation without requiring a pre-existing approved plan** (the classic bootstrap problem: how do you approve the first plan if plans require approval?).
 
 **The flow:**
-1. Fresh KAIZA workspace (no approved plans yet) → bootstrap mode enabled
+1. Fresh ATLAS-GATE workspace (no approved plans yet) → bootstrap mode enabled
 2. Only the holder of the bootstrap secret can create the first foundation plan
 3. That plan is cryptographically signed with the bootstrap secret
 4. After first plan created and approved, bootstrap mode disables
@@ -33,7 +33,7 @@ The bootstrap secret enables **secure plan creation without requiring a pre-exis
 
 ```javascript
 // Step 1: Bootstrap secret loaded from environment or file
-let secret = process.env.KAIZA_BOOTSTRAP_SECRET;
+let secret = process.env.ATLAS-GATE_BOOTSTRAP_SECRET;
 
 // Step 2: Plan creation payload is signed with the secret
 const hmac = crypto.createHmac("sha256", secret);
@@ -71,23 +71,23 @@ if (payload.timestamp && Date.now() - payload.timestamp > 300000) {
 
 ```bash
 # Generate a random 32-byte secret (base64 encoded)
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 
 # Verify it's set
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 # Output: A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8S9t0U1v2W3x4Y5z6A7b8C9d0...
 
 # Make permanent (add to ~/.bashrc or ~/.zshrc)
-echo 'export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)' >> ~/.bashrc
+echo 'export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 ### Option 2: File-Based Fallback
 
-If environment variable not set, KAIZA looks for:
+If environment variable not set, ATLAS-GATE looks for:
 
 ```
-.kaiza/bootstrap_secret.json
+.atlas-gate/bootstrap_secret.json
 ```
 
 File contents:
@@ -99,22 +99,22 @@ File contents:
 
 **Setup:**
 ```bash
-mkdir -p .kaiza
-echo '{"bootstrap_secret": "'"$(openssl rand -base64 32)"'"}' > .kaiza/bootstrap_secret.json
-chmod 600 .kaiza/bootstrap_secret.json  # Restrict to owner only
+mkdir -p .atlas-gate
+echo '{"bootstrap_secret": "'"$(openssl rand -base64 32)"'"}' > .atlas-gate/bootstrap_secret.json
+chmod 600 .atlas-gate/bootstrap_secret.json  # Restrict to owner only
 ```
 
 ### Option 3: Platform-Specific
 
 **macOS/Linux:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 ```
 
 **Windows PowerShell:**
 ```powershell
 $secret = [Convert]::ToBase64String([System.Security.Cryptography.RNGCryptoServiceProvider]::new().GetBytes(24))
-$env:KAIZA_BOOTSTRAP_SECRET = $secret
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = $secret
 ```
 
 ---
@@ -153,7 +153,7 @@ const payload = {
 };
 
 // Sign with bootstrap secret
-const secret = process.env.KAIZA_BOOTSTRAP_SECRET;
+const secret = process.env.ATLAS-GATE_BOOTSTRAP_SECRET;
 const hmac = crypto.createHmac("sha256", secret);
 hmac.update(JSON.stringify(payload));
 const signature = hmac.digest("hex");
@@ -221,26 +221,26 @@ Call bootstrap_create_foundation_plan with:
 
 - **Store in environment variable (not code):**
   ```bash
-  export KAIZA_BOOTSTRAP_SECRET="..."  # Good
+  export ATLAS-GATE_BOOTSTRAP_SECRET="..."  # Good
   ```
 
 - **Restrict file permissions if using file fallback:**
   ```bash
-  chmod 600 .kaiza/bootstrap_secret.json
+  chmod 600 .atlas-gate/bootstrap_secret.json
   ```
 
 - **Rotate after successful bootstrap:**
   ```bash
   # Change the secret, delete old plans if needed, recreate
-  unset KAIZA_BOOTSTRAP_SECRET
-  rm .kaiza/bootstrap_secret.json
+  unset ATLAS-GATE_BOOTSTRAP_SECRET
+  rm .atlas-gate/bootstrap_secret.json
   ```
 
 - **Use different secrets per environment:**
   ```
-  Dev:   KAIZA_BOOTSTRAP_SECRET_DEV
-  Staging: KAIZA_BOOTSTRAP_SECRET_STAGING
-  Prod:  KAIZA_BOOTSTRAP_SECRET_PROD  ← Highly restricted
+  Dev:   ATLAS-GATE_BOOTSTRAP_SECRET_DEV
+  Staging: ATLAS-GATE_BOOTSTRAP_SECRET_STAGING
+  Prod:  ATLAS-GATE_BOOTSTRAP_SECRET_PROD  ← Highly restricted
   ```
 
 ### ❌ DON'T
@@ -254,8 +254,8 @@ Call bootstrap_create_foundation_plan with:
 - **Commit to git:**
   ```bash
   # Add to .gitignore
-  echo ".kaiza/bootstrap_secret.json" >> .gitignore
-  echo "KAIZA_BOOTSTRAP_SECRET*" >> .gitignore
+  echo ".atlas-gate/bootstrap_secret.json" >> .gitignore
+  echo "ATLAS-GATE_BOOTSTRAP_SECRET*" >> .gitignore
   ```
 
 - **Share via email/chat:**
@@ -273,7 +273,7 @@ Call bootstrap_create_foundation_plan with:
 - **Log the secret:**
   ```javascript
   // WRONG
-  console.log("Secret: " + process.env.KAIZA_BOOTSTRAP_SECRET);
+  console.log("Secret: " + process.env.ATLAS-GATE_BOOTSTRAP_SECRET);
   ```
 
 ---
@@ -287,13 +287,13 @@ Call bootstrap_create_foundation_plan with:
 **Fix:**
 ```bash
 # Set it explicitly
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 
 # Or verify it's set
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 
 # If empty, set in shell config
-echo 'export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)' >> ~/.bashrc
+echo 'export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -304,7 +304,7 @@ source ~/.bashrc
 **Fix:**
 1. Verify secret is consistent:
    ```bash
-   echo $KAIZA_BOOTSTRAP_SECRET
+   echo $ATLAS-GATE_BOOTSTRAP_SECRET
    # Should output the same value
    ```
 
@@ -370,14 +370,14 @@ After successful bootstrap (first plan created):
 
 ```bash
 # Option 1: Clear environment variable
-unset KAIZA_BOOTSTRAP_SECRET
+unset ATLAS-GATE_BOOTSTRAP_SECRET
 
 # Option 2: Delete fallback file
-rm .kaiza/bootstrap_secret.json
+rm .atlas-gate/bootstrap_secret.json
 
 # Option 3: Archive (keep for audit trail)
-cp .kaiza/bootstrap_secret.json .kaiza/bootstrap_secret.json.archived.2026-01-20
-rm .kaiza/bootstrap_secret.json
+cp .atlas-gate/bootstrap_secret.json .atlas-gate/bootstrap_secret.json.archived.2026-01-20
+rm .atlas-gate/bootstrap_secret.json
 ```
 
 ---
@@ -415,7 +415,7 @@ grep "bootstrap" audit-log.jsonl
 
 ```bash
 # Check governance state
-cat .kaiza/governance.json
+cat .atlas-gate/governance.json
 
 # Should show:
 # {
@@ -443,7 +443,7 @@ cat .kaiza/governance.json
 
 2. **Update environment:**
    ```bash
-   export KAIZA_BOOTSTRAP_SECRET=$NEW_SECRET
+   export ATLAS-GATE_BOOTSTRAP_SECRET=$NEW_SECRET
    ```
 
 3. **Verify new secret works (test in staging):**
@@ -453,14 +453,14 @@ cat .kaiza/governance.json
 
 4. **Remove old secret:**
    ```bash
-   unset KAIZA_BOOTSTRAP_SECRET  # or update .bashrc
-   rm .kaiza/bootstrap_secret.json
+   unset ATLAS-GATE_BOOTSTRAP_SECRET  # or update .bashrc
+   rm .atlas-gate/bootstrap_secret.json
    ```
 
 5. **Audit trail:**
    ```bash
    # Log the rotation
-   echo "Bootstrap secret rotated: $(date)" >> .kaiza/audit.log
+   echo "Bootstrap secret rotated: $(date)" >> .atlas-gate/audit.log
    ```
 
 ---
@@ -482,7 +482,7 @@ A: If lost after bootstrap is disabled, it doesn't matter (bootstrap is disabled
 
 **Q: Is the secret ever transmitted over the network?**
 
-A: No. The secret stays local (environment variable or file). Only the signed payload and signature are transmitted to KAIZA.
+A: No. The secret stays local (environment variable or file). Only the signed payload and signature are transmitted to ATLAS-GATE.
 
 **Q: Can I use a passphrase instead of random bytes?**
 
@@ -503,6 +503,6 @@ A: After successful bootstrap, it can be disabled and not used again. If kept ac
 
 ---
 
-**Document Owner:** KAIZA MCP Security Team  
+**Document Owner:** ATLAS-GATE MCP Security Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

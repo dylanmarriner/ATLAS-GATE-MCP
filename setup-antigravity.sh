@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# KAIZA MCP - Antigravity Setup Script
+# ATLAS-GATE MCP - Antigravity Setup Script
 # This script automates the setup process for writing plans with Antigravity
 
 set -e
 
 echo "=========================================="
-echo "KAIZA MCP Antigravity Setup"
+echo "ATLAS-GATE MCP Antigravity Setup"
 echo "=========================================="
 echo ""
 
@@ -19,7 +19,7 @@ NC='\033[0m'
 # Check if script is run from repo root
 if [ ! -f "package.json" ]; then
     echo -e "${RED}Error: script must be run from repository root${NC}"
-    echo "Run: cd /path/to/KAIZA-MCP-server && bash setup-antigravity.sh"
+    echo "Run: cd /path/to/ATLAS-GATE-MCP-server && bash setup-antigravity.sh"
     exit 1
 fi
 
@@ -45,7 +45,7 @@ echo ""
 
 echo "Step 3: Generate bootstrap secret"
 echo ""
-if [ -z "$KAIZA_BOOTSTRAP_SECRET" ]; then
+if [ -z "$ATLAS-GATE_BOOTSTRAP_SECRET" ]; then
     echo "Generating a cryptographically random 32-byte secret..."
     BOOTSTRAP_SECRET=$(openssl rand -base64 32)
     if [ $? -ne 0 ]; then
@@ -54,7 +54,7 @@ if [ -z "$KAIZA_BOOTSTRAP_SECRET" ]; then
     fi
 else
     echo -e "${YELLOW}Bootstrap secret already set in environment${NC}"
-    BOOTSTRAP_SECRET=$KAIZA_BOOTSTRAP_SECRET
+    BOOTSTRAP_SECRET=$ATLAS-GATE_BOOTSTRAP_SECRET
 fi
 
 echo -e "${GREEN}Bootstrap Secret (first 8 chars): ${BOOTSTRAP_SECRET:0:8}...${NC}"
@@ -68,16 +68,16 @@ if [ -f ".env" ]; then
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "Keeping existing .env file"
         # Use existing secret from .env if available
-        if [ -z "$KAIZA_BOOTSTRAP_SECRET" ]; then
-            BOOTSTRAP_SECRET=$(grep "KAIZA_BOOTSTRAP_SECRET=" .env | cut -d= -f2 | tr -d ' ')
+        if [ -z "$ATLAS-GATE_BOOTSTRAP_SECRET" ]; then
+            BOOTSTRAP_SECRET=$(grep "ATLAS-GATE_BOOTSTRAP_SECRET=" .env | cut -d= -f2 | tr -d ' ')
         fi
     else
         cp .env.example .env
         # Update the secret
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+            sed -i '' "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
         else
-            sed -i "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+            sed -i "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
         fi
         echo -e "${GREEN}✓ .env file created${NC}"
         chmod 600 .env
@@ -87,9 +87,9 @@ else
     cp .env.example .env
     # Update the secret
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+        sed -i '' "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
     else
-        sed -i "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+        sed -i "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
     fi
     echo -e "${GREEN}✓ .env file created${NC}"
     chmod 600 .env
@@ -98,7 +98,7 @@ fi
 echo ""
 
 echo "Step 5: Load environment"
-export KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
+export ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
 echo -e "${GREEN}✓ Bootstrap secret loaded into environment${NC}"
 echo ""
 
@@ -124,16 +124,16 @@ echo ""
 echo "1. Load the environment in your shell:"
 echo "   source .env"
 echo ""
-echo "2. Verify Antigravity can access KAIZA:"
-echo "   node bin/kaiza-mcp-antigravity.js"
+echo "2. Verify Antigravity can access ATLAS-GATE:"
+echo "   node bin/atlas-gate-mcp-antigravity.js"
 echo ""
 echo "3. Configure Antigravity client with MCP server:"
 echo "   Add to ~/.config/antigravity/mcp_config.json (or your client's config):"
 echo "   {"
 echo "     \"mcpServers\": {"
-echo "       \"kaiza\": {"
+echo "       \"atlas-gate\": {"
 echo "         \"command\": \"node\","
-echo "         \"args\": [\"$(pwd)/bin/kaiza-mcp-antigravity.js\"],"
+echo "         \"args\": [\"$(pwd)/bin/atlas-gate-mcp-antigravity.js\"],"
 echo "         \"type\": \"stdio\""
 echo "       }"
 echo "     }"

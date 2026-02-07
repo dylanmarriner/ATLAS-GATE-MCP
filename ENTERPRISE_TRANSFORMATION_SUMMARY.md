@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document summarizes the comprehensive enterprise-grade documentation upgrade delivered to the KAIZA MCP repository. The transformation implements all core deliverables specified in the upgrade requirements.
+This document summarizes the comprehensive enterprise-grade documentation upgrade delivered to the ATLAS-GATE MCP repository. The transformation implements all core deliverables specified in the upgrade requirements.
 
 ---
 
@@ -149,7 +149,7 @@ This document summarizes the comprehensive enterprise-grade documentation upgrad
 - `EXECUTIVE_OVERVIEW.md` — Strategic summary for C-level executives
 
 **Content**:
-- What KAIZA MCP is (one sentence)
+- What ATLAS-GATE MCP is (one sentence)
 - Problem it solves (3-4 key challenges with impact)
 - Business benefits (4 pillars: risk reduction, efficiency, visibility, UX)
 - High-level technical architecture (ASCII diagram)
@@ -221,7 +221,7 @@ This document summarizes the comprehensive enterprise-grade documentation upgrad
    - Windows with PowerShell/Command Prompt instructions
    - Mac with Homebrew and Terminal
    - Linux with apt/dnf package managers
-4. **Download KAIZA MCP** — Both Git and ZIP options
+4. **Download ATLAS-GATE MCP** — Both Git and ZIP options
 5. **Navigate to Folder** — `cd` command explained
 6. **Install Dependencies** — `npm install` walk-through
 7. **Set Up Bootstrap Secret** — Automatic and manual options
@@ -258,7 +258,7 @@ This document summarizes the comprehensive enterprise-grade documentation upgrad
 - **Troubleshooting** — 10+ problems with step-by-step fixes
 
 **Expected Outcomes**:
-- Reader successfully installs KAIZA MCP
+- Reader successfully installs ATLAS-GATE MCP
 - Reader understands what it does
 - Reader can verify installation works
 - Reader knows where to get help
@@ -710,7 +710,7 @@ Each release has explicit mapping:
 
 ## Conclusion
 
-KAIZA MCP repository has been successfully transformed from a solid foundation into an enterprise-grade documentation system with:
+ATLAS-GATE MCP repository has been successfully transformed from a solid foundation into an enterprise-grade documentation system with:
 
 1. **Docs-as-a-Product discipline** with versioning, ownership, and lifecycle governance
 2. **Comprehensive beginner guides** for users with zero computer experience

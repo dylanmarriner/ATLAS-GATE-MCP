@@ -349,7 +349,7 @@ export const INVARIANTS = {
  */
 export function printInvariantCatalog() {
   console.log("\n═════════════════════════════════════════════════════════════");
-  console.log("  KAIZA MCP SERVER INVARIANT CATALOG");
+  console.log("  ATLAS-GATE MCP SERVER INVARIANT CATALOG");
   console.log("═════════════════════════════════════════════════════════════\n");
 
   const categories = {};

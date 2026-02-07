@@ -1,6 +1,6 @@
 # Construct Audit Guide (C1-C8)
 
-**Quick reference for developers working under KAIZA MCP governance.**
+**Quick reference for developers working under ATLAS-GATE MCP governance.**
 
 ---
 
@@ -222,7 +222,7 @@ But if you genuinely need to use a non-real construct:
 
 ### Step 1: Create/Update Your Plan
 
-Edit `.kaiza/approved_plans/YOUR_PLAN.md` and add an authorization section:
+Edit `.atlas-gate/approved_plans/YOUR_PLAN.md` and add an authorization section:
 
 ```markdown
 ---
@@ -488,5 +488,5 @@ async function getUserProfile(userId) {
 - **Taxonomy**: `docs/CONSTRUCT_TAXONOMY.md`
 - **Detection Rules**: `core/construct-detection-rules.json`
 - **Enforcement**: `core/stub-detector.js` (GATE 4)
-- **Plans**: `.kaiza/approved_plans/*.md`
+- **Plans**: `.atlas-gate/approved_plans/*.md`
 

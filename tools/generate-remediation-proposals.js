@@ -2,7 +2,7 @@
  * MCP TOOL: generate_remediation_proposals
  * ROLE: WINDSURF (read-only, propose-only)
  * PURPOSE: Generate proposals from forensic/audit/error evidence
- * AUTHORITY: KAIZA MCP REMEDIATION PROPOSAL GENERATOR
+ * AUTHORITY: ATLAS-GATE MCP REMEDIATION PROPOSAL GENERATOR
  *
  * Inputs:
  * - plan_hash: SHA256 plan hash

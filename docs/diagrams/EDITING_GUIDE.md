@@ -14,7 +14,7 @@ This guide explains how to edit diagrams, regenerate SVG files, and maintain the
 
 ## Overview
 
-KAIZA MCP maintains two versions of every diagram:
+ATLAS-GATE MCP maintains two versions of every diagram:
 
 1. **Source** (`/docs/diagrams/source/`): Editable, human-readable format (Mermaid)
 2. **Rendered** (`/docs/diagrams/rendered/`): Generated SVG output (for display)
@@ -189,7 +189,7 @@ This command:
 ```bash
 $ npm run docs:render
 
-> kaiza-mcp-server@1.0.0 docs:render
+> atlas-gate-mcp-server@1.0.0 docs:render
 > find docs/diagrams/source -name '*.mmd' -exec npx mmdc -i {} -o docs/diagrams/rendered/{}.svg \;
 
 ✓ Rendered architecture.mmd → architecture.mmd.svg
@@ -521,6 +521,6 @@ npm install @mermaid-js/mermaid-cli --save-dev
 
 ---
 
-**Document Owner:** KAIZA MCP Documentation Team  
+**Document Owner:** ATLAS-GATE MCP Documentation Team  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

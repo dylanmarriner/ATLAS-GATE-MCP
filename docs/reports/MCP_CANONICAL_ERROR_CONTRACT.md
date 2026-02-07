@@ -2,12 +2,12 @@
 
 **Version**: 1.0.0  
 **Status**: ENFORCED  
-**Authority**: KAIZA MCP Governance  
+**Authority**: ATLAS-GATE MCP Governance  
 **Date**: 2026-01-19
 
 ## Executive Summary
 
-This document defines the canonical error envelope that MUST be emitted by the KAIZA MCP server whenever a tool call fails. Every error that reaches the MCP protocol transport layer is guaranteed to be a `SystemError` instance with a deterministic, JSON-safe envelope structure.
+This document defines the canonical error envelope that MUST be emitted by the ATLAS-GATE MCP server whenever a tool call fails. Every error that reaches the MCP protocol transport layer is guaranteed to be a `SystemError` instance with a deterministic, JSON-safe envelope structure.
 
 This contract eliminates silent failures, non-deterministic error reporting, and raw Error objects reaching clients.
 

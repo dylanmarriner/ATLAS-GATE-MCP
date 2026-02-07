@@ -48,7 +48,7 @@ This project is committed to providing a welcoming, inclusive environment. By pa
 - Node.js 18+
 - Git
 - GitHub account
-- Familiarity with KAIZA MCP architecture (see [ARCHITECTURE.md](./docs/ARCHITECTURE.md))
+- Familiarity with ATLAS-GATE MCP architecture (see [ARCHITECTURE.md](./docs/ARCHITECTURE.md))
 
 ### Setup Development Environment
 
@@ -420,7 +420,7 @@ By contributing, you agree that your contributions are licensed under the ISC Li
 5. Add tests for new code
 6. Be patient and respectful in review
 
-Thank you for helping make KAIZA MCP better!
+Thank you for helping make ATLAS-GATE MCP better!
 
 ---
 

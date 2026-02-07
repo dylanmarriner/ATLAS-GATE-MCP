@@ -52,7 +52,7 @@ function sha256(input) {
  * Create a temporary workspace for testing.
  */
 async function createTestWorkspace() {
-  const testDir = path.join(__dirname, ".kaiza-test-replay", `ws-${Date.now()}`);
+  const testDir = path.join(__dirname, ".atlas-gate-test-replay", `ws-${Date.now()}`);
   fs.mkdirSync(testDir, { recursive: true });
   return testDir;
 }
@@ -170,7 +170,7 @@ export async function testTamperDetectedBrokenChain() {
 
   try {
     const planHash = sha256("tamper-plan");
-    const auditDir = path.join(workspaceRoot, ".kaiza");
+    const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
     // Write valid entries
@@ -251,7 +251,7 @@ export async function testTamperDetectedSeqGap() {
 
   try {
     const planHash = sha256("seq-gap-plan");
-    const auditDir = path.join(workspaceRoot, ".kaiza");
+    const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
     fs.mkdirSync(auditDir, { recursive: true });
@@ -327,7 +327,7 @@ export async function testTamperDetectedInvalidJson() {
 
   try {
     const planHash = sha256("invalid-json-plan");
-    const auditDir = path.join(workspaceRoot, ".kaiza");
+    const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
     fs.mkdirSync(auditDir, { recursive: true });
@@ -479,9 +479,9 @@ export async function testReplayIsReadOnly() {
     const initialSet = new Set(initialFiles);
     const finalSet = new Set(finalFiles);
 
-    // Only .kaiza directory should potentially be new
+    // Only .atlas-gate directory should potentially be new
     for (const file of finalSet) {
-      if (file !== ".kaiza") {
+      if (file !== ".atlas-gate") {
         assert(
           initialSet.has(file),
           `File ${file} was created (non-read-only operation)`
@@ -543,7 +543,7 @@ export async function testVerifyWorkspaceIntegrityFail() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const auditDir = path.join(workspaceRoot, ".kaiza");
+    const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
     fs.mkdirSync(auditDir, { recursive: true });

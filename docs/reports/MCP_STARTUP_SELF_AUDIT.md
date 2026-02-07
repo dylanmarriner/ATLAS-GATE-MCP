@@ -1,7 +1,7 @@
 # MCP Startup Self-Audit Specification
 
 **Document Type**: Enforcement Audit Template  
-**Authority**: KAIZA MCP Governance  
+**Authority**: ATLAS-GATE MCP Governance  
 **Status**: ACTIVE  
 **Last Updated**: 2026-01-19
 
@@ -164,7 +164,7 @@ node test-startup-audit-failure.js
 
 ```bash
 # Start server and check for boot refusal if invariant is broken
-bin/kaiza-mcp-windsurf.js
+bin/atlas-gate-mcp-windsurf.js
 
 # Check audit logs for recorded violations
 cat docs/reports/PHASE_MCP_STARTUP_AUDIT_LOG.jsonl

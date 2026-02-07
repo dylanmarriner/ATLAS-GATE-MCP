@@ -1,4 +1,4 @@
-# KAIZA MCP - All Fixes Applied
+# ATLAS-GATE MCP - All Fixes Applied
 
 ## Summary
 
@@ -17,14 +17,14 @@ Fixed critical issues in WINDSURF and ANTIGRAVITY tools to ensure both roles wor
 
 ### Problem
 ```javascript
-const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
+const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.atlas-gate/bootstrap_secret.json";
 ```
 This absolute path only worked in one specific machine, breaking portability.
 
 ### Solution
 ```javascript
 const repoRoot = getRepoRoot();
-const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
 Now uses workspace-relative path via path resolver.
 
@@ -223,7 +223,7 @@ Enhanced to:
 
 ### Problem
 ```javascript
-const planPath = "/media/linnyux/development3/developing/KAIZA-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
+const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
 ```
 This path only existed on one machine.
 

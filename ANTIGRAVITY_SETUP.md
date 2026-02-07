@@ -31,7 +31,7 @@ cp .env.example .env
 
 Edit `.env` and set:
 ```
-KAIZA_BOOTSTRAP_SECRET=<your-generated-secret-from-step-1>
+ATLAS-GATE_BOOTSTRAP_SECRET=<your-generated-secret-from-step-1>
 ```
 
 Restrict permissions:
@@ -47,7 +47,7 @@ Before using Antigravity, source the .env file:
 source .env
 ```
 
-Or if using a different shell, ensure `KAIZA_BOOTSTRAP_SECRET` is in your environment.
+Or if using a different shell, ensure `ATLAS-GATE_BOOTSTRAP_SECRET` is in your environment.
 
 ## Step 4: Verify Setup
 
@@ -65,7 +65,7 @@ This checks:
 
 ## Step 5: Configure Antigravity Client
 
-Add KAIZA MCP to your Antigravity configuration. The MCP server is located at:
+Add ATLAS-GATE MCP to your Antigravity configuration. The MCP server is located at:
 
 ```
 bin/ATLAS-GATE-MCP-antigravity.js
@@ -76,13 +76,13 @@ Example configuration for `~/.config/antigravity/mcp_config.json` or your client
 ```json
 {
   "mcpServers": {
-    "kaiza": {
+    "atlas-gate": {
       "command": "node",
       "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-antigravity.js"],
       "type": "stdio",
       "disabled": false,
       "env": {
-        "KAIZA_BOOTSTRAP_SECRET": "your-secret-here"
+        "ATLAS-GATE_BOOTSTRAP_SECRET": "your-secret-here"
       }
     }
   }
@@ -125,10 +125,10 @@ Antigravity can now write plans. Use the MCP tools available:
 
 ## Directory Structure
 
-Plans are stored in `.kaiza/plans/`:
+Plans are stored in `.atlas-gate/plans/`:
 
 ```
-.kaiza/
+.atlas-gate/
 ├── plans/              # All plans live here
 │   ├── foundation.md
 │   ├── phase-2.md
@@ -158,7 +158,7 @@ The environment variable or fallback file is not accessible.
 
 **Fix:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 # Or source your .env file
 source .env
 ```
@@ -170,7 +170,7 @@ The signature verification failed. This usually means:
 
 **Fix:**
 - Ensure the same secret is used
-- Check that the environment variable is correct: `echo $KAIZA_BOOTSTRAP_SECRET`
+- Check that the environment variable is correct: `echo $ATLAS-GATE_BOOTSTRAP_SECRET`
 
 ### Tests fail with "bootstrap secret not set"
 The verification suite needs the secret in the environment.
@@ -184,8 +184,8 @@ npm run verify
 ## Next Steps
 
 1. **Create your foundation plan** using the `bootstrap_create_foundation_plan` tool
-2. **View the audit log** at `.kaiza/audit.log` to verify operations
-3. **Check governance state** in `.kaiza/governance.json`
+2. **View the audit log** at `.atlas-gate/audit.log` to verify operations
+3. **Check governance state** in `.atlas-gate/governance.json`
 4. **Read the full documentation** in `docs/` for advanced features
 
 ## References

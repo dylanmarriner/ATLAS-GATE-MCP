@@ -1,7 +1,7 @@
 # MCP External Attestation Specification v1.0
 
 **Status**: Complete  
-**Role**: KAIZA MCP Infrastructure  
+**Role**: ATLAS-GATE MCP Infrastructure  
 **Authority**: WINDSURF EXECUTION PROMPT — MCP External Attestation Interface  
 **Date**: 2026-01-19
 
@@ -9,7 +9,7 @@
 
 ## 1. Overview
 
-The KAIZA MCP External Attestation system provides **read-only, cryptographically signed attestation bundles** that allow external parties to verify the integrity and maturity of MCP server execution without requiring access to raw logs or configuration.
+The ATLAS-GATE MCP External Attestation system provides **read-only, cryptographically signed attestation bundles** that allow external parties to verify the integrity and maturity of MCP server execution without requiring access to raw logs or configuration.
 
 ### Key Properties
 
@@ -110,7 +110,7 @@ Each attestation bundle is a JSON object with the following fields (canonical or
 | `policy_enforcement` | Object | Write-time policy enforcement statistics |
 | `intent_coverage` | Object | Intent artifact coverage statistics |
 | `replay_verdict` | String | Result of deterministic execution replay |
-| `maturity_scores` | Object | KAIZA maturity assessment across 6 dimensions |
+| `maturity_scores` | Object | ATLAS-GATE maturity assessment across 6 dimensions |
 | `verifier_checksums` | Object | Hashes of included metrics (for tamper detection) |
 | `generated_timestamp` | ISO8601 | When bundle was generated (NOT signed) |
 | `signature` | Hex string | HMAC-SHA256(content, secret) |
@@ -136,8 +136,8 @@ Each attestation bundle is a JSON object with the following fields (canonical or
 
 The signing secret is obtained from (in order of precedence):
 
-1. `KAIZA_ATTESTATION_SECRET` environment variable
-2. `.kaiza/attestation_secret.json` file in workspace
+1. `ATLAS-GATE_ATTESTATION_SECRET` environment variable
+2. `.atlas-gate/attestation_secret.json` file in workspace
 3. Ephemeral random secret (with warning)
 
 **Security Note**: Secrets are never embedded in bundles or exported. Verification requires independent access to the secret.
@@ -274,7 +274,7 @@ Any third party can verify an attestation bundle using this deterministic protoc
 ### 6.1 Protocol Steps
 
 1. **Obtain Bundle**: Get attestation bundle (e.g., from docs/reports/)
-2. **Obtain Secret**: Obtain signing secret out-of-band (KAIZA_ATTESTATION_SECRET)
+2. **Obtain Secret**: Obtain signing secret out-of-band (ATLAS-GATE_ATTESTATION_SECRET)
 3. **Reconstruct Content**: Remove `bundle_id`, `generated_timestamp`, `signature`
 4. **Canonicalize**: Recursively sort all object keys
 5. **Compute HMAC**: `HMAC-SHA256(canonical_json, secret)`
@@ -462,7 +462,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 
 const bundle = JSON.parse(fs.readFileSync('bundle.json'));
-const secret = process.env.KAIZA_ATTESTATION_SECRET;
+const secret = process.env.ATLAS-GATE_ATTESTATION_SECRET;
 
 // Verify (use reference implementation above)
 const result = verifyBundle(bundle, secret);

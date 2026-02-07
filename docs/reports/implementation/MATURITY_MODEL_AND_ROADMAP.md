@@ -1,6 +1,6 @@
 ---
 title: "Maturity Model and Roadmap"
-description: "KAIZA MCP maturity assessment framework and strategic development roadmap"
+description: "ATLAS-GATE MCP maturity assessment framework and strategic development roadmap"
 version: "1.0.0"
 last_updated: "2026-01-19"
 review_date: "2026-04-19"
@@ -13,7 +13,7 @@ audience: ["technical", "executive"]
 
 ## Purpose
 
-This document defines the maturity model for KAIZA MCP across key dimensions and provides a strategic roadmap for development. It serves as a guide for current state assessment and future planning.
+This document defines the maturity model for ATLAS-GATE MCP across key dimensions and provides a strategic roadmap for development. It serves as a guide for current state assessment and future planning.
 
 ## Maturity Model Framework
 
@@ -284,7 +284,7 @@ This document defines the maturity model for KAIZA MCP across key dimensions and
 
 ---
 
-**Document Owner**: KAIZA MCP Strategy Team  
+**Document Owner**: ATLAS-GATE MCP Strategy Team  
 **Review Frequency**: Quarterly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

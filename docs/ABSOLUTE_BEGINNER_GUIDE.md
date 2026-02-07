@@ -1,4 +1,4 @@
-# Absolute Beginner's Guide: Using KAIZA MCP from Zero
+# Absolute Beginner's Guide: Using ATLAS-GATE MCP from Zero
 
 **For people who have never used a computer before.**
 
@@ -14,7 +14,7 @@
 
 ## What This Is
 
-**KAIZA MCP** is a tool that lets you safely use AI (artificial intelligence) to help with software development. Think of it like having a very intelligent assistant who:
+**ATLAS-GATE MCP** is a tool that lets you safely use AI (artificial intelligence) to help with software development. Think of it like having a very intelligent assistant who:
 - Suggests changes to your code
 - Keeps a detailed record of everything that happens
 - Only makes changes you've approved
@@ -116,7 +116,7 @@ git --version
 
 ---
 
-### Download KAIZA MCP
+### Download ATLAS-GATE MCP
 
 #### **Option A: Using Git (Recommended)**
 
@@ -127,18 +127,18 @@ git --version
 
 2. **Copy and paste this command:**
 ```bash
-git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
+git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 ```
 3. Press Enter
 4. Wait for it to finish (you'll see text scrolling)
 
 #### **Option B: Download as ZIP File (If you prefer not to use Git)**
 
-1. Go to https://github.com/dylanmarriner/KAIZA-MCP-server
+1. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
 2. Click the green "Code" button
 3. Click "Download ZIP"
 4. Open your "Downloads" folder
-5. Right-click "KAIZA-MCP-server-main.zip"
+5. Right-click "ATLAS-GATE-MCP-server-main.zip"
 6. Click "Extract All" (Windows) or "Unzip" (Mac)
 7. A new folder appears
 
@@ -148,20 +148,20 @@ git clone https://github.com/dylanmarriner/KAIZA-MCP-server.git
 
 **Windows (PowerShell/Command Prompt):**
 ```
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 or
 ```
-cd KAIZA-MCP-server-main
+cd ATLAS-GATE-MCP-server-main
 ```
 
 **Mac/Linux (Terminal):**
 ```bash
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 or
 ```bash
-cd KAIZA-MCP-server-main
+cd ATLAS-GATE-MCP-server-main
 ```
 
 **What `cd` means:** "Change Directory" — it means "go into this folder."
@@ -170,14 +170,14 @@ cd KAIZA-MCP-server-main
 
 ### Install Dependencies
 
-Once you're inside the KAIZA-MCP-server folder:
+Once you're inside the ATLAS-GATE-MCP-server folder:
 
 **All Platforms:**
 ```bash
 npm install
 ```
 
-**What this does:** Downloads all the code libraries KAIZA MCP needs to run. This takes 2-5 minutes.
+**What this does:** Downloads all the code libraries ATLAS-GATE MCP needs to run. This takes 2-5 minutes.
 
 **What success looks like:**
 - No red error messages at the end
@@ -191,7 +191,7 @@ npm install
 
 ### Set Up Bootstrap Secret
 
-KAIZA MCP requires a "bootstrap secret" — think of it like a password that authenticates the first time you use it.
+ATLAS-GATE MCP requires a "bootstrap secret" — think of it like a password that authenticates the first time you use it.
 
 **Option 1: Automatic Setup (Easiest)**
 
@@ -215,14 +215,14 @@ If the automatic script doesn't work:
 
 **Windows (PowerShell):**
 ```powershell
-$env:KAIZA_BOOTSTRAP_SECRET = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString()))
-echo $env:KAIZA_BOOTSTRAP_SECRET
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString()))
+echo $env:ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 **Mac/Linux:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
-echo $KAIZA_BOOTSTRAP_SECRET
+export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 **What to do with the result:**
@@ -240,13 +240,13 @@ Once everything is installed and in the right folder:
 
 **Windows:**
 ```powershell
-$env:KAIZA_BOOTSTRAP_SECRET = "your-bootstrap-secret-here"
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-bootstrap-secret-here"
 npm run verify
 ```
 
 **Mac/Linux:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET="your-bootstrap-secret-here"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-bootstrap-secret-here"
 npm run verify
 ```
 
@@ -257,7 +257,7 @@ Replace `your-bootstrap-secret-here` with the secret you saved earlier.
 - No red error text
 
 **What happens next:**
-- KAIZA MCP is now ready to use with your AI client (Claude Desktop, Windsurf, etc.)
+- ATLAS-GATE MCP is now ready to use with your AI client (Claude Desktop, Windsurf, etc.)
 - See the "For Developers" section in the main README for how to configure it
 
 ---
@@ -270,7 +270,7 @@ Replace `your-bootstrap-secret-here` with the secret you saved earlier.
 
 A Terminal (Mac/Linux) or Command Prompt/PowerShell (Windows) is a text-based way to talk to your computer. Instead of clicking buttons, you type instructions.
 
-**Why use it?** Some tools (like Git and KAIZA MCP) only work through the Terminal.
+**Why use it?** Some tools (like Git and ATLAS-GATE MCP) only work through the Terminal.
 
 #### How to Open Terminal/Command Prompt
 
@@ -325,13 +325,13 @@ pwd
 
 ### Part 2: Understanding the Folder Structure
 
-After you've installed KAIZA MCP, here's what the main folders mean:
+After you've installed ATLAS-GATE MCP, here's what the main folders mean:
 
 ```
-KAIZA-MCP-server/
+ATLAS-GATE-MCP-server/
 ├── docs/               ← All documentation (guides, references)
 ├── src/                ← Source code (don't edit unless contributing)
-├── tools/              ← Tools that KAIZA MCP uses
+├── tools/              ← Tools that ATLAS-GATE MCP uses
 ├── tests/              ← Tests (automatic checks that everything works)
 ├── adr/                ← Architecture Decision Records (why things are designed a certain way)
 ├── scripts/            ← Helper scripts (like setup-bootstrap.sh)
@@ -341,7 +341,7 @@ KAIZA-MCP-server/
 
 **You will mainly interact with:**
 - `docs/` — To read documentation
-- Your AI client (Claude Desktop, Windsurf) — To use KAIZA MCP
+- Your AI client (Claude Desktop, Windsurf) — To use ATLAS-GATE MCP
 - Terminal — To run commands
 
 ---
@@ -350,11 +350,11 @@ KAIZA-MCP-server/
 
 #### What is "Configuration"?
 
-Configuration is a set of instructions that tells KAIZA MCP how to behave. It's like a recipe for how to run the software.
+Configuration is a set of instructions that tells ATLAS-GATE MCP how to behave. It's like a recipe for how to run the software.
 
 #### For Windsurf Users
 
-You need to tell Windsurf where KAIZA MCP is located.
+You need to tell Windsurf where ATLAS-GATE MCP is located.
 
 **Steps:**
 1. Open a text editor (Notepad on Windows, TextEdit on Mac, etc.)
@@ -364,9 +364,9 @@ You need to tell Windsurf where KAIZA MCP is located.
 ```json
 {
   "mcpServers": {
-    "kaiza-windsurf": {
+    "atlas-gate-windsurf": {
       "command": "node",
-      "args": ["/Users/yourname/KAIZA-MCP-server/bin/kaiza-mcp-windsurf.js"],
+      "args": ["/Users/yourname/ATLAS-GATE-MCP-server/bin/atlas-gate-mcp-windsurf.js"],
       "type": "stdio",
       "disabled": false
     }
@@ -386,14 +386,14 @@ You need to tell Windsurf where KAIZA MCP is located.
 
 ---
 
-### Part 4: Running KAIZA MCP
+### Part 4: Running ATLAS-GATE MCP
 
 #### Step 1: Start Your Terminal
 Open Terminal/Command Prompt (see instructions above)
 
 #### Step 2: Navigate to the Folder
 ```bash
-cd KAIZA-MCP-server
+cd ATLAS-GATE-MCP-server
 ```
 
 #### Step 3: Set the Bootstrap Secret
@@ -401,12 +401,12 @@ Do this **every time** you open a new Terminal window:
 
 **Windows:**
 ```powershell
-$env:KAIZA_BOOTSTRAP_SECRET = "your-secret-here"
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-secret-here"
 ```
 
 **Mac/Linux:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET="your-secret-here"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 ```
 
 #### Step 4: Run the Verification
@@ -428,7 +428,7 @@ All tests passed ✓
 
 #### What are "Secrets"?
 
-Secrets (like the bootstrap secret) are passwords or codes that you must keep private. If someone else gets your secret, they could use KAIZA MCP with your authority.
+Secrets (like the bootstrap secret) are passwords or codes that you must keep private. If someone else gets your secret, they could use ATLAS-GATE MCP with your authority.
 
 **Rules for secrets:**
 1. Never share your secret with anyone
@@ -442,7 +442,7 @@ An "environment variable" is a way to store information that your Terminal remem
 
 When you run:
 ```bash
-export KAIZA_BOOTSTRAP_SECRET="my-secret"
+export ATLAS-GATE_BOOTSTRAP_SECRET="my-secret"
 ```
 
 You're telling the Terminal: "Remember this secret for the next commands I run."
@@ -467,9 +467,9 @@ You're telling the Terminal: "Remember this secret for the next commands I run."
 
 ## Glossary for Humans
 
-**Audit Log** — A record of everything that happened, like a detailed diary. KAIZA MCP records every action.
+**Audit Log** — A record of everything that happened, like a detailed diary. ATLAS-GATE MCP records every action.
 
-**Bootstrap Secret** — The password for the first time you use KAIZA MCP. It's called "bootstrap" because it starts the system.
+**Bootstrap Secret** — The password for the first time you use ATLAS-GATE MCP. It's called "bootstrap" because it starts the system.
 
 **CLI** — Command-Line Interface. A way to use software by typing commands (instead of clicking buttons).
 
@@ -501,17 +501,17 @@ You're telling the Terminal: "Remember this secret for the next commands I run."
 
 **Path** — The location of a file or folder. Example: `/Users/john/Documents/my-file.txt`
 
-**Absolute Path** — The complete path from the very top of your computer. Example: `/Users/john/KAIZA-MCP-server/`
+**Absolute Path** — The complete path from the very top of your computer. Example: `/Users/john/ATLAS-GATE-MCP-server/`
 
 **Relative Path** — A path from where you are right now. Example: `docs/README.md` (which file should be in the current folder's `docs` folder)
 
-**Plan** — In KAIZA MCP, a plan is a detailed description of changes you approve before they happen.
+**Plan** — In ATLAS-GATE MCP, a plan is a detailed description of changes you approve before they happen.
 
 **Repository** — A folder containing all the code and history for a project. Often called a "repo."
 
 **Root** — The top level. "Project root" means the main folder of the project.
 
-**Role** — Different responsibilities or permissions. KAIZA MCP has "WINDSURF" (executor) and "ANTIGRAVITY" (planner) roles.
+**Role** — Different responsibilities or permissions. ATLAS-GATE MCP has "WINDSURF" (executor) and "ANTIGRAVITY" (planner) roles.
 
 **Script** — A file containing commands to run. When you run a script, it runs many commands automatically.
 
@@ -559,7 +559,7 @@ Should show a version like `v18.0.0`
 **Cause:** Could be many things. Usually a network issue or Node.js problem.
 
 **Solution:**
-1. Make sure you're in the `KAIZA-MCP-server` folder (run `ls` or `dir` and look for `package.json`)
+1. Make sure you're in the `ATLAS-GATE-MCP-server` folder (run `ls` or `dir` and look for `package.json`)
 2. Try again:
 ```bash
 npm install
@@ -571,7 +571,7 @@ npm install --no-optional
 
 ---
 
-### Problem: "KAIZA_BOOTSTRAP_SECRET is not set"
+### Problem: "ATLAS-GATE_BOOTSTRAP_SECRET is not set"
 
 **Cause:** You haven't set the environment variable yet, or you opened a new Terminal window.
 
@@ -580,12 +580,12 @@ npm install --no-optional
 
 **Windows:**
 ```powershell
-$env:KAIZA_BOOTSTRAP_SECRET = "your-secret-here"
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-secret-here"
 ```
 
 **Mac/Linux:**
 ```bash
-export KAIZA_BOOTSTRAP_SECRET="your-secret-here"
+export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 ```
 
 2. You **must do this every time** you open a new Terminal window
@@ -616,7 +616,7 @@ bash scripts/setup-bootstrap.sh
 
 **Steps to fix:**
 1. Make sure Node.js and Git are installed correctly
-2. Make sure KAIZA_BOOTSTRAP_SECRET is set
+2. Make sure ATLAS-GATE_BOOTSTRAP_SECRET is set
 3. Make sure you're in the right folder (you should see `package.json` when you run `ls` or `dir`)
 4. Delete the `node_modules` folder and try again:
 
@@ -652,9 +652,9 @@ pwd
 ```
 
 Copy the result and use it. For example:
-- Windows: `C:\Users\John\KAIZA-MCP-server`
-- Mac: `/Users/john/KAIZA-MCP-server`
-- Linux: `/home/john/KAIZA-MCP-server`
+- Windows: `C:\Users\John\ATLAS-GATE-MCP-server`
+- Mac: `/Users/john/ATLAS-GATE-MCP-server`
+- Linux: `/home/john/ATLAS-GATE-MCP-server`
 
 ---
 
@@ -664,22 +664,22 @@ Copy the result and use it. For example:
 1. Read the error message carefully (it's usually helpful)
 2. Search the [Glossary](#glossary-for-humans) for unfamiliar terms
 3. Check the [Troubleshooting](#troubleshooting) section (you might not be alone)
-4. Ask in [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+4. Ask in [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 
 ---
 
 ## Next Steps
 
-Now that you have KAIZA MCP installed and verified:
+Now that you have ATLAS-GATE MCP installed and verified:
 
 1. **Read the quick reference**: [MCP Quick Reference](./MCP_QUICK_REFERENCE.md) (1 page)
 2. **Configure your AI client**: See the main [README.md](../README.md#configuration) 
 3. **Learn the concepts**: [Architecture Overview](./ARCHITECTURE.md)
-4. **Ask questions**: [GitHub Discussions](https://github.com/dylanmarriner/KAIZA-MCP-server/discussions)
+4. **Ask questions**: [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 
 ---
 
-**Still stuck?** Create an issue at [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues) with:
+**Still stuck?** Create an issue at [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues) with:
 - What you tried
 - What happened
 - Which operating system you're using

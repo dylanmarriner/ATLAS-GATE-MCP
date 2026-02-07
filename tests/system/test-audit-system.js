@@ -9,7 +9,7 @@ import os from "os";
 import { appendAuditEntry, verifyAuditLogIntegrity, redactArgs, readAuditLog } from "./core/audit-system.js";
 import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "./core/path-resolver.js";
 
-const TEST_WORKSPACE = path.join(os.tmpdir(), `kaiza-audit-test-${Date.now()}`);
+const TEST_WORKSPACE = path.join(os.tmpdir(), `atlas-gate-audit-test-${Date.now()}`);
 
 function setup() {
   if (!fs.existsSync(TEST_WORKSPACE)) {
@@ -25,7 +25,7 @@ function teardown() {
 }
 
 function getAuditLogPath() {
-  return path.join(TEST_WORKSPACE, ".kaiza", "audit.log");
+  return path.join(TEST_WORKSPACE, ".atlas-gate", "audit.log");
 }
 
 // ============================================================================
@@ -37,7 +37,7 @@ async function test1_AuditDirCreation() {
   try {
     lockWorkspaceRoot(TEST_WORKSPACE);
 
-    const auditDir = path.join(TEST_WORKSPACE, ".kaiza");
+    const auditDir = path.join(TEST_WORKSPACE, ".atlas-gate");
     
     // Call appendAuditEntry to trigger directory creation
     await appendAuditEntry({
@@ -339,7 +339,7 @@ async function test9_AuditFailureCauseRefusal() {
     lockWorkspaceRoot(TEST_WORKSPACE);
 
     // Make the audit directory unwritable (if running as non-root)
-    const auditDir = path.join(TEST_WORKSPACE, ".kaiza");
+    const auditDir = path.join(TEST_WORKSPACE, ".atlas-gate");
     fs.mkdirSync(auditDir, { recursive: true });
     
     try {

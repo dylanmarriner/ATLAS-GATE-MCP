@@ -1,7 +1,7 @@
 # MCP Maturity Scoring Specification v1.0
 
 **ROLE**: INFRASTRUCTURE  
-**AUTHORITY**: KAIZA MCP Governance  
+**AUTHORITY**: ATLAS-GATE MCP Governance  
 **EFFECTIVE DATE**: January 19, 2026
 
 ---
@@ -516,4 +516,4 @@ Every scoring run:
 
 **Document Version**: 1.0  
 **Last Updated**: January 19, 2026  
-**Owner**: KAIZA MCP Governance
+**Owner**: ATLAS-GATE MCP Governance

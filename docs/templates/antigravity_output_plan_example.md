@@ -8,66 +8,134 @@
 **governance**: ATLAS-GATE-v1
 ---
 
-# PLAN: Feature Implementation
+# Plan Metadata
 
-## 1. TECHNICAL OBJECTIVE
+- Plan ID: PLAN_EXAMPLE_v1
+- Version: 1.0
+- Author: ANTIGRAVITY
+- Created: 2026-02-04T22:40:00Z
+- Status: APPROVED
+- Governance: ATLAS-GATE-v1
 
-Implement the core logic for [Feature Name] ensuring zero-hallucination compliance and full auditability. Success is defined by passing unit tests and maintaining workspace integrity.
+# Scope & Constraints
 
-## 2. SCOPE INVENTORY
+Affected Files:
+- [NEW] `src/feature.js`: Core implementation module
+- [MODIFY] `tests/feature.test.js`: Feature test suite
 
-- [NEW] `src/feature.js`: Core implementation.
-- [MODIFY] `tests/feature.test.js`: Integration tests.
+Out of Scope:
+- Database schema changes
+- API contract changes
+- Environment variable additions
 
-## 3. IMPLEMENTATION SEQUENCE (WINDSURF READY)
+Constraints:
+- All changes MUST be tested before execution
+- No breaking changes to existing APIs
+- Changes MUST maintain full auditability
 
-### Step 1: Initialize Core Logic
+# Phase Definitions
 
-- **Path**: `/home/kubuntux/Documents/ATLAS-GATE-MCP/src/feature.js`
-- **Role**: `EXECUTABLE`
-- **Intent**: Create the primary feature handler with strict error validation.
-- **Implementation**:
+## Phase: PHASE_CORE_IMPLEMENTATION
+
+Phase ID: PHASE_CORE_IMPLEMENTATION
+
+Objective: Implement the core feature handler with complete error validation and production-ready code
+
+Allowed operations: Create new files in src/, Modify test files, Run npm test, Execute verification commands
+
+Forbidden operations: Delete production files without rollback plan, Modify package.json dependencies, Execute arbitrary shell commands, Commit to main branch directly
+
+Required intent artifacts: Unit test file with passing tests, Implementation code with inline documentation, Verification output confirming success
+
+Verification commands: npm test tests/feature.test.js
+
+Expected outcomes: feature.js exports featureHandler function, All tests pass, No linting errors, Code passes syntax validation
+
+Failure stop conditions: Any test fails, Syntax errors detected, Feature handler throws on valid input, Code coverage below 80%
+
+# Path Allowlist
+
+- src/
+- tests/
+- package.json
+- README.md
+- docs/examples/
+
+# Verification Gates
+
+Verification Gate 1: Code Syntax Validation
+- Trigger: After file creation
+- Check: node -c src/feature.js
+- Required: MUST pass without errors
+- Failure action: REJECT and ROLLBACK
+
+Verification Gate 2: Unit Test Execution
+- Trigger: After implementation complete
+- Check: npm test tests/feature.test.js
+- Required: MUST pass without errors
+- Failure action: REJECT and ROLLBACK
+
+Verification Gate 3: Integrity Verification
+- Trigger: Before approval
+- Check: Workspace integrity verification
+- Required: MUST report no conflicts
+- Failure action: REJECT
+
+# Forbidden Actions
+
+Actions STRICTLY PROHIBITED during plan execution:
+- MUST NOT execute arbitrary shell commands
+- MUST NOT modify files outside Path Allowlist
+- MUST NOT create symlinks or hard links
+- MUST NOT access environment variables without explicit allowlist
+- MUST NOT make network requests
+- MUST NOT fork or spawn child processes
+- MUST NOT write to files with absolute paths
+- MUST NOT use sudo or privilege escalation
+
+# Rollback / Failure Policy
+
+Automatic Rollback Triggers:
+1. Any verification gate fails
+2. Syntax error detected in code
+3. Test failure occurs
+4. Workspace integrity violation
+
+Rollback Procedure:
+1. Delete `src/feature.js`
+2. Revert `tests/feature.test.js` using `git checkout tests/feature.test.js`
+3. Verify workspace matches pre-execution state
+4. Generate rollback audit log entry
+
+Recovery Steps:
+1. Review failure logs
+2. Identify root cause
+3. Modify implementation
+4. Re-submit plan for approval
+
+## Example Implementation Reference
 
 ```javascript
+// src/feature.js
 export function featureHandler(input) {
   if (!input) {
     throw new Error("Missing required input");
   }
-  // Real implementation code here
   return { success: true, data: input };
 }
 ```
 
-### Step 2: Add Verification Tests
-
-- **Path**: `/home/kubuntux/Documents/ATLAS-GATE-MCP/tests/feature.test.js`
-- **Role**: `VERIFICATION`
-- **Intent**: Add unit tests for the feature handler.
-- **Implementation**:
-
 ```javascript
+// tests/feature.test.js
 import { featureHandler } from '../src/feature.js';
 import assert from 'assert';
 
 describe('Feature Handler', () => {
-  it('should return success on valid input', () => {
+  it('returns success on valid input', () => {
     const result = featureHandler('test');
     assert.strictEqual(result.success, true);
   });
 });
 ```
 
-## 4. VERIFICATION PLAN
-
-- **Automated Tests**: Run `npm test tests/feature.test.js`.
-- **Integrity Check**: Execute `mcp_atlas-gate-mcp_verify_workspace_integrity`.
-
-## 5. ROLLBACK PROTOCOL
-
-1. Delete `src/feature.js`.
-2. Revert changes to `tests/feature.test.js` using git checkout.
-
-## 6. GOVERNANCE AND SEALING
-
-This plan is ready for audit-chain integration.
-[BLAKE3_HASH: placeholder]
+[BLAKE3_HASH: 169ec4c03f6a20adfe8b846a38298b38706585e8111a2c4e8306baae75657d88]

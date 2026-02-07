@@ -1,4 +1,4 @@
-# KAIZA-MCP Server: Comprehensive Bug Analysis Report
+# ATLAS-GATE-MCP Server: Comprehensive Bug Analysis Report
 
 **Status**: Complete Static & Dynamic Analysis
 **Date**: 2026-01-12
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The KAIZA-MCP Server has **12 critical and high-severity bugs** across path resolution, plan lifecycle management, audit logging, and module initialization. These bugs prevent the system from starting correctly and cause failures in normal operation.
+The ATLAS-GATE-MCP Server has **12 critical and high-severity bugs** across path resolution, plan lifecycle management, audit logging, and module initialization. These bugs prevent the system from starting correctly and cause failures in normal operation.
 
 **Key Issues**:
 1. Module import ordering (hard fail on startup)
@@ -101,9 +101,9 @@ Plan locations are hardcoded in multiple places with different priorities:
 **In `list_plans.js` (lines 25-30)**:
 ```javascript
 const planLocations = [
-  path.join(absPath, ".kaiza", "approved_plans"),
-  path.join(absPath, ".kaiza", "plans"),
-  path.join(absPath, ".kaiza", "approvedplans"),
+  path.join(absPath, ".atlas-gate", "approved_plans"),
+  path.join(absPath, ".atlas-gate", "plans"),
+  path.join(absPath, ".atlas-gate", "approvedplans"),
   path.join(absPath, "docs", "plans"),
 ];
 ```
@@ -111,9 +111,9 @@ const planLocations = [
 **In `plan-enforcer.js` (lines 28-33)**:
 ```javascript
 const planLocations = [
-  path.join(repoRoot, ".kaiza", "approved_plans"),
-  path.join(repoRoot, ".kaiza", "plans"),
-  path.join(repoRoot, ".kaiza", "approvedplans"),
+  path.join(repoRoot, ".atlas-gate", "approved_plans"),
+  path.join(repoRoot, ".atlas-gate", "plans"),
+  path.join(repoRoot, ".atlas-gate", "approvedplans"),
   path.join(repoRoot, "docs", "plans"),
 ];
 ```
@@ -121,9 +121,9 @@ const planLocations = [
 **In `plan-registry.js` (lines 7-12)**:
 ```javascript
 const planLocations = [
-  path.join(WORKSPACE_ROOT, ".kaiza", "approved_plans"),
-  path.join(WORKSPACE_ROOT, ".kaiza", "plans"),
-  path.join(WORKSPACE_ROOT, ".kaiza", "approvedplans"),
+  path.join(WORKSPACE_ROOT, ".atlas-gate", "approved_plans"),
+  path.join(WORKSPACE_ROOT, ".atlas-gate", "plans"),
+  path.join(WORKSPACE_ROOT, ".atlas-gate", "approvedplans"),
   path.join(WORKSPACE_ROOT, "docs", "plans"),
 ];
 ```
@@ -187,14 +187,14 @@ Governance state path constructed differently in different modules:
 **In `governance.js` (line 9)**:
 ```javascript
 function getGovernancePath(repoRoot) {
-    return path.join(repoRoot, ".kaiza", GOVERNANCE_FILE);
+    return path.join(repoRoot, ".atlas-gate", GOVERNANCE_FILE);
 }
 ```
 
 **In `plan-enforcer.js` (line 8)**:
 ```javascript
 function readGovernanceState(repoRoot) {
-  const govPath = path.join(repoRoot, ".kaiza", "governance.json");
+  const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");
   // ... hardcoded filename
 }
 ```
@@ -467,7 +467,7 @@ fs.writeFileSync(fullPlanPath, planContent, "utf8");
 ```
 
 This creates the directory if missing (OK), but:
-1. No guarantee that parent directories have correct governance marker (`.kaiza/ROOT`)
+1. No guarantee that parent directories have correct governance marker (`.atlas-gate/ROOT`)
 2. No validation that this is actually a governed repo
 3. Could accidentally create `docs/plans` in wrong location
 
@@ -479,7 +479,7 @@ This creates the directory if missing (OK), but:
 - Multiple `docs/plans` directories possible in monorepo
 
 **Fix**: 
-1. Require `.kaiza/ROOT` to exist before plan creation
+1. Require `.atlas-gate/ROOT` to exist before plan creation
 2. Validate repo root before creating plan directory
 3. Fail if repo is not properly governed
 
@@ -492,7 +492,7 @@ This creates the directory if missing (OK), but:
 **Location**: Not found in codebase
 
 **Problem**:
-The KAIZA documentation mentions:
+The ATLAS-GATE documentation mentions:
 ```
 git commit -m "..."
 (pre-commit validates)
@@ -508,7 +508,7 @@ But there's no `.git/hooks/pre-commit` file in the repository. The system claims
 **Impact**:
 - No automatic validation on commits
 - Files can be committed outside audit log
-- GLOBAL_INVARIANTS say "All code is audited (written via KAIZA-MCP)" but no enforcement
+- GLOBAL_INVARIANTS say "All code is audited (written via ATLAS-GATE-MCP)" but no enforcement
 
 **Fix**: Either:
 1. Implement pre-commit hook in repository

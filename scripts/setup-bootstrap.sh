@@ -1,11 +1,11 @@
 #!/bin/bash
-# Setup Bootstrap Secret for KAIZA MCP
+# Setup Bootstrap Secret for ATLAS-GATE MCP
 # This script generates and configures the bootstrap secret for your workspace
 
 set -e
 
 echo "=========================================="
-echo "KAIZA MCP Bootstrap Secret Setup"
+echo "ATLAS-GATE MCP Bootstrap Secret Setup"
 echo "=========================================="
 echo ""
 
@@ -18,22 +18,22 @@ NC='\033[0m' # No Color
 # Check if script is run from repo root
 if [ ! -f "package.json" ]; then
     echo -e "${RED}Error: script must be run from repository root${NC}"
-    echo "Run: cd /path/to/KAIZA-MCP-server && bash scripts/setup-bootstrap.sh"
+    echo "Run: cd /path/to/ATLAS-GATE-MCP-server && bash scripts/setup-bootstrap.sh"
     exit 1
 fi
 
 echo "Step 1: Check current bootstrap secret status"
 echo ""
 
-if [ -z "$KAIZA_BOOTSTRAP_SECRET" ]; then
-    echo -e "${YELLOW}⚠️  No KAIZA_BOOTSTRAP_SECRET in current environment${NC}"
+if [ -z "$ATLAS-GATE_BOOTSTRAP_SECRET" ]; then
+    echo -e "${YELLOW}⚠️  No ATLAS-GATE_BOOTSTRAP_SECRET in current environment${NC}"
 else
-    echo -e "${GREEN}✓ KAIZA_BOOTSTRAP_SECRET is already set${NC}"
+    echo -e "${GREEN}✓ ATLAS-GATE_BOOTSTRAP_SECRET is already set${NC}"
     read -p "Do you want to regenerate it? (y/n): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "Using existing secret."
-        BOOTSTRAP_SECRET=$KAIZA_BOOTSTRAP_SECRET
+        BOOTSTRAP_SECRET=$ATLAS-GATE_BOOTSTRAP_SECRET
     else
         echo "Generating new secret..."
         BOOTSTRAP_SECRET=$(openssl rand -base64 32)
@@ -63,7 +63,7 @@ echo "Step 3: How would you like to store the secret?"
 echo ""
 echo "1) Environment variable (.bashrc / .zshrc)"
 echo "2) .env file (for this project)"
-echo "3) .kaiza/bootstrap_secret.json file (fallback)"
+echo "3) .atlas-gate/bootstrap_secret.json file (fallback)"
 echo "4) Copy to clipboard only (manual setup)"
 echo ""
 read -p "Choose option (1-4): " choice
@@ -81,22 +81,22 @@ case $choice in
         else
             echo -e "${YELLOW}⚠️  Could not find .bashrc or .zshrc${NC}"
             echo "Manually add this line to your shell config:"
-            echo "export KAIZA_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'"
+            echo "export ATLAS-GATE_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'"
             exit 0
         fi
         
         # Check if already set
-        if grep -q "KAIZA_BOOTSTRAP_SECRET" "$SHELL_RC"; then
-            echo "Updating existing KAIZA_BOOTSTRAP_SECRET in $SHELL_RC"
+        if grep -q "ATLAS-GATE_BOOTSTRAP_SECRET" "$SHELL_RC"; then
+            echo "Updating existing ATLAS-GATE_BOOTSTRAP_SECRET in $SHELL_RC"
             # Use sed to replace (works on macOS and Linux)
             if [[ "$OSTYPE" == "darwin"* ]]; then
-                sed -i '' "s/export KAIZA_BOOTSTRAP_SECRET=.*/export KAIZA_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'/" "$SHELL_RC"
+                sed -i '' "s/export ATLAS-GATE_BOOTSTRAP_SECRET=.*/export ATLAS-GATE_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'/" "$SHELL_RC"
             else
-                sed -i "s/export KAIZA_BOOTSTRAP_SECRET=.*/export KAIZA_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'/" "$SHELL_RC"
+                sed -i "s/export ATLAS-GATE_BOOTSTRAP_SECRET=.*/export ATLAS-GATE_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'/" "$SHELL_RC"
             fi
         else
-            echo "Adding KAIZA_BOOTSTRAP_SECRET to $SHELL_RC"
-            echo "export KAIZA_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'" >> "$SHELL_RC"
+            echo "Adding ATLAS-GATE_BOOTSTRAP_SECRET to $SHELL_RC"
+            echo "export ATLAS-GATE_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'" >> "$SHELL_RC"
         fi
         
         echo -e "${GREEN}✓ Secret added to $SHELL_RC${NC}"
@@ -126,21 +126,21 @@ case $choice in
         else
             # Create minimal .env
             cat > .env << EOF
-# KAIZA MCP Environment Configuration
-KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
+# ATLAS-GATE MCP Environment Configuration
+ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
 EOF
         fi
         
         # Update the secret in .env
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+            sed -i '' "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
         else
-            sed -i "s/^KAIZA_BOOTSTRAP_SECRET=.*/KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
+            sed -i "s/^ATLAS-GATE_BOOTSTRAP_SECRET=.*/ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET/" .env
         fi
         
         echo -e "${GREEN}✓ .env file created${NC}"
         echo ""
-        echo "Load the .env file before running KAIZA:"
+        echo "Load the .env file before running ATLAS-GATE:"
         echo "  source .env"
         echo "  npm run server"
         echo ""
@@ -150,11 +150,11 @@ EOF
         ;;
     3)
         echo ""
-        echo "Creating .kaiza/bootstrap_secret.json..."
+        echo "Creating .atlas-gate/bootstrap_secret.json..."
         
-        mkdir -p .kaiza
+        mkdir -p .atlas-gate
         
-        if [ -f .kaiza/bootstrap_secret.json ]; then
+        if [ -f .atlas-gate/bootstrap_secret.json ]; then
             echo -e "${YELLOW}⚠️  File already exists${NC}"
             read -p "Overwrite? (y/n): " -n 1 -r
             echo
@@ -165,23 +165,23 @@ EOF
         fi
         
         # Write JSON file
-        cat > .kaiza/bootstrap_secret.json << EOF
+        cat > .atlas-gate/bootstrap_secret.json << EOF
 {
   "bootstrap_secret": "$BOOTSTRAP_SECRET"
 }
 EOF
         
-        echo -e "${GREEN}✓ .kaiza/bootstrap_secret.json created${NC}"
+        echo -e "${GREEN}✓ .atlas-gate/bootstrap_secret.json created${NC}"
         echo ""
         
         # Restrict permissions
-        chmod 600 .kaiza/bootstrap_secret.json
+        chmod 600 .atlas-gate/bootstrap_secret.json
         echo -e "${GREEN}✓ File permissions restricted (600)${NC}"
         echo ""
         
         # Add to .gitignore
         if ! grep -q "bootstrap_secret.json" .gitignore 2>/dev/null; then
-            echo ".kaiza/bootstrap_secret.json" >> .gitignore
+            echo ".atlas-gate/bootstrap_secret.json" >> .gitignore
             echo -e "${GREEN}✓ Added to .gitignore${NC}"
         fi
         echo ""
@@ -193,7 +193,7 @@ EOF
         echo "$BOOTSTRAP_SECRET"
         echo ""
         echo "To use it, set the environment variable:"
-        echo "  export KAIZA_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'"
+        echo "  export ATLAS-GATE_BOOTSTRAP_SECRET='$BOOTSTRAP_SECRET'"
         echo ""
         ;;
     *)
@@ -206,16 +206,16 @@ echo "Step 4: Verify setup"
 echo ""
 
 # Try to load and verify
-export KAIZA_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
+export ATLAS-GATE_BOOTSTRAP_SECRET=$BOOTSTRAP_SECRET
 
-if [ -z "$KAIZA_BOOTSTRAP_SECRET" ]; then
+if [ -z "$ATLAS-GATE_BOOTSTRAP_SECRET" ]; then
     echo -e "${RED}✗ Bootstrap secret not set${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}✓ Bootstrap secret is set${NC}"
-echo "  Length: ${#KAIZA_BOOTSTRAP_SECRET} characters"
-echo "  First 8 chars: ${KAIZA_BOOTSTRAP_SECRET:0:8}..."
+echo "  Length: ${#ATLAS-GATE_BOOTSTRAP_SECRET} characters"
+echo "  First 8 chars: ${ATLAS-GATE_BOOTSTRAP_SECRET:0:8}..."
 echo ""
 
 echo "=========================================="

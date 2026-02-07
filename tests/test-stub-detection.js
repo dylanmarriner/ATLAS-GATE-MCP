@@ -211,7 +211,7 @@ Bootstrap scope only. Production-ready.
 
 # Path Allowlist
 - docs/plans/**
-- .kaiza/**
+- .atlas-gate/**
 
 # Verification Gates
 All gates pass.

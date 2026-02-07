@@ -1,18 +1,18 @@
 <!--
-KAIZA_PLAN_HASH: d8bb32317a7c1fa04b8203a75388afc6b58a9aa5cad210b85a3e826850b72112
+ATLAS-GATE_PLAN_HASH: d8bb32317a7c1fa04b8203a75388afc6b58a9aa5cad210b85a3e826850b72112
 ROLE: ANTIGRAVITY
 STATUS: PENDING_APPROVAL
 -->
 
 # Plan Metadata
 
-This plan establishes the Plan Linter system for the KAIZA MCP server. The linter ensures all subsequent plans meet strict requirements for structure, enforceability, and auditability.
+This plan establishes the Plan Linter system for the ATLAS-GATE MCP server. The linter ensures all subsequent plans meet strict requirements for structure, enforceability, and auditability.
 
 ---
 
 # Scope & Constraints
 
-All operations in this plan are scoped strictly to the KAIZA MCP server repository, specifically the following directories:
+All operations in this plan are scoped strictly to the ATLAS-GATE MCP server repository, specifically the following directories:
 - `core/plan-linter.js` - Core linter implementation
 - `test-plan-linter.js` - Test suite
 - `docs/reports/` - Documentation and reports
@@ -155,7 +155,7 @@ The rollback procedure for this plan is deterministic and automated:
 
 # Notes for Approvers
 
-This plan implements deterministic plan linting, a foundational governance system for the KAIZA MCP server.
+This plan implements deterministic plan linting, a foundational governance system for the ATLAS-GATE MCP server.
 
 **Key Invariants Enforced**:
 - `PLAN_SCOPE_LAW` - Structure and path validation

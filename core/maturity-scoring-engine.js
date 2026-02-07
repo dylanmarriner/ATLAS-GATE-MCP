@@ -1,7 +1,7 @@
 /**
  * ROLE: INFRASTRUCTURE
  * PURPOSE: Evidence-based maturity scoring engine with hard-coded rules
- * AUTHORITY: KAIZA MCP Maturity Scoring Specification v1.0
+ * AUTHORITY: ATLAS-GATE MCP Maturity Scoring Specification v1.0
  * 
  * This engine computes organizational maturity across 6 dimensions:
  * Reliability, Security, Documentation, Governance, Integration, Performance

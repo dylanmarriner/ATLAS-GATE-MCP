@@ -214,11 +214,11 @@ export function detectStubs(content, filePath = "") {
       // Attempting to install typescript might be safer for TS files.
       // However, for this step, I installed 'acorn'.
       // Acorn fails on TS syntax.
-      // If the repo is JS (KAIZA-MCP-server seems to be .js files), Acorn is fine.
+      // If the repo is JS (ATLAS-GATE-MCP-server seems to be .js files), Acorn is fine.
       // If the user starts writing TS, Acorn will choke.
       // The requirement "JS/TS AST policy" implies I should handle TS.
-      // But I am in KAIZA-MCP-server which is JS.
-      // User said "Operating inside the KAIZA-MCP-server repo".
+      // But I am in ATLAS-GATE-MCP-server which is JS.
+      // User said "Operating inside the ATLAS-GATE-MCP-server repo".
       // I see only .js files in file list.
       // So Acorn is sufficient for THIS repo.
 

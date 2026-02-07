@@ -1,12 +1,12 @@
-# 🚀 KAIZA MCP Server - START HERE
+# 🚀 ATLAS-GATE MCP Server - START HERE
 
-**Welcome to KAIZA - Enterprise-Grade Governance for AI-Generated Code**
+**Welcome to ATLAS-GATE - Enterprise-Grade Governance for AI-Generated Code**
 
 ---
 
 ## What You're Looking At
 
-The KAIZA MCP Server is a production-ready system that:
+The ATLAS-GATE MCP Server is a production-ready system that:
 
 ✅ **Mandatory Session Ignition** - Authority starts with `begin_session`  
 ✅ **Role Purity** - Isolated Planning (**ANTIGRAVITY**) and Execution (**WINDSURF**)  
@@ -20,15 +20,15 @@ The KAIZA MCP Server is a production-ready system that:
 
 1. **Clone** the repository
 2. **Install** dependencies with `npm install`
-3. **Set** environment variable: `KAIZA_BOOTSTRAP_SECRET`
-4. **Run** the server for your role: `node bin/kaiza-mcp-antigravity.js`
+3. **Set** environment variable: `ATLAS-GATE_BOOTSTRAP_SECRET`
+4. **Run** the server for your role: `node bin/atlas-gate-mcp-antigravity.js`
 5. **Ignite**: Call `begin_session` with your absolute workspace root
 
 ---
 
 ## 🏗️ The 2-Role Architecture
 
-KAIZA enforces a strict binary authority model:
+ATLAS-GATE enforces a strict binary authority model:
 
 ### 🧠 ANTIGRAVITY (The Architect)
 
@@ -75,4 +75,4 @@ KAIZA enforces a strict binary authority model:
 - **Deep Technical Audit**: [FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md)
 
 ---
-**KAIZA MCP**: *Refining the boundary between intelligence and execution.*
+**ATLAS-GATE MCP**: *Refining the boundary between intelligence and execution.*

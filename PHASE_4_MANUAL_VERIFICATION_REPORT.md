@@ -82,7 +82,7 @@
 **Live File Verification**:
 ```markdown
 <!--
-KAIZA_PLAN_HASH: 3249c908daa76ef24742884505c541098ee3a9f9d88c2ca69c9a1f0365956911
+ATLAS-GATE_PLAN_HASH: 3249c908daa76ef24742884505c541098ee3a9f9d88c2ca69c9a1f0365956911
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -135,7 +135,7 @@ STATUS: APPROVED
 **Status**: ✅ **MANUALLY VERIFIED**
 
 **Live State Verification**:
-- ✅ `.kaiza/governance.json` file integrity confirmed
+- ✅ `.atlas-gate/governance.json` file integrity confirmed
 - ✅ Bootstrap state management working
 - ✅ Approved plans tracking accurate
 - ✅ Configuration persistence stable

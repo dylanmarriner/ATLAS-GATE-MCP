@@ -37,11 +37,11 @@ const TEST_SUITE = "ATTESTATION";
 // Create temporary workspace with minimal audit log
 function createTestWorkspace() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
-  const kaizaDir = path.join(tmpDir, ".kaiza");
-  fs.mkdirSync(kaizaDir, { recursive: true });
+  const atlas-gateDir = path.join(tmpDir, ".atlas-gate");
+  fs.mkdirSync(atlas-gateDir, { recursive: true });
 
   // Create a minimal audit log
-  const auditLogPath = path.join(kaizaDir, "audit-log.jsonl");
+  const auditLogPath = path.join(atlas-gateDir, "audit-log.jsonl");
   const entry1 = {
     timestamp: "2025-01-19T10:00:00.000Z",
     sessionId: "test-session-1",
@@ -67,14 +67,14 @@ function createTestWorkspace() {
   fs.appendFileSync(auditLogPath, JSON.stringify(entry2) + "\n");
 
   // Set a deterministic signing secret
-  process.env.KAIZA_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
 
   return tmpDir;
 }
 
 function cleanupTestWorkspace(tmpDir) {
   fs.rmSync(tmpDir, { recursive: true, force: true });
-  delete process.env.KAIZA_ATTESTATION_SECRET;
+  delete process.env.ATLAS-GATE_ATTESTATION_SECRET;
 }
 
 // TEST 1: Bundle has deterministic structure (content ordering)
@@ -316,7 +316,7 @@ function test_exportMarkdownFormat() {
 // TEST 13: Missing audit log causes refusal
 function test_missingAuditLogRefusal() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
-  process.env.KAIZA_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
 
   try {
     assert.throws(
@@ -333,7 +333,7 @@ function test_missingAuditLogRefusal() {
 
 // TEST 14: Invalid workspace root causes refusal
 function test_invalidWorkspaceRootRefusal() {
-  process.env.KAIZA_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
 
   try {
     assert.throws(
@@ -344,7 +344,7 @@ function test_invalidWorkspaceRootRefusal() {
 
     console.log(`✓ TEST 14: Invalid workspace root causes refusal`);
   } finally {
-    delete process.env.KAIZA_ATTESTATION_SECRET;
+    delete process.env.ATLAS-GATE_ATTESTATION_SECRET;
   }
 }
 

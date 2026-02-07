@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Zero-Setup Guarantee
+# ATLAS-GATE MCP Server: Zero-Setup Guarantee
 
 **Status**: ✅ FULLY OPERATIONAL IN ANY DIRECTORY  
 **Date**: January 12, 2026
@@ -7,7 +7,7 @@
 
 ## Core Principle
 
-The KAIZA MCP Server is designed to work **100% out of the box** in any directory, repository structure, or folder without requiring configuration, setup files, or markers.
+The ATLAS-GATE MCP Server is designed to work **100% out of the box** in any directory, repository structure, or folder without requiring configuration, setup files, or markers.
 
 A user can:
 1. Clone/download the repository
@@ -27,7 +27,7 @@ The system uses a 4-tier fallback strategy for finding the repository root:
 
 **Tier 1: Explicit Governance Marker**
 ```
-.kaiza/ROOT
+.atlas-gate/ROOT
 ```
 If present, this is the repo root. Highest priority.
 
@@ -41,7 +41,7 @@ If present, this is the repo root. Works in any Git-managed repo.
 ```
 docs/plans/
 ```
-If present, indicates a KAIZA-managed repo. Uses parent directory as root.
+If present, indicates a ATLAS-GATE-managed repo. Uses parent directory as root.
 
 **Tier 4: Current Directory (Fallback)**
 If none of the above are found, the **current working directory becomes the repo root**.
@@ -118,13 +118,13 @@ This means:
 
 ## What This Means for End Users
 
-### Scenario 1: Random Developer Downloads KAIZA
+### Scenario 1: Random Developer Downloads ATLAS-GATE
 
 **Steps:**
 ```bash
 $ cd ~/my-project
-$ npm install KAIZA-MCP-server
-$ node node_modules/KAIZA-MCP-server/server.js
+$ npm install ATLAS-GATE-MCP-server
+$ node node_modules/ATLAS-GATE-MCP-server/server.js
 ```
 
 **Result:**
@@ -145,7 +145,7 @@ my-repo/
 └── README.md
 ```
 
-**After running KAIZA from `my-repo` directory:**
+**After running ATLAS-GATE from `my-repo` directory:**
 ```
 my-repo/
 ├── src/
@@ -163,7 +163,7 @@ my-repo/
 **Works identically:**
 ```bash
 $ cd /tmp/test-repo
-$ node /path/to/KAIZA-MCP-server/server.js
+$ node /path/to/ATLAS-GATE-MCP-server/server.js
 # System auto-discovers repo root (/tmp/test-repo)
 # Creates docs/plans/ and audit-log.jsonl as needed
 ```
@@ -183,25 +183,25 @@ The following operations work **without any configuration**:
 | Read files | ❌ None | ✅ YES |
 | Write files | ❌ None** | ✅ YES (with valid plan) |
 
-*Requires KAIZA_BOOTSTRAP_SECRET env var (sensible for security, but doesn't block operation discovery)  
+*Requires ATLAS-GATE_BOOTSTRAP_SECRET env var (sensible for security, but doesn't block operation discovery)  
 **Requires an approved plan (policy, not setup issue)
 
 ---
 
 ## Environmental Assumptions
 
-The KAIZA MCP Server makes **no assumptions** about:
+The ATLAS-GATE MCP Server makes **no assumptions** about:
 - Working directory
 - Repository structure
 - Git status
 - Existing configuration files
 - Existing directories
-- Environment variables (except KAIZA_BOOTSTRAP_SECRET for bootstrap)
+- Environment variables (except ATLAS-GATE_BOOTSTRAP_SECRET for bootstrap)
 
 It works identically whether you:
 - Are in a Git repo or not
 - Have specific folder structures
-- Have existing `.kaiza/` markers
+- Have existing `.atlas-gate/` markers
 - Have existing `docs/plans/` directories
 - Run from repo root or a subdirectory
 
@@ -266,12 +266,12 @@ A system that is **impossible to misconfigure**.
 ### Test: Run in Arbitrary Directory
 
 ```bash
-# Create a test directory (no .git, no .kaiza, no docs/)
-mkdir /tmp/test_kaiza_fresh
-cd /tmp/test_kaiza_fresh
+# Create a test directory (no .git, no .atlas-gate, no docs/)
+mkdir /tmp/test_atlas-gate_fresh
+cd /tmp/test_atlas-gate_fresh
 
 # Run comprehensive tests
-node /path/to/KAIZA-MCP-server/test-comprehensive.js
+node /path/to/ATLAS-GATE-MCP-server/test-comprehensive.js
 
 # Result: ✅ All 22 tests pass
 ```
@@ -311,20 +311,20 @@ Traditional MCP servers often require:
 - Directory structures
 - Initialization scripts
 
-KAIZA requires **none of this**. It works like a CLI tool:
+ATLAS-GATE requires **none of this**. It works like a CLI tool:
 
 ```bash
-node kaiza-mcp/server.js  # Works immediately
+node atlas-gate-mcp/server.js  # Works immediately
 ```
 
 Not:
 
 ```bash
 # Setup required
-mkdir -p .kaiza/plans
-echo '{"bootstrap_enabled": true}' > .kaiza/governance.json
-export KAIZA_BOOTSTRAP_SECRET=...
-node kaiza-mcp/server.js  # NOW it works
+mkdir -p .atlas-gate/plans
+echo '{"bootstrap_enabled": true}' > .atlas-gate/governance.json
+export ATLAS-GATE_BOOTSTRAP_SECRET=...
+node atlas-gate-mcp/server.js  # NOW it works
 ```
 
 ---
@@ -349,13 +349,13 @@ For end users:
 3. Done
 ```
 
-No configuration. No setup files. No environment variables (except optional KAIZA_BOOTSTRAP_SECRET for plan creation). Just works.
+No configuration. No setup files. No environment variables (except optional ATLAS-GATE_BOOTSTRAP_SECRET for plan creation). Just works.
 
 ---
 
 ## Summary
 
-The KAIZA MCP Server is designed for **zero friction** deployment. A user following no setup instructions can download, run, and use the system immediately in any directory structure.
+The ATLAS-GATE MCP Server is designed for **zero friction** deployment. A user following no setup instructions can download, run, and use the system immediately in any directory structure.
 
 This is the definition of a **production-ready system** - one that works correctly by default, adapts to its environment, and requires no configuration.
 

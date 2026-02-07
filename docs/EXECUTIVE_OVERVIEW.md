@@ -1,22 +1,22 @@
 ---
-title: "KAIZA MCP Executive Overview"
+title: "ATLAS-GATE MCP Executive Overview"
 description: "One-page strategic summary for executives and non-technical stakeholders"
 version: "1.0.0"
 last_updated: "2026-01-20"
 audience: ["executive", "manager", "stakeholder"]
 ---
 
-# KAIZA MCP: Executive Overview
+# ATLAS-GATE MCP: Executive Overview
 
 **One-page strategic summary for decision-makers and non-technical stakeholders.**
 
 ---
 
-## What Is KAIZA MCP?
+## What Is ATLAS-GATE MCP?
 
-KAIZA MCP is an enterprise governance gateway that transforms AI agents into accountable, auditable, and authorized execution systems. It sits between AI tools (Claude, specialized agents) and your codebase, enforcing role-based authorization, requiring explicit plans before changes, and maintaining tamper-proof audit trails.
+ATLAS-GATE MCP is an enterprise governance gateway that transforms AI agents into accountable, auditable, and authorized execution systems. It sits between AI tools (Claude, specialized agents) and your codebase, enforcing role-based authorization, requiring explicit plans before changes, and maintaining tamper-proof audit trails.
 
-**In simple terms:** If you're concerned about AI-driven code changes introducing risk, compliance violations, or unauthorized modifications, KAIZA MCP gives you the guardrails, oversight, and evidence trail you need.
+**In simple terms:** If you're concerned about AI-driven code changes introducing risk, compliance violations, or unauthorized modifications, ATLAS-GATE MCP gives you the guardrails, oversight, and evidence trail you need.
 
 ---
 
@@ -79,10 +79,10 @@ KAIZA MCP is an enterprise governance gateway that transforms AI agents into acc
 | **AI agents go rogue (unauth changes)** | Plan-based authorization + role separation | High |
 | **Compliance audits fail** | Cryptographic audit trails, attestation bundles, forensic replay | High |
 | **Audit logs are tampered** | SHA256 hash chain, immutable append-only log, integrity verification | High |
-| **AI agent memory injection (prompt attacks)** | Comes from user; KAIZA trusts approved plans, not agent memory | Medium* |
+| **AI agent memory injection (prompt attacks)** | Comes from user; ATLAS-GATE trusts approved plans, not agent memory | Medium* |
 | **Supply chain risk (compromised dependencies)** | Active security scanning; plans for frequent dependency audits | Medium |
 
-*Note: KAIZA trusts the user's planning role. Defense against prompt injection is outside scope (handled by client-side guards, system prompts, etc.).
+*Note: ATLAS-GATE trusts the user's planning role. Defense against prompt injection is outside scope (handled by client-side guards, system prompts, etc.).
 
 ### Adoption & Change Management
 
@@ -91,7 +91,7 @@ KAIZA MCP is an enterprise governance gateway that transforms AI agents into acc
 2. **Phase 2 (Month 2-3):** Adopt for development branches; measure overhead and value
 3. **Phase 3 (Month 4+):** Gradually expand to critical systems; integrate with CI/CD pipelines
 
-**No immediate rip-and-replace required.** Teams can run both governed (KAIZA) and ungoverned (traditional) workflows in parallel.
+**No immediate rip-and-replace required.** Teams can run both governed (ATLAS-GATE) and ungoverned (traditional) workflows in parallel.
 
 ---
 
@@ -182,12 +182,12 @@ After 3 months, successful teams report:
 **Questions?**
 
 - Documentation: [Full docs](./README.md)
-- Technical questions: [GitHub Issues](https://github.com/dylanmarriner/KAIZA-MCP-server/issues)
+- Technical questions: [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
 - Security concerns: [SECURITY.md](../SECURITY.md)
-- Governance questions: Contact your KAIZA governance lead
+- Governance questions: Contact your ATLAS-GATE governance lead
 
 ---
 
-**Document Owner:** KAIZA MCP Leadership  
+**Document Owner:** ATLAS-GATE MCP Leadership  
 **Last Updated:** 2026-01-20  
 **Version:** 1.0.0

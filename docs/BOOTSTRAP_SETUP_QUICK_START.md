@@ -8,7 +8,7 @@ bash scripts/setup-bootstrap.sh              # macOS/Linux
 powershell -File scripts/setup-bootstrap.ps1 # Windows
 
 # 2. Verify
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 
 # 3. You're done! The secret is set up.
 ```
@@ -21,7 +21,7 @@ echo $KAIZA_BOOTSTRAP_SECRET
 
 **Step 1: Run the setup script**
 ```bash
-cd /path/to/KAIZA-MCP-server
+cd /path/to/ATLAS-GATE-MCP-server
 bash scripts/setup-bootstrap.sh
 ```
 
@@ -37,7 +37,7 @@ bash scripts/setup-bootstrap.sh
 
 **Step 3: Verify**
 ```bash
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 # Output: A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6...
 ```
 
@@ -51,7 +51,7 @@ Right-click PowerShell → "Run as Administrator"
 
 **Step 2: Run the setup script**
 ```powershell
-cd C:\path\to\KAIZA-MCP-server
+cd C:\path\to\ATLAS-GATE-MCP-server
 powershell -ExecutionPolicy Bypass -File scripts/setup-bootstrap.ps1
 ```
 
@@ -61,7 +61,7 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-bootstrap.ps1
 
 **Step 4: Verify**
 ```powershell
-echo $env:KAIZA_BOOTSTRAP_SECRET
+echo $env:ATLAS-GATE_BOOTSTRAP_SECRET
 # Output: A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6...
 ```
 
@@ -76,20 +76,20 @@ echo $env:KAIZA_BOOTSTRAP_SECRET
 SECRET=$(openssl rand -base64 32)
 
 # Option A: Set in current session
-export KAIZA_BOOTSTRAP_SECRET=$SECRET
+export ATLAS-GATE_BOOTSTRAP_SECRET=$SECRET
 
 # Option B: Add to ~/.bashrc or ~/.zshrc (permanent)
-echo "export KAIZA_BOOTSTRAP_SECRET='$SECRET'" >> ~/.bashrc
+echo "export ATLAS-GATE_BOOTSTRAP_SECRET='$SECRET'" >> ~/.bashrc
 source ~/.bashrc
 
 # Option C: Create .env file
-echo "KAIZA_BOOTSTRAP_SECRET=$SECRET" > .env
-source .env  # Load before running KAIZA
+echo "ATLAS-GATE_BOOTSTRAP_SECRET=$SECRET" > .env
+source .env  # Load before running ATLAS-GATE
 
-# Option D: Create .kaiza/bootstrap_secret.json
-mkdir -p .kaiza
-echo "{\"bootstrap_secret\": \"$SECRET\"}" > .kaiza/bootstrap_secret.json
-chmod 600 .kaiza/bootstrap_secret.json
+# Option D: Create .atlas-gate/bootstrap_secret.json
+mkdir -p .atlas-gate
+echo "{\"bootstrap_secret\": \"$SECRET\"}" > .atlas-gate/bootstrap_secret.json
+chmod 600 .atlas-gate/bootstrap_secret.json
 ```
 
 ### Windows PowerShell
@@ -99,17 +99,17 @@ chmod 600 .kaiza/bootstrap_secret.json
 $secret = [Convert]::ToBase64String([System.Security.Cryptography.RNGCryptoServiceProvider]::new().GetBytes(24))
 
 # Option A: Set for current session
-$env:KAIZA_BOOTSTRAP_SECRET = $secret
+$env:ATLAS-GATE_BOOTSTRAP_SECRET = $secret
 
 # Option B: Set for all future sessions (User environment)
-[Environment]::SetEnvironmentVariable("KAIZA_BOOTSTRAP_SECRET", $secret, "User")
+[Environment]::SetEnvironmentVariable("ATLAS-GATE_BOOTSTRAP_SECRET", $secret, "User")
 
 # Option C: Create .env file
-"KAIZA_BOOTSTRAP_SECRET=$secret" | Set-Content -Path ".env"
+"ATLAS-GATE_BOOTSTRAP_SECRET=$secret" | Set-Content -Path ".env"
 
-# Option D: Create .kaiza/bootstrap_secret.json
-New-Item -ItemType Directory -Path ".kaiza" -Force | Out-Null
-@{ bootstrap_secret = $secret } | ConvertTo-Json | Set-Content -Path ".kaiza/bootstrap_secret.json"
+# Option D: Create .atlas-gate/bootstrap_secret.json
+New-Item -ItemType Directory -Path ".atlas-gate" -Force | Out-Null
+@{ bootstrap_secret = $secret } | ConvertTo-Json | Set-Content -Path ".atlas-gate/bootstrap_secret.json"
 ```
 
 ---
@@ -120,16 +120,16 @@ New-Item -ItemType Directory -Path ".kaiza" -Force | Out-Null
 
 ```bash
 # macOS/Linux
-echo $KAIZA_BOOTSTRAP_SECRET
+echo $ATLAS-GATE_BOOTSTRAP_SECRET
 
 # Windows PowerShell
-echo $env:KAIZA_BOOTSTRAP_SECRET
+echo $env:ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 **Success:** You see a long string of random characters  
 **Failure:** No output (secret not set)
 
-### Test with KAIZA
+### Test with ATLAS-GATE
 
 ```bash
 npm run verify
@@ -174,11 +174,11 @@ bash scripts/setup-bootstrap.sh
 **Solution:** Make it permanent:
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-echo 'export KAIZA_BOOTSTRAP_SECRET="your-secret-here"' >> ~/.bashrc
+echo 'export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"' >> ~/.bashrc
 source ~/.bashrc
 
 # Or create .env file
-echo 'KAIZA_BOOTSTRAP_SECRET=your-secret-here' > .env
+echo 'ATLAS-GATE_BOOTSTRAP_SECRET=your-secret-here' > .env
 ```
 
 ---

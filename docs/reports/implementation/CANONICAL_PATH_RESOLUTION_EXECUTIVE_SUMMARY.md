@@ -1,4 +1,4 @@
-# KAIZA MCP Server: Canonical Path Resolution & Invariant Enforcement
+# ATLAS-GATE MCP Server: Canonical Path Resolution & Invariant Enforcement
 ## Executive Summary & Complete Implementation Report
 
 ---
@@ -19,13 +19,13 @@
 
 ### Before Hardening
 
-The original KAIZA server had **implicit assumptions** about paths:
+The original ATLAS-GATE server had **implicit assumptions** about paths:
 
 ```
 Problem 1: Multiple plan directories checked each operation
-├─ .kaiza/approved_plans
-├─ .kaiza/plans
-├─ .kaiza/approvedplans
+├─ .atlas-gate/approved_plans
+├─ .atlas-gate/plans
+├─ .atlas-gate/approvedplans
 ├─ docs/plans
 └─ → Which one is actually used? Unclear.
 
@@ -344,12 +344,12 @@ invariant(condition, "INV_CODE", "Message");
 ```javascript
 // Fragile: multiple locations, unclear priority
 const plansDir = 
-  fs.existsSync(path.join(root, ".kaiza/approved_plans")) ? 
-    path.join(root, ".kaiza/approved_plans") :
-  fs.existsSync(path.join(root, ".kaiza/plans")) ? 
-    path.join(root, ".kaiza/plans") :
-  fs.existsSync(path.join(root, ".kaiza/approvedplans")) ?
-    path.join(root, ".kaiza/approvedplans") :
+  fs.existsSync(path.join(root, ".atlas-gate/approved_plans")) ? 
+    path.join(root, ".atlas-gate/approved_plans") :
+  fs.existsSync(path.join(root, ".atlas-gate/plans")) ? 
+    path.join(root, ".atlas-gate/plans") :
+  fs.existsSync(path.join(root, ".atlas-gate/approvedplans")) ?
+    path.join(root, ".atlas-gate/approvedplans") :
   path.join(root, "docs/plans");
 ```
 
@@ -557,7 +557,7 @@ All paths are now:
 
 ## Conclusion
 
-The KAIZA MCP Server is now **provably correct by construction**.
+The ATLAS-GATE MCP Server is now **provably correct by construction**.
 
 ### What Changed
 

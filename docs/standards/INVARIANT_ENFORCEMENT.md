@@ -1,8 +1,8 @@
-# KAIZA MCP Server: Invariant Enforcement System
+# ATLAS-GATE MCP Server: Invariant Enforcement System
 
 ## Executive Summary
 
-The KAIZA MCP Server now enforces a comprehensive set of **structural invariants** that make entire classes of bugs impossible by construction. Every critical assumption about correctness is enforced at runtime with explicit, unrecoverable assertions. If the system enters an invalid state, it stops immediately with a clear error message.
+The ATLAS-GATE MCP Server now enforces a comprehensive set of **structural invariants** that make entire classes of bugs impossible by construction. Every critical assumption about correctness is enforced at runtime with explicit, unrecoverable assertions. If the system enters an invalid state, it stops immediately with a clear error message.
 
 **Zero Silent Failures. Zero Implicit Assumptions. 100% Explicit Enforcement.**
 
@@ -437,7 +437,7 @@ These can be added without changing the existing invariant system.
 
 ## Summary
 
-The KAIZA MCP Server now enforces **40+ invariants** across 7 categories. These invariants make entire classes of bugs **structurally impossible**:
+The ATLAS-GATE MCP Server now enforces **40+ invariants** across 7 categories. These invariants make entire classes of bugs **structurally impossible**:
 
 - Plan discovery failures → impossible (single canonical directory)
 - Plan misplacement → impossible (containment check)

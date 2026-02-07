@@ -2,7 +2,7 @@
 
 ## Summary
 
-✅ **Fully implemented Rust static enforcement gate system** for KAIZA MCP  
+✅ **Fully implemented Rust static enforcement gate system** for ATLAS-GATE MCP  
 ✅ **Pre-write policy validation** blocks forbidden patterns before commit  
 ✅ **Post-write verification gates** ensure compiler compliance  
 ✅ **Hard-fail architecture** reverts changes on any violation  

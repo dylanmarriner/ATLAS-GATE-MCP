@@ -8,7 +8,7 @@
 
 ## Integration Summary
 
-The plan linter has been integrated into all three critical control points of the KAIZA MCP approval and execution system.
+The plan linter has been integrated into all three critical control points of the ATLAS-GATE MCP approval and execution system.
 
 ---
 

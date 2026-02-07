@@ -341,7 +341,7 @@ Revert
 test("Valid plan → pass", () => {
   const plan = `
 # Plan Metadata
-Foundation plan for KAIZA MCP
+Foundation plan for ATLAS-GATE MCP
 
 # Scope & Constraints
 All operations are scoped to /core/** and /tools/** directories only.

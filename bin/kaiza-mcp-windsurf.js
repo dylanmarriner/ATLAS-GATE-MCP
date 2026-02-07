@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * KAIZA MCP SERVER - Windsurf (Mutation/Execution)
+ * ATLAS-GATE MCP SERVER - Windsurf (Mutation/Execution)
  */
 
 import { startServer } from "../server.js";

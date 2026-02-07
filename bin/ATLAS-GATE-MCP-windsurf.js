@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * KAIZA MCP SERVER - Windsurf (Mutation/Execution)
+ * ATLAS-GATE MCP SERVER - Windsurf (Mutation/Execution)
  * 
  * SECURITY: Windsurf runs in MCP-ONLY SANDBOX MODE
  * - Cannot access filesystem directly (only via MCP tools)

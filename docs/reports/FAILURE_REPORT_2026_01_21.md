@@ -19,7 +19,7 @@ Antigravity attempted to read a restricted prompt "ANTIGRAVITY" during the initi
 
 1. The `read_prompt` call was a hallucogenic attempt to gather system context that should be gathered via documentation instead.
 2. The agent has been re-instructed to use `read_file` on `docs/` for planning context.
-3. This report serves as the official acknowledgement and documentation required by the KAIZA Governance Protocol.
+3. This report serves as the official acknowledgement and documentation required by the ATLAS-GATE Governance Protocol.
 
 ## Action Taken
 

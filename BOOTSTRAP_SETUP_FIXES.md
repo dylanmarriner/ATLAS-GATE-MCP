@@ -9,13 +9,13 @@ The bootstrap tool has been corrected to work properly in any repository without
 ### 1. **Hardcoded Fallback Path in `core/governance.js`** ✅
 **Problem:** The `verifyBootstrapAuth()` function had a hardcoded path:
 ```javascript
-const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.kaiza/bootstrap_secret.json";
+const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.atlas-gate/bootstrap_secret.json";
 ```
 
 **Fix:** Changed to use workspace-relative path resolution:
 ```javascript
 const repoRoot = getRepoRoot();
-const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
+const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
 
 **Impact:** The bootstrap tool now works in ANY repository, not just the hardcoded path.
@@ -33,7 +33,7 @@ const fallbackPath = path.join(repoRoot, ".kaiza", "bootstrap_secret.json");
 ### 3. **Hardcoded Path in Verification Script** ✅
 **Problem:** `tools/verification/verify-example-plan.js` had:
 ```javascript
-const planPath = "/media/linnyux/development3/developing/KAIZA-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
+const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
 ```
 
 **Fix:** Changed to workspace-relative path using `import.meta.url`:
@@ -50,10 +50,10 @@ const planPath = path.join(__dirname, "../../docs/examples/EXAMPLE_VALID_PLAN.md
 Bootstrap has been tested in multiple scenarios:
 
 ### Test 1: Fresh Repository Bootstrap ✅
-- Created new workspace `/tmp/test-kaiza-bootstrap`
+- Created new workspace `/tmp/test-atlas-gate-bootstrap`
 - Successfully bootstrapped with test plan
 - Plan file created at `docs/plans/{hash}.md`
-- Governance state written to `.kaiza/governance.json`
+- Governance state written to `.atlas-gate/governance.json`
 - Bootstrap flag set to `bootstrap_enabled: false`
 
 ### Test 2: Different Repository Bootstrap ✅

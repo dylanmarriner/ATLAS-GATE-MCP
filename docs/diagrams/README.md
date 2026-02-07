@@ -1,6 +1,6 @@
 ---
 title: "Diagram System Documentation"
-description: "Overview of KAIZA MCP diagram system with source and rendered outputs"
+description: "Overview of ATLAS-GATE MCP diagram system with source and rendered outputs"
 version: "1.0.0"
 last_updated: "2026-01-19"
 review_date: "2026-04-19"
@@ -13,7 +13,7 @@ audience: ["technical", "executive"]
 
 ## Purpose
 
-The KAIZA MCP diagram system provides versioned, maintainable visualizations that render correctly in both GitHub and static documentation sites. All diagrams are treated as versioned artifacts with editable source files and rendered outputs.
+The ATLAS-GATE MCP diagram system provides versioned, maintainable visualizations that render correctly in both GitHub and static documentation sites. All diagrams are treated as versioned artifacts with editable source files and rendered outputs.
 
 ## Directory Structure
 
@@ -224,7 +224,7 @@ npm run verify:diagrams
 
 ---
 
-**Document Owner**: KAIZA MCP Documentation Team  
+**Document Owner**: ATLAS-GATE MCP Documentation Team  
 **Review Frequency**: Monthly  
 **Last Updated**: 2026-01-19  
 **Version**: 1.0.0

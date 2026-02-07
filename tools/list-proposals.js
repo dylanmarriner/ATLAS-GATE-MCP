@@ -2,7 +2,7 @@
  * MCP TOOL: list_proposals
  * ROLE: WINDSURF (read-only)
  * PURPOSE: List all proposals with status
- * AUTHORITY: KAIZA MCP REMEDIATION PROPOSAL LISTING
+ * AUTHORITY: ATLAS-GATE MCP REMEDIATION PROPOSAL LISTING
  *
  * Returns list of proposals + metadata
  * No I/O side effects beyond reads

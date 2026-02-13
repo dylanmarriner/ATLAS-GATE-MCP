@@ -87,10 +87,10 @@ const FORBIDDEN_PATH_PATTERNS = [
  * Compute plan hash from canonical plan text
  * Hash is deterministic: same content -> same hash
  * 
- * Strips both HTML comments and [BLAKE3_HASH: ...] footers before hashing.
+ * Strips both HTML comments and [SHA256_HASH: ...] footers before hashing.
  * This allows plans to embed their own hash without circular dependency.
  * 
- * Returns SHA256 hex digest (BLAKE3 would require external dependency).
+ * Returns SHA256 hex digest (64 hexadecimal characters).
  */
 export function computePlanHash(planContent) {
     invariantNotNull(planContent, "PLAN_CONTENT_REQUIRED", "Plan content is required");
@@ -100,13 +100,13 @@ export function computePlanHash(planContent) {
         "Plan content must be non-empty string"
     );
 
-    // Strip both HTML comments (<!--...-->) and [BLAKE3_HASH: ...] footers
+    // Strip both HTML comments (<!--...-->) and [SHA256_HASH: ...] footers
     // This allows the hash value to be embedded without circular dependency
     let stripped = planContent
         // Remove HTML comment headers
         .replace(/<!--[\s\S]*?-->\s*/m, "")
-        // Remove [BLAKE3_HASH: ...] footer (with optional whitespace before/after)
-        .replace(/\s*\[BLAKE3_HASH:\s*[^\]]*\]\s*$/m, "");
+        // Remove [SHA256_HASH: ...] footer (with optional whitespace before/after)
+        .replace(/\s*\[SHA256_HASH:\s*[^\]]*\]\s*$/m, "");
 
     const canonicalized = stripped
         .trim()

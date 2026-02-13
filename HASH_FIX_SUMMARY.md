@@ -1,46 +1,49 @@
-# Atlas-Gate Hash System Fix
+# Atlas-Gate Hash System - SHA256 Implementation
 
-## Problem
-The `lint_plan` tool was not stripping the `[BLAKE3_HASH: ...]` footer before computing plan hashes, causing hash mismatches.
+## Hash Algorithm
+All plan hashes use **SHA256** (64 hexadecimal character strings).
 
-## Root Cause
-In `/core/plan-linter.js`, the `computePlanHash()` function only stripped HTML comments (`<!-- -->`), but did not strip the `[BLAKE3_HASH: ...]` footer format documented in the templates.
+BLAKE3 is NOT used - it requires external dependency not in package.json.
 
-## Solution Applied
-Modified `computePlanHash()` to strip both:
-1. HTML comments (`<!-- -->`)
-2. `[BLAKE3_HASH: ...]` footers (with flexible whitespace handling)
+## Hash Footer Format
+Plans embed their own hash using format: `[SHA256_HASH: <64-char-hex>]`
 
-### Changed File
-- `/home/linnyux/Documents/ATLAS-GATE-MCP/core/plan-linter.js` (lines 86-115)
+## Hash Computation
+The `computePlanHash()` function in `/core/plan-linter.js` strips:
+1. HTML comment headers (`<!--...-->`)
+2. `[SHA256_HASH: ...]` footers (with flexible whitespace)
 
-### Key Change
+Then computes SHA256 of remaining content.
+
+### Code
 ```javascript
-// Before: Only stripped HTML comments
-const stripped = planContent.replace(/<!--[\s\S]*?-->\s*/m, "");
-
-// After: Strips both HTML comments and [BLAKE3_HASH: ...] footers
+// Strip HTML comment and hash footer before computing hash
 let stripped = planContent
     .replace(/<!--[\s\S]*?-->\s*/m, "")
-    .replace(/\s*\[BLAKE3_HASH:\s*[^\]]*\]\s*$/m, "");
+    .replace(/\s*\[SHA256_HASH:\s*[^\]]*\]\s*$/m, "");
+
+// Compute SHA256 hash
+return crypto.createHash("sha256").update(canonicalized).digest("hex");
 ```
 
-## Verification
-Tested with the official template `docs/templates/antigravity_output_plan_example.md`:
+## Why Strip Footer?
+This allows plans to embed their own hash without circular dependency:
+- Plan includes `[SHA256_HASH: placeholder]`
+- Linter computes hash of content (excluding footer)
+- Linter inserts actual hash into footer
+- Hash is now embedded and verifiable
 
-1. Hash computed with `[BLAKE3_HASH: placeholder]` in file
-2. Same hash computed without footer
-3. Hash remains consistent when actual hash is injected
+## Hash Verification
+WINDSURF verifies plan integrity by:
+1. Reading plan file
+2. Stripping HTML comment (lines 1-5)
+3. Computing SHA256 of remaining content
+4. Comparing computed hash to provided Plan Hash
+5. If mismatch → STOP, plan not approved
 
-Result: ✓ All hash computations match
+## File Locations
+- Implementation: `/core/plan-linter.js` lines 86-118
+- Plans directory: `docs/plans/`
+- Plan filename: `<SHA256_HASH>.md`
 
-## Impact
-- Plans can now embed their own hash using `[BLAKE3_HASH: ...]` format
-- `lint_plan` correctly validates hash consistency
-- No circular dependency in hash computation
-- Fully compatible with template format
-
-## Notes
-- Uses SHA256 (not BLAKE3) - BLAKE3 requires external dependency not in package.json
-- Hash footer can appear anywhere and with flexible whitespace
-- Deterministic: same content always produces same hash
+Example: `docs/plans/aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2.md`

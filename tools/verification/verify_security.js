@@ -3,7 +3,6 @@ import { readPromptHandler } from "./tools/read_prompt.js";
 import { SESSION_STATE } from "./session.js";
 import fs from "fs";
 import path from "path";
-import crypto from "crypto";
 import { lockWorkspaceRoot, getPlansDir, getRepoRoot, getAuditLogPath } from "./core/path-resolver.js";
 
 const REPO_ROOT = process.cwd();

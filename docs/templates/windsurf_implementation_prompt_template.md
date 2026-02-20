@@ -58,7 +58,7 @@ You will receive the following inputs from the operator. HALT if ANY are missing
 
 - **Plan Path**: Absolute path to the sealed .md implementation plan
 - **Workspace Root**: Absolute path to the project root directory
-- **Plan Hash**: The SHA256 hash value from the sealed plan (64 hex characters)
+- **Plan Signature**: The SHA256 hash value from the sealed plan (64 hex characters)
 - **Execution Mode**: FULL (execute all steps) or DRY_RUN (validate without mutations)
 
 You MUST use these exact values throughout execution. Do not proceed until all inputs are confirmed.
@@ -76,7 +76,7 @@ These constraints are MANDATORY and CANNOT be violated under ANY circumstances:
 
 2. **MANDATORY AUDIT METADATA**: 
    - Every `write_file` call MUST include correct `intent` metadata
-   - `plan` hash MUST match the provided Plan Hash exactly
+   - `plan` hash MUST match the provided Plan Signature exactly
    - `role` specification MUST be one of: EXECUTABLE, BOUNDARY, INFRASTRUCTURE, VERIFICATION
    - Missing or incorrect metadata = IMMEDIATE HALT
 
@@ -96,7 +96,7 @@ These constraints are MANDATORY and CANNOT be violated under ANY circumstances:
 5. **POST-OPERATION SELF-AUDIT**: 
    - After EVERY `write_file` call, immediately verify the audit log entry:
      - Entry was recorded
-     - `plan_hash` matches exactly (case-sensitive)
+     - `plan_signature` matches exactly (case-sensitive)
      - `intent` metadata is correct
      - `role` value is recorded
    - If verification fails, HALT immediately
@@ -134,14 +134,14 @@ Establish your engineering posture for governed execution.
 1. Call `mcp_atlas-gate-mcp_read_file` with the Plan Path
 2. **CRITICAL**: Use MCP calls only. Native filesystem reads are PROHIBITED.
 3. Verify the plan content is readable and properly formatted
-4. Check that the [BLAKE3_HASH: ...] footer is present
+4. Check that the [SHA256_HASH: ...] footer is present
 
 **HALT CONDITION**: If plan cannot be read, STOP and report.
 
 ### Step 4: VALIDATE PLAN INTEGRITY
 
 1. Compute the SHA256 hash of the plan content (using the linter's rules: strip [SHA256_HASH: ...] footer before hashing)
-2. Verify this computed hash MATCHES the provided Plan Hash exactly (case-insensitive hex comparison)
+2. Verify this computed hash MATCHES the provided Plan Signature exactly (case-insensitive hex comparison)
 3. Verify the plan is marked as `APPROVED` or `DRAFT`
 4. Verify the plan includes all required sections and phases
 
@@ -155,7 +155,7 @@ For each step defined in the plan's implementation sequence:
 2. Call `mcp_atlas-gate-mcp_write_file` with EXACT parameters from the plan
 3. **IMMEDIATELY** call `mcp_atlas-gate-mcp_read_audit_log` to verify the entry
 4. Confirm the audit entry contains:
-   - Correct `plan_hash` value (SHA256 hex string, 64 chars, must match Plan Hash exactly)
+   - Correct `plan_signature` value (SHA256 hex string, 64 chars, must match Plan Signature exactly)
    - Correct `intent` value
    - Correct `role` value
 5. Move to next step ONLY if verification succeeds
@@ -234,7 +234,7 @@ If ANY criterion is not met, execution FAILED.
 
 Your execution MUST produce a complete audit trail. For every operation:
 
-1. **Write Operation**: Entry in audit log with plan_hash, intent, role, path
+1. **Write Operation**: Entry in audit log with plan_signature, intent, role, path
 2. **Verification**: Entry confirming command execution and result
 3. **Integrity Check**: Entry confirming final workspace state
 4. **Rollback** (if needed): Entry documenting rollback operations
@@ -247,7 +247,7 @@ This audit trail is permanent and cannot be modified.
 
 Before beginning, you MUST verify ALL of the following. HALT if ANY are missing:
 
-- ✓ Received Plan Path, Workspace Root, Plan Hash from operator
+- ✓ Received Plan Path, Workspace Root, Plan Signature from operator
 - ✓ Received Execution Mode (FULL or DRY_RUN)
 - ✓ Loaded all 10 mandated engineering skills and internalized them
 - ✓ Understand the MANDATORY ORDER of execution steps (1-7)
@@ -265,7 +265,7 @@ Do not proceed until ALL items are confirmed.
 1. **Confirm Operator Input**:
    - Plan Path: [confirm exact path]
    - Workspace Root: [confirm exact path]
-   - Plan Hash: [confirm exact hash value]
+   - Plan Signature: [confirm exact hash value]
    - Execution Mode: [confirm FULL or DRY_RUN]
 
 2. **Load Skills**: Initialize all 10 mandated engineering skills
@@ -286,7 +286,7 @@ Plan execution is SUCCESSFUL only if ALL criteria are met:
 - ✓ All skills loaded and internalized
 - ✓ Plan read and hash validated (SHA256 match)
 - ✓ All write_file calls succeeded with correct metadata
-- ✓ All audit log entries recorded with matching plan_hash
+- ✓ All audit log entries recorded with matching plan_signature
 - ✓ All verification commands passed with exit code 0
 - ✓ Final integrity check reported no violations
 - ✓ No files outside allowlist were modified

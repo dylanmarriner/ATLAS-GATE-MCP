@@ -1,9 +1,5 @@
 import fs from "fs";
-import crypto from "crypto";
-
-function sha256(input) {
-  return crypto.createHash("sha256").update(input).digest("hex");
-}
+import { sha256 } from "../../core/cosign-hash-provider.js";
 
 const lines = fs.readFileSync("audit-log.jsonl", "utf8").trim().split("\n");
 

@@ -19,7 +19,7 @@ const REPO_ROOT = path.join(__dirname, "..");
 
 // Import core modules
 import { lockWorkspaceRoot, resetWorkspaceRootForTesting, getRepoRoot } from "../core/path-resolver.js";
-import { lintPlan, computePlanHash } from "../core/plan-linter.js";
+import { lintPlan } from "../core/plan-linter.js";
 import { bootstrapPlanHandler } from "../tools/bootstrap_tool.js";
 import { beginSessionHandler } from "../tools/begin_session.js";
 import { listPlansHandler } from "../tools/list_plans.js";
@@ -189,33 +189,37 @@ None forbidden.
 No rollback needed.
 `;
 
-try {
-  const lintResult = lintPlan(validPlan);
-  if (lintResult.passed) {
-    logTest("lintPlan - valid", "PASS", `Hash: ${lintResult.hash.substring(0, 8)}...`);
-  } else {
-    logTest("lintPlan - valid", "FAIL", `Errors: ${lintResult.errors.length}`);
+(async () => {
+  try {
+    const lintResult = await lintPlan(validPlan);
+    if (lintResult.passed) {
+      logTest("lintPlan - valid", "PASS", `Violations: ${lintResult.violations.length}`);
+    } else {
+      logTest("lintPlan - valid", "FAIL", `Errors: ${lintResult.errors.length}`);
+    }
+  } catch (err) {
+    logTest("lintPlan - valid", "FAIL", err.message);
   }
-} catch (err) {
-  logTest("lintPlan - valid", "FAIL", err.message);
-}
 
-// Test that stubs are rejected
-const planWithTodo = validPlan.replace(
-  "# Scope & Constraints\n\nTest scope only.",
-  "# Scope & Constraints\n\nTODO: add constraints"
-);
+  // Test that stubs are rejected
+  const planWithTodo = validPlan.replace(
+    "# Scope & Constraints\n\nTest scope only.",
+    "# Scope & Constraints\n\nTODO: add constraints"
+  );
 
-try {
-  const lintResult = lintPlan(planWithTodo);
-  if (!lintResult.passed) {
-    logTest("lintPlan - TODO rejection", "PASS", "Stub markers correctly rejected");
-  } else {
-    logTest("lintPlan - TODO rejection", "FAIL", "Should have rejected TODO marker");
+  try {
+    const lintResult = await lintPlan(planWithTodo);
+    if (!lintResult.passed) {
+      logTest("lintPlan - TODO rejection", "PASS", "Stub markers correctly rejected");
+    } else {
+      logTest("lintPlan - TODO rejection", "FAIL", "Should have rejected TODO marker");
+    }
+  } catch (err) {
+    logTest("lintPlan - TODO rejection", "FAIL", err.message);
   }
-} catch (err) {
-  logTest("lintPlan - TODO rejection", "FAIL", err.message);
-}
+})().catch(err => {
+  console.error("Async test block failed:", err);
+});
 
 /**
  * TEST 6: READ-ONLY TOOLS
@@ -257,7 +261,7 @@ logSection("TEST 7: Plan Creation & Governance");
 
 // Test that bootstrap works with valid plan
 const SECRET = "test-secret-for-comprehensive-test";
-process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
+process.env['ATLAS-GATE_BOOTSTRAP_SECRET'] = SECRET;
 
 // Clean governance state
 const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");

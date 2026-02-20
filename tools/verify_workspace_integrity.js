@@ -4,9 +4,9 @@
  * AUTHORITY: PROMPT 07 - MCP Deterministic Replay
  *
  * This read-only tool verifies:
- * 1. Audit log hash chain is unbroken
+ * 1. Audit log signature chain is unbroken
  * 2. All intent artifacts are present for executed files
- * 3. Plan hashes are immutable
+ * 3. Plan signatures are immutable
  * 4. No tamper evidence exists
  *
  * OUTPUT:
@@ -35,7 +35,7 @@ export async function verifyWorkspaceIntegrityHandler(args) {
     workspace_root: SESSION_STATE.workspaceRoot,
     tool: "verify_workspace_integrity",
     intent: "Verify workspace and audit log integrity",
-    plan_hash: null,
+    plan_signature: null,
     phase_id: null,
     args: {},
     result: integrityResult.pass ? "ok" : "integrity_check_failed",
@@ -80,12 +80,12 @@ function translateInvariant(invariantName) {
     VALID_WORKSPACE_ROOT: "Workspace root path is valid and accessible",
     AUDIT_LOG_EXISTS: "Audit log file exists",
     HASH_CHAIN_INTACT:
-      "Audit log hash chain is unbroken (no tampering detected)",
+      "Audit log signature chain is unbroken (no tampering detected)",
     SEQUENCE_CONTINUOUS: "Audit log sequence numbers are continuous",
     VALID_JSON: "All audit log entries are valid JSON",
     INTENT_ARTIFACTS_PRESENT:
       "All executed files have corresponding intent artifacts",
-    PLAN_HASHES_IMMUTABLE: "Plan hashes are immutable and consistent",
+    PLAN_HASHES_IMMUTABLE: "Plan signatures are immutable and consistent",
     NO_TAMPERING_EVIDENCE: "No evidence of tampering in audit log",
   };
 

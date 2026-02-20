@@ -1,0 +1,361 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: atlas-gate
+  labels:
+    name: atlas-gate
+
+---
+# ConfigMap for environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlas-gate-config
+  namespace: atlas-gate
+data:
+  NODE_ENV: "production"
+  ATLAS_GATE_HOST: "0.0.0.0"
+  ATLAS_GATE_PORT: "3000"
+  ATLAS_GATE_DATA_DIR: "/data"
+
+---
+# Secret for API Keys (create with: kubectl create secret generic atlas-gate-secrets ...)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: atlas-gate-secrets
+  namespace: atlas-gate
+type: Opaque
+data:
+  # Base64 encoded secrets (update with your values)
+  # kubectl create secret generic atlas-gate-secrets \
+  #   --from-literal=admin-api-key=$(openssl rand -hex 32) \
+  #   -n atlas-gate
+  admin-api-key: YWRtaW5fa2V5X2NoYW5nZV9tZQ==  # CHANGE THIS
+
+---
+# PersistentVolume for data storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: atlas-gate-pv
+  namespace: atlas-gate
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /data/atlas-gate
+    type: DirectoryOrCreate
+
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: atlas-gate-pvc
+  namespace: atlas-gate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: atlas-gate-pv
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atlas-gate
+  namespace: atlas-gate
+  labels:
+    app: atlas-gate
+    version: v2
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: atlas-gate
+  template:
+    metadata:
+      labels:
+        app: atlas-gate
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+    spec:
+      serviceAccountName: atlas-gate
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      
+      containers:
+      - name: atlas-gate
+        image: atlas-gate:latest
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        
+        envFrom:
+        - configMapRef:
+            name: atlas-gate-config
+        
+        env:
+        - name: ADMIN_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: atlas-gate-secrets
+              key: admin-api-key
+        
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: logs
+          mountPath: /var/log/atlas-gate
+        
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+      
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: atlas-gate-pvc
+      - name: logs
+        emptyDir: {}
+      
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - atlas-gate
+              topologyKey: kubernetes.io/hostname
+
+---
+# Service - ClusterIP (internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: atlas-gate-service
+  namespace: atlas-gate
+  labels:
+    app: atlas-gate
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: atlas-gate
+
+---
+# Service - LoadBalancer (external)
+apiVersion: v1
+kind: Service
+metadata:
+  name: atlas-gate-lb
+  namespace: atlas-gate
+  labels:
+    app: atlas-gate
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: http
+    protocol: TCP
+    name: https
+  selector:
+    app: atlas-gate
+  sessionAffinity: ClientIP
+
+---
+# HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: atlas-gate-hpa
+  namespace: atlas-gate
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: atlas-gate
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+
+---
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: atlas-gate
+  namespace: atlas-gate
+
+---
+# Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: atlas-gate
+  namespace: atlas-gate
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: atlas-gate
+  namespace: atlas-gate
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: atlas-gate
+subjects:
+- kind: ServiceAccount
+  name: atlas-gate
+  namespace: atlas-gate
+
+---
+# Ingress (for HTTPS and routing)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: atlas-gate-ingress
+  namespace: atlas-gate
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - atlas-gate.example.com
+    secretName: atlas-gate-tls
+  rules:
+  - host: atlas-gate.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: atlas-gate-service
+            port:
+              number: 3000
+
+---
+# NetworkPolicy for security
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: atlas-gate-policy
+  namespace: atlas-gate
+spec:
+  podSelector:
+    matchLabels:
+      app: atlas-gate
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: atlas-gate
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 3000
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 53  # DNS
+    - protocol: UDP
+      port: 53
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 3000  # Internal communication

@@ -18,7 +18,9 @@
     "security:audit": "node verify_security.js",
     "test:performance": "echo 'Performance tests skipped'",
     "start:windsurf": "node bin/ATLAS-GATE-MCP-windsurf.js",
-    "start:antigravity": "node bin/ATLAS-GATE-MCP-antigravity.js"
+    "start:antigravity": "node bin/ATLAS-GATE-MCP-antigravity.js",
+    "start:http": "node bin/ATLAS-GATE-HTTP.js",
+    "example:client": "node examples/multi-tenant-client.js"
   },
   "keywords": [
     "mcp",
@@ -40,6 +42,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3",
+    "@stoplight/spectral-cli": "^6.12.0",
+    "@stoplight/spectral-core": "^1.13.0",
     "acorn": "^8.15.0",
     "acorn-walk": "^8.3.4",
     "diff": "^8.0.3",

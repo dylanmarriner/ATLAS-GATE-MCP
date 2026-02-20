@@ -158,7 +158,7 @@ if (result.passed) {
 }
 ```
 
-### Compute Plan Hash
+### Compute Plan Signature
 ```javascript
 import { computePlanHash } from './core/plan-linter.js';
 

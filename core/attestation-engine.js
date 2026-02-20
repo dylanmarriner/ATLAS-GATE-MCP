@@ -24,6 +24,7 @@ import crypto from "crypto";
 import { replayExecution } from "./replay-engine.js";
 import { computeMaturityScore } from "./maturity-scoring-engine.js";
 import { lintPlan } from "./plan-linter.js";
+import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "./cosign-hash-provider.js";
 
 // ============================================================================
 // SIGNING CONFIGURATION
@@ -75,59 +76,30 @@ function getAttestationSecret(workspaceRoot) {
 
 /**
  * Compute deterministic bundle ID from canonical bundle content.
- * This is the content hash before signing.
+ * This is a deterministic identifier based on content.
  * Uses canonical JSON with recursively sorted keys for determinism.
  *
  * @param {Object} bundleContent - Bundle object (without signature)
- * @returns {string} SHA256 hash
+ * @returns {string} Canonical representation hash
  */
 function computeBundleId(bundleContent) {
-  const canonical = canonicalizeForHash(bundleContent);
+  const canonical = canonicalizeForSigning(bundleContent);
   return crypto.createHash("sha256").update(canonical).digest("hex");
 }
 
 /**
- * Recursively canonicalize object for hashing (all keys sorted).
- * This ensures deterministic field ordering at any depth.
+ * Compute HMAC signature of bundle content (for backward compatibility).
+ * This function is kept for verifying old bundles but should not be used for new code.
+ * New code should use cosign signing instead.
  *
- * @param {*} obj - Value to canonicalize
- * @returns {string} Canonical JSON
- */
-function canonicalizeForHash(obj) {
-  if (typeof obj !== "object" || obj === null) {
-    return JSON.stringify(obj);
-  }
-
-  if (Array.isArray(obj)) {
-    return JSON.stringify(obj.map(canonicalizeForHash));
-  }
-
-  const keys = Object.keys(obj).sort();
-  const sorted = {};
-  for (const key of keys) {
-    const value = obj[key];
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      sorted[key] = JSON.parse(canonicalizeForHash(value));
-    } else {
-      sorted[key] = value;
-    }
-  }
-  return JSON.stringify(sorted);
-}
-
-/**
- * Compute HMAC signature of bundle content.
- * Signature is computed over the canonical JSON (same as bundle_id derivation).
- *
+ * @deprecated Use signWithCosign from cosign-hash-provider instead
  * @param {Object} bundleContent - Bundle object
  * @param {string} secret - HMAC secret
  * @returns {string} HMAC-SHA256 hex digest
  */
 function signBundle(bundleContent, secret) {
-  const canonical = canonicalizeForHash(bundleContent);
-  const hmac = crypto.createHmac("sha256", secret);
-  hmac.update(canonical);
-  return hmac.digest("hex");
+  const canonical = canonicalizeForSigning(bundleContent);
+  return crypto.createHmac("sha256", secret).update(canonical).digest("hex");
 }
 
 /**
@@ -153,14 +125,10 @@ function verifyBundleSignature(signedBundle, secret) {
   const expectedSignature = signBundle(bundleContent, secret);
 
   // Timing-safe comparison
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signedBundle.signature, "hex"),
-      Buffer.from(expectedSignature, "hex")
-    );
-  } catch {
-    return false;
-  }
+  return crypto.timingSafeEqual(
+    Buffer.from(signedBundle.signature, "hex"),
+    Buffer.from(expectedSignature, "hex")
+  );
 }
 
 // ============================================================================
@@ -171,16 +139,16 @@ function verifyBundleSignature(signedBundle, secret) {
  * Gather workspace evidence for attestation.
  * Reads from:
  * - Audit log
- * - Plans directory
+ * - Plans directory (verifies with lintPlan)
  * - Replay results
  * - Maturity scores
  * 
  * @param {string} workspaceRoot
- * @param {Object} options - { plan_hash_filter, time_window }
+ * @param {Object} options - { plan_signature_filter, time_window }
  * @returns {Object} Evidence object
  * @throws {Error} If critical evidence missing (fail-closed)
  */
-function gatherEvidence(workspaceRoot, options = {}) {
+async function gatherEvidence(workspaceRoot, options = {}) {
   const auditLogPath = pathModule.join(workspaceRoot, ".atlas-gate", "audit-log.jsonl");
   
   // Check evidence existence
@@ -205,24 +173,50 @@ function gatherEvidence(workspaceRoot, options = {}) {
     throw new Error("ATTESTATION_EVIDENCE_INVALID: Audit log is empty");
   }
 
-  // Compute audit log root hash
+  // Compute audit log root signature
   const lastEntry = auditEntries[auditEntries.length - 1];
-  const auditLogRootHash = lastEntry.hash || lastEntry.entry_hash;
+  const auditLogRootSignature = lastEntry.signature;
 
-  if (!auditLogRootHash) {
-    throw new Error("ATTESTATION_EVIDENCE_INVALID: Cannot compute audit log root hash");
+  if (!auditLogRootSignature) {
+    throw new Error("ATTESTATION_EVIDENCE_INVALID: Cannot compute audit log root signature");
   }
 
-  // Gather plan hashes from audit
-  const planHashes = new Set();
+  // Gather plan signatures from audit
+  const planSignatures = new Set();
+  const planVerifications = [];
+  
   auditEntries.forEach(entry => {
-    if (entry.plan_hash) {
-      planHashes.add(entry.plan_hash);
+    if (entry.plan_signature) {
+      planSignatures.add(entry.plan_signature);
     }
   });
 
   // Convert to array and sort (determinism)
-  const planHashList = Array.from(planHashes).sort();
+  const planSignatureList = Array.from(planSignatures).sort();
+
+  // Verify plans with cosign + spectral
+  const plansDir = pathModule.join(workspaceRoot, ".atlas-gate", "plans");
+  if (fs.existsSync(plansDir)) {
+    for (const planSignature of planSignatureList) {
+      try {
+        const planPath = pathModule.join(plansDir, `${planSignature}.md`);
+        if (fs.existsSync(planPath)) {
+          const planContent = fs.readFileSync(planPath, "utf8");
+          const lintResult = await lintPlan(planContent, planSignature);
+          planVerifications.push({
+            plan_signature: planSignature,
+            lint_passed: lintResult.passed,
+          });
+        }
+      } catch (err) {
+        planVerifications.push({
+          plan_signature: planSignature,
+          lint_passed: false,
+          error: err.message,
+        });
+      }
+    }
+  }
 
   // Compute audit metrics
   const auditMetrics = {
@@ -233,9 +227,10 @@ function gatherEvidence(workspaceRoot, options = {}) {
   };
 
   return {
-    auditLogRootHash,
+    auditLogRootSignature,
     auditMetrics,
-    planHashes: planHashList,
+    planSignatures: planSignatureList,
+    planVerifications,
     auditEntries,
   };
 }
@@ -311,11 +306,11 @@ function computeIntentSummary(workspaceRoot) {
  * Bundle is immutable after generation (content-addressed by hash).
  *
  * @param {string} workspaceRoot
- * @param {Object} options - { plan_hash_filter, time_window, workspace_root_label }
+ * @param {Object} options - { plan_signature_filter, time_window, workspace_root_label }
  * @returns {Object} Signed attestation bundle
  * @throws {Error} If evidence missing or invalid (fail-closed)
  */
-export function generateAttestationBundle(workspaceRoot, options = {}) {
+export async function generateAttestationBundle(workspaceRoot, options = {}) {
   // STEP 1: VALIDATE INPUTS (fail-closed)
   if (!workspaceRoot || typeof workspaceRoot !== "string") {
     throw new Error("ATTESTATION_INVALID_INPUT: workspace_root must be a non-empty string");
@@ -325,8 +320,8 @@ export function generateAttestationBundle(workspaceRoot, options = {}) {
     throw new Error(`ATTESTATION_INVALID_INPUT: workspace_root does not exist: ${workspaceRoot}`);
   }
 
-  // STEP 2: GATHER EVIDENCE (fail-closed)
-  const evidence = gatherEvidence(workspaceRoot, options);
+  // STEP 2: GATHER EVIDENCE (fail-closed, now with plan verification via lintPlan)
+  const evidence = await gatherEvidence(workspaceRoot, options);
 
   // STEP 3: COMPUTE POLICY SUMMARY
   const policySummary = computePolicySummary(evidence.auditEntries);
@@ -338,8 +333,8 @@ export function generateAttestationBundle(workspaceRoot, options = {}) {
   let replayVerdict = "UNAVAILABLE";
   let replayFindingCount = 0;
   
-  if (evidence.planHashes.length > 0) {
-    const replayResult = replayExecution(workspaceRoot, evidence.planHashes[0]);
+  if (evidence.planSignatures.length > 0) {
+    const replayResult = replayExecution(workspaceRoot, evidence.planSignatures[0]);
     replayVerdict = replayResult.verdict;
     replayFindingCount = replayResult.findings.length;
   }
@@ -350,10 +345,8 @@ export function generateAttestationBundle(workspaceRoot, options = {}) {
     auditLogPath,
   });
 
-  // STEP 7: COMPUTE WORKSPACE ROOT HASH (not the path itself)
-  const workspaceRootHash = crypto.createHash("sha256")
-    .update(workspaceRoot)
-    .digest("hex");
+  // STEP 7: COMPUTE WORKSPACE ROOT IDENTIFIER
+  const workspaceRootHash = crypto.createHash("sha256").update(workspaceRoot).digest("hex");
 
   // STEP 8: BUILD BUNDLE CONTENT (canonical field order for determinism)
   // NOTE: Do NOT include generated_timestamp in the bundle content for signing
@@ -371,8 +364,8 @@ export function generateAttestationBundle(workspaceRoot, options = {}) {
     },
 
     // Evidence roots
-    audit_log_root_hash: evidence.auditLogRootHash,
-    plan_hashes: evidence.planHashes,
+    audit_log_root_signature: evidence.auditLogRootSignature,
+    plan_signatures: evidence.planSignatures,
 
     // Summaries
     audit_metrics: evidence.auditMetrics,
@@ -390,15 +383,9 @@ export function generateAttestationBundle(workspaceRoot, options = {}) {
 
     // Verifier checksums (hash of exported data)
     verifier_checksums: {
-      audit_metric_hash: crypto.createHash("sha256")
-        .update(JSON.stringify(evidence.auditMetrics))
-        .digest("hex"),
-      policy_summary_hash: crypto.createHash("sha256")
-        .update(JSON.stringify(policySummary))
-        .digest("hex"),
-      maturity_hash: crypto.createHash("sha256")
-        .update(JSON.stringify(maturityScore))
-        .digest("hex"),
+      audit_metric_hash: crypto.createHash("sha256").update(JSON.stringify(evidence.auditMetrics)).digest("hex"),
+      policy_summary_hash: crypto.createHash("sha256").update(JSON.stringify(policySummary)).digest("hex"),
+      maturity_hash: crypto.createHash("sha256").update(JSON.stringify(maturityScore)).digest("hex"),
     },
   };
 
@@ -490,9 +477,7 @@ export function verifyAttestationBundle(signedBundle, workspaceRoot) {
 
   // Audit metrics hash
   if (signedBundle.audit_metrics) {
-    const auditMetricHash = crypto.createHash("sha256")
-      .update(JSON.stringify(signedBundle.audit_metrics))
-      .digest("hex");
+    const auditMetricHash = crypto.createHash("sha256").update(JSON.stringify(signedBundle.audit_metrics)).digest("hex");
     if (auditMetricHash !== signedBundle.verifier_checksums.audit_metric_hash) {
       violations.push({
         check: "AUDIT_METRIC_HASH_MISMATCH",
@@ -503,9 +488,7 @@ export function verifyAttestationBundle(signedBundle, workspaceRoot) {
 
   // Maturity score hash
   if (signedBundle.maturity_scores) {
-    const maturityHash = crypto.createHash("sha256")
-      .update(JSON.stringify(signedBundle.maturity_scores))
-      .digest("hex");
+    const maturityHash = crypto.createHash("sha256").update(JSON.stringify(signedBundle.maturity_scores)).digest("hex");
     if (maturityHash !== signedBundle.verifier_checksums.maturity_hash) {
       violations.push({
         check: "MATURITY_HASH_MISMATCH",
@@ -568,17 +551,17 @@ function generateAttestationMarkdown(bundle) {
 
   lines.push(`\n## Evidence Summary`);
   lines.push(`\n### Audit Log`);
-  lines.push(`- **Root Hash:** \`${bundle.audit_log_root_hash.substring(0, 16)}...\``);
+  lines.push(`- **Root Signature:** \`${bundle.audit_log_root_signature.substring(0, 16)}...\``);
   lines.push(`- **Total Entries:** ${bundle.audit_metrics.total_entries}`);
   lines.push(`- **Failures:** ${bundle.audit_metrics.failure_count}`);
   lines.push(`- **Time Range:** ${bundle.time_window.start} to ${bundle.time_window.end}`);
 
   lines.push(`\n### Plans Executed`);
-  if (bundle.plan_hashes.length === 0) {
+  if (bundle.plan_signatures.length === 0) {
     lines.push(`- None recorded`);
   } else {
-    bundle.plan_hashes.forEach(h => {
-      lines.push(`- \`${h.substring(0, 16)}...\``);
+    bundle.plan_signatures.forEach(sig => {
+      lines.push(`- \`${sig.substring(0, 16)}...\``);
     });
   }
 
@@ -631,8 +614,8 @@ export const ATTESTATION_SCHEMA = {
     "bundle_schema_version",
     "generated_timestamp",
     "workspace_root_hash",
-    "audit_log_root_hash",
-    "plan_hashes",
+    "audit_log_root_signature",
+    "plan_signatures",
     "audit_metrics",
     "policy_enforcement",
     "intent_coverage",

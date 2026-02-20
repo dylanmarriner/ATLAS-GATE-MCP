@@ -265,7 +265,7 @@ Tool calls may arrive before `begin_session`:
   workspace_root: "/path",         // Locked workspace root
   tool: "write_file",              // Tool name
   intent: "Update config",         // Human-readable summary (nullable)
-  plan_hash: "plan-xyz",           // Plan identifier (nullable)
+  plan_signature: "plan-xyz",           // Plan identifier (nullable)
   phase_id: null,                  // Phase identifier (nullable)
   args_hash: "def456...",          // SHA256 of redacted args (nullable)
   result: "ok",                    // "ok" | "error"

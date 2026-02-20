@@ -184,9 +184,9 @@ export const TOOL_SCHEMAS = {
   },
 
   replay_execution: {
-    required: ['plan_hash'],
+    required: ['plan_signature'],
     fields: {
-      plan_hash: {
+      plan_signature: {
         type: 'string',
         validator: (val) => {
           if (typeof val !== 'string') return `must be string, got ${typeof val}`;
@@ -232,7 +232,7 @@ export const TOOL_SCHEMAS = {
         optional: true,
         validator: (val) => typeof val === 'string' ? null : `must be string, got ${typeof val}`
       },
-      plan_hash_filter: {
+      plan_signature_filter: {
         type: 'string',
         optional: true,
         validator: (val) => {
@@ -422,7 +422,7 @@ export function installEnforcementLayer(server, role) {
             workspace_root: SESSION_STATE.workspaceRoot || 'UNINITIALIZED',
             tool: toolName,
             intent: null,
-            plan_hash: null,
+            plan_signature: null,
             phase_id: null,
             args: args,
             result: 'blocked',

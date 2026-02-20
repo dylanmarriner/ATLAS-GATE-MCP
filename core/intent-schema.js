@@ -7,7 +7,7 @@
  * Intents are non-negotiable for every file write (except failure reports).
  */
 
-import crypto from "crypto";
+import { sha256 } from "./cosign-hash-provider.js";
 
 /**
  * Canonical intent artifact schema (REQUIRED SECTIONS IN ORDER)
@@ -35,7 +35,7 @@ export const CANONICAL_INTENT_SCHEMA = {
       header: /^## Authority$/,
       required: true,
       validator: validateAuthority,
-      description: "Plan hash and phase ID binding"
+      description: "Plan signature and phase ID binding"
     },
     {
       id: "inputs",
@@ -190,60 +190,60 @@ function validatePurpose(content) {
 }
 
 /**
- * Validate authority section (Plan Hash + Phase ID)
+ * Validate authority section (Plan Signature + Phase ID)
  * @param {string} content - Content between Authority header and next section
- * @param {string} executingPlanHash - Current plan hash (optional, for drift checking)
+ * @param {string} executingPlanSignature - Current plan signature (optional, for drift checking)
  * @param {string} executingPhaseId - Current phase ID (optional, for drift checking)
- * @returns {{valid: boolean, error?: string, planHash?: string, phaseId?: string}}
+ * @returns {{valid: boolean, error?: string, planSignature?: string, phaseId?: string}}
  */
-function validateAuthority(content, executingPlanHash, executingPhaseId) {
-  const lines = content.trim().split("\n");
+function validateAuthority(content, executingPlanSignature, executingPhaseId) {
+   const lines = content.trim().split("\n");
 
-  let planHash = null;
-  let phaseId = null;
+   let planSignature = null;
+   let phaseId = null;
 
-  for (const line of lines) {
-    const planMatch = line.match(/Plan Hash:\s*([a-fA-F0-9]{64})/);
-    const phaseMatch = line.match(/Phase ID:\s*(PHASE_\w+)/);
+   for (const line of lines) {
+     const planMatch = line.match(/Plan Signature:\s*([A-Za-z0-9+/=]+)/);
+     const phaseMatch = line.match(/Phase ID:\s*(PHASE_\w+)/);
 
-    if (planMatch) {
-      planHash = planMatch[1].toLowerCase();
-    }
-    if (phaseMatch) {
-      phaseId = phaseMatch[1];
-    }
-  }
+     if (planMatch) {
+       planSignature = planMatch[1];
+     }
+     if (phaseMatch) {
+       phaseId = phaseMatch[1];
+     }
+   }
 
-  if (!planHash) {
-    return {
-      valid: false,
-      error: "Authority must include 'Plan Hash: <sha256>'"
-    };
-  }
+   if (!planSignature) {
+     return {
+       valid: false,
+       error: "Authority must include 'Plan Signature: <cosign-signature>'"
+     };
+   }
 
-  if (!phaseId) {
-    return {
-      valid: false,
-      error: "Authority must include 'Phase ID: PHASE_*'"
-    };
-  }
+   if (!phaseId) {
+     return {
+       valid: false,
+       error: "Authority must include 'Phase ID: PHASE_*'"
+     };
+   }
 
-  // Check drift if executing context available
-  if (executingPlanHash && planHash !== executingPlanHash.toLowerCase()) {
-    return {
-      valid: false,
-      error: `Plan hash drift: intent references ${planHash} but executing ${executingPlanHash}`
-    };
-  }
+   // Check drift if executing context available
+   if (executingPlanSignature && planSignature !== executingPlanSignature) {
+     return {
+       valid: false,
+       error: `Plan signature drift: intent references ${planSignature} but executing ${executingPlanSignature}`
+     };
+   }
 
-  if (executingPhaseId && phaseId !== executingPhaseId) {
-    return {
-      valid: false,
-      error: `Phase ID drift: intent references ${phaseId} but executing ${executingPhaseId}`
-    };
-  }
+   if (executingPhaseId && phaseId !== executingPhaseId) {
+     return {
+       valid: false,
+       error: `Phase ID drift: intent references ${phaseId} but executing ${executingPhaseId}`
+     };
+   }
 
-  return { valid: true, planHash, phaseId };
+   return { valid: true, planSignature, phaseId };
 }
 
 /**
@@ -428,5 +428,5 @@ export function parseSections(content) {
  */
 export function hashIntent(content) {
   const normalized = content.trim();
-  return crypto.createHash("sha256").update(normalized).digest("hex");
+  return sha256(normalized);
 }

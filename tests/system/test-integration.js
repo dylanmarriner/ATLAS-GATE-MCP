@@ -1,7 +1,7 @@
-import { lintPlan } from "./core/plan-linter.js";
+import { lintPlan } from "../../core/plan-linter.js";
 import { bootstrapPlanHandler } from "./tools/bootstrap_tool.js";
 import { lintPlanHandler } from "./tools/lint_plan.js";
-import { enforcePlan } from "./core/plan-enforcer.js";
+import { enforcePlan } from "../../core/plan-enforcer.js";
 
 console.log("✓ Imports successful");
 console.log("✓ bootstrap_tool.js has lintPlan import");

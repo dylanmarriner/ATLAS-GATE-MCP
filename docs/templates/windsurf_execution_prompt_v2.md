@@ -21,18 +21,24 @@ Core principle: **Plan specifies EXACTLY what to do. You do it.**
 You will receive EXACTLY these three values:
 
 - **Workspace Root**: Absolute path to project root (e.g., `/home/user/atlas-gate`)
-- **Plan Hash**: SHA256 hash - 64 hexadecimal characters (e.g., `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`)
+- **Plan Signature**: Identifier from ATLAS-GATE_PLAN_HASH header field (64-char hex, e.g., `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`)
 - **Plan Path**: Computed from hash (always `docs/plans/<HASH>.md`)
+- **Public Key Path**: Path to cosign public key for signature verification (e.g., `/workspace/.cosign/cosign.pub`)
 
 **Example**:
 ```
 Workspace Root: /home/user/atlas-gate
-Plan Hash: aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2
+Plan Signature: aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2
 Plan Path: docs/plans/aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2.md
-(Combine: /home/user/atlas-gate/docs/plans/aeb41...ff2.md)
+Public Key: /home/user/atlas-gate/.cosign/cosign.pub
+(Full path: /home/user/atlas-gate/docs/plans/aeb41...ff2.md)
 ```
 
-**CRITICAL**: Plans MUST be in `docs/plans/` with filename = hash. If the file doesn't exist at this location, the plan is not approved and execution MUST STOP.
+**CRITICAL**: 
+- Plans MUST be in `docs/plans/` with filename = hash. If file doesn't exist, plan is not approved → STOP
+- Plan MUST include `COSIGN_SIGNATURE: [base64]` in header comment
+- Signature MUST be verifiable with provided public key using cosign
+- If signature invalid or verification fails → STOP
 
 **HALT** if any input missing or ambiguous.
 
@@ -47,7 +53,7 @@ Plan Path: docs/plans/aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1
 3. **Read plan file** using `read_file` with Plan Path
 4. **Verify plan format** - check for required sections
 5. **Compute hash** of plan (strip HTML comment header, compute SHA256)
-6. **Compare hash** - computed hash MUST match Plan Hash exactly
+6. **Compare hash** - computed hash MUST match Plan Signature exactly
 7. **If hash fails** → STOP immediately, do NOT execute
 
 ---
@@ -58,7 +64,8 @@ Plans have this exact structure:
 
 ```
 <!--
-ATLAS-GATE_PLAN_HASH: [placeholder]
+ATLAS-GATE_PLAN_HASH: [unique identifier for this plan]
+COSIGN_SIGNATURE: [ECDSA P-256 signature, base64 encoded]
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -85,21 +92,32 @@ STATUS: APPROVED
 ...
 ```
 
-All 7 sections required. HTML comment is stripped before hashing.
+All 7 sections required. HTML comment is stripped before signature verification.
 
 ---
 
 ## EXECUTION SEQUENCE
 
-### Step 1: Hash Validation
+### Step 1: Signature Verification (Cosign)
 
 ```
 1. Read plan file
-2. Strip lines 1-5 (HTML comment)
-3. Compute SHA256 of remaining content
-4. Compare to Plan Hash (case-insensitive hex)
-5. IF MISMATCH: STOP and report failure
+2. Extract COSIGN_SIGNATURE from HTML comment header (line 3)
+3. Strip lines 1-5 (HTML comment) and [COSIGN_SIGNATURE: ...] footer
+4. Canonicalize remaining content (trim lines, normalize whitespace)
+5. Verify signature using cosign (ECDSA P-256) with provided public key
+   - Cosign library: @sigstore/cosign
+   - Algorithm: ECDSA P-256 (secp256r1)
+   - Input: canonicalized plan content
+   - Signature format: base64-encoded
+6. IF VERIFICATION FAILS: STOP and report failure
+7. IF NO SIGNATURE IN PLAN: STOP and report failure
 ```
+
+**Implementation**: Use cosign's `verifyBlob()` function with:
+- `payload`: Buffer of canonicalized plan content
+- `signature`: Buffer of base64-decoded COSIGN_SIGNATURE value
+- `keyPath`: Path to cosign public key (e.g., `.cosign/cosign.pub`)
 
 ### Step 2: Section Validation
 
@@ -167,7 +185,7 @@ await write_file({
 
 After each write, call `read_audit_log`:
 - Last entry MUST match the write you just did
-- `plan_hash` field MUST match Plan Hash
+- `plan_signature` field MUST match Plan Signature
 - `role` field MUST match what you sent
 
 **IF audit entry missing or wrong** → STOP immediately.
@@ -251,7 +269,7 @@ Do NOT attempt to continue execution after failure.
 **Operator Input**:
 - Plan Path: `docs/plans/PLAN_AUTH_V1.md`
 - Workspace Root: `/home/user/atlas-gate`
-- Plan Hash: `aeb411...ff2` (64 hex chars)
+- Plan Signature: `aeb411...ff2` (64 hex chars)
 
 **Your Execution**:
 
@@ -342,7 +360,7 @@ Action: REFUSE WRITE, STOP
 
 Execution is successful ONLY if:
 
-- ✓ Hash validated (matches Plan Hash exactly)
+- ✓ Hash validated (matches Plan Signature exactly)
 - ✓ All 7 plan sections present
 - ✓ All files in Scope & Constraints created/modified
 - ✓ All files within Path Allowlist
@@ -360,7 +378,7 @@ If ANY criterion not met → **EXECUTION FAILED**.
 ### Success Report
 ```
 ✓ Plan executed successfully
-✓ Plan Hash: aeb411...ff2
+✓ Plan Signature: aeb411...ff2
 ✓ Files modified:
   - src/auth.js (EXECUTABLE)
   - tests/auth.test.js (VERIFICATION)

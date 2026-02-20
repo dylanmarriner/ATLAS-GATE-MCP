@@ -21,7 +21,7 @@ import { appendAuditEntry } from "../core/audit-system.js";
 /**
  * Tool handler for replay_execution.
  * Inputs:
- * - plan_hash (required): SHA256 plan hash to replay
+ * - plan_signature (required): Cosign plan signature to replay
  * - phase_id (optional): filter to specific phase
  * - tool (optional): filter to specific tool name
  * - seq_start (optional): start sequence number
@@ -31,7 +31,7 @@ import { appendAuditEntry } from "../core/audit-system.js";
  */
 export async function replayExecutionHandler(args) {
   const {
-    plan_hash: planHash,
+    plan_signature: planSignature,
     phase_id: phaseId,
     tool,
     seq_start: seqStart,
@@ -39,8 +39,8 @@ export async function replayExecutionHandler(args) {
   } = args;
 
   // Validate required input
-  if (!planHash) {
-    throw new Error("REPLAY_INVALID_INPUT: plan_hash is required");
+  if (!planSignature) {
+    throw new Error("REPLAY_INVALID_INPUT: plan_signature is required");
   }
 
   // Execute replay (read-only, no state mutation)
@@ -50,7 +50,7 @@ export async function replayExecutionHandler(args) {
   if (seqStart !== undefined) filters.seq_start = seqStart;
   if (seqEnd !== undefined) filters.seq_end = seqEnd;
 
-  const replayResult = replayExecution(SESSION_STATE.workspaceRoot, planHash, filters);
+  const replayResult = replayExecution(SESSION_STATE.workspaceRoot, planSignature, filters);
 
   // Audit this replay invocation (read-only operation)
   await appendAuditEntry({
@@ -58,11 +58,11 @@ export async function replayExecutionHandler(args) {
     role: process.argv.join(" ").includes("windsurf") ? "WINDSURF" : "ANTIGRAVITY",
     workspace_root: SESSION_STATE.workspaceRoot,
     tool: "replay_execution",
-    intent: `Forensic replay of plan ${planHash}`,
-    plan_hash: planHash,
+    intent: `Forensic replay of plan ${planSignature}`,
+    plan_signature: planSignature,
     phase_id: phaseId || null,
     args: {
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: phaseId || null,
       tool: tool || null,
       seq_start: seqStart || null,
@@ -94,7 +94,7 @@ function formatReplayResult(replayResult) {
   return {
     verdict: replayResult.verdict,
     success: replayResult.success,
-    plan_hash: replayResult.plan_hash,
+    plan_signature: replayResult.plan_signature,
     summary: {
       total_entries_analyzed: replayResult.entries_analyzed,
       total_findings: replayResult.summary?.total_findings || 0,
@@ -151,12 +151,12 @@ function translateFindingCode(code) {
     EVIDENCE_GAP_MISSING_RESULT_HASH: "Result hash is missing from audit entry",
 
     // Tamper
-    TAMPER_DETECTED_BROKEN_HASH_CHAIN: "Audit log hash chain is broken (tampering)",
+    TAMPER_DETECTED_BROKEN_HASH_CHAIN: "Audit log signature chain is broken (tampering)",
     TAMPER_DETECTED_SEQ_GAP: "Sequence numbers have gaps (entries removed)",
     TAMPER_DETECTED_INVALID_JSON:
       "Audit entry contains invalid JSON (corruption)",
     TAMPER_DETECTED_HASH_RECOMPUTATION_MISMATCH:
-      "Stored hash does not match recomputed hash (tampering)",
+      "Stored signature does not match verification (tampering)",
   };
 
   return translations[code] || `Unknown: ${code}`;
@@ -181,7 +181,7 @@ function generateExplanation(replayResult) {
   if (summary.tamper_violations > 0) {
     parts.push(
       `⚠️ Tampering detected: ${summary.tamper_violations} entry/entries ` +
-        `show signs of tampering (broken hash chain, missing entries, or corruption).`
+        `show signs of tampering (broken signature chain, missing entries, or corruption).`
     );
   }
 

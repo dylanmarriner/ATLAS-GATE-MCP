@@ -17,10 +17,10 @@ const __filename = fileURLToPath(import.meta.url);
 
 // Mock environment
 const SECRET = "test-secret-123";
-process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
+process.env['ATLAS-GATE_BOOTSTRAP_SECRET'] = SECRET;
 
 const PLAN_CONTENT = `<!--
-ATLAS-GATE_PLAN_HASH: PENDING_HASH
+ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->

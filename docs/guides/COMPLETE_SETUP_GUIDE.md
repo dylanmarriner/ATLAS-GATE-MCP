@@ -602,7 +602,7 @@ If anyone modifies an entry, the hash chain breaks and it's detected!
   "executedVia": "POST /api/handle",
   "failureModes": "500 error if validation fails",
   "authority": "FOUNDATION-a1b2c3d4-e5f6-7890.md",
-  "planHash": "optional-hash-for-integrity-check"
+  "planSignature": "optional-hash-for-integrity-check"
 }
 ```
 

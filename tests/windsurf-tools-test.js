@@ -186,7 +186,7 @@ try {
   
   try {
     const result = await replayExecutionHandler({
-      plan_hash: "0000000000000000000000000000000000000000000000000000000000000000",
+      plan_signature: "0000000000000000000000000000000000000000000000000000000000000000",
       seq_start: 1,
       seq_end: 10
     });

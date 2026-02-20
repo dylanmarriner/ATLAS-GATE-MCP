@@ -29,7 +29,7 @@ import {
  * @property {string} [error] - Error message if validation failed
  * @property {string} [intentHash] - Hash of intent document
  * @property {Object} [sections] - Parsed sections
- * @property {string} [planHash] - Extracted plan hash
+ * @property {string} [planSignature] - Extracted plan signature
  * @property {string} [phaseId] - Extracted phase ID
  */
 
@@ -46,18 +46,18 @@ import {
  * @param {string} targetPath - Absolute path to file being written
  * @param {string} workspaceRoot - Absolute workspace root
  * @param {boolean} isFailureReport - true if writing to docs/reports/ (exempt from intent)
- * @param {string} [executingPlanHash] - Current plan hash (for drift detection)
+ * @param {string} [executingPlanSignature] - Current plan signature (for drift detection)
  * @param {string} [executingPhaseId] - Current phase ID (for drift detection)
  * @returns {Promise<IntentValidationResult>}
  * @throws {SystemError} on validation failure
  */
-export async function validateIntentArtifact(
-  targetPath,
-  workspaceRoot,
-  isFailureReport = false,
-  executingPlanHash = null,
-  executingPhaseId = null
-) {
+ export async function validateIntentArtifact(
+   targetPath,
+   workspaceRoot,
+   isFailureReport = false,
+   executingPlanSignature = null,
+   executingPhaseId = null
+ ) {
   // Failure reports don't require intent artifacts
   if (isFailureReport) {
     return {
@@ -79,7 +79,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { targetPath: relativeTarget, intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -106,7 +106,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -130,7 +130,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -158,7 +158,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -196,7 +196,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -226,7 +226,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath), targetPath: relativeTarget },
       result: "error",
@@ -256,7 +256,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -294,7 +294,7 @@ export async function validateIntentArtifact(
       role: "WINDSURF",
       workspace_root: workspaceRoot,
       tool: "write_file",
-      plan_hash: executingPlanHash,
+      plan_signature: executingPlanSignature,
       phase_id: executingPhaseId,
       args: { intentPath: path.relative(workspaceRoot, intentPath) },
       result: "error",
@@ -318,7 +318,7 @@ export async function validateIntentArtifact(
     role: "WINDSURF",
     workspace_root: workspaceRoot,
     tool: "write_file",
-    plan_hash: executingPlanHash,
+    plan_signature: executingPlanSignature,
     phase_id: executingPhaseId,
     args: {
       intentPath: path.relative(workspaceRoot, intentPath),
@@ -335,7 +335,7 @@ export async function validateIntentArtifact(
     valid: true,
     intentHash,
     sections,
-    planHash: authorityValidation.planHash,
+    planSignature: authorityValidation.planSignature,
     phaseId: authorityValidation.phaseId
   };
 }

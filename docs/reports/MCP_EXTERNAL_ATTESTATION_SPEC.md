@@ -40,7 +40,7 @@ Each attestation bundle is a JSON object with the following fields (canonical or
   },
   
   "audit_log_root_hash": "sha256_hash",
-  "plan_hashes": ["hash1", "hash2"],
+  "plan_signaturees": ["hash1", "hash2"],
   
   "audit_metrics": {
     "total_entries": number,
@@ -105,7 +105,7 @@ Each attestation bundle is a JSON object with the following fields (canonical or
 | `workspace_root_label` | String | Human-readable label for workspace (optional) |
 | `time_window` | Object | Date range covered by this attestation |
 | `audit_log_root_hash` | SHA256 hex | Hash of last entry in audit log (chain integrity proof) |
-| `plan_hashes` | Array[SHA256] | All plan hashes executed in this workspace |
+| `plan_signaturees` | Array[SHA256] | All plan hashes executed in this workspace |
 | `audit_metrics` | Object | Summary of audit log activity |
 | `policy_enforcement` | Object | Write-time policy enforcement statistics |
 | `intent_coverage` | Object | Intent artifact coverage statistics |
@@ -180,7 +180,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 ```json
 {
   "workspace_root_label": "string (optional)",
-  "plan_hash_filter": "string (optional)",
+  "plan_signature_filter": "string (optional)",
   "time_window": { "start": "ISO8601", "end": "ISO8601" } (optional)
 }
 ```

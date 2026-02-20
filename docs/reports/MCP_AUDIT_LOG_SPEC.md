@@ -66,7 +66,7 @@ Each audit entry is a JSON object, written as a single line followed by `\n` (JS
   // Tool & Intent
   tool: "write_file",                // Tool name
   intent: "Add logging to module X", // Human-readable summary (nullable)
-  plan_hash: "plan-hash-abc123",     // Plan identifier (nullable)
+  plan_signature: "plan-hash-abc123",     // Plan identifier (nullable)
   phase_id: null,                    // Phase identifier (nullable for future use)
 
   // Arguments (redacted)
@@ -98,7 +98,7 @@ Each audit entry is a JSON object, written as a single line followed by `\n` (JS
 | `workspace_root` | string | Absolute path of locked workspace root |
 | `tool` | string | Name of tool invoked (e.g., "write_file", "read_file") |
 | `intent` | string \| null | Human-readable reason for the operation |
-| `plan_hash` | string \| null | Hash of the authorized plan (if applicable) |
+| `plan_signature` | string \| null | Hash of the authorized plan (if applicable) |
 | `phase_id` | string \| null | Phase identifier (reserved for future use) |
 | `args_hash` | string \| null | SHA256 of redacted args (for write ops, includes file hash+length) |
 | `result` | string | "ok" if successful, "error" if failed |
@@ -453,9 +453,9 @@ function wrapHandler(handler, toolName) {
 ## 10. EXAMPLE AUDIT LOG
 
 ```json
-{"ts":"2026-01-19T14:30:45.123Z","seq":1,"prev_hash":"GENESIS","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"begin_session","intent":null,"plan_hash":null,"phase_id":null,"args_hash":null,"result":"ok","error_code":null,"invariant_id":null,"result_hash":null,"notes":"begin_session completed","entry_hash":"abc123def456..."}
-{"ts":"2026-01-19T14:30:46.234Z","seq":2,"prev_hash":"abc123def456...","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"read_file","intent":"Read package.json","plan_hash":null,"phase_id":null,"args_hash":"def789abc012...","result":"ok","error_code":null,"invariant_id":null,"result_hash":"ghi345jkl678...","notes":"read_file completed successfully","entry_hash":"def789abc012..."}
-{"ts":"2026-01-19T14:30:47.345Z","seq":3,"prev_hash":"def789abc012...","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"write_file","intent":"Update version in package.json","plan_hash":"plan-abc123","phase_id":null,"args_hash":"jkl012mno345...","result":"ok","error_code":null,"invariant_id":null,"result_hash":"pqr678stu901...","notes":"write_file completed successfully","entry_hash":"jkl012mno345..."}
+{"ts":"2026-01-19T14:30:45.123Z","seq":1,"prev_hash":"GENESIS","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"begin_session","intent":null,"plan_signature":null,"phase_id":null,"args_hash":null,"result":"ok","error_code":null,"invariant_id":null,"result_hash":null,"notes":"begin_session completed","entry_hash":"abc123def456..."}
+{"ts":"2026-01-19T14:30:46.234Z","seq":2,"prev_hash":"abc123def456...","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"read_file","intent":"Read package.json","plan_signature":null,"phase_id":null,"args_hash":"def789abc012...","result":"ok","error_code":null,"invariant_id":null,"result_hash":"ghi345jkl678...","notes":"read_file completed successfully","entry_hash":"def789abc012..."}
+{"ts":"2026-01-19T14:30:47.345Z","seq":3,"prev_hash":"def789abc012...","session_id":"550e8400-e29b-41d4-a716-446655440000","role":"WINDSURF","workspace_root":"/workspace","tool":"write_file","intent":"Update version in package.json","plan_signature":"plan-abc123","phase_id":null,"args_hash":"jkl012mno345...","result":"ok","error_code":null,"invariant_id":null,"result_hash":"pqr678stu901...","notes":"write_file completed successfully","entry_hash":"jkl012mno345..."}
 ```
 
 **Notes**:

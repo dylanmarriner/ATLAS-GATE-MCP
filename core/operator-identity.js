@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { sha256 } from "./cosign-hash-provider.js";
 
 /**
  * ROLE: INFRASTRUCTURE
@@ -54,9 +54,7 @@ export function bindOperatorIdentity(operator_id, operator_role, authentication_
     operator_role,
     authentication_context: authentication_context.trim(),
     bound_at: new Date().toISOString(),
-    identity_hash: crypto.createHash("sha256")
-      .update(`${operator_id}:${operator_role}:${authentication_context}`)
-      .digest("hex")
+    identity_hash: sha256(`${operator_id}:${operator_role}:${authentication_context}`)
   };
 
   return {

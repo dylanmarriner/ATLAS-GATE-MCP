@@ -2,10 +2,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { writeFileHandler } from './tools/write_file.js';
-import { resolveRepoRoot } from './core/repo-resolver.js';
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from './core/path-resolver.js';
-import { SESSION_STATE } from './session.js';
+import { writeFileHandler } from '../../tools/write_file.js';
+import { resolveRepoRoot } from '../../core/repo-resolver.js';
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from '../../core/path-resolver.js';
+import { SESSION_STATE } from '../../session.js';
 import os from 'os';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

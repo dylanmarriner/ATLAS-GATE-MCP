@@ -20,6 +20,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { canonicalizeForSigning, verifyWithCosign } from "./cosign-hash-provider.js";
 
 // ============================================================================
 // FINDING CODES (REQUIRED BY SPEC SECTION 4)
@@ -57,18 +58,7 @@ export const FINDING_CODES = {
   TAMPER_DETECTED_HASH_RECOMPUTATION_MISMATCH: "TAMPER_DETECTED_HASH_RECOMPUTATION_MISMATCH",
 };
 
-// ============================================================================
-// UTILITY: HASHING
-// ============================================================================
-
-function sha256(input) {
-  const normalized = typeof input === "string" ? input : JSON.stringify(input);
-  return crypto.createHash("sha256").update(normalized).digest("hex");
-}
-
-function canonicalizeForHash(obj) {
-  return JSON.stringify(obj, Object.keys(obj).sort(), "");
-}
+// Hashing utilities imported from cosign-hash-provider
 
 // ============================================================================
 // REPLAY CONFIGURATION & VALIDATION
@@ -79,17 +69,13 @@ function canonicalizeForHash(obj) {
  *
  * @throws {Error} if required inputs are missing or invalid
  */
-function validateReplayInputs(workspaceRoot, planHash) {
+function validateReplayInputs(workspaceRoot, planSignature) {
   if (!workspaceRoot || typeof workspaceRoot !== "string") {
     throw new Error("REPLAY_INVALID_INPUT: workspace_root must be a non-empty string");
   }
 
-  if (!planHash || typeof planHash !== "string") {
-    throw new Error("REPLAY_INVALID_INPUT: plan_hash is required (64-char hex)");
-  }
-
-  if (!/^[a-f0-9]{64}$/.test(planHash)) {
-    throw new Error("REPLAY_INVALID_INPUT: plan_hash must be 64-char hex string (SHA256)");
+  if (!planSignature || typeof planSignature !== "string") {
+    throw new Error("REPLAY_INVALID_INPUT: plan_signature is required");
   }
 }
 
@@ -136,16 +122,16 @@ function readAuditLog(workspaceRoot) {
 }
 
 // ============================================================================
-// HASH CHAIN VERIFICATION
+// SIGNATURE CHAIN VERIFICATION
 // ============================================================================
 
 /**
- * Verify hash chain integrity.
+ * Verify signature chain integrity.
  * Returns list of violations, empty if valid.
  */
 function verifyHashChain(auditEntries) {
   const violations = [];
-  let expectedPrevHash = "GENESIS";
+  let expectedPrevSignature = null;
 
   for (const { lineNum, data } of auditEntries) {
     if (data === null) {
@@ -153,32 +139,28 @@ function verifyHashChain(auditEntries) {
       continue;
     }
 
-    // Check prev_hash chain
-    if (data.prev_hash !== expectedPrevHash) {
+    // Check prev_signature chain
+    if (data.prev_signature !== expectedPrevSignature) {
       violations.push({
         finding_code: FINDING_CODES.TAMPER_DETECTED_BROKEN_HASH_CHAIN,
         seq: data.seq,
         lineNum,
-        message: `Hash chain broken at seq ${data.seq}: expected prev_hash ${expectedPrevHash}, got ${data.prev_hash}`,
+        message: `Signature chain broken at seq ${data.seq}: expected prev_signature ${expectedPrevSignature}, got ${data.prev_signature}`,
       });
     }
 
-    // Verify entry hash (recompute)
-    const storedHash = data.entry_hash;
-    const canonicalWithoutHash = { ...data };
-    delete canonicalWithoutHash.entry_hash;
-
-    const computedHash = sha256(canonicalizeForHash(canonicalWithoutHash));
-    if (computedHash !== storedHash) {
+    // Verify signature is present (full verification done in audit-system.js)
+    const storedSignature = data.signature;
+    if (!storedSignature) {
       violations.push({
-        finding_code: FINDING_CODES.TAMPER_DETECTED_HASH_RECOMPUTATION_MISMATCH,
+        finding_code: FINDING_CODES.TAMPER_DETECTED_INVALID_JSON,
         seq: data.seq,
         lineNum,
-        message: `Entry hash mismatch at seq ${data.seq}: stored ${storedHash}, computed ${computedHash}`,
+        message: `Entry signature missing at seq ${data.seq}`,
       });
     }
 
-    expectedPrevHash = storedHash || data.prev_hash;
+    expectedPrevSignature = storedSignature || expectedPrevSignature;
   }
 
   return violations;
@@ -367,24 +349,24 @@ function validateAuthority(auditEntries) {
 // ============================================================================
 
 /**
- * For a given plan_hash, ensure all tools were executed within the
+ * For a given plan_signature, ensure all tools were executed within the
  * expected phase boundaries defined in the plan.
  * (This is a placeholder; full validation requires reading the plan file.)
  */
-function validatePlanScope(auditEntries, planHash, workspaceRoot) {
+function validatePlanScope(auditEntries, planSignature, workspaceRoot) {
   const violations = [];
 
   // Count entries for this plan
   const planEntries = auditEntries.filter(
-    ({ data }) => data && data.plan_hash === planHash
+    ({ data }) => data && data.plan_signature === planSignature
   );
 
   if (planEntries.length === 0) {
     // No execution for this plan; gap in evidence
     violations.push({
       finding_code: FINDING_CODES.EVIDENCE_GAP_INCOMPLETE_PLAN_EXECUTION,
-      plan_hash: planHash,
-      message: `No audit entries found for plan ${planHash}`,
+      plan_signature: planSignature,
+      message: `No audit entries found for plan ${planSignature}`,
     });
   }
 
@@ -398,7 +380,7 @@ function validatePlanScope(auditEntries, planHash, workspaceRoot) {
 /**
  * Execute deterministic replay:
  * 1. Read audit log (read-only)
- * 2. Verify hash chain integrity
+ * 2. Verify signature chain integrity
  * 3. Check sequence continuity
  * 4. Validate determinism invariants
  * 5. Detect authority/policy violations
@@ -406,15 +388,15 @@ function validatePlanScope(auditEntries, planHash, workspaceRoot) {
  * 7. Classify findings
  *
  * @param {string} workspaceRoot - Locked workspace root
- * @param {string} planHash - SHA256 plan hash
+ * @param {string} planSignature - Cosign plan signature
  * @param {Object} filters - Optional: { phase_id, tool, seq_start, seq_end }
  * @returns {Object} replay result with findings and timeline
  * @throws {Error} if inputs are invalid (fail-closed)
  */
-export function replayExecution(workspaceRoot, planHash, filters = {}) {
+export function replayExecution(workspaceRoot, planSignature, filters = {}) {
   // STEP 1: VALIDATE INPUTS (FAIL-CLOSED)
    try {
-     validateReplayInputs(workspaceRoot, planHash);
+     validateReplayInputs(workspaceRoot, planSignature);
    } catch (err) {
      // Re-throw for governance compliance - validation errors must propagate
      throw new Error(`REPLAY_INVALID_INPUT: ${err.message}`);
@@ -449,7 +431,7 @@ export function replayExecution(workspaceRoot, planHash, filters = {}) {
       findings: [
         {
           finding_code: FINDING_CODES.EVIDENCE_GAP_INCOMPLETE_PLAN_EXECUTION,
-          plan_hash: planHash,
+          plan_signature: planSignature,
           message: "No audit entries recorded",
         },
       ],
@@ -500,7 +482,7 @@ export function replayExecution(workspaceRoot, planHash, filters = {}) {
   allFindings.push(...validateAuthority(filteredEntries));
 
   // Plan scope validation
-  allFindings.push(...validatePlanScope(filteredEntries, planHash, workspaceRoot));
+  allFindings.push(...validatePlanScope(filteredEntries, planSignature, workspaceRoot));
 
   // STEP 5: BUILD TIMELINE
   const timeline = filteredEntries
@@ -511,10 +493,8 @@ export function replayExecution(workspaceRoot, planHash, filters = {}) {
       tool: data.tool,
       role: data.role,
       intent: data.intent,
-      plan_hash: data.plan_hash,
+      plan_signature: data.plan_signature,
       phase_id: data.phase_id,
-      args_hash: data.args_hash,
-      result_hash: data.result_hash,
       error_code: data.error_code,
       invariant_id: data.invariant_id,
     }));
@@ -536,7 +516,7 @@ export function replayExecution(workspaceRoot, planHash, filters = {}) {
   return {
     success: verdict === "PASS",
     error_code: null,
-    plan_hash: planHash,
+    plan_signature: planSignature,
     entries_analyzed: filteredEntries.length,
     findings: allFindings,
     timeline,

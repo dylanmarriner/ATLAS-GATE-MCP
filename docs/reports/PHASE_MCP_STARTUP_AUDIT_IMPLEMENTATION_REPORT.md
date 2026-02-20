@@ -223,9 +223,9 @@ Enforced by Check 3.2 logic.
 **Check 4.1**: Plans addressed by hash (SHA256), not by name
 
 ```javascript
-export function enforcePlan(planHash, targetPath) {
-  invariantNotNull(planHash, "INV_PLAN_HASH_REQUIRED", "...");
-  const planFile = resolvePlanPath(planHash);  // ← Hash-based lookup
+export function enforcePlan(planSignature, targetPath) {
+  invariantNotNull(planSignature, "INV_PLAN_HASH_REQUIRED", "...");
+  const planFile = resolvePlanPath(planSignature);  // ← Hash-based lookup
   ...
 }
 ```

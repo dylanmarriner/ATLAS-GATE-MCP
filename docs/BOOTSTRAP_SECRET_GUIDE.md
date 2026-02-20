@@ -406,7 +406,7 @@ grep "bootstrap" audit-log.jsonl
 # {
 #   "tool": "bootstrap_create_foundation_plan",
 #   "status": "success",
-#   "plan_hash": "...",
+#   "plan_signature": "...",
 #   "timestamp": "2026-01-20T..."
 # }
 ```

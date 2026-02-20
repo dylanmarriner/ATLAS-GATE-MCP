@@ -147,7 +147,7 @@ return score
 **Formula:**
 ```
 score = 5.0
-if planHashCoverage < 1.0: score = 2.0
+if planSignatureCoverage < 1.0: score = 2.0
 if hashMismatches > 0: score = 2.0
 if unauthorizedPaths > 0: score = 2.0
 return score
@@ -265,7 +265,7 @@ The system MUST:
 | Reliability | auditCoverage ≥99% AND hashChainBreaks=0 AND replayFailRate<0.01 |
 | Security | policyPassRate=100% AND bypassCount=0 AND auditTamperedCount=0 |
 | Documentation | intentCoverage≥95% AND schemaViolations=0 AND nonCoderSections=true |
-| Governance | planHashCoverage=100% AND hashMismatches=0 AND unauthorizedPaths=0 |
+| Governance | planSignatureCoverage=100% AND hashMismatches=0 AND unauthorizedPaths=0 |
 | Integration | toolCount≥5 AND gateFailures=0 AND !manualStepsRequired |
 | Performance | metrics present AND policyLatency≤5000 AND auditLatency≤10000 AND !regression |
 

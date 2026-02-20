@@ -16,7 +16,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
+import { sha256 } from './cosign-hash-provider.js';
 
 const MATURITY_DIMENSIONS = {
   RELIABILITY: 'Reliability',
@@ -482,5 +482,5 @@ export function explainMaturityGap(currentLevel, targetLevel = 5.0, dimensions) 
  */
 export function hashScoringResult(scoreResult) {
   const canonical = JSON.stringify(scoreResult, null, 0);
-  return crypto.createHash('sha256').update(canonical).digest('hex');
+  return sha256(canonical);
 }

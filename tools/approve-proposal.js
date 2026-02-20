@@ -108,7 +108,7 @@ export async function approveProposal(params) {
       {
         tool: "approve_proposal",
         intent: `Human gate: Mark proposal ${proposal_id} as ${decision}`,
-        plan_hash: updated_proposal.plan_hash,
+        plan_signature: updated_proposal.plan_signature,
         role: "BOUNDARY", // Approval is a boundary operation
         result: "ok",
         error_code: null,

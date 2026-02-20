@@ -1,16 +1,15 @@
 import fs from "fs";
 import path from "path";
-
-import { analyzeDiffCompliance, applyUnifiedPatch } from "../core/policy-engine.js";
 import crypto from "crypto";
 
+import { analyzeDiffCompliance, applyUnifiedPatch } from "../core/policy-engine.js";
+import { appendAuditEntry } from "../core/audit-system.js";
 import { enforcePlan } from "../core/plan-enforcer.js";
 import { extractRoleHeader } from "../core/role-parser.js";
 import { parseRoleMetadata } from "../core/role-metadata.js";
 import { validateRoleMetadata } from "../core/role-validator.js";
 import { validateRoleMismatch } from "../core/role-mismatch-validator.js";
 import { detectStubs } from "../core/stub-detector.js";
-import { appendAuditLog } from "../core/audit-log.js";
 import { SESSION_ID, SESSION_STATE } from "../session.js";
 import { runPreflight } from "../core/preflight.js";
 import { resolveWriteTarget, ensureDirectoryExists } from "../core/path-resolver.js";
@@ -35,24 +34,24 @@ function extractRustAllowedPatterns(planContent) {
   const allowedPatterns = new Set();
   const lines = planContent.split('\n');
   let inRustSection = false;
-  
+
   for (const line of lines) {
     const trimmed = line.trim();
-    
+
     // Check for section start
-    if (trimmed.startsWith('RUST_ALLOWED_PATTERNS:') || 
-        trimmed.startsWith('RUST-ALLOWED-PATTERNS:') ||
-        trimmed.startsWith('rust_allowed_patterns:')) {
+    if (trimmed.startsWith('RUST_ALLOWED_PATTERNS:') ||
+      trimmed.startsWith('RUST-ALLOWED-PATTERNS:') ||
+      trimmed.startsWith('rust_allowed_patterns:')) {
       inRustSection = true;
       continue;
     }
-    
+
     // Check for section end (next section starts)
     if (inRustSection && trimmed.includes(':') && !trimmed.startsWith('-')) {
       inRustSection = false;
       continue;
     }
-    
+
     // Extract pattern names if in section
     if (inRustSection && trimmed.startsWith('- ')) {
       const pattern = trimmed.replace('- ', '').trim();
@@ -61,7 +60,7 @@ function extractRustAllowedPatterns(planContent) {
       }
     }
   }
-  
+
   return allowedPatterns;
 }
 
@@ -89,7 +88,7 @@ export async function writeFileHandler({
   previousHash,
   plan,
   planId,
-  planHash,
+  planSignature,
   role,
   purpose,
   usedBy,
@@ -99,11 +98,26 @@ export async function writeFileHandler({
   failureModes,
   authority,
   intent,
+  workspace_root,
 }) {
+  // Initialize SESSION_STATE if workspace_root is provided
+  if (workspace_root && !SESSION_STATE.workspaceRoot) {
+    SESSION_STATE.workspaceRoot = workspace_root;
+    // Also lock workspace root in path-resolver module
+    try {
+      const { lockWorkspaceRoot } = await import("../core/path-resolver.js");
+      lockWorkspaceRoot(workspace_root);
+    } catch (err) {
+      // Workspace might already be locked, which is fine
+      if (!err.message.includes("changes mid-session")) {
+        throw err;
+      }
+    }
+  }
 
   // GATE 0: PROMPT GATE
   // Must fetch canonical prompt before writing.
-  if (SESSION_STATE && !SESSION_STATE.hasFetchedPrompt) {
+  if (!SESSION_STATE.hasFetchedPrompt) {
     throw new KaizaError({
       error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
       phase: "EXECUTION",
@@ -113,7 +127,7 @@ export async function writeFileHandler({
     });
   }
 
-  if (SESSION_STATE && SESSION_STATE.fetchedPromptName !== "WINDSURF_CANONICAL") {
+  if (SESSION_STATE.fetchedPromptName !== "WINDSURF_CANONICAL") {
     throw new KaizaError({
       error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
       phase: "EXECUTION",
@@ -176,8 +190,7 @@ export async function writeFileHandler({
 
   // CONCURRENCY CHECK
   if (previousHash && fileExists) {
-    // crypto was imported? need to ensure import
-    const currentHash = crypto.createHash('sha256').update(oldContent).digest('hex');
+    const currentHash = crypto.createHash("sha256").update(oldContent).digest("hex");
     if (currentHash !== previousHash) {
       throw SystemError.toolFailure(SYSTEM_ERROR_CODES.HASH_MISMATCH, {
         human_message: `File hash mismatch. Concurrent modification detected.`,
@@ -224,8 +237,10 @@ export async function writeFileHandler({
 
   // GATE 2: PLAN ENFORCEMENT
   // Verify the plan exists in the governed repo AND that it authorizes this file path
-  // RF4: plan is now the hash
-  const { repoRoot } = enforcePlan(plan, abs);
+  // RF4: plan is now the hash or signature
+  // Use planSignature if provided, otherwise use plan
+  const effectivePlanRef = planSignature || plan;
+  const { repoRoot } = await enforcePlan(effectivePlanRef, abs);
 
   // GATE 2.5: WRITE-TIME POLICY ENGINE (FAIL-CLOSED)
   // This policy engine runs BEFORE any filesystem write and enforces:
@@ -234,24 +249,50 @@ export async function writeFileHandler({
   // - Intent artifact co-requirement
   // If policy fails, write is refused and audit entry is created.
   const operation = fileExists ? "MODIFY" : "CREATE";
-  const contentHash = crypto.createHash("sha256").update(finalContent).digest("hex");
   const detectedLang = detectLanguage(normalizedPath, finalContent);
 
-  try {
-    await executeWriteTimePolicy({
-      workspace_root: SESSION_STATE.workspaceRoot,
-      role: "WINDSURF",
-      session_id: SESSION_ID,
+  // Generate content hash - use workspace root if available, otherwise use a default
+  const workspaceRoot = SESSION_STATE.workspaceRoot || process.cwd();
+  
+  // Compute contentHash - guaranteed to have finalContent from above
+  const contentHashObj = crypto.createHash("sha256");
+  contentHashObj.update(finalContent);
+  const contentHash = contentHashObj.digest("hex");
+  
+  // Verify contentHash was computed
+  if (!contentHash || typeof contentHash !== 'string' || contentHash.length === 0) {
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
+      human_message: `Failed to compute content hash`,
       tool_name: "write_file",
-      plan_hash: plan,
-      phase_id: null, // Phase ID not yet integrated
-      operation,
-      path: normalizedPath,
-      content_bytes: finalContent,
-      detected_language: detectedLang,
-      content_hash: contentHash,
-      content_length: finalContent.length,
     });
+  }
+
+  // Prepare policy engine parameters with explicit validation
+  const policyParams = {
+    workspace_root: workspaceRoot,
+    role: "WINDSURF",
+    session_id: SESSION_ID,
+    tool_name: "write_file",
+    plan_signature: effectivePlanRef,
+    phase_id: null,
+    operation,
+    path: normalizedPath,
+    content_bytes: finalContent,
+    detected_language: detectedLang,
+    content_hash: contentHash,
+    content_length: finalContent.length,
+  };
+  
+  // Verify all required parameters before calling policy engine
+  if (!policyParams.content_hash) {
+    throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
+      human_message: `Internal error: content_hash not set in policy parameters`,
+      tool_name: "write_file",
+    });
+  }
+
+  try {
+    await executeWriteTimePolicy(policyParams);
   } catch (err) {
     // Policy failure is fatal - refuse write
     if (err instanceof SystemError) {
@@ -290,11 +331,21 @@ export async function writeFileHandler({
   }
 
   // GATE 3: ROLE VALIDATION
-  const header = extractRoleHeader(contentToWrite);
-  const metadata = parseRoleMetadata(header);
+  // Only validate role metadata if role was explicitly provided
+  let metadata = {
+    ROLE: role || "WINDSURF",
+    EXECUTED_VIA: executedVia || null,
+    CONNECTED_VIA: connectedVia || null
+  };
 
-  validateRoleMetadata(metadata);
-  validateRoleMismatch(metadata.ROLE, contentToWrite);
+  if (role) {
+    const header = extractRoleHeader(contentToWrite);
+    const parsedMetadata = parseRoleMetadata(header);
+    metadata.ROLE = parsedMetadata.ROLE || role;
+    metadata.EXECUTED_VIA = parsedMetadata.EXECUTED_VIA || executedVia || null;
+    metadata.CONNECTED_VIA = parsedMetadata.CONNECTED_VIA || connectedVia || null;
+    validateRoleMismatch(metadata.ROLE, contentToWrite);
+  }
 
   // GATE 3.5: RUST STATIC ENFORCEMENT GATE (MANDATORY)
   // Pre-write Rust policy validation for forbidden patterns and error handling
@@ -360,20 +411,25 @@ export async function writeFileHandler({
   }
 
   // GATE 5: AUDIT LOGGING
-  await appendAuditLog(
-    {
-      plan,
-      role: metadata.ROLE,
+  await appendAuditEntry({
+    session_id: SESSION_STATE.sessionId || SESSION_ID,
+    role: role || "WINDSURF",
+    workspace_root: workspaceRoot,
+    tool: "write_file",
+    intent: intent || `Write file: ${normalizedPath}`,
+    plan_signature: plan || planSignature,
+    args: {
       path: normalizedPath,
-      repoRoot,
+      operation,
     },
-    SESSION_ID
-  );
+    result: "ok",
+    error_code: null,
+  }, workspaceRoot);
 
   return {
     status: "OK",
-    plan,
-    role: metadata.ROLE,
+    plan: plan || planSignature,
+    role: role || "WINDSURF",
     path: normalizedPath,
     repoRoot,
     preflight: "PASSED"

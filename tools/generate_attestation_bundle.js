@@ -25,7 +25,7 @@ import path from "path";
 /**
  * Tool handler for generate_attestation_bundle.
  *
- * Input: optional { workspace_root_label, plan_hash_filter, time_window }
+ * Input: optional { workspace_root_label, plan_signature_filter, time_window }
  * Output: Signed attestation bundle with bundle_id
  */
 export async function generateAttestationBundleHandler(args) {
@@ -45,9 +45,9 @@ export async function generateAttestationBundleHandler(args) {
 
   try {
     // Generate bundle (read-only)
-    bundle = generateAttestationBundle(workspaceRoot, {
+    bundle = await generateAttestationBundle(workspaceRoot, {
       workspace_root_label: args.workspace_root_label || null,
-      plan_hash_filter: args.plan_hash_filter || null,
+      plan_signature_filter: args.plan_signature_filter || null,
       time_window: args.time_window || null,
     });
   } catch (err) {
@@ -61,7 +61,7 @@ export async function generateAttestationBundleHandler(args) {
       workspace_root: workspaceRoot,
       tool: "generate_attestation_bundle",
       intent: "Generate attestation bundle from workspace evidence",
-      plan_hash: null,
+      plan_signature: null,
       phase_id: null,
       args: args || {},
       result: "error",
@@ -84,11 +84,11 @@ export async function generateAttestationBundleHandler(args) {
     workspace_root: workspaceRoot,
     tool: "generate_attestation_bundle",
     intent: "Generate attestation bundle from workspace evidence",
-    plan_hash: null,
+    plan_signature: null,
     phase_id: null,
     args: {
       bundle_id: bundle.bundle_id,
-      plan_count: bundle.plan_hashes.length,
+      plan_count: bundle.plan_signatures.length,
       audit_entries: bundle.audit_metrics.total_entries,
     },
     result: "ok",

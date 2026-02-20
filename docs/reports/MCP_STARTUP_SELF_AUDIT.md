@@ -98,7 +98,7 @@ await server.tool.call('begin_session', { workspace_root: '/repo2' }); // Should
 
 | Invariant ID | Rule | Pass Criteria | Fail Criteria |
 |---|---|---|---|
-| `INV_STARTUP_PLAN_ADDRESSING_BY_HASH` | Plans addressed by hash only | `enforcePlan()` takes `planHash` parameter and calls `resolvePlanPath(planHash)` | Plan lookup uses name-based resolution |
+| `INV_STARTUP_PLAN_ADDRESSING_BY_HASH` | Plans addressed by hash only | `enforcePlan()` takes `planSignature` parameter and calls `resolvePlanPath(planSignature)` | Plan lookup uses name-based resolution |
 | `INV_STARTUP_PLAN_DIRECTORY_CANONICAL` | Plans directory is `{workspace_root}/docs/plans` | `getPlansDir()` returns canonical path | Plans directory is discovered or configurable |
 
 **Hash format**: SHA256 (64 hexadecimal characters)

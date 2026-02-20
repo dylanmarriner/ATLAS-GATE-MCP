@@ -64,7 +64,7 @@ await appendAuditEntry({
     role: "ANTIGRAVITY",
     tool: "bootstrap_create_foundation_plan",
     event: "plan_lint_proposal",
-    plan_hash: lintResult.hash,
+    plan_signature: lintResult.hash,
     lint_result: "PASS",
     error_count: 0,
     violations: [],
@@ -128,9 +128,9 @@ if (!lintResult.passed) {
 
 // Hash must match lint result hash
 const computedHash = lintResult.hash;
-if (computedHash !== payload.plan_hash) {
+if (computedHash !== payload.plan_signature) {
     throw new Error(
-        `APPROVAL_BLOCKED: Hash mismatch. Computed ${computedHash}, expected ${payload.plan_hash}`
+        `APPROVAL_BLOCKED: Hash mismatch. Computed ${computedHash}, expected ${payload.plan_signature}`
     );
 }
 
@@ -140,7 +140,7 @@ await appendAuditEntry({
     role: "ANTIGRAVITY",
     tool: "bootstrap_create_foundation_plan",
     event: "plan_lint_approval",
-    plan_hash: computedHash,
+    plan_signature: computedHash,
     lint_result: "PASS",
     error_count: 0,
     violations: [],
@@ -163,32 +163,32 @@ const rawHash = computedHash; // Use linted hash
 
 ### Location
 **File**: `tools/write_file.js`  
-**Function**: `enforcePlan(planHash, targetPath)` in `core/plan-enforcer.js`  
+**Function**: `enforcePlan(planSignature, targetPath)` in `core/plan-enforcer.js`  
 **When**: When WINDSURF calls write_file with a plan hash
 
 ### Current Code Flow
 ```javascript
-export function enforcePlan(planHash, targetPath) {
-    invariantNotNull(planHash, "INV_PLAN_HASH_REQUIRED", "Plan hash is required for authorization");
+export function enforcePlan(planSignature, targetPath) {
+    invariantNotNull(planSignature, "INV_PLAN_HASH_REQUIRED", "Plan hash is required for authorization");
 
-    const planFile = resolvePlanPath(planHash);
+    const planFile = resolvePlanPath(planSignature);
     const fileContent = fs.readFileSync(planFile, "utf8");
 
     const headerMatch = fileContent.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
     if (!headerMatch) {
-        throw new Error(`REFUSE: Plan ${planHash} is not APPROVED or has invalid header format.`);
+        throw new Error(`REFUSE: Plan ${planSignature} is not APPROVED or has invalid header format.`);
     }
 
     const embeddedHash = headerMatch[1];
 
-    if (embeddedHash !== planHash) {
-        throw new Error(`REFUSE: Hash mismatch. Filename ${planHash} does not match embedded hash ${embeddedHash}`);
+    if (embeddedHash !== planSignature) {
+        throw new Error(`REFUSE: Hash mismatch. Filename ${planSignature} does not match embedded hash ${embeddedHash}`);
     }
 
     // ... scope checks ...
     
-    return { repoRoot: getRepoRoot(), plan: planHash, data: {} };
+    return { repoRoot: getRepoRoot(), plan: planSignature, data: {} };
 }
 ```
 
@@ -200,7 +200,7 @@ Add linting re-validation during execution:
 import { lintPlan } from "./plan-linter.js";
 
 // RE-LINT PLAN AT EXECUTION TIME (FAIL IF MODIFIED)
-const lintResult = lintPlan(fileContent, planHash);
+const lintResult = lintPlan(fileContent, planSignature);
 if (!lintResult.passed) {
     throw SystemError.toolFailure(
         SYSTEM_ERROR_CODES.PLAN_VALIDATION_FAILED,
@@ -223,7 +223,7 @@ await appendAuditEntry({
     role: "WINDSURF",
     tool: "write_file",
     event: "plan_lint_execution",
-    plan_hash: planHash,
+    plan_signature: planSignature,
     lint_result: "PASS",
     error_count: 0,
     violations: [],
@@ -275,7 +275,7 @@ import { getPlansDir } from "../core/path-resolver.js";
 
 export async function lintPlanHandler({ path: filePath, hash, content }) {
   let planContent;
-  let planHash = hash;
+  let planSignature = hash;
   
   if (content) {
     planContent = content;
@@ -289,7 +289,7 @@ export async function lintPlanHandler({ path: filePath, hash, content }) {
     throw new Error("Must provide path, hash, or content");
   }
 
-  const lintResult = lintPlan(planContent, planHash);
+  const lintResult = lintPlan(planContent, planSignature);
 
   return {
     type: "text",
@@ -333,7 +333,7 @@ Every lint operation MUST append to audit log:
   "role": "ANTIGRAVITY|WINDSURF",
   "tool": "bootstrap_create_foundation_plan|write_file|lint_plan",
   "event": "plan_lint_proposal|plan_lint_approval|plan_lint_execution",
-  "plan_hash": "d8bb32317a7c1fa04b8203a75388afc6b58a9aa5cad210b85a3e826850b72112",
+  "plan_signature": "d8bb32317a7c1fa04b8203a75388afc6b58a9aa5cad210b85a3e826850b72112",
   "lint_result": "PASS|FAIL",
   "error_count": 0,
   "warning_count": 0,

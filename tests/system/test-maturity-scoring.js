@@ -22,8 +22,8 @@ import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { computeMaturityScore, explainMaturityGap, hashScoringResult } from './core/maturity-scoring-engine.js';
-import { generateMaturityReport, writeMaturityReport } from './core/maturity-report-generator.js';
+import { computeMaturityScore, explainMaturityGap, hashScoringResult } from '../../core/maturity-scoring-engine.js';
+import { generateMaturityReport, writeMaturityReport } from '../../core/maturity-report-generator.js';
 
 const TEST_SUITE = 'MATURITY_SCORING';
 

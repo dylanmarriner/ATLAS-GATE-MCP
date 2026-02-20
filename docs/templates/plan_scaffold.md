@@ -1,5 +1,5 @@
 <!--
-ATLAS-GATE_PLAN_HASH: placeholder
+ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -13,26 +13,30 @@ Status: APPROVED
 Timestamp: [ISO 8601 format, e.g., 2026-02-14T14:30:00Z]
 Governance: ATLAS-GATE-v1
 
+**Linting Status**: Will be validated by 7-stage linter (Structure, Phases, Paths, Enforceability, Auditability, Spectral, Cosign)
+
 ---
 
 # Scope & Constraints
 
-Objective: [Clear, measurable goal. What exactly are we building?]
+Objective: [Clear, measurable goal written in plain English. No code symbols, backticks, or technical jargon. Linter Stage 5 validates this is human-readable.]
 
 Affected Files:
-- [path/to/file1.js]: [What changes]
-- [path/to/file2.js]: [What changes]
-- [path/to/test.js]: [What changes]
+- [path/to/file1.js]: [What changes - specific, not vague]
+- [path/to/file2.js]: [What changes - specific, not vague]
+- [path/to/test.js]: [What changes - specific, not vague]
 
 Out of Scope:
 - [What explicitly will NOT be changed]
-- [To avoid scope creep]
+- [To avoid scope creep and ambiguity]
 
 Constraints:
-- MUST [requirement 1]
-- MUST [requirement 2]
+- MUST [requirement 1 - use binary language only]
+- MUST [requirement 2 - no "may", "should", "optional", "try to"]
 - MUST NOT [forbidden action 1]
 - MUST NOT [forbidden action 2]
+
+**Linter Validation**: Stage 4 checks for ambiguous language (may, should, try to, attempt to, optional). Stage 5 validates objectives are plain English.
 
 ---
 
@@ -49,6 +53,11 @@ Verification commands: npm run test && npm run lint
 Expected outcomes: All tests pass, all files created/modified per spec, zero lint errors
 Failure stop conditions: Test failure, Lint error, File outside allowlist, Syntax error
 
+**Linter Validation**: 
+- Stage 1 checks phase section exists
+- Stage 2 checks Phase ID is UPPERCASE_WITH_UNDERSCORES format and all required fields present (Objective, Allowed operations, Forbidden operations, Required intent artifacts, Verification commands, Expected outcomes, Failure stop conditions)
+- Stage 6 (Spectral) validates phase format matches rules
+
 ---
 
 # Path Allowlist
@@ -56,6 +65,11 @@ Failure stop conditions: Test failure, Lint error, File outside allowlist, Synta
 - src/
 - tests/
 - docs/
+
+**Linter Validation**: 
+- Stage 3 checks all paths are workspace-relative (no leading `/`)
+- Stage 3 blocks parent directory escapes (`..`)
+- Stage 3 blocks unresolved variables (`${...}`)
 
 ---
 
@@ -89,13 +103,18 @@ Actions STRICTLY PROHIBITED during execution:
 - MUST NOT skip verification commands
 - MUST NOT write code with "// to be implemented" comments
 
+**Linter Validation**: 
+- Stage 4 (Enforceability) scans for stub patterns: TODO, FIXME, XXX, HACK, stub, mock, placeholder, temp.*implementation, "to be implemented", "to be determined", tbd, wip
+- Stage 4 checks for ambiguous language: may, should, if possible, optional, try to, attempt to
+- Stage 4 blocks human judgment clauses: "use best judgment", "exercise judgment"
+
 ---
 
 # Rollback / Failure Policy
 
 ## Automatic Rollback Triggers
-1. Any verification gate fails (test failure, lint error)
-2. Hash mismatch detected during execution
+1. Signature verification fails (WINDSURF can't verify plan integrity with cosign)
+2. Any verification gate fails (test failure, lint error)
 3. File modified outside Path Allowlist
 4. Syntax error in written code
 5. Audit log entry missing after write
@@ -109,6 +128,12 @@ Actions STRICTLY PROHIBITED during execution:
 
 ## Recovery Steps
 1. Review failure logs and error output
-2. Identify root cause (test failure, lint error, etc.)
+2. Identify root cause:
+   - Signature verification failure: Plan file was modified or public key mismatch - check git history
+   - Test failure or lint error: Code needs fixing, resubmit to linting
+   - File outside allowlist: Plan scope violation, modify plan Path Allowlist
 3. Modify plan to address issue
-4. Resubmit plan for linting and execution
+4. Resubmit plan for linting (runs all 7 stages: Structure, Phases, Paths, Enforceability, Auditability, Spectral, Cosign signing)
+5. New signature generated: `ATLAS-GATE_PLAN_SIGNATURE: [new-url-safe-base64]`
+6. Plan saved with new filename: `docs/plans/[new-signature].md`
+7. WINDSURF executes with verified signature

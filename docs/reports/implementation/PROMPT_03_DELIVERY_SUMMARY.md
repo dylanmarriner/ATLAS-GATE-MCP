@@ -165,7 +165,7 @@ If audit fails, tool fails (no silent losses).
   "workspace_root": "/workspace",
   "tool": "write_file",
   "intent": "Update config",
-  "plan_hash": "plan-xyz",
+  "plan_signature": "plan-xyz",
   "phase_id": null,
   "args_hash": "def789...",
   "result": "ok",
@@ -290,7 +290,7 @@ node -e "
 - ✓ 18 required fields
 - ✓ Timestamp, sequence, prev_hash, entry_hash
 - ✓ Session ID, role, workspace_root
-- ✓ Tool, intent, plan_hash, phase_id
+- ✓ Tool, intent, plan_signature, phase_id
 - ✓ Args_hash, result, error_code, invariant_id, result_hash, notes
 
 ### 4) Redaction Policy

@@ -53,7 +53,7 @@ The policy engine receives the following inputs. If any are missing, the write i
 | `role` | string | WINDSURF or ANTIGRAVITY (currently WINDSURF only for writes) |
 | `session_id` | string | Session UUID for audit tracing |
 | `tool_name` | string | Name of calling tool (e.g., "write_file") |
-| `plan_hash` | string | SHA256 hash of authorized plan (from plan_enforcer) |
+| `plan_signature` | string | SHA256 hash of authorized plan (from plan_enforcer) |
 | `phase_id` | string \| null | Phase ID within plan (optional, for future use) |
 | `operation` | string | "CREATE" (new file) or "MODIFY" (existing file) |
 | `path` | string | Workspace-relative file path (e.g., "src/main.rs") |
@@ -255,7 +255,7 @@ On **every** policy failure, an audit entry is created with:
 - `role`: WINDSURF or ANTIGRAVITY
 - `workspace_root`: Locked workspace path
 - `tool`: "write_file"
-- `plan_hash`: Plan authorization hash
+- `plan_signature`: Plan authorization hash
 - `phase_id`: Phase within plan (if available)
 - `result`: "error"
 - `error_code`: Classified error code (e.g., "POLICY_VIOLATION")
@@ -409,7 +409,7 @@ Every write attempt (success or failure) produces an audit entry in `/.atlas-gat
   "role": "WINDSURF",
   "workspace_root": "/home/user/myproject",
   "tool": "write_file",
-  "plan_hash": "def456...",
+  "plan_signature": "def456...",
   "phase_id": null,
   "args_hash": "ghi789...",
   "result": "error",

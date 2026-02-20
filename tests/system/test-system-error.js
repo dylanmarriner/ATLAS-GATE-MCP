@@ -7,12 +7,12 @@
  * 3. Thrown object becomes SystemError envelope
  * 4. Invariant violation produces SystemError with invariant_id
  * 5. Pre-session errors have correct null fields
- * 6. Phase_id and plan_hash are preserved in envelope
+ * 6. Phase_id and plan_signature are preserved in envelope
  * 7. SystemError serialization is JSON-safe
  * 8. Audit log entry on failure is written
  */
 
-import { SystemError, SYSTEM_ERROR_CODES } from "./core/system-error.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../core/system-error.js";
 import assert from "assert";
 
 const tests = [];
@@ -125,9 +125,9 @@ tests.push({
   },
 });
 
-// TEST 6: phase_id and plan_hash are preserved in envelope
+// TEST 6: phase_id and plan_signature are preserved in envelope
 tests.push({
-  name: "phase_id and plan_hash are preserved in envelope",
+  name: "phase_id and plan_signature are preserved in envelope",
   run: () => {
     const systemErr = SystemError.toolFailure(
       SYSTEM_ERROR_CODES.PLAN_NOT_APPROVED,
@@ -135,13 +135,13 @@ tests.push({
         human_message: "Plan not approved",
         tool_name: "write_file",
         phase_id: "PHASE_5A",
-        plan_hash: "abc123def456",
+        plan_signature: "abc123def456",
       }
     );
 
     const envelope = systemErr.toEnvelope();
     assert.strictEqual(envelope.phase_id, "PHASE_5A");
-    assert.strictEqual(envelope.plan_hash, "abc123def456");
+    assert.strictEqual(envelope.plan_signature, "abc123def456");
     console.log("✓ TEST 6 PASS");
   },
 });
@@ -190,7 +190,7 @@ tests.push({
       "tool_name",
       "invariant_id",
       "phase_id",
-      "plan_hash",
+      "plan_signature",
       "cause",
       "timestamp",
     ];

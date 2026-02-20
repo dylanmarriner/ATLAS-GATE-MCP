@@ -26,7 +26,7 @@ import { readPromptHandler } from "../tools/read_prompt.js";
 import { readFileHandler } from "../tools/read_file.js";
 import { listPlansHandler } from "../tools/list_plans.js";
 import { lintPlanHandler } from "../tools/lint_plan.js";
-import { lintPlan, computePlanHash } from "../core/plan-linter.js";
+import { lintPlan } from "../core/plan-linter.js";
 
 // Session setup
 import { SESSION_STATE } from "../session.js";
@@ -291,19 +291,24 @@ try {
 }
 
 /**
- * TEST 5: Plan Hashing
+ * TEST 5: Plan Signature Generation
  */
-section("TEST 5: Plan Hashing");
+section("TEST 5: Plan Signature Generation");
 
 try {
-  const hash = computePlanHash(validPlan);
-  if (hash && hash.length === 64 && /^[a-f0-9]+$/.test(hash)) {
-    logTest("computePlanHash", "PASS", `Hash: ${hash.substring(0, 8)}...`);
+  const canonicalized = validPlan
+    .trim()
+    .split("\n")
+    .map(line => line.trimRight())
+    .join("\n");
+  const signature = crypto.createHash("sha256").update(canonicalized).digest("hex");
+  if (signature && signature.length === 64 && /^[a-f0-9]+$/.test(signature)) {
+    logTest("generatePlanSignature", "PASS", `Signature: ${signature.substring(0, 8)}...`);
   } else {
-    logTest("computePlanHash", "FAIL", "Invalid hash format");
+    logTest("generatePlanSignature", "FAIL", "Invalid signature format");
   }
 } catch (err) {
-  logTest("computePlanHash", "FAIL", err.message);
+  logTest("generatePlanSignature", "FAIL", err.message);
 }
 
 /**

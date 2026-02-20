@@ -203,7 +203,7 @@ $ node test-write-time-policy.js
 ## How It Works: Execution Flow
 
 ```
-1. write_file called with path, content, plan_hash
+1. write_file called with path, content, plan_signature
 
 2. GATE 2: enforcePlan() validates plan exists and is approved
 
@@ -260,7 +260,7 @@ await executeWriteTimePolicy({
   role: "WINDSURF",
   session_id: SESSION_ID,
   tool_name: "write_file",
-  plan_hash: plan,
+  plan_signature: plan,
   phase_id: null,
   operation: fileExists ? "MODIFY" : "CREATE",
   path: normalizedPath,

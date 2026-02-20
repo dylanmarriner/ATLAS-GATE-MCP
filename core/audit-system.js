@@ -24,6 +24,7 @@ import path from "path";
 import crypto from "crypto";
 import { getRepoRoot } from "./path-resolver.js";
 import { acquireLock, releaseLock } from "./file-lock.js";
+import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "./cosign-hash-provider.js";
 
 // ============================================================================
 // CONSTANTS & CONFIG
@@ -33,7 +34,8 @@ const AUDIT_DIR_RELATIVE = ".atlas-gate";
 const AUDIT_LOG_FILENAME = "audit.log";
 const AUDIT_INDEX_FILENAME = "audit.index";
 const AUDIT_LOCK_DIR = "audit.lock";
-const GENESIS_HASH = "GENESIS";
+const COSIGN_KEYS_DIR = ".cosign-keys";
+const GENESIS_SIGNATURE = null;
 
 // Sensitive keys to redact from audit entries
 const SENSITIVE_KEYS = new Set([
@@ -77,12 +79,44 @@ export function flushPreSessionBuffer(auditLogPath) {
 }
 
 // ============================================================================
-// UTILITY: SHA256 HASHING
+// KEY PAIR MANAGEMENT
 // ============================================================================
 
-function sha256(input) {
-  const normalized = typeof input === "string" ? input : JSON.stringify(input);
-  return crypto.createHash("sha256").update(normalized).digest("hex");
+let cachedKeyPair = null;
+
+async function loadOrGenerateKeyPair(workspaceRoot) {
+   if (cachedKeyPair) {
+     return cachedKeyPair;
+   }
+
+   const keyDir = path.join(workspaceRoot, AUDIT_DIR_RELATIVE, COSIGN_KEYS_DIR);
+   const pubPath = path.join(keyDir, "public.pem");
+   const privPath = path.join(keyDir, "private.pem");
+
+   // Try to load existing keys
+   if (fs.existsSync(pubPath) && fs.existsSync(privPath)) {
+     cachedKeyPair = {
+       publicKey: fs.readFileSync(pubPath, "utf8"),
+       privateKey: fs.readFileSync(privPath, "utf8")
+     };
+     return cachedKeyPair;
+   }
+
+   // Auto-generate keys for testing/development
+   try {
+     fs.mkdirSync(keyDir, { recursive: true });
+     const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
+       namedCurve: 'prime256v1',
+       publicKeyEncoding: { type: 'spki', format: 'pem' },
+       privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+     });
+     fs.writeFileSync(pubPath, publicKey, 'utf8');
+     fs.writeFileSync(privPath, privateKey, 'utf8');
+     cachedKeyPair = { publicKey, privateKey };
+     return cachedKeyPair;
+   } catch (err) {
+     throw new Error(`COSIGN_KEYGEN_FAILED: ${err.message}`);
+   }
 }
 
 // ============================================================================
@@ -138,13 +172,12 @@ export function redactArgs(args) {
 
 /**
  * Redact file content before logging.
- * For write operations, we hash the content but never log it raw.
+ * For write operations, we note the content but never log it raw.
  */
-export function redactFileContent(path, content) {
-  // Never log raw file content
+export function redactFileContent(contentPath, content) {
+  // Never log raw file content - only metadata
   return {
-    path,
-    contentHash: sha256(content),
+    path: contentPath,
     contentLength: content.length
   };
 }
@@ -153,10 +186,7 @@ export function redactFileContent(path, content) {
 // UTILITY: CANONICALIZATION
 // ============================================================================
 
-function canonicalizeForHash(obj) {
-  // Deterministic JSON serialization: sorted keys, no extra spaces
-  return JSON.stringify(obj, Object.keys(obj).sort(), "");
-}
+// Canonicalization imported from cosign-hash-provider
 
 // ============================================================================
 // AUDIT ENTRY BUILDING
@@ -164,61 +194,39 @@ function canonicalizeForHash(obj) {
 
 /**
  * Build a complete audit entry with all required fields.
+ * Note: Signature is added by appendAuditEntry after this function.
  * 
  * @param {Object} entry - Partial entry data
  * @param {number} seq - Sequence number
- * @param {string} prevHash - Hash of previous entry
- * @returns {Object} Complete entry ready for writing
+ * @param {string} prevSignature - Signature of previous entry
+ * @returns {Object} Complete entry ready for signing
  */
-function buildAuditEntry(entry, seq, prevHash) {
+function buildAuditEntry(entry, seq, prevSignature) {
   const timestamp = new Date().toISOString();
   
   // Redact args if present
   const redactedArgs = entry.args ? redactArgs(entry.args) : null;
-  const argsHash = redactedArgs ? sha256(canonicalizeForHash(redactedArgs)) : null;
 
-  // Redact result if needed
-  let resultHash = null;
-  if (entry.result && typeof entry.result === "object") {
-    if (entry.result.path && entry.result.content !== undefined) {
-      // File content in result - hash it, don't log it
-      const redacted = redactFileContent(entry.result.path, entry.result.content);
-      resultHash = sha256(canonicalizeForHash(redacted));
-    } else {
-      resultHash = sha256(canonicalizeForHash(entry.result));
-    }
-  } else if (entry.result) {
-    resultHash = sha256(String(entry.result));
-  }
-
-  // Build canonical entry (without entry_hash yet)
+  // Build canonical entry (without signature yet)
   const canonical = {
     ts: timestamp,
     seq,
-    prev_hash: prevHash,
+    prev_signature: prevSignature,
     session_id: entry.session_id,
     role: entry.role,
     workspace_root: entry.workspace_root,
     tool: entry.tool,
     intent: entry.intent || null,
-    plan_hash: entry.plan_hash || null,
+    plan_signature: entry.plan_signature || null,
     phase_id: entry.phase_id || null,
-    args_hash: argsHash,
+    args: redactedArgs,
     result: entry.result === undefined ? null : (typeof entry.result === "string" ? entry.result : "ok"),
     error_code: entry.error_code || null,
     invariant_id: entry.invariant_id || null,
-    result_hash: resultHash,
     notes: entry.notes || null
   };
 
-  // Compute hash of canonical entry
-  const entryHash = sha256(canonicalizeForHash(canonical));
-  
-  // Add hash to entry
-  return {
-    ...canonical,
-    entry_hash: entryHash
-  };
+  return canonical;
 }
 
 // ============================================================================
@@ -246,15 +254,15 @@ function getAuditDir(workspaceRoot) {
  * 
  * CRITICAL: This function:
  * 1. Acquires exclusive lock
- * 2. Reads current sequence and last hash atomically
- * 3. Builds entry with deterministic hash chain
+ * 2. Reads current sequence and last signature atomically
+ * 3. Builds entry and signs with cosign
  * 4. Writes single JSON line atomically
  * 5. Releases lock
  * 
  * @param {Object} entry - Audit entry fields
  * @param {string} workspaceRoot - The locked workspace root
  * @throws {Error} if lock acquisition or append fails
- * @returns {Object} written entry with seq and entry_hash
+ * @returns {Object} written entry with seq and signature
  */
 export async function appendAuditEntry(entry, workspaceRoot) {
   if (!workspaceRoot) {
@@ -272,6 +280,9 @@ export async function appendAuditEntry(entry, workspaceRoot) {
     fs.mkdirSync(auditDir, { recursive: true });
   }
 
+  // Load cosign key pair
+  const keyPair = await loadOrGenerateKeyPair(workspaceRoot);
+
   // ACQUIRE LOCK (fail-closed on timeout)
   let lockAcquired = false;
   try {
@@ -284,7 +295,7 @@ export async function appendAuditEntry(entry, workspaceRoot) {
   try {
     // READ CURRENT STATE (atomically with lock held)
     let seq = 1;
-    let prevHash = GENESIS_HASH;
+    let prevSignature = GENESIS_SIGNATURE;
 
     if (fs.existsSync(auditPath)) {
       const lines = fs.readFileSync(auditPath, "utf8").trim().split("\n").filter(l => l.length > 0);
@@ -293,18 +304,28 @@ export async function appendAuditEntry(entry, workspaceRoot) {
         try {
           const lastEntry = JSON.parse(lines[lines.length - 1]);
           seq = (lastEntry.seq || lines.length) + 1;
-          prevHash = lastEntry.entry_hash || lastEntry.hash || GENESIS_HASH;
+          prevSignature = lastEntry.signature || GENESIS_SIGNATURE;
         } catch (parseErr) {
           throw new Error(`AUDIT_CORRUPT: Cannot parse last entry: ${parseErr.message}`);
         }
       }
     }
 
-    // BUILD ENTRY WITH HASH CHAIN
-    const auditEntry = buildAuditEntry(entry, seq, prevHash);
+    // BUILD ENTRY
+    const auditEntry = buildAuditEntry(entry, seq, prevSignature);
+
+    // SIGN ENTRY WITH COSIGN
+    const canonical = canonicalizeForSigning(auditEntry);
+    const signature = await signWithCosign(canonical, keyPair);
+
+    // ADD SIGNATURE TO ENTRY
+    const signedEntry = {
+      ...auditEntry,
+      signature
+    };
 
     // WRITE ATOMICALLY (append mode, single write)
-    const line = JSON.stringify(auditEntry) + "\n";
+    const line = JSON.stringify(signedEntry) + "\n";
     
     try {
       fs.appendFileSync(auditPath, line);
@@ -312,7 +333,7 @@ export async function appendAuditEntry(entry, workspaceRoot) {
       throw new Error(`AUDIT_WRITE_FAILED: ${writeErr.message}`);
     }
 
-    return auditEntry;
+    return signedEntry;
   } finally {
     // RELEASE LOCK (critical: must always run)
     if (lockAcquired) {
@@ -331,7 +352,7 @@ export async function appendAuditEntry(entry, workspaceRoot) {
 // CORE OPERATION: VERIFY AUDIT LOG INTEGRITY
 // ============================================================================
 
-export function verifyAuditLogIntegrity(workspaceRoot) {
+export async function verifyAuditLogIntegrity(workspaceRoot) {
   const auditPath = getAuditLogPath(workspaceRoot);
 
   if (!fs.existsSync(auditPath)) {
@@ -345,9 +366,11 @@ export function verifyAuditLogIntegrity(workspaceRoot) {
 
   const lines = fs.readFileSync(auditPath, "utf8").trim().split("\n").filter(l => l.length > 0);
   const failures = [];
+  
+  const keyPair = await loadOrGenerateKeyPair(workspaceRoot);
 
   let expectedSeq = 1;
-  let expectedPrevHash = GENESIS_HASH;
+  let expectedPrevSignature = GENESIS_SIGNATURE;
 
   for (let i = 0; i < lines.length; i++) {
     const lineNum = i + 1;
@@ -360,8 +383,6 @@ export function verifyAuditLogIntegrity(workspaceRoot) {
         seq: lineNum,
         error: `INVALID_JSON: ${err.message}`
       });
-      // Continue processing remaining entries but mark the log as corrupted
-      // This is a verification-mode operation, not a mutation, so continuing is acceptable
       throw new Error(`AUDIT_LOG_CORRUPTED: Invalid JSON at line ${lineNum}: ${err.message}`);
     }
 
@@ -373,29 +394,30 @@ export function verifyAuditLogIntegrity(workspaceRoot) {
       });
     }
 
-    // Validate hash chain
-    if (entry.prev_hash !== expectedPrevHash) {
+    // Validate signature chain
+    if (entry.prev_signature !== expectedPrevSignature) {
       failures.push({
         seq: lineNum,
-        error: `CHAIN_BROKEN: expected prev_hash ${expectedPrevHash}, got ${entry.prev_hash}`
+        error: `CHAIN_BROKEN: expected prev_signature ${expectedPrevSignature}, got ${entry.prev_signature}`
       });
     }
 
-    // Verify entry hash (recompute and compare)
-    const storedHash = entry.entry_hash;
-    const canonicalWithoutHash = { ...entry };
-    delete canonicalWithoutHash.entry_hash;
-    const computedHash = sha256(canonicalizeForHash(canonicalWithoutHash));
-
-    if (computedHash !== storedHash) {
+    // Verify signature (recompute and compare)
+    const storedSignature = entry.signature;
+    const entryWithoutSignature = { ...entry };
+    delete entryWithoutSignature.signature;
+    const canonical = canonicalizeForSigning(entryWithoutSignature);
+    
+    const isValid = await verifyWithCosign(canonical, storedSignature, keyPair.publicKey);
+    if (!isValid) {
       failures.push({
         seq: lineNum,
-        error: `HASH_MISMATCH: stored ${storedHash}, computed ${computedHash}`
+        error: `SIGNATURE_INVALID: Stored signature does not match entry content`
       });
     }
 
     expectedSeq += 1;
-    expectedPrevHash = entry.entry_hash;
+    expectedPrevSignature = entry.signature;
   }
 
   return {

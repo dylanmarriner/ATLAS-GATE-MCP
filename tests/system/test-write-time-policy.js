@@ -11,8 +11,8 @@ import assert from "assert";
 import {
   detectLanguage,
   executeWriteTimePolicy,
-} from "./core/write-time-policy-engine.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "./core/system-error.js";
+} from "../../core/write-time-policy-engine.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../core/system-error.js";
 import crypto from "crypto";
 import path from "path";
 import os from "os";
@@ -45,7 +45,7 @@ function createBasePolicyInput(overrides = {}) {
     role: "WINDSURF",
     session_id: "test-session",
     tool_name: "write_file",
-    plan_hash: sha256("test-plan"),
+    plan_signature: sha256("test-plan"),
     phase_id: null,
     operation: "CREATE",
     path: "src/test.js",

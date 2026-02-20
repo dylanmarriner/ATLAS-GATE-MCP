@@ -115,7 +115,7 @@ Test Coverage:
 3. ✓ Object → SystemError (normalized)
 4. ✓ Invariant violation (includes invariant_id)
 5. ✓ Pre-session errors (session_id/workspace_root = null)
-6. ✓ phase_id/plan_hash preservation
+6. ✓ phase_id/plan_signature preservation
 7. ✓ JSON serialization (no circular refs)
 8. ✓ Required envelope fields (all present, none undefined)
 9. ✓ Minimal context construction
@@ -255,7 +255,7 @@ npm run verify
 - [x] JSON serialization tested and deterministic
 - [x] Session state properly populated in envelopes
 - [x] Invariant IDs preserved when applicable
-- [x] phase_id and plan_hash preserved in context
+- [x] phase_id and plan_signature preserved in context
 - [x] Startup failures handled (startupFailure factory)
 - [x] 12 comprehensive tests added (all passing)
 - [x] Spec document created (MCP_CANONICAL_ERROR_CONTRACT.md)

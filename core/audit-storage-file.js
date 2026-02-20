@@ -7,7 +7,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import crypto from 'crypto';
+import { sha256 } from './cosign-hash-provider.js';
 import { AuditStorage } from './audit-storage.js';
 
 export class FileAuditStorage extends AuditStorage {
@@ -20,15 +20,15 @@ export class FileAuditStorage extends AuditStorage {
   }
 
   /**
-   * Calculate SHA256 hash of entry
-   */
+    * Calculate SHA256 hash of entry
+    */
   _calculateHash(entry, previousHash = null) {
     const payload = JSON.stringify({
       ...entry,
       previous_hash: previousHash,
     });
 
-    return crypto.createHash('sha256').update(payload).digest('hex');
+    return sha256(payload);
   }
 
   async append(entry) {
@@ -64,8 +64,8 @@ export class FileAuditStorage extends AuditStorage {
   }
 
   async read(filters = {}) {
-    try {
-      const { session_id, tool, role, plan_hash, limit = 1000, offset = 0 } = filters;
+     try {
+       const { session_id, tool, role, plan_signature, limit = 1000, offset = 0 } = filters;
 
       // Read file (may not exist initially)
       let content = '';
@@ -105,9 +105,9 @@ export class FileAuditStorage extends AuditStorage {
         filtered = filtered.filter(e => e.role === role);
       }
 
-      if (plan_hash) {
-        filtered = filtered.filter(e => e.plan_hash === plan_hash);
-      }
+      if (plan_signature) {
+         filtered = filtered.filter(e => e.plan_signature === plan_signature);
+       }
 
       // Pagination
       return filtered.slice(offset, offset + limit);

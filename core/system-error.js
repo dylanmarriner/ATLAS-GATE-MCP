@@ -80,7 +80,7 @@ export const SYSTEM_ERROR_CODES = {
  * - tool_name: name of tool being executed
  * - invariant_id: stable invariant ID if violation, null otherwise
  * - phase_id: caller-provided phase ID or null
- * - plan_hash: SHA256 plan hash or null
+ * - plan_signature: SHA256 plan hash or null
  * - cause: original thrown value (normalized for JSON)
  * - timestamp: ISO 8601 server-side timestamp
  * - stack_trace: (optional) debug stack trace if enabled
@@ -96,7 +96,7 @@ export class SystemError extends Error {
       tool_name = "unknown",
       invariant_id = null,
       phase_id = null,
-      plan_hash = null,
+      plan_signature = null,
       cause = null,
       include_stack_trace = false,
     } = config;
@@ -118,7 +118,7 @@ export class SystemError extends Error {
     this.tool_name = tool_name;
     this.invariant_id = invariant_id;
     this.phase_id = phase_id;
-    this.plan_hash = plan_hash;
+    this.plan_signature = plan_signature;
     this.cause = this._normalizeCause(cause);
     this.timestamp = new Date().toISOString();
 
@@ -172,7 +172,7 @@ export class SystemError extends Error {
       tool_name: this.tool_name,
       invariant_id: this.invariant_id,
       phase_id: this.phase_id,
-      plan_hash: this.plan_hash,
+      plan_signature: this.plan_signature,
       cause: this.cause,
       timestamp: this.timestamp,
       ...(this.stack_trace && { stack_trace: this.stack_trace }),
@@ -204,7 +204,7 @@ export class SystemError extends Error {
       workspace_root = null,
       tool_name = "unknown",
       phase_id = null,
-      plan_hash = null,
+      plan_signature = null,
     } = context;
 
     const human_message =
@@ -218,7 +218,7 @@ export class SystemError extends Error {
       workspace_root,
       tool_name,
       phase_id,
-      plan_hash,
+      plan_signature,
       cause: err,
       include_stack_trace: process.env.DEBUG_STACK === "true",
     });
@@ -235,7 +235,7 @@ export class SystemError extends Error {
       workspace_root = null,
       tool_name = "unknown",
       phase_id = null,
-      plan_hash = null,
+      plan_signature = null,
     } = context;
 
     return new SystemError({
@@ -247,7 +247,7 @@ export class SystemError extends Error {
       tool_name,
       invariant_id,
       phase_id,
-      plan_hash,
+      plan_signature,
       include_stack_trace: process.env.DEBUG_STACK === "true",
     });
   }
@@ -263,7 +263,7 @@ export class SystemError extends Error {
       workspace_root = null,
       tool_name = "unknown",
       phase_id = null,
-      plan_hash = null,
+      plan_signature = null,
       cause = null,
     } = context;
 
@@ -275,7 +275,7 @@ export class SystemError extends Error {
       workspace_root,
       tool_name,
       phase_id,
-      plan_hash,
+      plan_signature,
       cause,
       include_stack_trace: process.env.DEBUG_STACK === "true",
     });

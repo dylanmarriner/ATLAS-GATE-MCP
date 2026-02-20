@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import crypto from "crypto";
 import { getRepoRoot, getGovernancePath as getResolvedGovernancePath, getPlansDir } from "./path-resolver.js";
 import { lintPlan } from "./plan-linter.js";
+import { hmacSha256, timingSafeEqual, signWithCosign } from "./cosign-hash-provider.js";
 
 const GOVERNANCE_FILE = "governance.json";
 
@@ -41,7 +41,7 @@ export function isBootstrapEnabled(repoRoot) {
 }
 
 export function verifyBootstrapAuth(payload, signature) {
-     let secret = process.env.ATLAS-GATE_BOOTSTRAP_SECRET;
+     let secret = process.env['ATLAS-GATE_BOOTSTRAP_SECRET'];
      
      if (!secret) {
          // Fallback: Try to read from the workspace's .atlas-gate/bootstrap_secret.json
@@ -65,11 +65,9 @@ export function verifyBootstrapAuth(payload, signature) {
          throw new Error("BOOTSTRAP_SECRET_MISSING");
      }
 
-     const hmac = crypto.createHmac("sha256", secret);
-     hmac.update(JSON.stringify(payload));
-     const expectedSignature = hmac.digest("hex");
+     const expectedSignature = hmacSha256(JSON.stringify(payload), secret);
 
-     if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {
+     if (!timingSafeEqual(signature, expectedSignature)) {
          throw new Error("INVALID_BOOTSTRAP_SIGNATURE");
      }
 
@@ -79,60 +77,60 @@ export function verifyBootstrapAuth(payload, signature) {
      }
  }
 
-export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
-    // 1. Verify Enabled
-    if (!isBootstrapEnabled(getRepoRoot())) {
-        throw new Error("BOOTSTRAP_DISABLED");
-    }
+export async function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
+     // 1. Verify Enabled
+     if (!isBootstrapEnabled(getRepoRoot())) {
+         throw new Error("BOOTSTRAP_DISABLED");
+     }
 
-    // 2. Verify Auth
-    verifyBootstrapAuth(payload, signature);
+     // 2. Verify Auth
+     verifyBootstrapAuth(payload, signature);
 
-    // 3. GATE: LINT THE PLAN AT APPROVAL (MANDATORY)
-    const lintResult = lintPlan(planContent);
-    if (!lintResult.passed) {
-        throw new Error(
-            `APPROVAL_BLOCKED: Plan linting failed with ${lintResult.errors.length} error(s). ` +
-            lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
-        );
-    }
+     // 3. GATE: LINT THE PLAN AT APPROVAL (MANDATORY)
+     const lintResult = await lintPlan(planContent);
+     if (!lintResult.passed) {
+         throw new Error(
+             `APPROVAL_BLOCKED: Plan linting failed with ${lintResult.errors.length} error(s). ` +
+             lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
+         );
+     }
 
-    // 4. Write Plan using canonical path resolver
-    // RF5: Antigravity hashes once (use linted hash for consistency)
-    const rawHash = lintResult.hash;
+     // 4. Write Plan using canonical path resolver
+     // Generate cosign signature for the plan content
+     const planSignature = await signWithCosign(planContent);
 
-    // Embed hash in content according to protocol
-    let finalContent = planContent;
-    if (planContent.includes("PENDING_HASH")) {
-        finalContent = planContent.replace("PENDING_HASH", rawHash);
-    }
+     // Embed signature in content according to protocol
+     let finalContent = planContent;
+     if (planContent.includes("PENDING_SIGNATURE")) {
+         finalContent = planContent.replace("PENDING_SIGNATURE", planSignature);
+     }
 
-    // RF4: Filename == hash
-    const planFileName = `${rawHash}.md`;
-    const plansDir = getPlansDir();
+     // Filename == signature
+     const planFileName = `${planSignature}.md`;
+     const plansDir = getPlansDir();
 
-    if (!fs.existsSync(plansDir)) {
-        fs.mkdirSync(plansDir, { recursive: true });
-    }
+     if (!fs.existsSync(plansDir)) {
+         fs.mkdirSync(plansDir, { recursive: true });
+     }
 
-    const fullPlanPath = path.join(plansDir, planFileName);
+     const fullPlanPath = path.join(plansDir, planFileName);
 
-    // Ensure content has APPROVED status (case-insensitive and supporting new format)
-    const approvedMatch = finalContent.match(/STATUS:\s*APPROVED/i);
-    if (!approvedMatch) {
-        throw new Error("FOUNDATION_PLAN_MUST_BE_APPROVED");
-    }
+     // Ensure content has APPROVED status (case-insensitive and supporting new format)
+     const approvedMatch = finalContent.match(/STATUS:\s*APPROVED/i);
+     if (!approvedMatch) {
+         throw new Error("FOUNDATION_PLAN_MUST_BE_APPROVED");
+     }
 
-    fs.writeFileSync(fullPlanPath, finalContent, "utf8");
+     fs.writeFileSync(fullPlanPath, finalContent, "utf8");
 
-    // 4. Update Governance State -> Disable Bootstrap
-    const state = readGovernanceState(getRepoRoot());
-    state.bootstrap_enabled = false;
-    state.approved_plans_count = 1;
-    writeGovernanceState(getRepoRoot(), state);
+     // 5. Update Governance State -> Disable Bootstrap
+     const state = readGovernanceState(getRepoRoot());
+     state.bootstrap_enabled = false;
+     state.approved_plans_count = 1;
+     writeGovernanceState(getRepoRoot(), state);
 
-    return {
-        planId: rawHash,
-        path: fullPlanPath
-    };
+     return {
+         planId: planSignature,
+         path: fullPlanPath
+     };
 }

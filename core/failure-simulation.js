@@ -29,7 +29,7 @@ export const SIMULABLE_FAILURES = {
   REPLAY_DIVERGENCE: "replay_divergence",
   OPERATOR_FATIGUE_BREACH: "operator_fatigue_breach",
   FILESYSTEM_PERMISSION_DENIED: "filesystem_permission_denied",
-  PLAN_HASH_MISMATCH: "plan_hash_mismatch",
+  PLAN_HASH_MISMATCH: "plan_signature_mismatch",
   STARTUP_GATE_FAILURE: "startup_gate_failure"
 };
 

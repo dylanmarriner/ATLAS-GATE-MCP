@@ -27,7 +27,7 @@ Every tool failure produces a `SystemError` envelope with these NON-NEGOTIABLE f
   tool_name: string;                // Name of the tool being executed
   invariant_id: string | null;      // Invariant ID if violation, null otherwise
   phase_id: string | null;          // Phase ID from caller or null
-  plan_hash: string | null;         // SHA256 plan hash or null
+  plan_signature: string | null;         // SHA256 plan hash or null
   cause: string | object | null;    // Original error (normalized for JSON)
   timestamp: string;                // ISO 8601 timestamp (server-generated)
   stack_trace?: string;             // Optional: only if DEBUG_STACK=true
@@ -46,7 +46,7 @@ Every tool failure produces a `SystemError` envelope with these NON-NEGOTIABLE f
 | `tool_name` | Tool being executed | `"write_file"` | No |
 | `invariant_id` | Which invariant was violated (if applicable) | `"MANDATORY_DIAGNOSTICS"` | Yes (non-invariant errors) |
 | `phase_id` | Execution phase from caller | `"PHASE_5A"` | Yes (if not provided) |
-| `plan_hash` | SHA256 of approved plan | `"abc123def456..."` | Yes (if not applicable) |
+| `plan_signature` | SHA256 of approved plan | `"abc123def456..."` | Yes (if not applicable) |
 | `cause` | Original thrown value | `{ message: "...", code: "..." }` | Yes (if none available) |
 | `timestamp` | ISO 8601 server timestamp | `"2026-01-19T15:32:10.123Z"` | No |
 | `stack_trace` | Full error stack (debug only) | Multi-line string | Yes (optional) |
@@ -215,7 +215,7 @@ Every tool failure is logged to `audit-log.jsonl` with:
 - tool_name
 - error_code
 - invariant_id (if applicable)
-- plan_hash/phase_id (if provided)
+- plan_signature/phase_id (if provided)
 - timestamp
 - cause (normalized)
 
@@ -245,7 +245,7 @@ All error paths MUST have tests covering:
 3. ✓ Object thrown → becomes SystemError
 4. ✓ Invariant violation → includes invariant_id
 5. ✓ Pre-session error → has null session_id/workspace_root
-6. ✓ Error with phase_id/plan_hash → preserved in envelope
+6. ✓ Error with phase_id/plan_signature → preserved in envelope
 7. ✓ Serialization → JSON-safe, no circular refs, no undefined
 8. ✓ Audit log → entry written on failure
 

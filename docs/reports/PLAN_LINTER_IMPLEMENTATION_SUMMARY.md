@@ -170,7 +170,7 @@ if (result.passed) {
 }
 ```
 
-### Compute Plan Hash
+### Compute Plan Signature
 ```javascript
 import { computePlanHash } from './core/plan-linter.js';
 
@@ -202,7 +202,7 @@ if (!result.passed) {
 ### 3. Plan Execution (tools/write_file.js)
 ```javascript
 const planContent = fs.readFileSync(planFile, 'utf8');
-const result = lintPlan(planContent, planHash);
+const result = lintPlan(planContent, planSignature);
 if (!result.passed) {
   throw SystemError.toolFailure(...);
 }

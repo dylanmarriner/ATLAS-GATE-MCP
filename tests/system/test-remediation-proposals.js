@@ -28,14 +28,14 @@ import {
   Proposal,
   PROPOSAL_TYPES,
   PROPOSAL_STATUS,
-} from "./core/remediation-engine.js";
+} from "../../core/remediation-engine.js";
 import {
   writeProposal,
   readProposal,
   listProposals,
   updateProposalStatus,
-} from "./core/proposal-store.js";
-import { appendAuditEntry, readAuditLog } from "./core/audit-system.js";
+} from "../../core/proposal-store.js";
+import { appendAuditEntry, readAuditLog } from "../../core/audit-system.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -76,8 +76,8 @@ export async function testProposalFromForensicFinding() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "POLICY_VIOLATION_UNSAFE_UNWRAP",
@@ -119,8 +119,8 @@ export async function testProposalRefusedNoEvidence() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     // Try to create a proposal with empty evidence_refs
     let thrown = false;
@@ -131,7 +131,7 @@ export async function testProposalRefusedNoEvidence() {
         violations_addressed: ["TEST"],
         exact_changes_requested: [],
         workspace_root: workspaceRoot,
-        plan_hash: planHash,
+        plan_signature: planSignature,
       });
     } catch (err) {
       assert(err.message.includes("REMEDIATION_NOT_EVIDENCE_BOUND"));
@@ -156,8 +156,8 @@ export async function testProposalEvidenceBound() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "DIVERGENCE_DETECTED",
@@ -195,8 +195,8 @@ export async function testOnlyAllowedProposalTypes() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "POLICY_VIOLATION_UNSAFE_UNWRAP",
@@ -225,8 +225,8 @@ export async function testProposalFileWritten() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "INTENT_SCHEMA_VIOLATION",
@@ -268,8 +268,8 @@ export async function testListProposals() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     // Create multiple proposals
     const findings = [
@@ -318,8 +318,8 @@ export async function testApproveProposal() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "INTENT_SCHEMA_VIOLATION",
@@ -359,7 +359,7 @@ export async function testApprovalNoCodeMutation() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
+    const planSignature = sha256("test-plan");
 
     // Create a dummy code file
     const codeDir = path.join(workspaceRoot, "src");
@@ -370,7 +370,7 @@ export async function testApprovalNoCodeMutation() {
     const originalContent = fs.readFileSync(codeFile, "utf8");
 
     // Create and approve proposal
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
     const finding = {
       finding_code: "POLICY_VIOLATION_UNSAFE_UNWRAP",
       phase_id: "01-phase",
@@ -406,8 +406,8 @@ export async function testAuditEntryOnGeneration() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "DIVERGENCE_DETECTED",
@@ -424,7 +424,7 @@ export async function testAuditEntryOnGeneration() {
       {
         tool: "generate_remediation_proposals",
         intent: "Generate proposals from evidence",
-        plan_hash: planHash,
+        plan_signature: planSignature,
         role: "EXECUTABLE",
         result: "ok",
         error_code: null,
@@ -457,8 +457,8 @@ export async function testAuditEntryOnApproval() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "INTENT_SCHEMA_VIOLATION",
@@ -511,8 +511,8 @@ export async function testProposalStatusPending() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("test-plan");
-    const engine = new RemediationEngine(workspaceRoot, planHash);
+    const planSignature = sha256("test-plan");
+    const engine = new RemediationEngine(workspaceRoot, planSignature);
 
     const finding = {
       finding_code: "POLICY_VIOLATION_UNSAFE_UNWRAP",
@@ -542,10 +542,10 @@ export async function testStalePlanHashDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash1 = sha256("old-plan");
-    const planHash2 = sha256("new-plan");
+    const planSignature1 = sha256("old-plan");
+    const planSignature2 = sha256("new-plan");
 
-    const engine = new RemediationEngine(workspaceRoot, planHash1);
+    const engine = new RemediationEngine(workspaceRoot, planSignature1);
 
     const finding = {
       finding_code: "INTENT_SCHEMA_VIOLATION",
@@ -556,21 +556,21 @@ export async function testStalePlanHashDetected() {
     };
 
     const proposal = engine.proposalFromForensicFinding(finding);
-    assert.strictEqual(proposal.plan_hash, planHash1, "Proposal bound to planHash1");
+    assert.strictEqual(proposal.plan_signature, planSignature1, "Proposal bound to planSignature1");
 
     // Write proposal with old plan hash
     writeProposal(workspaceRoot, proposal);
 
     // Now verify expiration condition
     assert(
-      proposal.expiration_condition.includes(planHash1),
+      proposal.expiration_condition.includes(planSignature1),
       "Expiration should reference plan hash"
     );
 
     // Simulate plan hash change (new plan)
     // Proposal should still reference old hash
     const readBack = readProposal(workspaceRoot, proposal.proposal_id);
-    assert.strictEqual(readBack.plan_hash, planHash1);
+    assert.strictEqual(readBack.plan_signature, planSignature1);
 
     console.log("✓ Test 12 PASSED: Stale plan hash detected on approval");
   } finally {

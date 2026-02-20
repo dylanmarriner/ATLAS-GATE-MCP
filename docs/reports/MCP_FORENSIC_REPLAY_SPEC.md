@@ -26,12 +26,12 @@ Deterministic reconstruction without state mutation.
 #### API
 
 ```javascript
-replayExecution(workspaceRoot, planHash, filters = {})
+replayExecution(workspaceRoot, planSignature, filters = {})
 ```
 
 **Inputs:**
 - `workspaceRoot` (required): Workspace root path
-- `planHash` (required): SHA256 plan hash (64-char hex)
+- `planSignature` (required): SHA256 plan hash (64-char hex)
 - `filters` (optional): Phase, tool, seq range filters
 
 **Filters:**
@@ -49,7 +49,7 @@ replayExecution(workspaceRoot, planHash, filters = {})
 {
   success: boolean,
   error_code: string | null,
-  plan_hash: string,
+  plan_signature: string,
   entries_analyzed: number,
   findings: [
     {
@@ -66,7 +66,7 @@ replayExecution(workspaceRoot, planHash, filters = {})
       tool: string,
       role: string,
       intent: string,
-      plan_hash: string,
+      plan_signature: string,
       phase_id: string,
       args_hash: string,
       result_hash: string,
@@ -143,7 +143,7 @@ verifyWorkspaceIntegrity(workspaceRoot)
 ### 3. Forensic Report Generation (`core/forensic-report-generator.js`)
 
 ```javascript
-generateForensicReport(replayResult, planHash, generatedAt)
+generateForensicReport(replayResult, planSignature, generatedAt)
 ```
 
 **Generates markdown report with sections:**
@@ -194,7 +194,7 @@ generateForensicReport(replayResult, planHash, generatedAt)
 **Schema:**
 ```javascript
 {
-  plan_hash: string,           // SHA256 plan hash (required)
+  plan_signature: string,           // SHA256 plan hash (required)
   phase_id?: string,           // Filter to phase (optional)
   tool?: string,               // Filter to tool (optional)
   seq_start?: number,          // Start seq (optional)
@@ -222,7 +222,7 @@ Every replay invocation is audited:
   intent: "Forensic replay of plan X" | "Verify workspace integrity",
   result: "ok" | "analysis_complete",
   error_code: null,
-  plan_hash: string,
+  plan_signature: string,
   args: { /* redacted args */ }
 }
 ```
@@ -274,7 +274,7 @@ Forensic reports include:
 
 Replay MUST refuse if:
 - `workspace_root` is null, empty, or invalid
-- `plan_hash` is not a 64-char hex string
+- `plan_signature` is not a 64-char hex string
 - Audit log verification fails (corrupted entries)
 - Plan hash not found in audit log
 

@@ -13,7 +13,7 @@ export async function listPlansHandler() {
     .readdirSync(plansDir)
     .filter(f => f.endsWith(".md"))
     .map(f => {
-      const hash = f.replace(".md", "");
+      const signature = f.replace(".md", "");
       const filePath = path.join(plansDir, f);
       const content = fs.readFileSync(filePath, 'utf8');
       
@@ -21,8 +21,8 @@ export async function listPlansHandler() {
       let scope = "UNKNOWN";
       let version = "UNKNOWN";
       
-      // Try parsing ATLAS-GATE_PLAN_HASH format (HTML comment header)
-      const headerMatch = content.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})\s+ROLE:\s*(\w+)\s+STATUS:\s*(\w+)\s*-->/);
+      // Try parsing ATLAS-GATE_PLAN_SIGNATURE format (HTML comment header)
+      const headerMatch = content.match(/<!--\s*ATLAS-GATE_PLAN_SIGNATURE:\s*([A-Za-z0-9+/=]+)\s+ROLE:\s*(\w+)\s+STATUS:\s*(\w+)\s*-->/);
       if (headerMatch) {
         status = headerMatch[3];
       }
@@ -46,7 +46,7 @@ export async function listPlansHandler() {
       }
       
       return {
-        hash,
+        signature,
         file: f,
         status,
         scope,
@@ -56,7 +56,7 @@ export async function listPlansHandler() {
     .filter(p => p.status === "APPROVED"); // Only include approved plans
 
   const plansList = plans
-    .map(p => `• ${p.hash} (${p.status}) [${p.scope}] v${p.version}`)
+    .map(p => `• ${p.signature} (${p.status}) [${p.scope}] v${p.version}`)
     .join('\n');
 
   return {

@@ -28,7 +28,7 @@ import path from "path";
 import os from "os";
 
 // Import test utilities
-import { FAILURE_TAXONOMY, getFailureDefinition, isCriticalFailure } from "./core/failure-taxonomy.js";
+import { FAILURE_TAXONOMY, getFailureDefinition, isCriticalFailure } from "../../core/failure-taxonomy.js";
 import {
   KillSwitchState,
   loadKillSwitchState,
@@ -38,14 +38,14 @@ import {
   isToolAllowedUnderKillSwitch,
   getKillSwitchState,
   clearKillSwitch
-} from "./core/kill-switch.js";
+} from "../../core/kill-switch.js";
 import {
   generateHaltReport,
   writeHaltReport,
   executeSafeHalt,
   listHaltReports,
   readHaltReport
-} from "./core/safe-halt.js";
+} from "../../core/safe-halt.js";
 import {
   initializeSimulation,
   injectFailure,
@@ -54,7 +54,7 @@ import {
   SIMULATION_MODE,
   SIMULABLE_FAILURES,
   disableSimulation
-} from "./core/failure-simulation.js";
+} from "../../core/failure-simulation.js";
 import {
   drillAuditTamper,
   drillPolicyBreach,
@@ -62,13 +62,13 @@ import {
   drillOperatorAbuse,
   drillFilesystemDenial,
   listAvailableDrills
-} from "./core/drills.js";
+} from "../../core/drills.js";
 import {
   initiateRecoveryAcknowledgement,
   confirmRecovery,
   unlockKillSwitch,
   getRecoveryStatus
-} from "./core/recovery-gate.js";
+} from "../../core/recovery-gate.js";
 
 // Test counters
 let passedTests = 0;
@@ -348,7 +348,7 @@ test("All drills are listed and available", () => {
   const drillNames = drills.map(d => d.name);
   assert(drillNames.includes("drill_audit_tamper"));
   assert(drillNames.includes("drill_policy_breach"));
-  assert(drillNames.includes("drill_plan_hash_mismatch"));
+  assert(drillNames.includes("drill_plan_signature_mismatch"));
   assert(drillNames.includes("drill_operator_abuse"));
   assert(drillNames.includes("drill_filesystem_denial"));
 });

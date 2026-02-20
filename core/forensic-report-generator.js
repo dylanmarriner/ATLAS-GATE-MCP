@@ -16,16 +16,16 @@ import path from "path";
  * Generate a forensic report from replay result.
  *
  * @param {Object} replayResult - Result from replayExecution()
- * @param {string} planHash - SHA256 hash of the plan
+ * @param {string} planSignature - SHA256 hash of the plan
  * @param {Date} generatedAt - Timestamp of report generation
  * @returns {string} Markdown-formatted forensic report
  */
-export function generateForensicReport(replayResult, planHash, generatedAt = new Date()) {
+export function generateForensicReport(replayResult, planSignature, generatedAt = new Date()) {
   const sections = [];
 
   // HEADER
   sections.push(`# Forensic Replay Report`);
-  sections.push(`**Plan Hash:** \`${planHash}\``);
+  sections.push(`**Plan Signature:** \`${planSignature}\``);
   sections.push(`**Generated:** ${generatedAt.toISOString()}`);
   sections.push(`**Verdict:** \`${replayResult.verdict}\``);
   sections.push("");

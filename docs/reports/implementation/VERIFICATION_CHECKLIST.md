@@ -109,10 +109,10 @@ Two primary deliverables have been created:
 
 **BUG #7: Plan ID/Hash Not Required**
 - **Files**: server.js, plan-enforcer.js
-- **Issue**: planId and planHash optional despite spec requiring them
+- **Issue**: planId and planSignature optional despite spec requiring them
 - **Impact**: Plan integrity unverified, race conditions possible
 - **Status**: IDENTIFIED
-- **Fix Provided**: Make planId/planHash required in Zod schema, enforce in enforcePlan
+- **Fix Provided**: Make planId/planSignature required in Zod schema, enforce in enforcePlan
 
 **BUG #8: Synchronous I/O Blocks Concurrency**
 - **Files**: Multiple (write_file.js, governance.js, audit-log.js)

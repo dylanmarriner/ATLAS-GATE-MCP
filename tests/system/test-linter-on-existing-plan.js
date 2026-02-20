@@ -1,14 +1,23 @@
-import { lintPlan, computePlanHash } from "./core/plan-linter.js";
+import { lintPlan } from "../../core/plan-linter.js";
 import fs from "fs";
+import crypto from "crypto";
 
 const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/plans/6448139d0c27b8c485e89ecb44839e3130a18d9505be9c97103557d74164637d.md";
 const planContent = fs.readFileSync(planPath, "utf8");
 
+// Generate test signature
+const canonicalized = planContent
+  .trim()
+  .split("\n")
+  .map(line => line.trimRight())
+  .join("\n");
+const testSig = crypto.createHash("sha256").update(canonicalized).digest("hex");
+
 console.log("Testing linter against existing plan...\n");
 
-const result = lintPlan(planContent, "6448139d0c27b8c485e89ecb44839e3130a18d9505be9c97103557d74164637d");
+const result = lintPlan(planContent, testSig);
 
-console.log(`Plan Hash: ${result.hash}`);
+console.log(`Plan Signature: ${testSig}`);
 console.log(`Lint Result: ${result.passed ? "PASS" : "FAIL"}`);
 console.log(`Errors: ${result.errors.length}`);
 console.log(`Warnings: ${result.warnings.length}`);

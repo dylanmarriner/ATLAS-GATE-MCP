@@ -26,22 +26,22 @@ import path from "path";
 import os from "os";
 import crypto from "crypto";
 import {
-  generateAttestationBundle,
-  verifyAttestationBundle,
-  exportAttestationBundle,
-  ATTESTATION_SCHEMA,
-} from "./core/attestation-engine.js";
+   generateAttestationBundle,
+   verifyAttestationBundle,
+   exportAttestationBundle,
+   ATTESTATION_SCHEMA,
+ } from "../../core/attestation-engine.js";
 
 const TEST_SUITE = "ATTESTATION";
 
 // Create temporary workspace with minimal audit log
 function createTestWorkspace() {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
-  const atlas-gateDir = path.join(tmpDir, ".atlas-gate");
-  fs.mkdirSync(atlas-gateDir, { recursive: true });
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
+   const atlasGateDir = path.join(tmpDir, ".atlas-gate");
+   fs.mkdirSync(atlasGateDir, { recursive: true });
 
   // Create a minimal audit log
-  const auditLogPath = path.join(atlas-gateDir, "audit-log.jsonl");
+  const auditLogPath = path.join(atlasGateDir, "audit-log.jsonl");
   const entry1 = {
     timestamp: "2025-01-19T10:00:00.000Z",
     sessionId: "test-session-1",
@@ -57,7 +57,7 @@ function createTestWorkspace() {
     sessionId: "test-session-1",
     tool: "write_file",
     result: "ok",
-    plan_hash: "abc123def456abc123def456abc123def456abc123def456abc123def456abc1",
+    plan_signature: "abc123def456abc123def456abc123def456abc123def456abc123def456abc1",
     prevHash: hash1,
   };
   const hash2 = crypto.createHash("sha256").update(JSON.stringify(entry2)).digest("hex");
@@ -67,15 +67,15 @@ function createTestWorkspace() {
   fs.appendFileSync(auditLogPath, JSON.stringify(entry2) + "\n");
 
   // Set a deterministic signing secret
-  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+   process.env['ATLAS-GATE_ATTESTATION_SECRET'] = "test-secret-key-32-bytes-long-!!";
 
   return tmpDir;
 }
 
 function cleanupTestWorkspace(tmpDir) {
-  fs.rmSync(tmpDir, { recursive: true, force: true });
-  delete process.env.ATLAS-GATE_ATTESTATION_SECRET;
-}
+   fs.rmSync(tmpDir, { recursive: true, force: true });
+   delete process.env['ATLAS-GATE_ATTESTATION_SECRET'];
+ }
 
 // TEST 1: Bundle has deterministic structure (content ordering)
 function test_bundleGenerationDeterministic() {
@@ -315,8 +315,8 @@ function test_exportMarkdownFormat() {
 
 // TEST 13: Missing audit log causes refusal
 function test_missingAuditLogRefusal() {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
-  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
+   process.env['ATLAS-GATE_ATTESTATION_SECRET'] = "test-secret-key-32-bytes-long-!!";
 
   try {
     assert.throws(
@@ -332,8 +332,8 @@ function test_missingAuditLogRefusal() {
 }
 
 // TEST 14: Invalid workspace root causes refusal
-function test_invalidWorkspaceRootRefusal() {
-  process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+ function test_invalidWorkspaceRootRefusal() {
+   process.env['ATLAS-GATE_ATTESTATION_SECRET'] = "test-secret-key-32-bytes-long-!!";
 
   try {
     assert.throws(
@@ -344,7 +344,7 @@ function test_invalidWorkspaceRootRefusal() {
 
     console.log(`✓ TEST 14: Invalid workspace root causes refusal`);
   } finally {
-    delete process.env.ATLAS-GATE_ATTESTATION_SECRET;
+  delete process.env['ATLAS-GATE_ATTESTATION_SECRET'];
   }
 }
 

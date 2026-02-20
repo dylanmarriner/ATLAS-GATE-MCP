@@ -257,16 +257,16 @@ The `write_file` handler checks `SESSION_STATE.hasFetchedPrompt` at line 44 of `
 ```javascript
 if (!requiredPlanId) {
   // Maybe warn or throw?
-  // "require plan_id + plan_hash"
-  // I'll throw Error("STRICT_MODE: planId and planHash required")?
+  // "require plan_id + plan_signature"
+  // I'll throw Error("STRICT_MODE: planId and planSignature required")?
   // I'll leave it optional for this immediate step to avoid breaking the test suite...
   // Actually, I should update the test to be compliant.
 }
 ```
 
-Comments in code show uncertainty. The spec says "require plan_id + plan_hash" for non-bootstrap writes, but:
+Comments in code show uncertainty. The spec says "require plan_id + plan_signature" for non-bootstrap writes, but:
 - `planId` is optional (Zod line 70 of `server.js`)
-- `planHash` is optional (Zod line 71 of `server.js`)
+- `planSignature` is optional (Zod line 71 of `server.js`)
 - Enforcement is incomplete (conditional check without error)
 - No test requires these fields
 
@@ -278,7 +278,7 @@ Comments in code show uncertainty. The spec says "require plan_id + plan_hash" f
 - RACE CONDITION: Plan file changed after approval but before write, write proceeds anyway
 - No auditable plan version guarantee
 
-**Fix**: Make `planId` and `planHash` required for all non-bootstrap writes. Update `Zod` schema and all call sites.
+**Fix**: Make `planId` and `planSignature` required for all non-bootstrap writes. Update `Zod` schema and all call sites.
 
 **Severity**: MEDIUM (plan integrity compromised)
 

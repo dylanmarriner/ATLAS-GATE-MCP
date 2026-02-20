@@ -29,13 +29,13 @@ import {
   replayExecution,
   verifyWorkspaceIntegrity,
   FINDING_CODES,
-} from "./core/replay-engine.js";
-import { generateForensicReport } from "./core/forensic-report-generator.js";
+} from "../../core/replay-engine.js";
+import { generateForensicReport } from "../../core/forensic-report-generator.js";
 import {
   appendAuditEntry,
   readAuditLog,
   verifyAuditLogIntegrity,
-} from "./core/audit-system.js";
+} from "../../core/audit-system.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,9 +44,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ============================================================================
 
 function sha256(input) {
-  const normalized = typeof input === "string" ? input : JSON.stringify(input);
-  return crypto.createHash("sha256").update(normalized).digest("hex");
-}
+   const normalized = typeof input === "string" ? input : JSON.stringify(input);
+   return crypto.createHash("sha256").update(normalized).digest("hex");
+ }
+
+/**
+  * Mock cosign signature (base64 encoded SHA256 for testing)
+  */
+ function mockCosignSign(input) {
+   const normalized = typeof input === "string" ? input : JSON.stringify(input);
+   return crypto.createHash("sha256").update(normalized).digest("base64");
+ }
 
 /**
  * Create a temporary workspace for testing.
@@ -71,29 +79,29 @@ function cleanupTestWorkspace(testDir) {
 // ============================================================================
 
 export async function testReplayPassOnValidRun() {
-  const workspaceRoot = await createTestWorkspace();
+   const workspaceRoot = await createTestWorkspace();
 
-  try {
-    const planHash = sha256("valid-plan-content");
+   try {
+     const planSignature = mockCosignSign("valid-plan-content");
 
-    // Write a valid audit entry
-    await appendAuditEntry({
+     // Write a valid audit entry
+     await appendAuditEntry({
       session_id: "test-session",
       role: "EXECUTABLE",
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Write test file",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "01-setup",
       args: { path: "/test.js", content: "test" },
       result: "ok",
       error_code: null,
       invariant_id: null,
       notes: "Test entry",
-    }, workspaceRoot);
+     }, workspaceRoot);
 
-    // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+     // Replay
+     const result = replayExecution(workspaceRoot, planSignature);
 
     assert.strictEqual(result.verdict, "PASS", "Verdict should be PASS");
     assert.strictEqual(result.success, true, "Success should be true");
@@ -113,7 +121,7 @@ export async function testDivergenceDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("divergence-plan");
+    const planSignature = mockCosignSign("divergence-plan");
     const argsHash = sha256("identical-args");
 
     // Write two entries with same args_hash but different result_hash
@@ -123,7 +131,7 @@ export async function testDivergenceDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "First execution",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "01-phase",
       args: { path: "/test1.js" },
       result: "ok",
@@ -138,7 +146,7 @@ export async function testDivergenceDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Second execution (same args, different result)",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "01-phase",
       args: { path: "/test1.js" }, // Same args
       result: "different", // Different result
@@ -148,7 +156,7 @@ export async function testDivergenceDetected() {
     }, workspaceRoot);
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     // Should detect divergence (if hash computed correctly)
     // Note: Our test may not capture divergence perfectly due to how args_hash is computed
@@ -169,7 +177,7 @@ export async function testTamperDetectedBrokenChain() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("tamper-plan");
+    const planSignature = mockCosignSign("tamper-plan");
     const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
@@ -185,7 +193,7 @@ export async function testTamperDetectedBrokenChain() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -210,7 +218,7 @@ export async function testTamperDetectedBrokenChain() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -226,7 +234,7 @@ export async function testTamperDetectedBrokenChain() {
     fs.appendFileSync(auditPath, JSON.stringify(entry2) + "\n");
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     // Should detect broken chain
     const hasTamperFinding = result.findings.some((f) =>
@@ -250,7 +258,7 @@ export async function testTamperDetectedSeqGap() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("seq-gap-plan");
+    const planSignature = mockCosignSign("seq-gap-plan");
     const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
@@ -266,7 +274,7 @@ export async function testTamperDetectedSeqGap() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -289,7 +297,7 @@ export async function testTamperDetectedSeqGap() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -303,7 +311,7 @@ export async function testTamperDetectedSeqGap() {
     fs.appendFileSync(auditPath, JSON.stringify(entry2) + "\n");
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     const hasGapFinding = result.findings.some((f) =>
       f.finding_code === FINDING_CODES.TAMPER_DETECTED_SEQ_GAP
@@ -326,7 +334,7 @@ export async function testTamperDetectedInvalidJson() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("invalid-json-plan");
+    const planSignature = mockCosignSign("invalid-json-plan");
     const auditDir = path.join(workspaceRoot, ".atlas-gate");
     const auditPath = path.join(auditDir, "audit.log");
 
@@ -342,7 +350,7 @@ export async function testTamperDetectedInvalidJson() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -359,7 +367,7 @@ export async function testTamperDetectedInvalidJson() {
     fs.appendFileSync(auditPath, "{ invalid json }\n");
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     const hasInvalidJsonFinding = result.findings.some((f) =>
       f.finding_code === FINDING_CODES.TAMPER_DETECTED_INVALID_JSON
@@ -381,7 +389,7 @@ export async function testAuthorityViolationDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("authority-violation-plan");
+    const planSignature = mockCosignSign("authority-violation-plan");
 
     // Write entry with PLAN_NOT_APPROVED error
     await appendAuditEntry({
@@ -390,7 +398,7 @@ export async function testAuthorityViolationDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Attempted write without plan",
-      plan_hash: null, // No plan!
+      plan_signature: null, // No plan!
       phase_id: null,
       args: { path: "/test.js" },
       result: "error",
@@ -400,7 +408,7 @@ export async function testAuthorityViolationDetected() {
     }, workspaceRoot);
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     // Should detect authority violation (execution without plan)
     const hasAuthViolation = result.findings.some((f) =>
@@ -423,7 +431,7 @@ export async function testPolicyViolationDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("policy-violation-plan");
+    const planSignature = mockCosignSign("policy-violation-plan");
 
     // Write entry with policy violation
     await appendAuditEntry({
@@ -432,7 +440,7 @@ export async function testPolicyViolationDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Write blocked by policy",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "01-phase",
       args: { path: "/test.js" },
       result: "error",
@@ -442,7 +450,7 @@ export async function testPolicyViolationDetected() {
     }, workspaceRoot);
 
     // Replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     const hasPolicyViolation = result.findings.some((f) =>
       f.finding_code === FINDING_CODES.POLICY_VIOLATION_BLOCKED_BY_GATE
@@ -464,13 +472,13 @@ export async function testReplayIsReadOnly() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("readonly-test-plan");
+    const planSignature = mockCosignSign("readonly-test-plan");
 
     // Get initial state
     const initialFiles = fs.readdirSync(workspaceRoot);
 
     // Execute replay
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     // Get final state
     const finalFiles = fs.readdirSync(workspaceRoot);
@@ -510,7 +518,7 @@ export async function testVerifyWorkspaceIntegrityPass() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Test entry",
-      plan_hash: sha256("test-plan"),
+      plan_signature: sha256("test-plan"),
       phase_id: null,
       args: {},
       result: "ok",
@@ -558,7 +566,7 @@ export async function testVerifyWorkspaceIntegrityFail() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: null,
-      plan_hash: null,
+      plan_signature: null,
       phase_id: null,
       args_hash: null,
       result: "ok",
@@ -591,7 +599,7 @@ export async function testNonDeterministicFlagged() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("non-det-plan");
+    const planSignature = mockCosignSign("non-det-plan");
 
     // This test conceptually checks that the determinism validation
     // mechanism is in place. Full testing requires precise args_hash matching.
@@ -602,7 +610,7 @@ export async function testNonDeterministicFlagged() {
       workspace_root: workspaceRoot,
       tool: "some_tool",
       intent: "Test",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "phase",
       args: { input: "X" },
       result: "result1",
@@ -611,7 +619,7 @@ export async function testNonDeterministicFlagged() {
       notes: "Result 1",
     }, workspaceRoot);
 
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     // Mechanism should be in place
     assert(result.findings !== undefined, "Findings mechanism should exist");
@@ -629,7 +637,7 @@ export async function testForensicReportGenerated() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("report-plan");
+    const planSignature = mockCosignSign("report-plan");
 
     await appendAuditEntry({
       session_id: "test",
@@ -637,7 +645,7 @@ export async function testForensicReportGenerated() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Test write",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "phase",
       args: {},
       result: "ok",
@@ -646,12 +654,12 @@ export async function testForensicReportGenerated() {
       notes: "Test entry",
     }, workspaceRoot);
 
-    const replayResult = replayExecution(workspaceRoot, planHash);
-    const report = generateForensicReport(replayResult, planHash);
+    const replayResult = replayExecution(workspaceRoot, planSignature);
+    const report = generateForensicReport(replayResult, planSignature);
 
     assert(typeof report === "string", "Report should be a string");
     assert(report.includes("Forensic Replay Report"), "Report should have title");
-    assert(report.includes(planHash), "Report should include plan hash");
+    assert(report.includes(planSignature), "Report should include plan hash");
     assert(
       report.includes("Executive Summary"),
       "Report should have executive summary"
@@ -672,7 +680,7 @@ export async function testInvariantViolationDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("invariant-plan");
+    const planSignature = mockCosignSign("invariant-plan");
 
     await appendAuditEntry({
       session_id: "test",
@@ -680,7 +688,7 @@ export async function testInvariantViolationDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file",
       intent: "Invariant violation",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "phase",
       args: {},
       result: "error",
@@ -689,7 +697,7 @@ export async function testInvariantViolationDetected() {
       notes: "Invariant was violated",
     }, workspaceRoot);
 
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     const hasInvariantFinding = result.findings.some((f) =>
       f.finding_code === FINDING_CODES.POLICY_VIOLATION_INVARIANT_VIOLATION
@@ -711,7 +719,7 @@ export async function testRoleMismatchDetected() {
   const workspaceRoot = await createTestWorkspace();
 
   try {
-    const planHash = sha256("role-mismatch-plan");
+    const planSignature = mockCosignSign("role-mismatch-plan");
 
     await appendAuditEntry({
       session_id: "test",
@@ -719,7 +727,7 @@ export async function testRoleMismatchDetected() {
       workspace_root: workspaceRoot,
       tool: "write_file", // WINDSURF-only tool
       intent: "Role mismatch",
-      plan_hash: planHash,
+      plan_signature: planSignature,
       phase_id: "phase",
       args: {},
       result: "error",
@@ -728,7 +736,7 @@ export async function testRoleMismatchDetected() {
       notes: "ANTIGRAVITY tried to write",
     }, workspaceRoot);
 
-    const result = replayExecution(workspaceRoot, planHash);
+    const result = replayExecution(workspaceRoot, planSignature);
 
     const hasRoleFinding = result.findings.some((f) =>
       f.finding_code === FINDING_CODES.AUTHORITY_VIOLATION_ROLE_MISMATCH

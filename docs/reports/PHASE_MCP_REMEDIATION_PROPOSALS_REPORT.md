@@ -78,7 +78,7 @@ Example: Broken audit hash chain (potential tampering).
 ```json
 {
   "workspace_root": "/path",
-  "plan_hash": "abc123...",
+  "plan_signature": "abc123...",
   "evidence_selectors": {
     "forensic_findings": [/* array of findings */],
     "system_errors": [/* array of SystemError */]
@@ -218,7 +218,7 @@ Changes Requested:
 - [ ] Verify no new warnings
 
 ## Validity
-proposal is valid if plan_hash matches abc123...
+proposal is valid if plan_signature matches abc123...
 ```
 
 ### Proposal Index
@@ -312,7 +312,7 @@ Every proposal action is audited:
 2. **Human Decision**: Every proposal requires explicit human approval or rejection
 3. **Immutable Status**: Once APPROVED/REJECTED, status cannot change (prevents flip-flopping)
 4. **Audit Trail**: Approver identity + timestamp recorded for every decision
-5. **Plan Hash Validation**: Proposals invalid if plan has changed (staleness detected)
+5. **Plan Signature Validation**: Proposals invalid if plan has changed (staleness detected)
 
 ### Approval Workflow
 
@@ -338,7 +338,7 @@ Human reviews proposal markdown
 1. **Markdown Parsing**: Parser is regex-based (not AST). Works for well-formed markdown; edge cases may fail.
 2. **Evidence Filtering**: Tool expects evidence pre-selected; does not query audit log directly.
 3. **Proposal Immutability**: Once APPROVED, cannot revert without manual audit log edit (by design—fail-safe).
-4. **Stale Detection**: Uses plan_hash; plan updates invalidate all prior proposals (conservative).
+4. **Stale Detection**: Uses plan_signature; plan updates invalidate all prior proposals (conservative).
 
 ---
 

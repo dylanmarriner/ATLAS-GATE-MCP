@@ -33,7 +33,7 @@
 ```mermaid
 graph TD
     A[User] -->|creates plan| B[ANTIGRAVITY]
-    B -->|approves| C[Plan Hash]
+    B -->|approves| C[Plan Signature]
     C -->|references| D[WINDSURF]
     D -->|executes| E[File Write]
 ```
@@ -61,7 +61,7 @@ class Plan {
     approver: string
 }
 class Execution {
-    plan_hash: string
+    plan_signature: string
     tool: string
     result: string
 }

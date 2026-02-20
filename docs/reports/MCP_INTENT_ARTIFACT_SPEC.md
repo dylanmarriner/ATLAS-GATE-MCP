@@ -93,14 +93,14 @@ Declares the plan hash and phase ID that authorized this change.
 **Format:**
 ```
 ## Authority
-Plan Hash: <64-char hex sha256>
+Plan Signature: <64-char hex sha256>
 Phase ID: PHASE_<identifier>
 ```
 
 **Valid:**
 ```
 ## Authority
-Plan Hash: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+Plan Signature: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 Phase ID: PHASE_INTENT_ARTIFACT
 ```
 
@@ -110,7 +110,7 @@ Phase ID: PHASE_INTENT_ARTIFACT
 Approved by John (author names forbidden)
 
 ## Authority
-Plan Hash: 12345 (too short)
+Plan Signature: 12345 (too short)
 Phase ID: phase_1 (must be uppercase PHASE_)
 ```
 
@@ -259,7 +259,7 @@ Intent artifacts are validated on every write via the policy engine:
 - Workspace-relative
 
 ### 5.3 Authority Binding
-- Plan Hash matches executing plan_hash
+- Plan Signature matches executing plan_signature
 - Phase ID matches executing phase_id
 - On mismatch: write REFUSED with INTENT_AUTHORITY_DRIFT
 
@@ -281,7 +281,7 @@ If a file is modified in a later phase:
 - Write is REFUSED on drift
 
 **Example:**
-- Intent created in PHASE_1 with `Plan Hash: abc123` and `Phase ID: PHASE_1`
+- Intent created in PHASE_1 with `Plan Signature: abc123` and `Phase ID: PHASE_1`
 - If file modified in PHASE_2:
   - Intent must be updated to `Phase ID: PHASE_2`
   - Otherwise, write is REFUSED with INTENT_AUTHORITY_DRIFT
@@ -296,7 +296,7 @@ On every intent validation:
   "seq": 123,
   "session_id": "...",
   "tool": "write_file",
-  "plan_hash": "...",
+  "plan_signature": "...",
   "phase_id": "PHASE_1",
   "args_hash": "...",
   "result": "ok" or "error",
@@ -371,7 +371,7 @@ An intent file answers these questions:
 This file implements core validation for intent artifacts. It receives intent content, checks it against a strict schema, and rejects any intent that doesn't conform.
 
 ## Authority
-Plan Hash: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+Plan Signature: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 Phase ID: PHASE_INTENT_ARTIFACT
 
 ## Inputs
@@ -427,7 +427,7 @@ See section 10 above for a realistic example.
 This file validates intents.
 
 ## Authority
-Plan Hash: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+Plan Signature: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 Phase ID: PHASE_1
 
 ## Inputs
@@ -453,7 +453,7 @@ Phase ID: PHASE_1
 This file validates intents. TODO: Add more features.  # FORBIDDEN: TODO marker
 
 ## Authority
-Plan Hash: ...
+Plan Signature: ...
 ```
 
 ## 13. Compliance Checklist
@@ -462,7 +462,7 @@ Plan Hash: ...
 - [ ] Title matches exact target path (workspace-relative)
 - [ ] All 9 sections present in correct order
 - [ ] Purpose is plain English (no code symbols)
-- [ ] Authority has Plan Hash (64-char hex) and Phase ID (PHASE_*)
+- [ ] Authority has Plan Signature (64-char hex) and Phase ID (PHASE_*)
 - [ ] All bulleted sections have ≥1 item
 - [ ] Invariants are declarative (no "might", "should", "could")
 - [ ] No forbidden patterns detected

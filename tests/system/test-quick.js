@@ -5,13 +5,13 @@ import crypto from "crypto";
 import {
   generateAttestationBundle,
   verifyAttestationBundle,
-} from "./core/attestation-engine.js";
+} from "../../core/attestation-engine.js";
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
-const atlas-gateDir = path.join(tmpDir, ".atlas-gate");
-fs.mkdirSync(atlas-gateDir, { recursive: true });
+const atlasGateDir = path.join(tmpDir, ".atlas-gate");
+fs.mkdirSync(atlasGateDir, { recursive: true });
 
-const auditLogPath = path.join(atlas-gateDir, "audit-log.jsonl");
+const auditLogPath = path.join(atlasGateDir, "audit-log.jsonl");
 const entry1 = {
   timestamp: "2025-01-19T10:00:00.000Z",
   sessionId: "test-session-1",
@@ -24,7 +24,7 @@ entry1.hash = hash1;
 
 fs.writeFileSync(auditLogPath, JSON.stringify(entry1) + "\n");
 
-process.env.ATLAS-GATE_ATTESTATION_SECRET = "test-secret-key-32-bytes-long-!!";
+process.env['ATLAS-GATE_ATTESTATION_SECRET'] = "test-secret-key-32-bytes-long-!!";
 
 const bundle = generateAttestationBundle(tmpDir);
 console.log("Generated bundle_id:", bundle.bundle_id);

@@ -5,7 +5,7 @@
  * AUTHORITY: ATLAS-GATE MCP REMEDIATION PROPOSAL GENERATOR
  *
  * Inputs:
- * - plan_hash: SHA256 plan hash
+ * - plan_signature: Cosign plan signature
  * - evidence_selectors: object { forensic_findings?, system_errors?, audit_filter? }
  *
  * Output:
@@ -16,6 +16,7 @@
  * CONSTRAINT: All proposals start PENDING. Require human approval to advance.
  */
 
+import crypto from "crypto";
 import { RemediationEngine, PROPOSAL_TYPES } from "../core/remediation-engine.js";
 import { writeProposal, listProposals } from "../core/proposal-store.js";
 import { appendAuditEntry } from "../core/audit-system.js";
@@ -27,7 +28,7 @@ import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 export async function generateRemediationProposals(params) {
   const {
     workspace_root,
-    plan_hash,
+    plan_signature,
     evidence_selectors = {},
   } = params;
 
@@ -43,11 +44,11 @@ export async function generateRemediationProposals(params) {
     );
   }
 
-  if (!plan_hash || typeof plan_hash !== "string") {
+  if (!plan_signature || typeof plan_signature !== "string") {
     throw SystemError.toolFailure(
       SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE,
       {
-        human_message: "plan_hash must be a non-empty string",
+        human_message: "plan_signature must be a non-empty string",
         tool_name: "generate_remediation_proposals",
         workspace_root,
       }
@@ -56,7 +57,7 @@ export async function generateRemediationProposals(params) {
 
   try {
     // Initialize remediation engine
-    const engine = new RemediationEngine(workspace_root, plan_hash);
+    const engine = new RemediationEngine(workspace_root, plan_signature);
 
     // Process forensic findings
     const forensic_findings = evidence_selectors.forensic_findings || [];
@@ -86,17 +87,11 @@ export async function generateRemediationProposals(params) {
     // Validate all proposals are evidence-bound
     const evidence_map = new Map();
     for (const finding of forensic_findings) {
-      const hash = require("crypto")
-        .createHash("sha256")
-        .update(JSON.stringify(finding))
-        .digest("hex");
+      const hash = crypto.createHash("sha256").update(JSON.stringify(finding)).digest("hex");
       evidence_map.set(hash, finding);
     }
     for (const error of system_errors) {
-      const hash = require("crypto")
-        .createHash("sha256")
-        .update(JSON.stringify(error))
-        .digest("hex");
+      const hash = crypto.createHash("sha256").update(JSON.stringify(error)).digest("hex");
       evidence_map.set(hash, error);
     }
 
@@ -128,7 +123,7 @@ export async function generateRemediationProposals(params) {
       {
         tool: "generate_remediation_proposals",
         intent: "Generate remediation proposals from evidence",
-        plan_hash,
+        plan_signature,
         role: "EXECUTABLE",
         result: "ok",
         error_code: null,
@@ -155,7 +150,7 @@ export async function generateRemediationProposals(params) {
         human_message: `Failed to generate proposals: ${err.message}`,
         tool_name: "generate_remediation_proposals",
         workspace_root,
-        plan_hash,
+        plan_signature,
         cause: err,
       }
     );

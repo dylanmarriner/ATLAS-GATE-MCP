@@ -69,12 +69,12 @@ const rawHash = lintResult.hash;
 ## Integration Point 3: Plan Execution Gate ✓
 
 **File**: `core/plan-enforcer.js`  
-**Function**: `enforcePlan(planHash, targetPath)`  
+**Function**: `enforcePlan(planSignature, targetPath)`  
 **Change**: Added re-linting with hash validation
 
 ```javascript
 // GATE: RE-LINT PLAN AT EXECUTION TIME (FAIL IF MODIFIED)
-const lintResult = lintPlan(fileContent, planHash);
+const lintResult = lintPlan(fileContent, planSignature);
 if (!lintResult.passed) {
     throw new Error(
         `REFUSE: Plan execution blocked. Linting failed with ${lintResult.errors.length} error(s). ` +
@@ -289,7 +289,7 @@ Lint results are structured for audit logging:
 {
   "timestamp": 1705700400000,
   "event": "plan_lint_proposal|plan_lint_approval|plan_lint_execution",
-  "plan_hash": "d8bb323...",
+  "plan_signature": "d8bb323...",
   "lint_result": "PASS|FAIL",
   "error_count": 0,
   "violations": [

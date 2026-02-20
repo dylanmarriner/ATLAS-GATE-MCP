@@ -48,7 +48,7 @@ async function runAttack(name, {
         content: input.content,
         plan: input.plan || "Governance Audit",
         planId: input.planId,
-        planHash: input.planHash,
+        planSignature: input.planSignature,
         role: input.role || "ATTACKER",
         // ... defaults
         ...input,
@@ -120,7 +120,7 @@ Red Team Usage.
 
     const COMMON_ARGS = {
         plan: PLAN_HASH,
-        planHash: PLAN_HASH,
+        planSignature: PLAN_HASH,
         role: "INFRASTRUCTURE",
         purpose: "Testing Governance Enforcement",
         authority: PLAN_HASH,

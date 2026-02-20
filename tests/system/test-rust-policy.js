@@ -3,8 +3,8 @@ import {
   validateRustErrorHandling,
   enforceRustPolicy,
   verifyCargoLintFlags
-} from './core/rust-policy-engine.js';
-import { KaizaError } from './core/error.js';
+} from '../../core/rust-policy-engine.js';
+import { KaizaError } from '../../core/error.js';
 import assert from 'assert';
 
 console.log('🧪 Testing Rust Static Enforcement Gate...\n');

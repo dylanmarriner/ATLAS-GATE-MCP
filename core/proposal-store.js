@@ -39,10 +39,10 @@ export function writeProposal(workspace_root, proposal) {
   try {
     // Ensure proposals directory
     const proposalsDir = path.join(workspace_root, PROPOSALS_DIR);
-    const atlas-gateDir = path.join(workspace_root, ".atlas-gate");
+    const atlasGateDir = path.join(workspace_root, ".atlas-gate");
 
     fs.mkdirSync(proposalsDir, { recursive: true });
-    fs.mkdirSync(atlas-gateDir, { recursive: true });
+    fs.mkdirSync(atlasGateDir, { recursive: true });
 
     // Write proposal markdown file
     const proposalFile = path.join(proposalsDir, `PROPOSAL_${proposal.proposal_id}.md`);
@@ -59,7 +59,7 @@ export function writeProposal(workspace_root, proposal) {
       file_path: proposalFile,
     };
 
-    const indexPath = path.join(atlas-gateDir, "proposals-index.jsonl");
+    const indexPath = path.join(atlasGateDir, "proposals-index.jsonl");
     fs.appendFileSync(indexPath, JSON.stringify(indexEntry) + "\n", "utf8");
 
     return { file_path: proposalFile, index_entry: indexEntry };
@@ -184,8 +184,8 @@ export function updateProposalStatus(
       reason,
     };
 
-    const atlas-gateDir = path.join(workspace_root, ".atlas-gate");
-    const auditPath = path.join(atlas-gateDir, "proposal-approvals.jsonl");
+    const atlasGateDir = path.join(workspace_root, ".atlas-gate");
+    const auditPath = path.join(atlasGateDir, "proposal-approvals.jsonl");
     fs.appendFileSync(auditPath, JSON.stringify(auditEntry) + "\n", "utf8");
 
     return proposal;
@@ -207,7 +207,7 @@ function formatProposalMarkdown(proposal) {
 **Type**: ${proposal.proposal_type}  
 **Created**: ${proposal.created_at}  
 **Workspace**: \`${proposal.workspace_root}\`  
-**Plan Hash**: \`${proposal.plan_hash}\`  
+**Plan Signature**: \`${proposal.plan_signature}\`  
 
 `;
 
@@ -303,8 +303,8 @@ function parseProposalMarkdown(content) {
   const createdMatch = content.match(/\*\*Created\*\*: ([\w\-T:.Z]+)/);
   const created_at = createdMatch ? createdMatch[1] : null;
 
-  const planHashMatch = content.match(/\*\*Plan Hash\*\*: `([a-f0-9]+)`/);
-  const plan_hash = planHashMatch ? planHashMatch[1] : null;
+  const planSignatureMatch = content.match(/\*\*Plan Signature\*\*: `([a-f0-9]+)`/);
+  const plan_signature = planSignatureMatch ? planSignatureMatch[1] : null;
 
   const workspaceMatch = content.match(/\*\*Workspace\*\*: `([^`]+)`/);
   const workspace_root = workspaceMatch ? workspaceMatch[1] : null;
@@ -366,7 +366,7 @@ function parseProposalMarkdown(content) {
     status,
     created_at,
     workspace_root,
-    plan_hash,
+    plan_signature,
     evidence_refs,
     violations_addressed,
     exact_changes_requested,

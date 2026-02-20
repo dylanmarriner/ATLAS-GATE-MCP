@@ -326,7 +326,7 @@ function checkPlanAddressingEnforcement(result) {
 
   try {
     result.addCheck(hashInvariant, true, 'Plan addressing by hash is enforced', {
-      mechanism: 'resolvePlanPath(planHash)',
+      mechanism: 'resolvePlanPath(planSignature)',
       hashFormat: 'SHA256 (64 hex chars)'
     });
 

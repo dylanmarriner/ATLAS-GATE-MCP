@@ -205,7 +205,7 @@ try {
 ```javascript
 // Attempt to execute with unapproved plan
 try {
-  enforcePlan("DraftPlan", "src/file.js", planId, planHash);
+  enforcePlan("DraftPlan", "src/file.js", planId, planSignature);
 } catch (err) {
   // This will throw InvariantViolationError
   // Code: INV_PLAN_APPROVED

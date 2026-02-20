@@ -31,7 +31,7 @@ resetWorkspaceRootForTesting();
 lockWorkspaceRoot(REPO_ROOT);
 
 const SECRET = "test-bootstrap-secret";
-process.env.ATLAS-GATE_BOOTSTRAP_SECRET = SECRET;
+process.env['ATLAS-GATE_BOOTSTRAP_SECRET'] = SECRET;
 
 // Clean state for testing
 const govPath = path.join(REPO_ROOT, ".atlas-gate", "governance.json");

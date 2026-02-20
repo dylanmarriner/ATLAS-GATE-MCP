@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { KaizaError, ERROR_CODES } from "./core/error.js";
-import { analyzeFileGovernance } from "./core/static-analyzer.js";
+import { KaizaError, ERROR_CODES } from "../../core/error.js";
+import { analyzeFileGovernance } from "../../core/static-analyzer.js";
 import { writeFileHandler } from "./tools/write_file.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
-import { lockWorkspaceRoot } from "./core/path-resolver.js";
+import { lockWorkspaceRoot } from "../../core/path-resolver.js";
 import { SESSION_STATE } from "./session.js";
 
 const REPO_ROOT = process.cwd();
@@ -35,7 +35,7 @@ function wrapHandler(handler, toolName) {
     };
 }
 
-import { ensureKaizaError } from "./core/error.js";
+import { ensureKaizaError } from "../../core/error.js";
 
 async function runTest() {
     console.log("🧪 STARTING GOVERNANCE VERIFICATION TEST");

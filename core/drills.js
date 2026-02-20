@@ -123,7 +123,7 @@ export async function drillAuditTamper(workspaceRoot, sessionId, role) {
         workspace_root: workspaceRoot,
         tool: drillName,
         intent: "catastrophic failure drill",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
         args: { drill_type: "audit_tamper" },
         result: "drill_completed",
@@ -200,7 +200,7 @@ export async function drillPolicyBreach(workspaceRoot, sessionId, role) {
         workspace_root: workspaceRoot,
         tool: drillName,
         intent: "catastrophic failure drill",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
         args: { drill_type: "policy_breach" },
         result: "drill_completed",
@@ -221,13 +221,13 @@ export async function drillPolicyBreach(workspaceRoot, sessionId, role) {
 }
 
 /**
- * DRILL 3: Plan Hash Mismatch
+ * DRILL 3: Plan Signature Mismatch
  * Simulates: plan hash mismatch
  * Severity: CRITICAL
  * Expected: Kill-switch engaged
  */
 export async function drillPlanHashMismatch(workspaceRoot, sessionId, role) {
-  const drillName = "drill_plan_hash_mismatch";
+  const drillName = "drill_plan_signature_mismatch";
   const result = new DrillResult(drillName);
 
   console.error(`[DRILL] Starting ${drillName}...`);
@@ -273,9 +273,9 @@ export async function drillPlanHashMismatch(workspaceRoot, sessionId, role) {
         workspace_root: workspaceRoot,
         tool: drillName,
         intent: "catastrophic failure drill",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
-        args: { drill_type: "plan_hash_mismatch" },
+        args: { drill_type: "plan_signature_mismatch" },
         result: "drill_completed",
         error_code: null,
         invariant_id: failureDef.invariant_id,
@@ -348,7 +348,7 @@ export async function drillOperatorAbuse(workspaceRoot, sessionId, role) {
         workspace_root: workspaceRoot,
         tool: drillName,
         intent: "catastrophic failure drill",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
         args: { drill_type: "operator_fatigue" },
         result: "drill_completed",
@@ -420,7 +420,7 @@ export async function drillFilesystemDenial(workspaceRoot, sessionId, role) {
         workspace_root: workspaceRoot,
         tool: drillName,
         intent: "catastrophic failure drill",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
         args: { drill_type: "filesystem_denial" },
         result: "drill_completed",
@@ -458,7 +458,7 @@ export function listAvailableDrills() {
       failure_ids: ["F-POLICY"]
     },
     {
-      name: "drill_plan_hash_mismatch",
+      name: "drill_plan_signature_mismatch",
       description: "Simulate plan file hash mismatch",
       severity: "CRITICAL",
       failure_ids: ["F-PLAN-HASH"]

@@ -6,7 +6,7 @@ STATUS: APPROVED
 
 # ATLAS-GATE Level 5 Execution Master Plan
 
-**Plan Hash**: d1c7db0646ebc8481e2b9fe824afe9aab4fb7c62fcdebaab0cae6fdfe2cd9ee1
+**Plan Signature**: d1c7db0646ebc8481e2b9fe824afe9aab4fb7c62fcdebaab0cae6fdfe2cd9ee1
 **Role Authority**: ANTIGRAVITY (Planning) / WINDSURF (Execution)
 **Status**: APPROVED
 

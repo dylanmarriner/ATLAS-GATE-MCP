@@ -152,7 +152,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 | Reliability | auditCoverage≥99% AND hashChainBreaks=0 AND replayFailRate<0.01 |
 | Security | policyPassRate=100% AND bypassCount=0 AND auditTamperedCount=0 |
 | Documentation | intentCoverage≥95% AND schemaViolations=0 AND nonCoderSections=true |
-| Governance | planHashCoverage=100% AND hashMismatches=0 AND unauthorizedPaths=0 |
+| Governance | planSignatureCoverage=100% AND hashMismatches=0 AND unauthorizedPaths=0 |
 | Integration | toolCount≥5 AND gateFailures=0 AND !manualStepsRequired |
 | Performance | metricsPresent AND policyLatency≤5000 AND auditLatency≤10000 AND !regression |
 

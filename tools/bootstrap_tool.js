@@ -9,12 +9,12 @@ export const bootstrapToolSchema = z.object({
     path: z.string(), // To resolve repo root
     planContent: z.string(),
     payload: z.object({
-        repoIdentifier: z.string(), // Root path hash or similar
+        repoIdentifier: z.string(), // Root path signature or similar
         timestamp: z.number(),
         nonce: z.string(),
         action: z.literal("BOOTSTRAP_CREATE_FOUNDATION_PLAN"),
     }),
-    signature: z.string(), // HMAC-SHA256(JSON.stringify(payload), secret)
+    signature: z.string(), // HMAC-SHA256(JSON.stringify(payload), secret) for bootstrap auth
 });
 
 export async function bootstrapPlanHandler(args) {
@@ -46,24 +46,24 @@ export async function bootstrapPlanHandler(args) {
     // (External callers like AMP/Antigravity would call this via MCP with auth)
     
     try {
-        // GATE 1: LINT THE PLAN PROPOSAL (MANDATORY)
-        const lintResult = lintPlan(planContent);
-        if (!lintResult.passed) {
-            throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PLAN_LINT_FAILED, {
-                human_message: `Plan proposal rejected: linting failed with ${lintResult.errors.length} error(s). ${lintResult.errors.map(e => e.message).join("; ")}`,
-                tool_name: "bootstrap_create_foundation_plan",
-                violations: lintResult.errors.map(e => ({
-                    code: e.code,
-                    message: e.message,
-                    invariant: e.invariant,
-                    severity: e.severity
-                }))
-            });
-        }
+         // GATE 1: LINT THE PLAN PROPOSAL (MANDATORY)
+         const lintResult = await lintPlan(planContent);
+         if (!lintResult.passed) {
+             throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PLAN_LINT_FAILED, {
+                 human_message: `Plan proposal rejected: linting failed with ${lintResult.errors.length} error(s). ${lintResult.errors.map(e => e.message).join("; ")}`,
+                 tool_name: "bootstrap_create_foundation_plan",
+                 violations: lintResult.errors.map(e => ({
+                     code: e.code,
+                     message: e.message,
+                     invariant: e.invariant,
+                     severity: e.severity
+                 }))
+             });
+         }
 
-        // Use canonical path resolver to get the cached repo root
-        const repoRoot = getRepoRoot();
-        const result = bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature);
+         // Use canonical path resolver to get the cached repo root
+         const repoRoot = getRepoRoot();
+         const result = await bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature);
 
         return {
             content: [

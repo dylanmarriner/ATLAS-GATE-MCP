@@ -1,0 +1,72 @@
+<!--
+ATLAS-GATE_PLAN_SIGNATURE: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
+ROLE: ANTIGRAVITY
+STATUS: APPROVED
+-->
+
+# Plan Metadata
+
+This is the foundation plan that bootstraps the ATLAS-GATE MCP governance system.
+
+---
+
+# Scope & Constraints
+
+This plan is scoped to the ATLAS-GATE MCP server repository and establishes baseline governance.
+
+Operations MUST NOT:
+- Modify files outside the workspace
+- Execute arbitrary shell commands
+- Delete files
+
+---
+
+# Phase Definitions
+
+## Phase: BOOTSTRAP_FOUNDATION
+Phase ID: BOOTSTRAP_PHASE
+
+Objective: Establish the foundation governance and audit systems.
+
+Allowed operations: CREATE, MODIFY
+
+Forbidden operations: DELETE
+
+Required intent artifacts: Foundation governance specification
+
+Verification commands: npm run verify
+
+Expected outcomes: System operational
+
+Failure stop conditions: Any system failure
+
+---
+
+# Path Allowlist
+
+- .atlas-gate/
+- docs/
+- core/
+- tools/
+
+---
+
+# Verification Gates
+
+- System must start without errors
+
+---
+
+# Forbidden Actions
+
+- DELETE operations on critical files
+- Modification of files outside allowlist
+
+---
+
+# Rollback / Failure Policy
+
+On failure:
+1. Revert changes
+2. Log to audit trail
+3. Require manual review

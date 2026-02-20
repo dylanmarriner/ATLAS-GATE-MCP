@@ -19,7 +19,7 @@ export class AuditStorage {
 
   /**
    * Read audit log entries
-   * @param {object} filters - Query filters { session_id, tool, role, plan_hash, limit, offset }
+   * @param {object} filters - Query filters { session_id, tool, role, plan_signature, limit, offset }
    * @returns {Promise<Array<object>>} Array of audit entries
    */
   async read(filters = {}) {

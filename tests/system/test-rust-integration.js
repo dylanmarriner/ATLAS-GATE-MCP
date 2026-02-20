@@ -4,8 +4,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import { enforceRustPolicy, runRustVerificationGates, verifyCargoLintFlags } from './core/rust-policy-engine.js';
-import { KaizaError } from './core/error.js';
+import { enforceRustPolicy, runRustVerificationGates, verifyCargoLintFlags } from '../../core/rust-policy-engine.js';
+import { KaizaError } from '../../core/error.js';
 import assert from 'assert';
 
 console.log('🧪 Testing Rust Integration with MCP Write Flow...\n');

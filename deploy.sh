@@ -1,627 +1,510 @@
 #!/bin/bash
 
-###############################################################################
-# ATLAS-GATE-MCP Kubernetes Deployment Script
-# 
-# Deploys to Hetzner cax31 with k3s + nginx ingress
-# Usage: ./deploy.sh <server-ip> <ssh-key-path>
-###############################################################################
+################################################################################
+# ATLAS-GATE HTTP Server - Complete Deployment Script
+################################################################################
+# One-command deployment to Docker or Kubernetes
+# Auto-installs Docker & Kubernetes if missing
+# Usage: ./deploy.sh [docker|kubernetes] [--options]
+################################################################################
 
 set -euo pipefail
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+BLUE='\033[0;34m'
+NC='\033[0m'
 
 # Configuration
-SERVER_IP="${1:-49.12.230.179}"
-SSH_KEY="${2:-/home/kubuntux/Downloads/.ssh/id_rsa}"
-SSH_USER="root"
-NAMESPACE="atlas-gate"
-REGISTRY="docker.io"
-IMAGE_NAME="atlas-gate-mcp"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEPLOY_MODE="${1:-docker}"
+SERVER_IP="${SERVER_IP:-localhost}"
+DOMAIN="${DOMAIN:-atlas-gate.local}"
+ENVIRONMENT="${ENVIRONMENT:-production}"
+REGISTRY="${REGISTRY:-}"
+IMAGE_NAME="${REGISTRY:+$REGISTRY/}atlas-gate"
 IMAGE_TAG="latest"
 
-echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}ATLAS-GATE-MCP Kubernetes Deployment${NC}"
-echo -e "${GREEN}========================================${NC}"
-echo ""
-echo "Server IP: $SERVER_IP"
-echo "SSH Key: $SSH_KEY"
-echo "Namespace: $NAMESPACE"
-echo ""
+# Functions
+log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
+log_error() { echo -e "${RED}[✗]${NC} $*"; exit 1; }
 
-# Verify SSH key exists
-if [ ! -f "$SSH_KEY" ]; then
-  echo -e "${RED}ERROR: SSH key not found at $SSH_KEY${NC}"
-  exit 1
-fi
-
-# Function to run command on remote server
-run_remote() {
-  local cmd="$1"
-  ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no "$SSH_USER@$SERVER_IP" "$cmd"
+print_banner() {
+  echo -e "${BLUE}"
+  echo "╔═══════════════════════════════════════════════════════════════╗"
+  echo "║       ATLAS-GATE HTTP Server - Deployment Script             ║"
+  echo "║          Mode: $DEPLOY_MODE ($(echo $DEPLOY_MODE | tr '[:lower:]' '[:upper:]'))                      ║"
+  echo "╚═══════════════════════════════════════════════════════════════╝"
+  echo -e "${NC}"
 }
 
-# Function to copy file to remote
-copy_to_remote() {
-  local src="$1"
-  local dst="$2"
-  scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$src" "$SSH_USER@$SERVER_IP:$dst"
+check_root() {
+  if [[ $EUID -ne 0 ]]; then
+    log_error "This script must be run as root or with sudo"
+  fi
 }
 
-###############################################################################
-# STEP 1: Install k3s
-###############################################################################
+detect_os() {
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+    OS_VERSION=$VERSION_ID
+  else
+    log_error "Cannot detect OS"
+  fi
+  
+  log_success "Detected OS: $OS $OS_VERSION"
+}
 
-echo -e "${YELLOW}[1/6] Installing k3s...${NC}"
+################################################################################
+# DOCKER INSTALLATION
+################################################################################
 
-run_remote 'bash -s' << 'EOF'
-  # Update system
-  apt-get update
-  apt-get install -y curl wget git
+install_docker() {
+  log_info "Installing Docker..."
+  
+  case "$OS" in
+    ubuntu|debian)
+      log_info "Installing Docker on Debian/Ubuntu..."
+      
+      # Update package manager
+      apt-get update
+      apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+      
+      # Add Docker GPG key
+      curl -fsSL https://download.docker.com/linux/$OS/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      
+      # Add Docker repository
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$OS \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      
+      # Install Docker
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+      
+      log_success "Docker installed"
+      ;;
+      
+    centos|rhel|fedora)
+      log_info "Installing Docker on CentOS/RHEL/Fedora..."
+      
+      yum install -y yum-utils
+      yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+      systemctl start docker
+      systemctl enable docker
+      
+      log_success "Docker installed"
+      ;;
+      
+    alpine)
+      log_info "Installing Docker on Alpine..."
+      apk add --no-cache docker docker-compose
+      rc-service docker start
+      rc-update add docker
+      
+      log_success "Docker installed"
+      ;;
+      
+    *)
+      log_error "Unsupported OS: $OS. Please install Docker manually: https://docs.docker.com/engine/install/"
+      ;;
+  esac
+}
 
-  # Install k3s
-  curl -sfL https://get.k3s.io | sh -s - \
-    --write-kubeconfig-mode 644 \
-    --flannel-backend=vxlan \
-    --disable=traefik
+install_docker_compose() {
+  log_info "Installing Docker Compose..."
+  
+  COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d'"' -f4)
+  
+  curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  chmod +x /usr/local/bin/docker-compose
+  
+  log_success "Docker Compose installed: $(docker-compose --version)"
+}
 
-  # Wait for k3s to be ready
+################################################################################
+# KUBERNETES INSTALLATION
+################################################################################
+
+install_kubectl() {
+  log_info "Installing kubectl..."
+  
+  KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+  
+  curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+  chmod +x kubectl
+  mv kubectl /usr/local/bin/kubectl
+  
+  log_success "kubectl installed: $(kubectl version --client --short)"
+}
+
+install_kind() {
+  log_info "Installing kind (Kubernetes in Docker)..."
+  
+  curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+  chmod +x /usr/local/bin/kind
+  
+  log_success "kind installed: $(kind --version)"
+}
+
+create_kind_cluster() {
+  log_info "Creating Kubernetes cluster with kind..."
+  
+  # Check if cluster already exists
+  if kind get clusters 2>/dev/null | grep -q "atlas-gate-cluster"; then
+    log_warn "Cluster atlas-gate-cluster already exists, skipping creation"
+    return
+  fi
+  
+  # Create cluster
+  kind create cluster --name atlas-gate-cluster --config - << EOF
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: atlas-gate-cluster
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+  - containerPort: 3000
+    hostPort: 3000
+    protocol: TCP
+- role: worker
+- role: worker
+EOF
+  
+  log_success "Kubernetes cluster created: atlas-gate-cluster"
+  
+  # Wait for cluster to be ready
+  log_info "Waiting for cluster to be ready..."
   sleep 10
   
-  echo "k3s installed successfully"
-EOF
-
-echo -e "${GREEN}✓ k3s installed${NC}"
-
-###############################################################################
-# STEP 2: Verify Kubernetes cluster
-###############################################################################
-
-echo -e "${YELLOW}[2/6] Verifying Kubernetes cluster...${NC}"
-
-run_remote 'kubectl get nodes' || {
-  echo -e "${RED}Failed to access Kubernetes cluster${NC}"
-  exit 1
+  kubectl cluster-info
 }
 
-echo -e "${GREEN}✓ Kubernetes cluster is ready${NC}"
+install_ingress_nginx() {
+  log_info "Installing Nginx Ingress Controller..."
+  
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+  
+  log_success "Ingress Nginx installed"
+}
 
-###############################################################################
-# STEP 3: Install nginx ingress controller
-###############################################################################
+################################################################################
+# DOCKER DEPLOYMENT
+################################################################################
 
-echo -e "${YELLOW}[3/6] Installing nginx ingress controller...${NC}"
+deploy_docker() {
+  print_banner
+  
+  log_info "Deploying ATLAS-GATE with Docker Compose..."
+  
+  # Check if Docker is installed, install if not
+  if ! command -v docker &> /dev/null; then
+    log_warn "Docker not found, installing..."
+    detect_os
+    check_root
+    install_docker
+  fi
+  log_success "Docker is available"
+  
+  # Check if Docker Compose is installed, install if not
+  if ! command -v docker-compose &> /dev/null; then
+    log_warn "Docker Compose not found, installing..."
+    install_docker_compose
+  fi
+  log_success "Docker Compose is available"
+  
+  log_info "Building Docker image..."
+  docker build -t "$IMAGE_NAME:$IMAGE_TAG" "$SCRIPT_DIR"
+  log_success "Docker image built: $IMAGE_NAME:$IMAGE_TAG"
+  
+  # Create .env file
+  log_info "Creating configuration..."
+  cat > "$SCRIPT_DIR/.env" << EOF
+ENVIRONMENT=$ENVIRONMENT
+ATLAS_GATE_PORT=3000
+REPOS_PATH=/tmp/repos
+NODE_ENV=$ENVIRONMENT
+EOF
+  
+  log_success "Configuration created"
+  
+  # Start containers
+  log_info "Starting containers..."
+  cd "$SCRIPT_DIR"
+  docker-compose up -d
+  
+  sleep 3
+  
+  # Check health
+  if docker exec atlas-gate-http curl -f http://localhost:3000/health >/dev/null 2>&1; then
+    log_success "ATLAS-GATE HTTP Server is running!"
+  else
+    log_warn "Server may still be starting. Check logs with: docker-compose logs -f atlas-gate"
+  fi
+  
+  # Get initial API key
+  log_info "Retrieving initial API key..."
+  API_KEY=$(docker logs atlas-gate-http 2>&1 | grep "API Key:" | head -1 | awk '{print $NF}' || echo "CHECK_LOGS")
+  
+  echo ""
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+  echo -e "${GREEN}Deployment Complete!${NC}"
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+  echo ""
+  echo "Server URL:     http://$SERVER_IP:3000"
+  echo "API Key:        $API_KEY"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Create a session:"
+  echo "     curl -X POST http://$SERVER_IP:3000/sessions/create \\"
+  echo "       -H \"X-API-Key: $API_KEY\" \\"
+  echo "       -H \"Content-Type: application/json\" \\"
+  echo "       -d '{\"workspaceRoot\": \"/path/to/repo\"}'"
+  echo ""
+  echo "  2. View logs:"
+  echo "     docker-compose logs -f atlas-gate"
+  echo ""
+  echo "  3. Stop server:"
+  echo "     docker-compose down"
+  echo ""
+  
+  save_credentials "$API_KEY"
+}
 
-run_remote 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml'
+################################################################################
+# KUBERNETES DEPLOYMENT
+################################################################################
 
-# Wait for nginx to be ready
-run_remote 'kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s' || true
-
-echo -e "${GREEN}✓ nginx ingress controller installed${NC}"
-
-###############################################################################
-# STEP 4: Create namespace and secrets
-###############################################################################
-
-echo -e "${YELLOW}[4/6] Creating namespace and secrets...${NC}"
-
-run_remote "
+deploy_kubernetes() {
+  print_banner
+  
+  log_info "Deploying ATLAS-GATE to Kubernetes..."
+  
+  # Check if kubectl is installed, install if not
+  if ! command -v kubectl &> /dev/null; then
+    log_warn "kubectl not found, installing..."
+    check_root
+    install_kubectl
+  fi
+  log_success "kubectl is available"
+  
+  # Check if Docker is installed (needed for building images)
+  if ! command -v docker &> /dev/null; then
+    log_warn "Docker not found, installing..."
+    detect_os
+    check_root
+    install_docker
+  fi
+  log_success "Docker is available"
+  
+  # Check if Kubernetes cluster is available
+  if ! kubectl cluster-info &>/dev/null; then
+    log_warn "No Kubernetes cluster found, installing kind and creating cluster..."
+    check_root
+    install_kind
+    create_kind_cluster
+    install_ingress_nginx
+  fi
+  
+  log_success "Connected to Kubernetes cluster"
+  
+  # Build and push image if registry is specified
+  if [ -n "$REGISTRY" ]; then
+    log_info "Building and pushing Docker image to registry..."
+    docker build -t "$IMAGE_NAME:$IMAGE_TAG" "$SCRIPT_DIR"
+    docker push "$IMAGE_NAME:$IMAGE_TAG"
+    log_success "Image pushed: $IMAGE_NAME:$IMAGE_TAG"
+  else
+    log_warn "No registry specified. Building local image..."
+    log_info "Building Docker image for local use..."
+    docker build -t "$IMAGE_NAME:$IMAGE_TAG" "$SCRIPT_DIR"
+    
+    # For kind, load image into cluster
+    if command -v kind &>/dev/null; then
+      log_info "Loading image into kind cluster..."
+      kind load docker-image "$IMAGE_NAME:$IMAGE_TAG" --name atlas-gate-cluster
+    fi
+  fi
+  
   # Create namespace
-  kubectl create namespace $NAMESPACE || true
+  log_info "Creating namespace..."
+  kubectl create namespace atlas-gate --dry-run=client -o yaml | kubectl apply -f -
+  log_success "Namespace ready"
   
-  # Create PostgreSQL secret
-  kubectl create secret generic postgres-secret \
-    --from-literal=POSTGRES_USER=atlas_user \
-    --from-literal=POSTGRES_PASSWORD=atlas_password_secure_change_me \
-    --from-literal=POSTGRES_DB=atlas_gate \
-    -n $NAMESPACE || kubectl replace secret postgres-secret \
-    --from-literal=POSTGRES_USER=atlas_user \
-    --from-literal=POSTGRES_PASSWORD=atlas_password_secure_change_me \
-    --from-literal=POSTGRES_DB=atlas_gate \
-    -n $NAMESPACE
-
-  # Create MCP config secret
-  kubectl create secret generic mcp-config \
-    --from-literal=AUDIT_BACKEND=postgres \
-    --from-literal=SESSION_BACKEND=redis \
-    --from-literal=REQUIRE_AUTH=false \
-    -n $NAMESPACE || kubectl replace secret mcp-config \
-    --from-literal=AUDIT_BACKEND=postgres \
-    --from-literal=SESSION_BACKEND=redis \
-    --from-literal=REQUIRE_AUTH=false \
-    -n $NAMESPACE
-"
-
-echo -e "${GREEN}✓ Namespace and secrets created${NC}"
-
-###############################################################################
-# STEP 5: Deploy services via kubectl
-###############################################################################
-
-echo -e "${YELLOW}[5/6] Deploying services...${NC}"
-
-# Create temporary manifests file
-MANIFESTS=$(mktemp)
-
-cat > "$MANIFESTS" << 'MANIFEST_EOF'
----
-# Persistent Volumes
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-pv
-spec:
-  capacity:
-    storage: 20Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /mnt/atlas-data/postgres
-
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: redis-pv
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /mnt/atlas-data/redis
-
----
-# PostgreSQL Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-  namespace: atlas-gate
-spec:
-  ports:
-    - port: 5432
-  clusterIP: None
-  selector:
-    app: postgres
-
----
-# PostgreSQL Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-  namespace: atlas-gate
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-      - name: postgres
-        image: postgres:15-alpine
-        ports:
-        - containerPort: 5432
-        envFrom:
-        - secretRef:
-            name: postgres-secret
-        volumeMounts:
-        - name: postgres-storage
-          mountPath: /var/lib/postgresql/data
-          subPath: pgdata
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - pg_isready -U atlas_user
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - pg_isready -U atlas_user
-          initialDelaySeconds: 5
-          periodSeconds: 5
-      volumes:
-      - name: postgres-storage
-        persistentVolumeClaim:
-          claimName: postgres-pvc
-
----
-# PostgreSQL PVC
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-pvc
-  namespace: atlas-gate
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-
----
-# Redis Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis
-  namespace: atlas-gate
-spec:
-  ports:
-    - port: 6379
-  clusterIP: None
-  selector:
-    app: redis
-
----
-# Redis Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis
-  namespace: atlas-gate
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: redis
-  template:
-    metadata:
-      labels:
-        app: redis
-    spec:
-      containers:
-      - name: redis
-        image: redis:7-alpine
-        ports:
-        - containerPort: 6379
-        command:
-        - redis-server
-        - "--appendonly"
-        - "yes"
-        volumeMounts:
-        - name: redis-storage
-          mountPath: /data
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - redis-cli ping
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - redis-cli ping
-          initialDelaySeconds: 5
-          periodSeconds: 5
-      volumes:
-      - name: redis-storage
-        persistentVolumeClaim:
-          claimName: redis-pvc
-
----
-# Redis PVC
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: redis-pvc
-  namespace: atlas-gate
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-
----
-# ConfigMap for initialization
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-init
-  namespace: atlas-gate
-data:
-  init.sql: |
-    CREATE TABLE IF NOT EXISTS audit_log (
-      id SERIAL PRIMARY KEY,
-      session_id UUID NOT NULL,
-      timestamp TIMESTAMPTZ DEFAULT NOW(),
-      role VARCHAR(50) NOT NULL,
-      tool VARCHAR(255) NOT NULL,
-      workspace_root VARCHAR(1024),
-      plan_hash VARCHAR(64),
-      result VARCHAR(20) NOT NULL,
-      error_code VARCHAR(50),
-      args JSONB,
-      notes TEXT,
-      hash_chain VARCHAR(64) NOT NULL UNIQUE,
-      seq BIGINT NOT NULL,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_audit_session_id ON audit_log(session_id);
-    CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp DESC);
-    CREATE INDEX IF NOT EXISTS idx_audit_tool ON audit_log(tool);
-
-    CREATE TABLE IF NOT EXISTS sessions (
-      session_id UUID PRIMARY KEY,
-      workspace_root VARCHAR(1024) NOT NULL,
-      active_plan_id VARCHAR(64),
-      created_at TIMESTAMPTZ DEFAULT NOW(),
-      expires_at TIMESTAMPTZ DEFAULT NOW() + INTERVAL '1 hour'
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_sessions_created ON sessions(created_at DESC);
-
----
-# MCP Server Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: mcp-server
-  namespace: atlas-gate
-spec:
-  type: ClusterIP
-  ports:
-    - port: 3000
-      targetPort: 3000
-  selector:
-    app: mcp-server
-
----
-# MCP Server Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mcp-server
-  namespace: atlas-gate
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mcp-server
-  template:
-    metadata:
-      labels:
-        app: mcp-server
-    spec:
-      initContainers:
-      - name: wait-postgres
-        image: busybox:1.35
-        command: ['sh', '-c', 'until nc -z postgres:5432; do echo waiting for postgres; sleep 2; done;']
-      - name: wait-redis
-        image: busybox:1.35
-        command: ['sh', '-c', 'until nc -z redis:6379; do echo waiting for redis; sleep 2; done;']
-      containers:
-      - name: mcp-server
-        image: node:18-alpine
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3000
-        workingDir: /app
-        command: ["node", "bin/server-network.js"]
-        env:
-        - name: MCP_PORT
-          value: "3000"
-        - name: MCP_BIND
-          value: "0.0.0.0"
-        - name: MCP_ROLE
-          value: "ANTIGRAVITY"
-        - name: DATABASE_URL
-          value: "postgresql://atlas_user:atlas_password_secure_change_me@postgres:5432/atlas_gate"
-        - name: REDIS_URL
-          value: "redis://redis:6379"
-        - name: WORKSPACE_ROOT
-          value: "/workspace"
-        - name: NODE_ENV
-          value: "production"
-        envFrom:
-        - secretRef:
-            name: mcp-config
-        volumeMounts:
-        - name: app-code
-          mountPath: /app
-        - name: workspace
-          mountPath: /workspace
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          timeoutSeconds: 3
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-      volumes:
-      - name: app-code
-        emptyDir: {}
-      - name: workspace
-        persistentVolumeClaim:
-          claimName: workspace-pvc
-
----
-# Workspace PVC
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: workspace-pvc
-  namespace: atlas-gate
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-
----
-# Workspace PV
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: workspace-pv
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /mnt/atlas-data/workspace
-
----
-# Ingress (nginx)
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: mcp-ingress
-  namespace: atlas-gate
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/rate-limit: "10"
-    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
-spec:
-  rules:
-  - host: mcp.localhost
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: mcp-server
-            port:
-              number: 3000
-  tls:
-  - hosts:
-    - mcp.localhost
-    secretName: mcp-tls
-
-MANIFEST_EOF
-
-# Apply manifests
-copy_to_remote "$MANIFESTS" /tmp/manifests.yaml
-
-run_remote "
-  # Create directories for persistent volumes
-  mkdir -p /mnt/atlas-data/{postgres,redis,workspace}
-  chmod 777 /mnt/atlas-data/*
-
-  # Apply Kubernetes manifests
-  kubectl apply -f /tmp/manifests.yaml
-
-  # Wait for deployments
-  echo 'Waiting for PostgreSQL to be ready...'
-  kubectl wait --for=condition=ready pod -l app=postgres -n atlas-gate --timeout=120s || true
-
-  echo 'Waiting for Redis to be ready...'
-  kubectl wait --for=condition=ready pod -l app=redis -n atlas-gate --timeout=120s || true
-
-  echo 'Waiting for MCP server to be ready...'
-  kubectl wait --for=condition=ready pod -l app=mcp-server -n atlas-gate --timeout=120s || true
-
-  echo 'All services deployed'
-"
-
-rm -f "$MANIFESTS"
-
-echo -e "${GREEN}✓ Services deployed${NC}"
-
-###############################################################################
-# STEP 6: Verify deployment and get access info
-###############################################################################
-
-echo -e "${YELLOW}[6/6] Verifying deployment...${NC}"
-
-run_remote "
-  echo 'Kubernetes Cluster Status:'
-  kubectl get nodes
-  echo ''
+  # Generate API key secret
+  log_info "Creating API key secret..."
+  ADMIN_API_KEY=$(openssl rand -hex 32)
   
-  echo 'Atlas-Gate Namespace:'
-  kubectl get all -n atlas-gate
-  echo ''
+  kubectl create secret generic atlas-gate-secrets \
+    --from-literal=admin-api-key="$ADMIN_API_KEY" \
+    -n atlas-gate \
+    --dry-run=client -o yaml | kubectl apply -f -
   
-  echo 'Persistent Volumes:'
-  kubectl get pvc -n atlas-gate
-  echo ''
+  log_success "Secret created"
   
-  echo 'Service Details:'
-  kubectl describe service mcp-server -n atlas-gate
-  echo ''
+  # Update image in manifest
+  log_info "Applying Kubernetes manifests..."
   
-  echo 'Getting cluster info...'
-  kubectl cluster-info
-"
+  # Create temporary manifest with updated image
+  sed "s|atlas-gate:latest|$IMAGE_NAME:$IMAGE_TAG|g" "$SCRIPT_DIR/k8s-deployment.yaml" | \
+    sed "s|atlas-gate.example.com|$DOMAIN|g" | \
+    kubectl apply -f -
+  
+  log_success "Manifests applied"
+  
+  # Wait for deployment
+  log_info "Waiting for deployment to be ready (this may take a minute)..."
+  kubectl rollout status deployment/atlas-gate -n atlas-gate --timeout=300s
+  log_success "Deployment is ready!"
+  
+  # Get service information
+  log_info "Retrieving service information..."
+  
+  # Try LoadBalancer first
+  LB_IP=$(kubectl get service atlas-gate-lb -n atlas-gate -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
+  LB_HOSTNAME=$(kubectl get service atlas-gate-lb -n atlas-gate -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+  
+  if [ -z "$LB_IP" ] && [ -z "$LB_HOSTNAME" ]; then
+    SERVICE_URL="http://atlas-gate-service.atlas-gate.svc.cluster.local:3000"
+    EXTERNAL_URL="Use port-forward: kubectl port-forward -n atlas-gate svc/atlas-gate-service 3000:3000"
+  elif [ -n "$LB_IP" ]; then
+    SERVICE_URL="http://$LB_IP:3000"
+    EXTERNAL_URL="http://$LB_IP"
+  else
+    SERVICE_URL="http://$LB_HOSTNAME:3000"
+    EXTERNAL_URL="http://$LB_HOSTNAME"
+  fi
+  
+  echo ""
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+  echo -e "${GREEN}Kubernetes Deployment Complete!${NC}"
+  echo -e "${GREEN}═══════════════════════════════════════════════════════════════${NC}"
+  echo ""
+  echo "Internal Service URL: $SERVICE_URL"
+  echo "External Access:      $EXTERNAL_URL"
+  echo "Admin API Key:        $ADMIN_API_KEY"
+  echo "Domain:               $DOMAIN"
+  echo ""
+  echo "Next steps:"
+  echo ""
+  echo "1. Port-forward to access locally:"
+  echo "   kubectl port-forward -n atlas-gate svc/atlas-gate-service 3000:3000"
+  echo ""
+  echo "2. View logs:"
+  echo "   kubectl logs -n atlas-gate -f deployment/atlas-gate"
+  echo ""
+  echo "3. Check pod status:"
+  echo "   kubectl get pods -n atlas-gate"
+  echo ""
+  echo "4. Scale deployment:"
+  echo "   kubectl scale deployment atlas-gate -n atlas-gate --replicas=5"
+  echo ""
+  echo "5. Delete deployment:"
+  echo "   kubectl delete namespace atlas-gate"
+  echo ""
+  
+  save_credentials "$ADMIN_API_KEY"
+}
 
-echo -e "${GREEN}✓ Deployment verified${NC}"
+################################################################################
+# UTILITY FUNCTIONS
+################################################################################
 
-###############################################################################
-# Summary
-###############################################################################
+save_credentials() {
+  local api_key=$1
+  local creds_file="$SCRIPT_DIR/.atlas-gate-creds"
+  
+  cat > "$creds_file" << EOF
+# ATLAS-GATE Credentials
+# Generated: $(date)
+# Deployment Mode: $DEPLOY_MODE
 
-echo ""
-echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}✓ Deployment Complete!${NC}"
-echo -e "${GREEN}========================================${NC}"
-echo ""
-echo "Server: $SERVER_IP"
-echo "Namespace: $NAMESPACE"
-echo ""
-echo -e "${YELLOW}Next steps:${NC}"
-echo ""
-echo "1. SSH into server and get kubeconfig:"
-echo "   ssh -i $SSH_KEY root@$SERVER_IP"
-echo "   cat /etc/rancher/k3s/k3s.yaml"
-echo ""
-echo "2. Configure local kubectl:"
-echo "   scp -i $SSH_KEY root@$SERVER_IP:/etc/rancher/k3s/k3s.yaml ~/.kube/config-atlas"
-echo "   sed -i 's/127.0.0.1/$SERVER_IP/' ~/.kube/config-atlas"
-echo "   export KUBECONFIG=~/.kube/config-atlas"
-echo ""
-echo "3. Verify services are running:"
-echo "   kubectl get pods -n atlas-gate"
-echo ""
-echo "4. Port forward to access locally:"
-echo "   kubectl port-forward -n atlas-gate svc/mcp-server 3000:3000"
-echo ""
-echo "5. Test the API:"
-echo "   curl http://localhost:3000/health"
-echo ""
-echo "6. View logs:"
-echo "   kubectl logs -n atlas-gate -l app=mcp-server -f"
-echo ""
-echo -e "${YELLOW}Access the MCP server at:${NC}"
-echo "   http://$SERVER_IP:3000"
-echo "   (After port forwarding or Ingress setup)"
-echo ""
+export ATLAS_GATE_API_KEY="$api_key"
+export ATLAS_GATE_URL="http://$SERVER_IP:3000"
+export ATLAS_GATE_DOMAIN="$DOMAIN"
+export ATLAS_GATE_MODE="$DEPLOY_MODE"
+
+# Source this file to load credentials:
+# source $creds_file
+EOF
+  
+  chmod 600 "$creds_file"
+  log_success "Credentials saved to: $creds_file"
+  echo "  Source with: source $creds_file"
+}
+
+show_help() {
+  cat << EOF
+ATLAS-GATE Deployment Script - Auto-Install Version
+
+Usage: $0 [MODE] [OPTIONS]
+
+MODE:
+  docker       Deploy with Docker Compose (default)
+               Installs Docker & Docker Compose if missing
+  kubernetes   Deploy to Kubernetes cluster
+               Installs kubectl & kind (K8s in Docker) if missing
+
+OPTIONS:
+  --server IP    Server IP/hostname (default: localhost)
+  --domain DOMAIN  Domain name (default: atlas-gate.local)
+  --registry URL   Docker registry URL (for Kubernetes)
+  --env ENV        Environment (production/staging/development)
+  --help          Show this help message
+
+Examples:
+  # Deploy locally with Docker (auto-installs Docker)
+  sudo ./deploy.sh docker
+
+  # Deploy to Kubernetes (auto-installs kind cluster)
+  sudo ./deploy.sh kubernetes --domain atlas-gate.example.com
+
+  # Deploy to Kubernetes with custom registry
+  sudo ./deploy.sh kubernetes --registry gcr.io/my-project --domain atlas-gate.example.com
+
+Environment Variables:
+  ATLAS_GATE_PORT      Server port (default: 3000)
+  ENVIRONMENT          Environment name (default: production)
+  REGISTRY             Docker registry URL
+
+Requirements:
+  - Must run as root or with sudo
+  - Linux OS (Ubuntu, Debian, CentOS, RHEL, Fedora, or Alpine)
+  - Internet connection (to download packages)
+  - At least 2GB RAM available
+
+EOF
+}
+
+################################################################################
+# MAIN
+################################################################################
+
+case "${1:-docker}" in
+  docker)
+    deploy_docker
+    ;;
+  kubernetes|k8s)
+    deploy_kubernetes
+    ;;
+  --help|-h)
+    show_help
+    ;;
+  *)
+    log_error "Unknown mode: $1. Use 'docker' or 'kubernetes'. Run with --help for usage."
+    ;;
+esac
+
+log_success "Deployment script complete!"

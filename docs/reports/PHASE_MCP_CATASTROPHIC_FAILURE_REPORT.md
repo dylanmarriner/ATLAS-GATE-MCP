@@ -62,7 +62,7 @@ All code is production-ready, auditable, and non-negotiable.
    - 5 named drill implementations:
      - drill_audit_tamper
      - drill_policy_breach
-     - drill_plan_hash_mismatch
+     - drill_plan_signature_mismatch
      - drill_operator_abuse
      - drill_filesystem_denial
    - Drill result objects

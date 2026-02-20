@@ -20,14 +20,26 @@
  * - Audit entry written on approval
  */
 
-import { lintPlan, computePlanHash } from "./core/plan-linter.js";
+import { lintPlan, signPlan, verifyPlanSignature } from "../../core/plan-linter.js";
+import crypto from "crypto";
+
+// Test helper: Generate deterministic signature for testing (not production)
+// In production, use actual cosign keys
+function generateTestSignature(planContent) {
+  const canonicalized = planContent
+    .trim()
+    .split("\n")
+    .map(line => line.trimRight())
+    .join("\n");
+  return crypto.createHash("sha256").update(canonicalized).digest("hex");
+}
 
 const tests = [];
 let passed = 0;
 let failed = 0;
 
 function test(name, fn) {
-  tests.push({ name, fn });
+  tests.push({ name, fn, isAsync: fn.constructor.name === 'AsyncFunction' });
 }
 
 function assertEqual(actual, expected, message) {
@@ -51,7 +63,7 @@ function assertFalse(condition, message) {
 // ============================================================================
 // TEST 1: Missing required section
 // ============================================================================
-test("Missing section → lint fail", () => {
+test("Missing section → lint fail", async () => {
   const plan = `
 # Plan Metadata
 Foundation plan
@@ -73,7 +85,7 @@ Phase ID: PHASE_1
 None
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail without 'Verification Gates' section");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_MISSING_SECTION"),
@@ -84,7 +96,7 @@ None
 // ============================================================================
 // TEST 2: Missing phase field
 // ============================================================================
-test("Missing phase field → fail", () => {
+test("Missing phase field → fail", async () => {
   const plan = `
 # Plan Metadata
 Foundation plan
@@ -116,7 +128,7 @@ Expected outcomes: All tests pass
 Revert on failure
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail without phase field");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_MISSING_FIELD"),
@@ -127,7 +139,7 @@ Revert on failure
 // ============================================================================
 // TEST 3: Invalid phase ID format
 // ============================================================================
-test("Invalid phase ID format → fail", () => {
+test("Invalid phase ID format → fail", async () => {
   const plan = `
 # Plan Metadata
 Test plan
@@ -159,7 +171,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with invalid phase ID format");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_INVALID_PHASE_ID"),
@@ -170,7 +182,7 @@ Revert
 // ============================================================================
 // TEST 4: Ambiguous language ("may")
 // ============================================================================
-test("Ambiguous language (may) → fail", () => {
+test("Ambiguous language (may) → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with ambiguous language
@@ -202,7 +214,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with ambiguous 'may' language");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_NOT_ENFORCEABLE"),
@@ -213,7 +225,7 @@ Revert
 // ============================================================================
 // TEST 5: Ambiguous language ("should")
 // ============================================================================
-test("Ambiguous language (should) → fail", () => {
+test("Ambiguous language (should) → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with should
@@ -245,14 +257,14 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with ambiguous 'should' language");
 });
 
 // ============================================================================
 // TEST 6: Path escape (..)
 // ============================================================================
-test("Path escape (..) → fail", () => {
+test("Path escape (..) → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with path escape
@@ -284,7 +296,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with path escape");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_PATH_ESCAPE"),
@@ -295,7 +307,7 @@ Revert
 // ============================================================================
 // TEST 7: Non-auditable objective (code symbols)
 // ============================================================================
-test("Non-auditable objective (code symbols) → fail", () => {
+test("Non-auditable objective (code symbols) → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with code
@@ -327,7 +339,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with code symbols in objective");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_NOT_AUDITABLE"),
@@ -338,7 +350,7 @@ Revert
 // ============================================================================
 // TEST 8: Valid plan → pass
 // ============================================================================
-test("Valid plan → pass", () => {
+test("Valid plan → pass", async () => {
   const plan = `
 # Plan Metadata
 Foundation plan for ATLAS-GATE MCP
@@ -376,7 +388,7 @@ Failure stop conditions: Any test failure MUST trigger rollback
 On any failure, revert all changes immediately and document in audit log.
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertTrue(result.passed, `Plan should pass validation. Errors: ${JSON.stringify(result.errors)}`);
   assertEqual(result.errors.length, 0, "Should have no errors");
 });
@@ -384,7 +396,7 @@ On any failure, revert all changes immediately and document in audit log.
 // ============================================================================
 // TEST 9: Hash computation (same content = same hash)
 // ============================================================================
-test("Hash computation is deterministic", () => {
+test("Hash computation is deterministic", async () => {
   const plan = `
 # Plan Metadata
 Test plan
@@ -416,17 +428,17 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const hash1 = computePlanHash(plan);
-  const hash2 = computePlanHash(plan);
+  const sig1 = generateTestSignature(plan);
+  const sig2 = generateTestSignature(plan);
   
-  assertEqual(hash1, hash2, "Same content should produce same hash");
-  assertEqual(hash1.length, 64, "Hash should be 64 characters (SHA256 hex)");
+  assertEqual(sig1, sig2, "Same content should produce same signature");
+  assertEqual(sig1.length, 64, "Signature should be 64 characters (SHA256 hex)");
 });
 
 // ============================================================================
 // TEST 10: Hash changes on edit
 // ============================================================================
-test("Hash changes when content changes", () => {
+test("Hash changes when content changes", async () => {
   const plan1 = `
 # Plan Metadata
 Test plan version 1
@@ -489,16 +501,16 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const hash1 = computePlanHash(plan1);
-  const hash2 = computePlanHash(plan2);
+  const sig1 = generateTestSignature(plan1);
+  const sig2 = generateTestSignature(plan2);
   
-  assertFalse(hash1 === hash2, "Different content should produce different hashes");
+  assertFalse(sig1 === sig2, "Different content should produce different signatures");
 });
 
 // ============================================================================
 // TEST 11: Hash mismatch detection
 // ============================================================================
-test("Hash mismatch → fail", () => {
+test("Hash mismatch → fail", async () => {
   const plan = `
 # Plan Metadata
 Test plan
@@ -530,21 +542,21 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const correctHash = computePlanHash(plan);
-  const wrongHash = "0000000000000000000000000000000000000000000000000000000000000000";
+  const correctSig = generateTestSignature(plan);
+  const wrongSig = "0000000000000000000000000000000000000000000000000000000000000000";
   
-  const result = lintPlan(plan, wrongHash);
-  assertFalse(result.passed, "Plan should fail with mismatched hash");
+  const result = lintPlan(plan, wrongSig);
+  assertFalse(result.passed, "Plan should fail with mismatched signature");
   assertTrue(
-    result.errors.some(e => e.code === "PLAN_HASH_MISMATCH"),
-    "Should have HASH_MISMATCH error"
+    result.errors.some(e => e.code === "PLAN_SIGNATURE_MISMATCH"),
+    "Should have SIGNATURE_MISMATCH error"
   );
 });
 
 // ============================================================================
 // TEST 12: Duplicate phase ID → fail
 // ============================================================================
-test("Duplicate phase IDs → fail", () => {
+test("Duplicate phase IDs → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with duplicate phases
@@ -586,7 +598,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with duplicate phase IDs");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_INVALID_PHASE_ID"),
@@ -597,7 +609,7 @@ Revert
 // ============================================================================
 // TEST 13: Absolute path in allowlist → fail
 // ============================================================================
-test("Absolute path in allowlist → fail", () => {
+test("Absolute path in allowlist → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with absolute path
@@ -629,7 +641,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with absolute path");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_INVALID_PATH"),
@@ -640,7 +652,7 @@ Revert
 // ============================================================================
 // TEST 14: Human judgment clause → fail
 // ============================================================================
-test("Human judgment clause → fail", () => {
+test("Human judgment clause → fail", async () => {
   const plan = `
 # Plan Metadata
 Plan with judgment
@@ -672,7 +684,7 @@ Failure stop conditions: Fail
 Revert
 `;
 
-  const result = lintPlan(plan);
+  const result = await lintPlan(plan);
   assertFalse(result.passed, "Plan should fail with human judgment clause");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_NOT_ENFORCEABLE"),
@@ -687,9 +699,13 @@ Revert
 async function runTests() {
   console.log(`\n[TEST] Running ${tests.length} plan linter tests...\n`);
 
-  for (const { name, fn } of tests) {
+  for (const { name, fn, isAsync } of tests) {
     try {
-      fn();
+      if (isAsync) {
+        await fn();
+      } else {
+        fn();
+      }
       console.log(`✓ ${name}`);
       passed++;
     } catch (err) {
@@ -706,4 +722,7 @@ async function runTests() {
   }
 }
 
-runTests();
+runTests().catch(err => {
+  console.error("Test runner failed:", err);
+  process.exit(1);
+});

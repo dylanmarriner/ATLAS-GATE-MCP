@@ -144,7 +144,7 @@ Every proposal contains:
   "status": "PENDING|APPROVED|REJECTED",
   "created_at": "2026-01-19T10:00:00.000Z",
   "workspace_root": "/path/to/workspace",
-  "plan_hash": "abc123def456...",
+  "plan_signature": "abc123def456...",
   
   "evidence_refs": [
     "sha256-hash-of-finding-1",
@@ -189,7 +189,7 @@ Every proposal contains:
   "approved_at": "2026-01-19T10:15:00.000Z (null if PENDING)",
   "approved_by": "human@example.com (null if PENDING)",
   
-  "expiration_condition": "proposal is valid if plan_hash matches abc123def456..."
+  "expiration_condition": "proposal is valid if plan_signature matches abc123def456..."
 }
 ```
 
@@ -219,7 +219,7 @@ Every proposal contains:
    - Modify plans
 2. **Immutable Decision**: Once APPROVED or REJECTED, proposal status cannot change
 3. **Audit Trail**: Every decision is logged with approver identity + timestamp
-4. **Plan Hash Validation**: Proposal is invalid if plan hash has changed (stale)
+4. **Plan Signature Validation**: Proposal is invalid if plan hash has changed (stale)
 
 ### Review Checklist (For Human Reviewer)
 
@@ -280,7 +280,7 @@ Before approving, verify:
 ```json
 {
   "workspace_root": "/path/to/workspace",
-  "plan_hash": "abc123def456...",
+  "plan_signature": "abc123def456...",
   "evidence_selectors": {
     "forensic_findings": [/* array of finding objects */],
     "system_errors": [/* array of SystemError objects */],
@@ -382,7 +382,7 @@ Before approving, verify:
 **Type**: PLAN_CORRECTION  
 **Created**: 2026-01-19T10:00:00.000Z  
 **Workspace**: `/path/to/workspace`  
-**Plan Hash**: `abc123def456...`
+**Plan Signature**: `abc123def456...`
 
 ## Approval
 (Only present if APPROVED/REJECTED)
@@ -435,7 +435,7 @@ Changes Requested:
 
 ## Validity
 
-proposal is valid if plan_hash matches abc123def456...
+proposal is valid if plan_signature matches abc123def456...
 ```
 
 ### Proposal Index
@@ -466,7 +466,7 @@ The system rejects (throws) if:
 
 1. **Evidence Incomplete**: `REMEDIATION_EVIDENCE_INSUFFICIENT`
    - Evidence ref does not map to actual data
-   - Required evidence missing (e.g., plan_hash)
+   - Required evidence missing (e.g., plan_signature)
 
 2. **Not Evidence-Bound**: `REMEDIATION_NOT_EVIDENCE_BOUND`
    - Proposal references evidence that doesn't exist
@@ -476,8 +476,8 @@ The system rejects (throws) if:
    - Proposal tries to change something outside its scope
    - Scope mismatch (phase vs. plan level)
 
-4. **Stale Plan Hash**: `REMEDIATION_STALE_PLAN`
-   - Proposal references old plan_hash
+4. **Stale Plan Signature**: `REMEDIATION_STALE_PLAN`
+   - Proposal references old plan_signature
    - Plan has been updated; proposal is no longer valid
 
 5. **Invalid Input**: `INVALID_INPUT_TYPE`, `INVALID_INPUT_FORMAT`
@@ -569,7 +569,7 @@ See `test-remediation-proposals.js` for full test suite.
 - **Evidence-Bound**: Every change maps to cited evidence
 - **Approval Gate**: Human-only tool to transition proposal status
 - **Audit Entry**: Immutable record of proposal generation/approval
-- **Plan Hash**: SHA256 hash of plan; used to detect stale proposals
+- **Plan Signature**: SHA256 hash of plan; used to detect stale proposals
 - **Scope**: Level of change (phase, file, plan)
 - **Risk Assessment**: Level (CRITICAL, HIGH, MEDIUM, LOW) + mitigation strategy
 

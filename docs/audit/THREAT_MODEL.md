@@ -12,8 +12,8 @@ To rigorously audit the ATLAS-GATE-MCP-server governance enforcement by simulati
 
 ### 2. Plan Enforcement
 - **Mechanism**: `enforcePlan` checks `doc/plans/{Plan}.md` existence and APPROVED status.
-- **Weakness Candidate**: `planId` and `planHash` arguments appear optional in `write_file.js`.
-- **Attack**: Call `write_file` with valid Plan Name but NO `planId` / `planHash`.
+- **Weakness Candidate**: `planId` and `planSignature` arguments appear optional in `write_file.js`.
+- **Attack**: Call `write_file` with valid Plan Name but NO `planId` / `planSignature`.
 - **Attack**: Call `write_file` with mismatching `planId`.
 - **Attack**: Modify plan content and try to write (Integrity Check).
 

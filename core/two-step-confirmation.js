@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import { sha256 } from "./cosign-hash-provider.js";
 
 /**
  * ROLE: INFRASTRUCTURE
@@ -145,9 +145,7 @@ export function completeConfirmation(confirmation_token, operator_consequences) 
     consequences_verified: true,
     confirmed_at: new Date().toISOString(),
     elapsed_ms: elapsed,
-    confirmation_hash: crypto.createHash("sha256")
-      .update(`${pending.action_id}:${JSON.stringify(pending.consequences)}:${pending.initiated_at}`)
-      .digest("hex")
+    confirmation_hash: sha256(`${pending.action_id}:${JSON.stringify(pending.consequences)}:${pending.initiated_at}`)
   };
 
   // Clean up pending record

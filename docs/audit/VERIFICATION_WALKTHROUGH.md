@@ -20,7 +20,7 @@ The adversarial runner `tests/adversarial-runner.js` was executed against the ac
 8. **Scope: Write Outside Repo** -> REJECTED (Repo Resolver) *[Test Fixed]*
 9. **Governance: No Prompt** -> REJECTED (Prompt Gate)
 10. **Governance: Bad Plan ID** -> REJECTED (Plan Enforcement)
-11. **Governance: Bad Plan Hash** -> REJECTED (Integrity Check)
+11. **Governance: Bad Plan Signature** -> REJECTED (Integrity Check)
 
 ### Phase 3: Preflight Enforcement (Verified)
 12. **Preflight: Break Verification** -> REVERTED (Preflight Failure)

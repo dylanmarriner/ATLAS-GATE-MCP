@@ -199,7 +199,7 @@ All existing tests continue to pass.
   "workspace_root": "/workspace",
   "tool": "write_file",
   "intent": "Update version",
-  "plan_hash": "plan-xyz",
+  "plan_signature": "plan-xyz",
   "phase_id": null,
   "args_hash": "def789abc012...",
   "result": "ok",

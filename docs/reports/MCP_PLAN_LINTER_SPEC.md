@@ -169,7 +169,7 @@ Plans must be understandable to engineers without coding knowledge. All objectiv
 
 ---
 
-## Plan Hash Binding & Immutability
+## Plan Signature Binding & Immutability
 
 ### Hash Computation
 ```javascript
@@ -250,7 +250,7 @@ Every lint operation produces an audit entry:
   "session_id": "...",
   "role": "ANTIGRAVITY|WINDSURF",
   "tool": "bootstrap_create_foundation_plan|write_file",
-  "plan_hash": "6448139...",
+  "plan_signature": "6448139...",
   "result": "lint_pass|lint_fail",
   "error_code": "PLAN_MISSING_SECTION|null",
   "invariant_id": "PLAN_SCOPE_LAW|...",

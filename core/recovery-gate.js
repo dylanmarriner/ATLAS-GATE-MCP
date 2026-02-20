@@ -325,7 +325,7 @@ export async function unlockKillSwitch(
         workspace_root: workspaceRoot,
         tool: "recovery_unlock",
         intent: "kill-switch recovery",
-        plan_hash: null,
+        plan_signature: null,
         phase_id: null,
         args: { operator, halt_report_path },
         result: "unlock_confirmed",

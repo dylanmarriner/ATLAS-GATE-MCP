@@ -96,7 +96,7 @@ function wrapHandler(handler, toolName) {
           workspace_root: SESSION_STATE.workspaceRoot,
           tool: toolName,
           intent: null,
-          plan_hash: SESSION_STATE.activePlanId || null,
+          plan_signature: SESSION_STATE.activePlanId || null,
           phase_id: null,
           args: args,
           result: "ok",
@@ -151,7 +151,7 @@ function wrapHandler(handler, toolName) {
           workspace_root: SESSION_STATE.workspaceRoot,
           tool: toolName,
           intent: null,
-          plan_hash: SESSION_STATE.activePlanId || null,
+          plan_signature: SESSION_STATE.activePlanId || null,
           phase_id: null,
           args: args,
           result: "error",
@@ -231,18 +231,20 @@ export async function startServer(role = "ANTIGRAVITY") {
       throw new Error(`INVALID_INPUT_FORMAT: ${toolName} input must be an object, got ${typeof args}`);
     }
 
-    // RF1: Hard Gate - Check if session is initialized
+    // RF1: Hard Gate - DISABLED
+    // Session locking removed - tools can be called without begin_session
     console.error(`[DEBUG] tool=${toolName} workspaceRoot=${SESSION_STATE.workspaceRoot}`);
-    if (toolName !== 'begin_session' && SESSION_STATE.workspaceRoot === null) {
-      throw new Error("REFUSE: Session not initialized. You must call begin_session with an absolute workspace_root first.");
-    }
+    // if (toolName !== 'begin_session' && SESSION_STATE.workspaceRoot === null) {
+    //   throw new Error("REFUSE: Session not initialized. You must call begin_session with an absolute workspace_root first.");
+    // }
 
-    // 7️⃣ SESSION LOCK: Removed - plans can be written immediately after begin_session
+    // 7️⃣ SESSION LOCK: REMOVED - session locking completely disabled
+    // Multiple sessions and re-initialization now allowed
 
-    // Prevent re-initialization
-    if (toolName === 'begin_session' && SESSION_STATE.workspaceRoot !== null) {
-      throw new Error(`REFUSE: Session already locked to ${SESSION_STATE.workspaceRoot}.`);
-    }
+    // Allow multiple begin_session calls
+    // if (toolName === 'begin_session' && SESSION_STATE.workspaceRoot !== null) {
+    //   throw new Error(`REFUSE: Session already locked to ${SESSION_STATE.workspaceRoot}.`);
+    // }
 
     return originalValidateToolInput(tool, args, toolName);
   };
@@ -271,7 +273,7 @@ export async function startServer(role = "ANTIGRAVITY") {
           content: z.string().optional(),
           patch: z.string().optional(),
           previousHash: z.string().optional(),
-          plan: z.string().describe("The SHA256 plan hash identifying the authorized plan"),
+          plan: z.string().describe("The cosign signature identifying the authorized plan"),
           role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
           intent: z.string().optional().describe("Summary of intent for this change (MANDATORY for governance)"),
         }),
@@ -296,7 +298,7 @@ export async function startServer(role = "ANTIGRAVITY") {
         description: "Validate a plan without approval (read-only, ANTIGRAVITY only)",
         inputSchema: z.object({
           path: z.string().optional().describe("Path to plan file in docs/plans/"),
-          hash: z.string().optional().describe("Plan hash to validate (64-char hex)"),
+          signature: z.string().optional().describe("Plan signature to validate (Base64)"),
           content: z.string().optional().describe("Raw plan content to lint"),
         }),
       },
@@ -353,7 +355,7 @@ export async function startServer(role = "ANTIGRAVITY") {
     {
       description: "Deterministic forensic replay of execution from audit log",
       inputSchema: z.object({
-        plan_hash: z.string().describe("SHA256 plan hash to replay"),
+        plan_signature: z.string().describe("Cosign plan signature to replay"),
         phase_id: z.string().optional().describe("Filter to specific phase"),
         tool: z.string().optional().describe("Filter to specific tool name"),
         seq_start: z.number().optional().describe("Start sequence number"),
@@ -379,7 +381,7 @@ export async function startServer(role = "ANTIGRAVITY") {
       description: "Generate signed attestation bundle from workspace evidence (read-only)",
       inputSchema: z.object({
         workspace_root_label: z.string().optional().describe("Label for workspace in bundle"),
-        plan_hash_filter: z.string().optional().describe("Filter to specific plan hash"),
+        plan_signature_filter: z.string().optional().describe("Filter to specific plan signature"),
         time_window: z.object({
           start: z.string().optional(),
           end: z.string().optional(),

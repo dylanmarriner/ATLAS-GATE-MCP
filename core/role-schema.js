@@ -15,4 +15,12 @@ export const ROLE_SCHEMA = {
     required: ["ROLE", "EXECUTED VIA", "PURPOSE"],
     forbidden: ["CONNECTED VIA"],
   },
+  WINDSURF: {
+    required: ["ROLE", "PURPOSE", "Authority"],
+    forbidden: [],
+  },
+  ANTIGRAVITY: {
+    required: ["ROLE", "PURPOSE", "Authority"],
+    forbidden: [],
+  },
 };

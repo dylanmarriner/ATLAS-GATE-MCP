@@ -272,7 +272,7 @@ Intent validation appends audit entries:
 ```javascript
 await appendAuditEntry({
   session_id, role, workspace_root, tool,
-  plan_hash, phase_id,
+  plan_signature, phase_id,
   args: { intentPath, targetPath },
   result: "ok" or "error",
   error_code: SYSTEM_ERROR_CODES.*,

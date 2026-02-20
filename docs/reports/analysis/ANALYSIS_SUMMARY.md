@@ -125,7 +125,7 @@ Three comprehensive documents have been created:
 
 ### Short Term (Next 4-8 hours)
 4. **Apply FIX #3-5** - Fix plan discovery inconsistencies
-5. **Apply FIX #7** - Make planId/planHash required
+5. **Apply FIX #7** - Make planId/planSignature required
 6. **Test monorepo scenario**
 
 ### Medium Term (Next 1-2 days)

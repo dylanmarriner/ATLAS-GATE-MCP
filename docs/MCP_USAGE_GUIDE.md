@@ -118,7 +118,7 @@
 - `path` — File to create/modify
 - `content` or `patch` — Code changes
 - `plan` — Name of approved plan authorizing this change
-- Optional: `planId`, `planHash` — For strict verification
+- Optional: `planId`, `planSignature` — For strict verification
 
 ---
 
@@ -213,7 +213,7 @@ await readFile({ path: "package.json" });
   
   plan: "PLAN_AUTH_SYSTEM",       // Approved plan name
   planId: "plan-auth-v1",         // (Optional) plan identifier
-  planHash: "abc123..."           // (Optional) SHA256 of plan
+  planSignature: "abc123..."           // (Optional) SHA256 of plan
 }
 ```
 
@@ -990,7 +990,7 @@ const result = await writeFile({
   
   plan: "PLAN_AUTH_SYSTEM",               // Required
   planId: "plan-auth-v1",                 // Optional
-  planHash: "sha256hash",                 // Optional
+  planSignature: "sha256hash",                 // Optional
   
   role: "EXECUTABLE",                     // Optional (EXECUTABLE, BOUNDARY, INFRASTRUCTURE, VERIFICATION)
   purpose: "JWT validation",              // Optional

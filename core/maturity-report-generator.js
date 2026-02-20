@@ -6,7 +6,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
+import { sha256 } from './cosign-hash-provider.js';
 
 /**
  * Generate human-readable maturity report (Markdown)
@@ -172,7 +172,7 @@ export function generateMaturityReport(scoreResult, prevResult = null) {
  */
 function hashReport(scoreResult) {
   const content = JSON.stringify(scoreResult, null, 0);
-  return crypto.createHash('sha256').update(content).digest('hex').slice(0, 8);
+  return sha256(content).slice(0, 8);
 }
 
 /**

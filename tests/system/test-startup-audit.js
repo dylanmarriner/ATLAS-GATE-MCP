@@ -4,8 +4,8 @@
  * AUTHORITY: ATLAS-GATE Governance - Refusal-to-boot enforcement
  */
 
-import { SESSION_STATE } from './session.js';
-import { resetWorkspaceRootForTesting } from './core/path-resolver.js';
+import { SESSION_STATE } from '../../session.js';
+import { resetWorkspaceRootForTesting } from '../../core/path-resolver.js';
 import assert from 'assert';
 
 let testsPassed = 0;
@@ -23,7 +23,7 @@ function test(name, fn) {
  * Test 1: Verify startup audit infrastructure exists
  */
 test('Startup Audit: Audit infrastructure exports', async () => {
-  const { runStartupAudit, STARTUP_INVARIANTS, StartupAuditResult } = await import('./core/startup-audit.js');
+  const { runStartupAudit, STARTUP_INVARIANTS, StartupAuditResult } = await import('../../core/startup-audit.js');
   assert(runStartupAudit, 'runStartupAudit function should be exported');
   assert(STARTUP_INVARIANTS, 'STARTUP_INVARIANTS should be exported');
   assert(StartupAuditResult, 'StartupAuditResult class should be exported');
@@ -34,7 +34,7 @@ test('Startup Audit: Audit infrastructure exports', async () => {
  * Test 2: Verify invariant registry has all required IDs
  */
 test('Startup Audit: Invariant IDs stable and unique', async () => {
-  const { STARTUP_INVARIANTS } = await import('./core/startup-audit.js');
+  const { STARTUP_INVARIANTS } = await import('../../core/startup-audit.js');
   
   const invariantIds = [];
   for (const [key, inv] of Object.entries(STARTUP_INVARIANTS)) {
@@ -53,7 +53,7 @@ test('Startup Audit: Invariant IDs stable and unique', async () => {
  * Test 3: Verify StartupAuditResult structure
  */
 test('Startup Audit: Result class has correct structure', async () => {
-  const { StartupAuditResult } = await import('./core/startup-audit.js');
+  const { StartupAuditResult } = await import('../../core/startup-audit.js');
   
   const result = new StartupAuditResult();
   
@@ -104,7 +104,7 @@ test('Startup Audit: Session state starts uninitialized', async () => {
  * Test 6: Error codes completeness
  */
 test('Startup Audit: All required error codes defined', async () => {
-  const { ERROR_CODES } = await import('./core/error.js');
+  const { ERROR_CODES } = await import('../../core/error.js');
   
   const requiredCodes = [
     'UNAUTHORIZED_ACTION',
@@ -128,7 +128,7 @@ test('Startup Audit: All required error codes defined', async () => {
  * Test 7: KaizaError class structure
  */
 test('Startup Audit: KaizaError has correct structure', async () => {
-  const { KaizaError, ERROR_CODES } = await import('./core/error.js');
+  const { KaizaError, ERROR_CODES } = await import('../../core/error.js');
   
   const err = new KaizaError({
     error_code: ERROR_CODES.SELF_AUDIT_FAILURE,
@@ -155,10 +155,10 @@ test('Startup Audit: KaizaError has correct structure', async () => {
  * Test 8: Infrastructure modules are loadable
  */
 test('Startup Audit: Critical infrastructure modules load', async () => {
-  const error = await import('./core/error.js');
-  const invariant = await import('./core/invariant.js');
-  const pathResolver = await import('./core/path-resolver.js');
-  const session = await import('./session.js');
+  const error = await import('../../core/error.js');
+  const invariant = await import('../../core/invariant.js');
+  const pathResolver = await import('../../core/path-resolver.js');
+  const session = await import('../../session.js');
   
   assert(error.KaizaError, 'error.js exports KaizaError');
   assert(error.ERROR_CODES, 'error.js exports ERROR_CODES');
@@ -172,7 +172,7 @@ test('Startup Audit: Critical infrastructure modules load', async () => {
  * Test 9: Path resolver workspace locking
  */
 test('Startup Audit: Workspace root locking enforced', async () => {
-  const { lockWorkspaceRoot, getRepoRoot, resetWorkspaceRootForTesting } = await import('./core/path-resolver.js');
+  const { lockWorkspaceRoot, getRepoRoot, resetWorkspaceRootForTesting } = await import('../../core/path-resolver.js');
   
   resetWorkspaceRootForTesting();
   
@@ -202,7 +202,7 @@ test('Startup Audit: Workspace root locking enforced', async () => {
  * Test 10: Invariant violation handling
  */
 test('Startup Audit: Invariant violations are non-recoverable', async () => {
-  const { InvariantViolationError } = await import('./core/invariant.js');
+  const { InvariantViolationError } = await import('../../core/invariant.js');
   
   assert(InvariantViolationError, 'InvariantViolationError should be exported');
   

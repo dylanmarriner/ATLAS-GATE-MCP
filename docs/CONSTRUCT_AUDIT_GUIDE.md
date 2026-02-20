@@ -259,7 +259,7 @@ await writeFile({
   content: "...", // your code with TODO markers
   plan: "PLAN_USER_SYSTEM",
   planId: "plan-user-system-v1",
-  planHash: "abc123..." // SHA256 of plan file
+  planSignature: "abc123..." // SHA256 of plan file
 });
 ```
 

@@ -58,7 +58,7 @@ Successfully implemented a **read-only external attestation system** for ATLAS-G
 Workspace → Gather Evidence → Compute Metrics → Sign → Export
                  ↓
           Audit Log
-          Plan Hashes
+          Plan Signaturees
           Maturity Score
           Policy Summary
           Intent Coverage

@@ -196,7 +196,7 @@ export const SIMULABLE_FAILURES = {
   REPLAY_DIVERGENCE: "replay_divergence",
   OPERATOR_FATIGUE_BREACH: "operator_fatigue_breach",
   FILESYSTEM_PERMISSION_DENIED: "filesystem_permission_denied",
-  PLAN_HASH_MISMATCH: "plan_hash_mismatch",
+  PLAN_HASH_MISMATCH: "plan_signature_mismatch",
   STARTUP_GATE_FAILURE: "startup_gate_failure"
 };
 ```
@@ -235,7 +235,7 @@ Drills are read-only tools that execute simulations with full auditability.
 
 1. **drill_audit_tamper** - Simulate audit write failure + hash mismatch
 2. **drill_policy_breach** - Simulate policy engine crash
-3. **drill_plan_hash_mismatch** - Simulate plan file hash mismatch
+3. **drill_plan_signature_mismatch** - Simulate plan file hash mismatch
 4. **drill_operator_abuse** - Simulate operator fatigue threshold breach
 5. **drill_filesystem_denial** - Simulate filesystem permission denied
 
@@ -400,7 +400,7 @@ Drills and recovery attempts are fully replay-verifiable:
 
 ```javascript
 const replay = await replayExecution({
-  plan_hash: "<drill-plan-hash>",
+  plan_signature: "<drill-plan-hash>",
   tool: "drill_audit_tamper",
   seq_start: 40,
   seq_end: 50

@@ -396,7 +396,7 @@ function validatePathInPlan(relPath, planData, isNewFile) {
  * - role: WINDSURF or ANTIGRAVITY
  * - session_id: session UUID
  * - tool_name: name of write tool calling this
- * - plan_hash: SHA256 hash of authorized plan
+ * - plan_signature: SHA256 hash of authorized plan
  * - phase_id: phase within plan (if available)
  * - operation: "CREATE" or "MODIFY"
  * - path: workspace-relative file path
@@ -417,7 +417,7 @@ export async function executeWriteTimePolicy({
   role,
   session_id,
   tool_name,
-  plan_hash,
+  plan_signature,
   phase_id,
   operation,
   path: filePath,
@@ -427,28 +427,73 @@ export async function executeWriteTimePolicy({
   content_length,
 }) {
   // === VALIDATE INPUTS (fail-closed) ===
-  const requiredFields = [
-    "workspace_root",
-    "role",
-    "session_id",
-    "tool_name",
-    "plan_hash",
-    "operation",
-    "path",
-    "content_bytes",
-    "detected_language",
-    "content_hash",
-    "content_length",
-  ];
-
-  for (const field of requiredFields) {
-    if (arguments[0][field] === undefined || arguments[0][field] === null) {
-      throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
-        human_message: `Policy engine missing required input: ${field}`,
-        tool_name: "write_file",
-      });
-    }
-  }
+   // Check each destructured parameter explicitly
+   if (!workspace_root) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: workspace_root`,
+       tool_name: "write_file",
+     });
+   }
+   if (!role) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: role`,
+       tool_name: "write_file",
+     });
+   }
+   if (!session_id) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: session_id`,
+       tool_name: "write_file",
+     });
+   }
+   if (!tool_name) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: tool_name`,
+       tool_name: "write_file",
+     });
+   }
+   if (!plan_signature) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: plan_signature`,
+       tool_name: "write_file",
+     });
+   }
+   if (!operation) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: operation`,
+       tool_name: "write_file",
+     });
+   }
+   if (!filePath) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: path`,
+       tool_name: "write_file",
+     });
+   }
+   if (!content_bytes) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: content_bytes`,
+       tool_name: "write_file",
+     });
+   }
+   if (!detected_language) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: detected_language`,
+       tool_name: "write_file",
+     });
+   }
+   if (!content_hash) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: content_hash`,
+       tool_name: "write_file",
+     });
+   }
+   if (content_length === undefined || content_length === null) {
+     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.MISSING_REQUIRED_FIELD, {
+       human_message: `Policy engine missing required input: content_length`,
+       tool_name: "write_file",
+     });
+   }
 
   // === CONSTRUCT ABSOLUTE PATH ===
   let absPath;
@@ -484,7 +529,7 @@ export async function executeWriteTimePolicy({
       role,
       workspace_root,
       tool: tool_name,
-      plan_hash,
+      plan_signature,
       phase_id,
       args: { path: filePath, operation },
       result: "error",
@@ -514,7 +559,7 @@ export async function executeWriteTimePolicy({
         role,
         workspace_root,
         tool: tool_name,
-        plan_hash,
+        plan_signature,
         phase_id,
         args: { path: filePath, operation },
         result: "error",
@@ -540,7 +585,7 @@ export async function executeWriteTimePolicy({
         role,
         workspace_root,
         tool: tool_name,
-        plan_hash,
+        plan_signature,
         phase_id,
         args: { path: filePath, operation },
         result: "error",
@@ -566,7 +611,7 @@ export async function executeWriteTimePolicy({
         role,
         workspace_root,
         tool: tool_name,
-        plan_hash,
+        plan_signature,
         phase_id,
         args: { path: filePath, operation },
         result: "error",
@@ -598,7 +643,7 @@ export async function executeWriteTimePolicy({
         role,
         workspace_root,
         tool: tool_name,
-        plan_hash,
+        plan_signature,
         phase_id,
         args: { path: filePath, operation },
         result: "error",
@@ -621,7 +666,7 @@ export async function executeWriteTimePolicy({
     role,
     workspace_root,
     tool: tool_name,
-    plan_hash,
+    plan_signature,
     phase_id,
     args: { path: filePath, operation, content_hash, content_length },
     result: "ok",

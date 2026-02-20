@@ -57,7 +57,7 @@ This directory contains the authoritative templates for ATLAS-GATE MCP governanc
 ### Execution Phase (WINDSURF)
 
 1. **Read the execution prompt**: `windsurf_execution_prompt_v2.md`
-2. **Get operator input**: Plan Path, Workspace Root, Plan Hash
+2. **Get operator input**: Plan Path, Workspace Root, Plan Signature
 3. **Init sequence**: begin_session, read_prompt("WINDSURF_CANONICAL")
 4. **Validate plan**: Hash verification, section check
 5. **Extract requirements**: Path Allowlist, Affected Files, Verification Gates
@@ -75,7 +75,7 @@ Every plan MUST have these 7 sections in this order:
 
 ```
 <!--
-ATLAS-GATE_PLAN_HASH: [64-char SHA256 hex]
+ATLAS-GATE_PLAN_SIGNATURE: [url-safe-base64 signature]
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -130,12 +130,13 @@ STATUS: APPROVED
 - ✗ Do NOT continue execution if any step fails
 - ✗ Do NOT write stub code, TODOs, or incomplete implementations
 
-### Hash Validation
+### Signature Validation
 
-- Plan hash is SHA256 (64 hexadecimal characters)
-- Computed by stripping HTML comment header (lines 1-5) and hashing remaining content
-- Must match exactly (case-insensitive comparison)
-- If mismatch → STOP immediately, do NOT execute
+- Plan signature is base64-encoded ECDSA P-256 cosign signature (URL-safe format)
+- 43 characters long, no `/`, `+`, or `=` characters
+- Used as filename for plan storage: `docs/plans/<signature>.md`
+- Verified with cosign public key before execution
+- If verification fails → STOP immediately, do NOT execute
 
 ### write_file Parameters
 
@@ -169,33 +170,79 @@ Required parameters:
 - ✗ Continuing execution after a step fails
 
 **General**:
-- ✗ Using BLAKE3 instead of SHA256 for hashes
+- ✗ Using hash format that doesn't match MCP implementation
 - ✗ Assuming plan hash format without verifying
 - ✗ Not checking linting errors before execution
 
 ---
 
-## Linting
+## Spectral Linting
 
-Plans are validated by `lint_plan` which checks:
+**What is Spectral?**
+Spectral is a linting tool (like ESLint for JSON/OpenAPI). The plan linter uses custom Spectral rules to validate plan structure and format.
 
-- All 7 required sections present
-- Sections in correct order
-- No ambiguous language
-- No stub markers
-- Phase ID format correct
-- Phase fields are plain text
-- Paths are workspace-relative
-- No absolute paths or parent escapes
-- Hash can be computed deterministically
+**Spectral Rules in Plan Linter**:
+1. `plan-required-sections`: Verifies all 7 sections present
+2. `plan-no-stubs`: Detects stub/incomplete code patterns
+3. `plan-phase-format`: Validates Phase ID format (UPPERCASE_WITH_UNDERSCORES)
 
-Run: `lint_plan({ path: "PLAN_ID.md" })`
+**Stage 6 Output**: If Spectral rules fail, errors are reported as `SPECTRAL_LINT_ERROR` in the violations list.
 
-Returns:
+---
+
+## Cosign Signing
+
+**What is Cosign?**
+Cosign signs plans with ECDSA P-256 cryptography. Creates tamper-proof, verifiable plans with cryptographic proof of authenticity.
+
+**Signing Process** (Stage 7 of Linting):
+1. Linter strips HTML comment header (lines 1-5) and signature footer from plan
+2. Canonicalizes content (removes comments, normalizes whitespace)
+3. Signs with cosign using EC P-256 private key from `.atlas-gate/.cosign-keys/`
+4. Returns URL-safe base64-encoded signature (43 characters)
+5. Inserts signature into `ATLAS-GATE_PLAN_SIGNATURE: [signature]` field in header
+6. Plan filename becomes the signature: `docs/plans/<signature>.md`
+
+**Verification Process** (WINDSURF Execution):
+1. Loads plan from `docs/plans/<signature>.md`
+2. Extracts `ATLAS-GATE_PLAN_SIGNATURE` from plan header
+3. Strips HTML comment header and signature footer
+4. Canonicalizes content identically to signing process
+5. Verifies signature using cosign public key from `.atlas-gate/.cosign-keys/`
+6. If verification fails: Plan rejected, execution stopped, audit entry created
+
+---
+
+## Linting (Multi-Stage: Spectral + Cosign)
+
+Plans are validated by `lint_plan` which runs 7 validation stages:
+
+**Stages 1-5: Custom Validation**
+- Structure: All 7 sections, correct order
+- Phases: Valid IDs (UPPERCASE_WITH_UNDERSCORES), required fields
+- Paths: Workspace-relative, no escapes
+- Enforceability: No stubs, ambiguous language, or judgment clauses
+- Auditability: Plain English objectives, human-readable
+
+**Stage 6: Spectral Linting**
+- OpenAPI/Spectral-based custom rules
+- Validates format patterns and field requirements
+- Checks code quality markers
+
+**Stage 7: Cosign Signing**
+- Signs plan with ECDSA P-256 private key from `.atlas-gate/.cosign-keys/`
+- Returns URL-safe base64-encoded signature (43 characters)
+- Inserts `ATLAS-GATE_PLAN_SIGNATURE` into plan header
+- Plan is ready for cryptographic verification
+
+**Run**: `lint_plan({ path: "PLAN_ID.md" })`
+
+**Returns**:
 ```json
 {
   "passed": true/false,
-  "hash": "64-char-sha256-hex",
+  "planId": "plan-signature-as-filename",
+  "signature": "url-safe-base64-cosign-signature",
   "errors": [...],
   "warnings": [...]
 }
@@ -203,25 +250,36 @@ Returns:
 
 If `passed: false`, fix errors and re-run.
 
+**On success**:
+- Plan is signed with cosign (ECDSA P-256)
+- Save to `docs/plans/<signature>.md` (signature is filename)
+- Include `ATLAS-GATE_PLAN_SIGNATURE` in header comment
+- Plan immutable and cryptographically verified
+
 ---
 
 ## File Locations (CRITICAL)
 
 **Plans MUST be stored in**: `docs/plans/`
 
-**Plans MUST be named by their hash**: `<SHA256_HASH>.md`
+**Plans MUST be named by ATLAS-GATE_PLAN_SIGNATURE**: `<SIGNATURE>.md`
 
 **Example**:
-- Hash: `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`
-- Location: `docs/plans/aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2.md`
+- Plan Signature (from linting): `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
+- Location: `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
+- Plan header contains: `ATLAS-GATE_PLAN_SIGNATURE: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 
-**Why**: WINDSURF looks up plans by hash using the path resolver. If a plan is saved anywhere else (e.g., `PLAN_AUTH_V1.md`, `plans/my_plan.md`, etc.), WINDSURF cannot find it and execution will FAIL.
+**Why**: 
+- WINDSURF looks up plans by signature using the path resolver
+- Signature is cryptographically unique per plan content
+- If modified, signature verification fails and execution stops
+- Prevents undetected tampering or version confusion
 
 **Workflow**:
 1. Write plan to temp location: `PLAN_AUTH_V1.md`
-2. Lint: `lint_plan({ path: "PLAN_AUTH_V1.md" })` → Returns hash
-3. Save to canonical location: `docs/plans/<hash>.md`
-4. Deliver plan hash to operator for execution
+2. Lint: `lint_plan({ path: "PLAN_AUTH_V1.md" })` → Validates 7 stages, signs with cosign, returns signature
+3. Save to canonical location: `docs/plans/<signature>.md` (plan now includes `ATLAS-GATE_PLAN_SIGNATURE`)
+4. Deliver plan signature and public key path to operator for execution
 
 ---
 
@@ -229,13 +287,16 @@ If `passed: false`, fix errors and re-run.
 
 Every write operation is recorded in the audit log with:
 - Timestamp
-- Plan hash
+- Plan signature
 - File path
 - Role (EXECUTABLE, BOUNDARY, etc.)
 - Intent/purpose
 - Audit entry hash (SHA256)
+- Cosign verification status
 
 Audit log is immutable and sequential. Cannot be modified or deleted.
+
+**Verification**: Each audit entry is linked to plan signature, providing cryptographic proof of execution authorization.
 
 ---
 
@@ -244,10 +305,11 @@ Audit log is immutable and sequential. Cannot be modified or deleted.
 1. Read: `antigravity_planning_prompt_v2.md`
 2. Copy: `plan_scaffold.md` → new file `PLAN_YOUR_FEATURE.md`
 3. Fill in: All sections with real content
-4. Lint: `lint_plan({ path: "PLAN_YOUR_FEATURE.md" })`
+4. Lint: `lint_plan({ path: "PLAN_YOUR_FEATURE.md" })` → 7-stage validation + cosign signing
 5. Fix: Any errors, re-lint
-6. Submit: Send plan path and hash to WINDSURF
-7. Execute: WINDSURF runs `windsurf_execution_prompt_v2.md` workflow
+6. Save: Move to `docs/plans/<signature>.md` with signature from linting
+7. Submit: Send plan signature and public key path to WINDSURF
+8. Execute: WINDSURF verifies cosign signature, then executes plan
 
 ---
 

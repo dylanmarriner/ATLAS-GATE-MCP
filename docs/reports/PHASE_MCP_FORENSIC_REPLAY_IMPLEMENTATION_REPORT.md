@@ -61,7 +61,7 @@ Successfully implemented deterministic execution replay + forensic verification 
 **replay_execution**
 ```javascript
 // Inputs
-plan_hash: string (required, 64-char hex)
+plan_signature: string (required, 64-char hex)
 phase_id: string (optional)
 tool: string (optional)
 seq_start: number (optional)
@@ -71,7 +71,7 @@ seq_end: number (optional)
 {
   verdict: "PASS" | "FAIL",
   success: boolean,
-  plan_hash: string,
+  plan_signature: string,
   summary: { findings count, violation counts },
   findings: [{ code, human_readable, details, affected_sequences }],
   timeline: [{ seq, tool, role, intent, result_hash, error_code }],
@@ -118,7 +118,7 @@ Every replay invocation is audited with full hash chain integrity:
   tool: "replay_execution" | "verify_workspace_integrity",
   role: "WINDSURF" | "ANTIGRAVITY",
   intent: "Forensic replay of plan X",
-  plan_hash: <SHA256>,
+  plan_signature: <SHA256>,
   args_hash: <redacted args SHA256>,
   result_hash: <result SHA256>,
   result: "ok" | "analysis_complete",

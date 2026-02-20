@@ -37,13 +37,18 @@ Plans MUST follow this exact format or `lint_plan` will reject them.
 
 ```
 <!--
-ATLAS-GATE_PLAN_HASH: [placeholder - linter will compute]
+ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
 ```
 
-The linter strips this comment before hashing. Hash is SHA256 (64 hex chars).
+The linter:
+1. Strips this comment before signing
+2. Signs with cosign (ECDSA P-256 cryptography)
+3. Returns signature in URL-safe base64 format (43 characters)
+4. Inserts signature into ATLAS-GATE_PLAN_SIGNATURE field
+5. Plan filename becomes the signature: `docs/plans/<signature>.md`
 
 ### REQUIRED SECTIONS (In This Order)
 
@@ -216,7 +221,7 @@ Actions STRICTLY PROHIBITED:
 
 ```markdown
 <!--
-ATLAS-GATE_PLAN_HASH: placeholder
+ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
 ROLE: ANTIGRAVITY
 STATUS: APPROVED
 -->
@@ -321,35 +326,64 @@ Failure: REJECT
 
 ---
 
-## LINT VALIDATION
+## LINT VALIDATION (Multi-Stage)
 
-Before submitting, your plan will pass through `lint_plan` which checks:
+Before submitting, your plan will pass through `lint_plan` which runs 7 stages:
 
+**Stage 1: Structure Validation**
 - ✓ All 7 required sections present
 - ✓ Sections in correct order
-- ✓ No ambiguous language (may, should, optional, try to, attempt to)
-- ✓ No stub markers (TODO, FIXME, XXX, stub, mock, placeholder)
-- ✓ Phase ID is uppercase_with_underscores
-- ✓ Phase fields are plain text (no markdown formatting)
+- ✓ All required fields in each section
+
+**Stage 2: Phase Validation**
+- ✓ Phase ID is uppercase_with_underscores format
+- ✓ All required phase fields present (Objective, Allowed operations, etc.)
+- ✓ No duplicate Phase IDs
+
+**Stage 3: Path Validation**
 - ✓ Path allowlist contains only workspace-relative paths
 - ✓ No absolute paths (no leading `/`)
 - ✓ No parent directory escapes (`..`)
-- ✓ Hash can be computed deterministically
+- ✓ No unresolved variables (`${...}`)
 
-**If ANY check fails**, lint_plan returns errors. Fix and resubmit.
+**Stage 4: Enforceability Validation**
+- ✓ No stub markers (TODO, FIXME, XXX, HACK, stub, mock, placeholder)
+- ✓ No ambiguous language (may, should, optional, try to, attempt to)
+- ✓ No human judgment clauses ("use best judgment", "exercise judgment")
+- ✓ All constraints use binary language (MUST, MUST NOT)
+
+**Stage 5: Auditability Validation**
+- ✓ Objectives are plain English (no code symbols like `${}`, backticks, keywords)
+- ✓ Plan is readable and auditable by humans
+
+**Stage 6: Spectral Linting**
+- ✓ Custom OpenAPI/Spectral rules for plan format
+- ✓ Validates required fields and patterns
+- ✓ Checks for code quality markers
+
+**Stage 7: Cosign Signing**
+- ✓ Plan will be signed with cosign (ECDSA P-256)
+- ✓ Signature format: URL-safe base64 (no `/`, `+`, or `=` characters)
+- ✓ Signature length: 43 characters
+- ✓ Keys stored in: `.atlas-gate/.cosign-keys/`
+
+**If ANY stage fails**, lint_plan returns errors. Fix and resubmit.
 
 ---
 
-## HASH COMPUTATION
+## SIGNATURE COMPUTATION
 
-The `lint_plan` tool computes SHA256 hash:
+The `lint_plan` tool creates a cosign signature:
 
-1. Strips HTML comment header (lines 1-5)
-2. Hashes remaining content
-3. Returns 64-character hex string
-4. You embed this in the footer (linter will update)
+1. Strips HTML comment header (lines 1-5) 
+2. Strips any existing `ATLAS-GATE_PLAN_SIGNATURE: ...` line
+3. Canonicalizes content (removes comments, normalizes whitespace)
+4. Signs with cosign using ECDSA P-256 private key from `.atlas-gate/.cosign-keys/private.pem`
+5. Returns signature in URL-safe base64 format (43 characters)
+6. Inserts signature into ATLAS-GATE_PLAN_SIGNATURE field in header
+7. Uses signature as filename for plan storage
 
-Example hash: `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`
+Example signature (URL-safe base64): `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o` (exactly 43 chars)
 
 ---
 
@@ -357,52 +391,71 @@ Example hash: `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`
 
 Plans MUST be saved to: **`docs/plans/`**
 
-Filename MUST be: **`<SHA256_HASH>.md`**
+Filename MUST be: **`<SIGNATURE>.md`** (from ATLAS-GATE_PLAN_SIGNATURE field in header)
 
 Example:
-- Hash: `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2`
-- Filename: `aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2.md`
-- Full path: `docs/plans/aeb41114559a6c480b2750d5c8df73806b5bcfc9627a66b3e9f67a0cd1ba4ff2.md`
+- Plan Signature (from linting): `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
+- Filename: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
+- Full path: `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
 
-**Why**: The MCP uses hash-based plan addressing. Plans are looked up by hash, not by plan ID. If saved anywhere else or with wrong filename, WINDSURF cannot find it.
+**Why**: 
+- The MCP uses signature-based plan addressing
+- Plans are looked up by their ATLAS-GATE_PLAN_SIGNATURE value, not by plan ID
+- Signature is cryptographically unique per plan content
+- If saved anywhere else or with wrong filename, WINDSURF cannot find it
+- If plan is modified, signature verification fails and execution stops
 
 ---
 
 ## WORKFLOW
 
-1. **Receive** operator input
+1. **Receive** operator input (Objective, Target Files, Plan ID, Constraints)
 2. **Analyze** target files and current code
 3. **Design** complete solution
 4. **Generate** plan following exact template above
 5. **Write** plan to TEMPORARY location (e.g., `PLAN_AUTH_V1.md`)
 6. **Lint** the plan: `lint_plan({ path: "PLAN_AUTH_V1.md" })`
-   - Linter returns: `{ passed: true, hash: "aeb411..." }`
-7. **Save** to canonical location: `docs/plans/<hash>.md`
-   - Rename: `PLAN_AUTH_V1.md` → `docs/plans/aeb411...ff2.md`
-8. **Fix** any lint errors: Modify plan, re-lint, re-save with new hash
+   - Runs 7 stages: Structure, Phases, Paths, Enforceability, Auditability, Spectral, Cosign signing
+   - Linter returns: `{ passed: true, signature: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o" }`
+7. **Save** to canonical location: `docs/plans/<signature>.md`
+   - Rename: `PLAN_AUTH_V1.md` → `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
+   - Plan now includes: `ATLAS-GATE_PLAN_SIGNATURE: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
+8. **Fix** any lint errors: Modify plan, re-lint, re-save with new signature
 9. **Deliver** to operator:
-   - Plan path: `docs/plans/aeb411...ff2.md`
-   - Plan hash: `aeb411...ff2` (64 hex chars)
+   - Plan path: `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
+   - Plan signature: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o` (43 chars, URL-safe base64)
+   - Public key path: `.atlas-gate/.cosign-keys/public.pem`
 
-WINDSURF will use the hash to locate the plan in `docs/plans/`.
-
----
-
-## HASH TO FILENAME MAPPING
-
-This is how WINDSURF finds your plan:
-
-```
-Operator provides: "Plan Hash: aeb411...ff2"
-WINDSURF looks for: docs/plans/aeb411...ff2.md
-If not found: ERROR - Plan not approved, cannot execute
-```
-
-If your plan is saved as `PLAN_AUTH_V1.md` (wrong), WINDSURF cannot find it.
-If your plan is saved as `docs/plans/aeb411...ff2.md` (correct), WINDSURF finds it.
+WINDSURF will use the signature to locate the plan and verify it with cosign.
 
 ---
 
-**STATUS**: TEMPLATE v2 - ACTUAL MCP IMPLEMENTATION
+## PLAN SIGNATURE TO FILENAME MAPPING
+
+This is how WINDSURF finds and verifies your plan:
+
+```
+Plan header contains: ATLAS-GATE_PLAN_SIGNATURE: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
+Operator provides: "Plan Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o"
+WINDSURF looks for: docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md
+If not found: ERROR - Plan not found, cannot execute
+
+If found, WINDSURF:
+1. Canonicalizes plan content (strip header, normalize whitespace)
+2. Verifies signature using cosign public key from `.atlas-gate/.cosign-keys/public.pem`
+3. If signature invalid: Plan rejected, execution stopped, audit entry created
+4. If signature valid: Proceeds with plan execution
+```
+
+**Signature Properties**:
+- Format: URL-safe base64 (43 characters)
+- No `/`, `+`, or `=` characters (safe for filenames)
+- ECDSA P-256 cryptographic signature
+- Unique per plan content (modification invalidates signature)
+- Deterministic (same content always produces same signature)
+
+---
+
+**STATUS**: TEMPLATE v2 - Updated for Cosign Signature-Based Addressing
 **LAST UPDATED**: 2026-02-14
-**BASED ON**: core/plan-linter.js, tools/lint_plan.js
+**BASED ON**: core/plan-linter.js, core/cosign-hash-provider.js, tools/bootstrap_tool.js

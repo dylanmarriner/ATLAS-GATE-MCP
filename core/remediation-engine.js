@@ -10,7 +10,7 @@
  * SPEC: PROMPT 08 - MCP REMEDIATION PROPOSALS (PROPOSE-ONLY)
  */
 
-import crypto from "crypto";
+import { sha256 } from "./cosign-hash-provider.js";
 import { SYSTEM_ERROR_CODES } from "./system-error.js";
 
 /**
@@ -38,7 +38,7 @@ export const PROPOSAL_STATUS = {
  */
 function generateProposalId(evidence_hash, proposal_type) {
   const input = `${evidence_hash}-${proposal_type}-${Date.now()}`;
-  return "PROP-" + crypto.createHash("sha256").update(input).digest("hex").substring(0, 16);
+  return "PROP-" + sha256(input).substring(0, 16);
 }
 
 /**
@@ -46,7 +46,7 @@ function generateProposalId(evidence_hash, proposal_type) {
  * 
  * Inputs:
  * - workspace_root: absolute path to workspace
- * - plan_hash: SHA256 plan hash (validates against stale proposals)
+ * - plan_signature: SHA256 plan hash (validates against stale proposals)
  * - evidence: array of evidence objects (forensic findings, audit entries, errors)
  * 
  * Output:
@@ -57,16 +57,16 @@ function generateProposalId(evidence_hash, proposal_type) {
  * - REMEDIATION_SCOPE_EXCEEDED (proposal exceeds bounds)
  */
 export class RemediationEngine {
-  constructor(workspace_root, plan_hash) {
+  constructor(workspace_root, plan_signature) {
     if (!workspace_root || typeof workspace_root !== "string") {
       throw new Error("REMEDIATION_INVALID_WORKSPACE: workspace_root required");
     }
-    if (!plan_hash || typeof plan_hash !== "string") {
-      throw new Error("REMEDIATION_INVALID_PLAN: plan_hash required");
+    if (!plan_signature || typeof plan_signature !== "string") {
+      throw new Error("REMEDIATION_INVALID_PLAN: plan_signature required");
     }
 
     this.workspace_root = workspace_root;
-    this.plan_hash = plan_hash;
+    this.plan_signature = plan_signature;
     this.proposals = [];
   }
 
@@ -175,7 +175,7 @@ export class RemediationEngine {
       },
       verification_after_apply: this._verificationStepsFor(proposal_type),
       workspace_root: this.workspace_root,
-      plan_hash: this.plan_hash,
+      plan_signature: this.plan_signature,
     });
 
     this.proposals.push(proposal);
@@ -259,7 +259,7 @@ export class RemediationEngine {
       },
       verification_after_apply: this._verificationStepsFor(proposal_type),
       workspace_root: this.workspace_root,
-      plan_hash: this.plan_hash,
+      plan_signature: this.plan_signature,
     });
 
     this.proposals.push(proposal);
@@ -352,7 +352,7 @@ export class Proposal {
       risk_assessment = {},
       verification_after_apply = [],
       workspace_root,
-      plan_hash,
+      plan_signature,
     } = config;
 
     // Validate proposal type
@@ -386,8 +386,8 @@ export class Proposal {
     this.approved_at = null;
     this.approved_by = null;
     this.workspace_root = workspace_root;
-    this.plan_hash = plan_hash;
-    this.expiration_condition = `proposal is valid if plan_hash matches ${plan_hash}`;
+    this.plan_signature = plan_signature;
+    this.expiration_condition = `proposal is valid if plan_signature matches ${plan_signature}`;
   }
 
   /**
@@ -432,7 +432,7 @@ export class Proposal {
       approved_at: this.approved_at,
       approved_by: this.approved_by,
       workspace_root: this.workspace_root,
-      plan_hash: this.plan_hash,
+      plan_signature: this.plan_signature,
       expiration_condition: this.expiration_condition,
     };
   }

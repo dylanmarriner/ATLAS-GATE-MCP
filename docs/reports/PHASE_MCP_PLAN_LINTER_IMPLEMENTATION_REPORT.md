@@ -154,7 +154,7 @@ if (!lintResult.passed) {
 ### Approval Gate (core/governance.js)
 ```javascript
 // Add before writing approved plan
-const expectedHash = payload.plan_hash;
+const expectedHash = payload.plan_signature;
 const lintResult = lintPlan(planContent, expectedHash);
 if (!lintResult.passed) {
   throw new Error("APPROVAL_BLOCKED: Plan lint failed");
@@ -165,7 +165,7 @@ if (!lintResult.passed) {
 ```javascript
 // Add in enforcePlan
 const planContent = fs.readFileSync(planFile, "utf8");
-const lintResult = lintPlan(planContent, planHash);
+const lintResult = lintPlan(planContent, planSignature);
 if (!lintResult.passed) {
   throw SystemError.toolFailure(
     SYSTEM_ERROR_CODES.PLAN_VALIDATION_FAILED
@@ -259,7 +259,7 @@ Every lint operation appends to `audit-log.jsonl`:
   "role": "ANTIGRAVITY",
   "tool": "bootstrap_create_foundation_plan",
   "event": "plan_lint",
-  "plan_hash": "6448139...",
+  "plan_signature": "6448139...",
   "lint_result": "PASS",
   "error_count": 0,
   "warning_count": 0,

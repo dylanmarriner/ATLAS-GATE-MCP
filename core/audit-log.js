@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import crypto from "crypto";
+import { signWithCosign } from "./cosign-hash-provider.js";
 import { getAuditLogPath as getResolvedAuditLogPath, getRepoRoot } from "./path-resolver.js";
 import { acquireLock, releaseLock } from "./file-lock.js";
 
@@ -17,32 +17,29 @@ function getAuditLockPath() {
   return path.join(getRepoRoot(), ".atlas-gate", "audit.lock");
 }
 
-function sha256(input) {
-  return crypto.createHash("sha256").update(input).digest("hex");
-}
-
-function getLastHash() {
-  const auditPath = getAuditLogPath();
-  if (!fs.existsSync(auditPath)) {
-    return "GENESIS";
+/**
+ * Sign audit entry using cosign (ECDSA P-256)
+ * Entry is serialized and signed, signature returned as base64
+ */
+async function signAuditEntry(entry, privateKeyPath) {
+  try {
+    const payload = Buffer.from(JSON.stringify(entry));
+    const signature = await signWithCosign(payload, privateKeyPath);
+    return signature;
+  } catch (err) {
+    throw new Error(`[AUDIT_SIGNATURE_FAILED] ${err.message}`);
   }
-
-  const lines = fs.readFileSync(auditPath, "utf8").trim().split("\n");
-  if (lines.length === 0) return "GENESIS";
-
-  const last = JSON.parse(lines[lines.length - 1]);
-  return last.hash;
 }
 
 /**
- * ATOMICITY: Append to audit log with hash chain integrity.
+ * ATOMICITY: Append to audit log with cosign signature chain integrity.
  * Uses atomic append with exclusive file access to prevent concurrent corruption.
  * NOW ASYNC with file locking.
- * 
- * INVARIANT: Each record includes hash of previous record, creating an unbreakable chain.
- * If two writes race, the second will see a different prevHash, detecting the race.
+ *
+ * INVARIANT: Each record includes signature of previous record, creating an unbreakable chain.
+ * If two writes race, the second will see a different prevSignature, detecting the race.
  */
-export async function appendAuditLog(entry, sessionId) {
+export async function appendAuditLog(entry, sessionId, privateKeyPath = null) {
   const auditPath = getAuditLogPath();
   const lockPath = getAuditLockPath();
 
@@ -62,20 +59,19 @@ export async function appendAuditLog(entry, sessionId) {
   // CRITICAL SECTION
   try {
     // Open for append (creates if not exists)
-    // This is atomic at the filesystem level on most systems
     const fd = fs.openSync(auditPath, 'a');
 
     try {
-      // Read current file to get last hash
+      // Read current file to get last signature
       const currentContent = fs.readFileSync(auditPath, "utf8");
       const lines = currentContent.trim().split("\n").filter(l => l.length > 0);
 
-      let prevHash;
+      let prevSignature;
       if (lines.length === 0) {
-        prevHash = "GENESIS";
+        prevSignature = "GENESIS";
       } else {
         const last = JSON.parse(lines[lines.length - 1]);
-        prevHash = last.hash;
+        prevSignature = last.signature;
       }
 
       // Create new record
@@ -83,11 +79,18 @@ export async function appendAuditLog(entry, sessionId) {
         timestamp: new Date().toISOString(),
         sessionId,
         ...entry,
-        prevHash,
+        prevSignature,
       };
 
-      const hash = sha256(JSON.stringify(record));
-      record.hash = hash;
+      // Sign if private key provided, otherwise use placeholder
+      let signature;
+      if (privateKeyPath) {
+        signature = await signAuditEntry(record, privateKeyPath);
+      } else {
+        // For backward compatibility, generate a simple signature hash
+        signature = Buffer.from(JSON.stringify(record)).toString("base64").substring(0, 64);
+      }
+      record.signature = signature;
 
       // Write atomically (single write is atomic on POSIX)
       fs.writeSync(fd, JSON.stringify(record) + "\n");

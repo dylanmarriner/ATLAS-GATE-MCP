@@ -13,6 +13,7 @@
 import fs from "fs";
 import path from "path";
 import { invariantTrue, invariantNotNull, invariantFalse } from "./invariant.js";
+import { SESSION_STATE } from "../session.js";
 
 let SESSION_WORKSPACE_ROOT = null;
 
@@ -58,13 +59,21 @@ export function resetWorkspaceRootForTesting() {
 
 /**
  * RF1: Get the session's workspace root.
- * Strictly returns the locked path or throws if not set.
+ * Returns locked path from either path-resolver or SESSION_STATE.
+ * Throws if neither is set.
  */
 export function getRepoRoot() {
-  if (SESSION_WORKSPACE_ROOT === null) {
-    throw new Error("REFUSE: No workspace_root. Call begin_session first.");
+  // Try locked workspace root first
+  if (SESSION_WORKSPACE_ROOT !== null) {
+    return SESSION_WORKSPACE_ROOT;
   }
-  return SESSION_WORKSPACE_ROOT;
+  
+  // Fall back to SESSION_STATE (set by begin_session or direct tool calls)
+  if (SESSION_STATE && SESSION_STATE.workspaceRoot) {
+    return SESSION_STATE.workspaceRoot;
+  }
+  
+  throw new Error("REFUSE: No workspace_root. Call begin_session or provide workspace_root.");
 }
 
 /**
@@ -84,22 +93,40 @@ export function getPlansDir() {
 }
 
 /**
- * RF4: Plan Addressing = HASH ONLY
- * Resolves exact path using workspace_root + hash.
+ * RF4: Plan Addressing = HASH OR NAMED PLAN
+ * Resolves exact path using workspace_root + hash or plan name.
+ * Supports both hash-based addressing and human-readable plan names.
  * 
- * @param {string} planHash - The hash of the plan.
+ * @param {string} planSignature - The hash/signature or plan name.
  */
-export function resolvePlanPath(planHash) {
-  invariantNotNull(planHash, "INV_PLAN_HASH_REQUIRED", "Plan hash is required for addressing");
+export function resolvePlanPath(planSignature) {
+  invariantNotNull(planSignature, "INV_PLAN_HASH_REQUIRED", "Plan hash/name is required for addressing");
 
   const plansDir = getPlansDir();
-  const planFile = path.join(plansDir, `${planHash}.md`);
-
-  if (!fs.existsSync(planFile)) {
-    throw new Error(`REFUSE: Plan not found by hash: ${planHash}`);
+  
+  // Remove .md extension if present to normalize the input
+  const normalized = planSignature.endsWith('.md') ? planSignature.slice(0, -3) : planSignature;
+  
+  // Build candidate path
+  const planFile = path.join(plansDir, `${normalized}.md`);
+  
+  // Check if file exists
+  if (fs.existsSync(planFile)) {
+    return planFile;
   }
-
-  return planFile;
+  
+  // If not found, check for alternate case-insensitive match (some filesystems are case-sensitive)
+  try {
+    const files = fs.readdirSync(plansDir);
+    const match = files.find(f => f.toLowerCase() === `${normalized}.md`.toLowerCase());
+    if (match) {
+      return path.join(plansDir, match);
+    }
+  } catch (err) {
+    // Directory read failed, will throw below
+  }
+  
+  throw new Error(`REFUSE: Plan not found by hash or name: ${planSignature}`);
 }
 
 /**

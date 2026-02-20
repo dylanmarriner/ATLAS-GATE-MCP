@@ -63,7 +63,7 @@ export async function exportAttestationBundleHandler(args) {
       workspace_root: workspaceRoot,
       tool: "export_attestation_bundle",
       intent: "Export attestation bundle to specified format",
-      plan_hash: null,
+      plan_signature: null,
       phase_id: null,
       args: { bundle_id: args.bundle?.bundle_id || "unknown", format },
       result: "error",
@@ -86,7 +86,7 @@ export async function exportAttestationBundleHandler(args) {
     workspace_root: workspaceRoot,
     tool: "export_attestation_bundle",
     intent: "Export attestation bundle to specified format",
-    plan_hash: null,
+    plan_signature: null,
     phase_id: null,
     args: {
       bundle_id: args.bundle.bundle_id,

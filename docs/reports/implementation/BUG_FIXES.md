@@ -96,7 +96,7 @@ function registerAllTools() {
         previousHash: z.string().optional(),
         plan: z.string(),
         planId: z.string().optional(),
-        planHash: z.string().optional(),
+        planSignature: z.string().optional(),
         role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
         purpose: z.string().optional(),
         usedBy: z.string().optional(),
@@ -509,10 +509,10 @@ export function getRepoRoot(targetPath, fallback) {
 
 ```javascript
 // Line 112: Change from
-const { repoRoot } = enforcePlan(plan, normalizedPath, planId, planHash);
+const { repoRoot } = enforcePlan(plan, normalizedPath, planId, planSignature);
 // to
 // enforcePlan now returns repoRoot
-const { repoRoot } = enforcePlan(plan, normalizedPath, planId, planHash, WORKSPACE_ROOT);
+const { repoRoot } = enforcePlan(plan, normalizedPath, planId, planSignature, WORKSPACE_ROOT);
 ```
 
 **Update**: `core/plan-enforcer.js` signature:
@@ -594,13 +594,13 @@ grep -n "readGovernanceState" \
 Change from:
 ```javascript
 planId: z.string().optional(),
-planHash: z.string().optional(),
+planSignature: z.string().optional(),
 ```
 
 To:
 ```javascript
 planId: z.string(),  // REQUIRED
-planHash: z.string(),  // REQUIRED
+planSignature: z.string(),  // REQUIRED
 ```
 
 **In core/plan-enforcer.js** (lines 145-157):
@@ -623,7 +623,7 @@ if (!requiredPlanId) {
 
 if (!requiredPlanHash) {
   throw new Error(
-    "PLAN_HASH_REQUIRED: planHash must be provided for all non-bootstrap writes. " +
+    "PLAN_HASH_REQUIRED: planSignature must be provided for all non-bootstrap writes. " +
     "This ensures plan content has not been modified since approval."
   );
 }
@@ -637,7 +637,7 @@ if (currentHash !== requiredPlanHash) {
 
 **Verification**:
 ```bash
-# Try to call write_file without planId/planHash
+# Try to call write_file without planId/planSignature
 node -e "
 import { writeFileHandler } from './tools/write_file.js';
 try {
@@ -645,7 +645,7 @@ try {
     path: 'test.js',
     content: 'test',
     plan: 'SOME_PLAN'
-    // No planId, no planHash
+    // No planId, no planSignature
   });
 } catch (e) {
   console.log('ERROR (expected):', e.message);

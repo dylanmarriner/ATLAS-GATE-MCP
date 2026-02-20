@@ -410,7 +410,7 @@ After bootstrap completes, the following must be independently verifiable:
 ```
 docs/plans/<HASH>.md           # The approved foundation plan (immutable)
 .atlas-gate/governance.json         # State file marking bootstrap complete
-audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_plan", "plan_hash": "<HASH>", ...}
+audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_plan", "plan_signature": "<HASH>", ...}
 ```
 
 **Evidence integrity**:

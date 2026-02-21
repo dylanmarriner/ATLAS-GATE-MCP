@@ -184,7 +184,6 @@ export function isToolAllowedUnderKillSwitch(toolName) {
   const readOnlyTools = new Set([
     "read_file",
     "read_audit_log",
-    "read_prompt",
     "list_plans",
     "replay_execution",
     "verify_workspace_integrity",

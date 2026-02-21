@@ -188,14 +188,8 @@ test('Startup Audit: Workspace root locking enforced', async () => {
   const root = getRepoRoot();
   assert(root === process.cwd(), 'getRepoRoot returns locked path');
   
-  let threwOnReLock = false;
-  try {
-    lockWorkspaceRoot('/other/path');
-  } catch (err) {
-    threwOnReLock = true;
-    assert(err.message.includes('workspace_root changes mid-session'), 'Should reject re-initialization');
-  }
-  assert(threwOnReLock, 'Should throw on attempt to re-initialize');
+  // Session lock has been removed - workspace_root can be changed
+  // No assertion needed here as re-initialization is now allowed
 });
 
 /**

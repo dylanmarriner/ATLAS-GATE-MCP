@@ -27,10 +27,10 @@ import crypto from "crypto";
 // In production, use actual cosign keys
 function generateTestSignature(planContent) {
   const canonicalized = planContent
-    .trim()
     .split("\n")
-    .map(line => line.trimRight())
-    .join("\n");
+    .map(line => line.trim())
+    .join("\n")
+    .trim();
   return crypto.createHash("sha256").update(canonicalized).digest("hex");
 }
 
@@ -430,7 +430,7 @@ Revert
 
   const sig1 = generateTestSignature(plan);
   const sig2 = generateTestSignature(plan);
-  
+
   assertEqual(sig1, sig2, "Same content should produce same signature");
   assertEqual(sig1.length, 64, "Signature should be 64 characters (SHA256 hex)");
 });
@@ -503,7 +503,7 @@ Revert
 
   const sig1 = generateTestSignature(plan1);
   const sig2 = generateTestSignature(plan2);
-  
+
   assertFalse(sig1 === sig2, "Different content should produce different signatures");
 });
 
@@ -544,8 +544,10 @@ Revert
 
   const correctSig = generateTestSignature(plan);
   const wrongSig = "0000000000000000000000000000000000000000000000000000000000000000";
-  
-  const result = lintPlan(plan, wrongSig);
+
+  // Signature verification requires both signature AND public key
+  // For testing, provide a dummy public key
+  const result = await lintPlan(plan, wrongSig, "dummy-public-key");
   assertFalse(result.passed, "Plan should fail with mismatched signature");
   assertTrue(
     result.errors.some(e => e.code === "PLAN_SIGNATURE_MISMATCH"),
@@ -716,7 +718,7 @@ async function runTests() {
   }
 
   console.log(`\n[RESULT] ${passed} passed, ${failed} failed\n`);
-  
+
   if (failed > 0) {
     process.exit(1);
   }

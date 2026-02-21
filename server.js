@@ -9,7 +9,6 @@ import { writeFileHandler } from "./tools/write_file.js";
 import { listPlansHandler } from "./tools/list_plans.js";
 import { readFileHandler } from "./tools/read_file.js";
 import { readAuditLogHandler } from "./tools/read_audit_log.js";
-import { readPromptHandler } from "./tools/read_prompt.js";
 import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
 import { lintPlanHandler } from "./tools/lint_plan.js";
 import { replayExecutionHandler } from "./tools/replay_execution.js";
@@ -336,17 +335,6 @@ export async function startServer(role = "ANTIGRAVITY") {
       inputSchema: z.object({}),
     },
     wrapHandler(readAuditLogHandler, "read_audit_log")
-  );
-
-  server.registerTool(
-    "read_prompt",
-    {
-      description: `Read canonical prompt - Role: ${role}`,
-      inputSchema: z.object({
-        name: z.string()
-      })
-    },
-    wrapHandler((args) => readPromptHandler(args, role), "read_prompt")
   );
 
   // Forensic replay tools (read-only, both roles)

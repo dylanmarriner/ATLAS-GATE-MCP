@@ -375,7 +375,7 @@ export function computeMaturityScore(workspaceRoot, options = {}) {
   };
   
   const toolMetrics = {
-    tools: ['begin_session', 'write_file', 'read_file', 'list_plans', 'read_audit_log', 'read_prompt'],
+    tools: ['begin_session', 'write_file', 'read_file', 'list_plans', 'read_audit_log'],
     gateFailures: 0,
     manualStepsRequired: false,
   };

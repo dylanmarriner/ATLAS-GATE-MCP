@@ -1,5 +1,4 @@
 import { writeFileHandler } from "./tools/write_file.js";
-import { readPromptHandler } from "./tools/read_prompt.js";
 import { SESSION_STATE } from "./session.js";
 import fs from "fs";
 import path from "path";
@@ -50,9 +49,6 @@ async function runPenetrationTest() {
             passed = false;
         }
     }
-
-    // Helper to unlock gate for subsequent tests
-    await readPromptHandler({ name: "WINDSURF_CANONICAL" }, "WINDSURF");
 
     // 2. PATH TRAVERSAL ATTEMPT
     console.log("\n[2] Testing Path Traversal...");

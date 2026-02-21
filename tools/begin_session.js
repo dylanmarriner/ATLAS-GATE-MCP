@@ -1,7 +1,7 @@
 import { SESSION_STATE } from "../session.js";
 import { lockWorkspaceRoot } from "../core/path-resolver.js";
 import { KaizaError, ERROR_CODES } from "../core/error.js";
-import { flushPreSessionBuffer, appendAuditEntry } from "../core/audit-system.js";
+import { flushPreSessionBuffer, appendAuditEntry, loadOrGenerateKeyPair } from "../core/audit-system.js";
 import { SESSION_ID } from "../session.js";
 
 /**
@@ -20,6 +20,15 @@ export async function beginSessionHandler({ workspace_root }) {
 
         // Update local session state
         SESSION_STATE.workspaceRoot = workspace_root;
+
+        // Generate or load ECDSA P-256 keys for this session
+        // If keys already exist, this is a no-op (idempotent)
+        // If keys don't exist, they are generated and stored in .atlas-gate/.cosign-keys/
+        try {
+            await loadOrGenerateKeyPair(workspace_root);
+        } catch (keyErr) {
+            throw new Error(`COSIGN_KEY_INIT_FAILED: ${keyErr.message}`);
+        }
 
         // PROMPT 03: Flush pre-session buffered events
         // (These are tool calls that arrived before begin_session)
@@ -46,7 +55,8 @@ export async function beginSessionHandler({ workspace_root }) {
                     text: JSON.stringify({
                         status: "SESSION_INITIALIZED",
                         workspace_root: workspace_root,
-                        message: "Authority locked. All subsequent operations must be relative to this root."
+                        message: "Authority locked. All subsequent operations must be relative to this root.",
+                        cryptography: "ECDSA P-256 keys initialized"
                     }, null, 2)
                 }
             ]

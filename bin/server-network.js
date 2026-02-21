@@ -115,12 +115,14 @@ app.get('/health', async (req, res) => {
 
     res.status(statusCode).json(health);
   } catch (err) {
-    console.error(`[HEALTH] Check failed: ${err.message}`);
-    res.status(503).json({
-      status: 'unhealthy',
-      error: err.message,
-      timestamp: new Date().toISOString(),
-    });
+   const errorMsg = err instanceof Error ? err.message : String(err);
+   console.error(`[HEALTH] Check failed: ${errorMsg}`);
+   res.status(503).json({
+     status: 'unhealthy',
+     error: errorMsg,
+     timestamp: new Date().toISOString(),
+   });
+   throw new Error(`Health check error: ${errorMsg}`);
   }
 });
 
@@ -209,17 +211,19 @@ app.post('/mcp', async (req, res) => {
       duration,
     });
 
-  } catch (err) {
-    const duration = Date.now() - startTime;
-    console.error(`[MCP] ${requestId} ERROR: ${err.message} (${duration}ms)`);
+    } catch (err) {
+      const duration = Date.now() - startTime;
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[MCP] ${requestId} ERROR: ${errorMsg} (${duration}ms)`);
 
-    res.status(500).json({
-      error: 'INTERNAL_ERROR',
-      message: err.message,
-      requestId,
-      tool: req.body.tool,
-    });
-  }
+      res.status(500).json({
+        error: 'INTERNAL_ERROR',
+        message: errorMsg,
+        requestId,
+        tool: req.body.tool,
+      });
+      throw new Error(`MCP handler error: ${errorMsg}`);
+    }
 });
 
 /**
@@ -260,7 +264,9 @@ mcp_pid ${process.pid}
     res.send(metricsText.trim());
 
   } catch (err) {
-    res.status(500).send(`# ERROR: ${err.message}`);
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    res.status(500).send(`# ERROR: ${errorMsg}`);
+    throw new Error(`Metrics endpoint error: ${errorMsg}`);
   }
 });
 
@@ -304,11 +310,13 @@ app.get('/audit/export', async (req, res) => {
       // Default: JSONL
       res.set('Content-Type', 'application/x-ndjson');
       res.send(entries.map(e => JSON.stringify(e)).join('\n'));
-    }
+      }
 
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        res.status(500).json({ error: errorMsg });
+        throw new Error(`Audit export error: ${errorMsg}`);
+      }
 });
 
 /**
@@ -345,8 +353,9 @@ async function gracefulShutdown() {
     }, 30000);
 
   } catch (err) {
-    console.error(`[SHUTDOWN] Error during shutdown: ${err.message}`);
-    process.exit(1);
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error(`[SHUTDOWN] Error during shutdown: ${errorMsg}`);
+    throw new Error(`Shutdown error: ${errorMsg}`);
   }
 }
 

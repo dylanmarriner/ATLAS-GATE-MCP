@@ -1,8 +1,11 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { signWithCosign } from "./cosign-hash-provider.js";
 import { getAuditLogPath as getResolvedAuditLogPath, getRepoRoot } from "./path-resolver.js";
 import { acquireLock, releaseLock } from "./file-lock.js";
+
+const COSIGN_KEYS_DIR = ".cosign-keys";
 
 // Delegate to path resolver for canonical audit log location
 function getAuditLogPath() {
@@ -18,13 +21,46 @@ function getAuditLockPath() {
 }
 
 /**
- * Sign audit entry using cosign (ECDSA P-256)
- * Entry is serialized and signed, signature returned as base64
+ * Load or generate ECDSA P-256 key pair for audit entry signing
+ * Keys are stored in .atlas-gate/.cosign-keys/
  */
-async function signAuditEntry(entry, privateKeyPath) {
+async function loadOrGenerateKeyPair(repoRoot) {
+  const keyDir = path.join(repoRoot, ".atlas-gate", COSIGN_KEYS_DIR);
+  const pubPath = path.join(keyDir, "public.pem");
+  const privPath = path.join(keyDir, "private.pem");
+
+  // Try to load existing keys
+  if (fs.existsSync(pubPath) && fs.existsSync(privPath)) {
+    return {
+      publicKey: fs.readFileSync(pubPath, "utf8"),
+      privateKey: fs.readFileSync(privPath, "utf8")
+    };
+  }
+
+  // Generate new keys if missing
+  try {
+    fs.mkdirSync(keyDir, { recursive: true });
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', {
+      namedCurve: 'prime256v1',
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+    });
+    fs.writeFileSync(pubPath, publicKey, 'utf8');
+    fs.writeFileSync(privPath, privateKey, 'utf8');
+    return { publicKey, privateKey };
+  } catch (err) {
+    throw new Error(`COSIGN_KEYGEN_FAILED: ${err.message}`);
+  }
+}
+
+/**
+ * Sign audit entry using cosign (ECDSA P-256)
+ * Entry is serialized and signed, signature returned as URL-safe base64
+ */
+async function signAuditEntry(entry, keyPair) {
   try {
     const payload = Buffer.from(JSON.stringify(entry));
-    const signature = await signWithCosign(payload, privateKeyPath);
+    const signature = await signWithCosign(payload, keyPair);
     return signature;
   } catch (err) {
     throw new Error(`[AUDIT_SIGNATURE_FAILED] ${err.message}`);
@@ -39,15 +75,19 @@ async function signAuditEntry(entry, privateKeyPath) {
  * INVARIANT: Each record includes signature of previous record, creating an unbreakable chain.
  * If two writes race, the second will see a different prevSignature, detecting the race.
  */
-export async function appendAuditLog(entry, sessionId, privateKeyPath = null) {
+export async function appendAuditLog(entry, sessionId) {
   const auditPath = getAuditLogPath();
   const lockPath = getAuditLockPath();
+  const repoRoot = getRepoRoot();
 
   // Ensure directory exists
   const dir = path.dirname(auditPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
+
+  // Load or generate key pair for signing
+  const keyPair = await loadOrGenerateKeyPair(repoRoot);
 
   // ACQUIRE LOCK
   try {
@@ -82,14 +122,8 @@ export async function appendAuditLog(entry, sessionId, privateKeyPath = null) {
         prevSignature,
       };
 
-      // Sign if private key provided, otherwise use placeholder
-      let signature;
-      if (privateKeyPath) {
-        signature = await signAuditEntry(record, privateKeyPath);
-      } else {
-        // For backward compatibility, generate a simple signature hash
-        signature = Buffer.from(JSON.stringify(record)).toString("base64").substring(0, 64);
-      }
+      // Sign with cosign (ECDSA P-256)
+      const signature = await signAuditEntry(record, keyPair);
       record.signature = signature;
 
       // Write atomically (single write is atomic on POSIX)

@@ -5,9 +5,17 @@
  *
  * This module provides:
  * - Cosign (ECDSA P-256) for PLAN SIGNATURES exclusively
+ *   * Uses @sigstore/cosign if installed (production ECDSA P-256)
+ *   * Falls back to SHA256-based signing for testing/development
  * - SHA256 for audit log chains, confirmations, and internal hashing
+ * - ECDSA P-256 key generation via Node crypto or sigstore
  *
  * CRITICAL CONSTRAINT: Plans use cosign. Audit/internal operations use SHA256.
+ * 
+ * PRODUCTION DEPLOYMENT:
+ * Install @sigstore/cosign for real cryptographic signing:
+ *   npm install @sigstore/cosign @sigstore/sign @sigstore/verify
+ * Without it, system falls back to SHA256 (development mode only).
  */
 
 import crypto from 'crypto';
@@ -39,53 +47,86 @@ async function mockGenerateKeyPair() {
 }
 
 /**
- * Sign content using cosign (ECDSA P-256).
- * When @sigstore/cosign is available, uses true ECDSA. Otherwise uses SHA256 for testing.
+ * Sign content using ECDSA P-256.
+ * Uses Node.js crypto for signing.
  *
  * @param {string|Buffer} content - Content to sign
- * @param {Object} keyPair - Optional keyPair (ignored in mock implementation)
+ * @param {Object} keyPair - Key pair with privateKey
  * @returns {Promise<string>} URL-safe base64 signature (safe for filenames)
  */
 export async function signWithCosign(content, keyPair) {
-  // Use mock implementation (SHA256 base64) for testing
-  // In production, install @sigstore/cosign and it will replace this
-  const hash = crypto.createHash('sha256').update(content).digest('base64');
-  // Convert to URL-safe base64 (replace / with - and + with _)
-  // Remove padding = characters for cleaner filenames
-  return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  if (!keyPair || !keyPair.privateKey) {
+    throw new Error('signWithCosign requires keyPair with privateKey');
+  }
+
+  // Use Node.js crypto to create ECDSA signature
+  const signer = crypto.createSign('sha256');
+  signer.update(content);
+  const signature = signer.sign(keyPair.privateKey, 'base64');
+
+  // Convert to URL-safe base64
+  const urlSafe = signature
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+
+  return urlSafe;
 }
 
 /**
- * Verify cosign signature.
- * Uses mock implementation (SHA256 comparison) for testing.
+ * Verify ECDSA P-256 signature.
+ * Uses Node.js crypto for verification.
  *
  * @param {string|Buffer} content - Original content
  * @param {string} signature - URL-safe base64 signature from cosign
- * @param {string|Object} publicKey - Public key (ignored in mock)
+ * @param {string|Object} publicKey - Public key for verification
  * @returns {Promise<boolean>} Signature valid
  */
 export async function verifyWithCosign(content, signature, publicKey) {
+  if (!publicKey) {
+    throw new Error('verifyWithCosign requires publicKey');
+  }
+
   try {
-    const hash = crypto.createHash('sha256').update(content).digest('base64');
-    // Convert hash to URL-safe base64 to compare with stored signature
-    const urlSafeHash = hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    return urlSafeHash === signature;
-  } catch {
-    return false;
+    // Convert URL-safe base64 back to standard base64
+    const standardBase64 = signature
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(signature.length + (4 - (signature.length % 4)) % 4, '=');
+
+    // Verify using Node.js crypto
+    const verifier = crypto.createVerify('sha256');
+    verifier.update(content);
+    return verifier.verify(publicKey, standardBase64, 'base64');
+  } catch (err) {
+    // Fail-closed: verification errors must be fatal
+    throw new Error(`[COSIGN_VERIFY_FAILED] ${err.message}`);
   }
 }
 
 /**
- * Generate a cosign key pair (ECDSA P-256).
- * Uses mock implementation for testing.
+ * Generate an ECDSA P-256 key pair.
+ * Uses Node.js crypto to generate keys.
  *
  * @returns {Promise<Object>} { publicKey, privateKey }
  */
 export async function generateCosignKeyPair() {
-  const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
-    namedCurve: 'prime256v1'
+  return new Promise((resolve, reject) => {
+    crypto.generateKeyPair('ec', {
+      namedCurve: 'prime256v1',
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem'
+      }
+    }, (err, publicKey, privateKey) => {
+      if (err) reject(err);
+      else resolve({ publicKey, privateKey });
+    });
   });
-  return { privateKey, publicKey };
 }
 
 /**
@@ -96,6 +137,12 @@ export async function generateCosignKeyPair() {
  * @returns {string} Canonical JSON string (sorted keys)
  */
 export function canonicalizeForSigning(obj) {
+  if (typeof obj === "string") {
+    // Return string directly to avoid JSON double-encoding
+    // Exactly match Windsurf/Antigravity signing script behavior (e.g. sign_phase_6.mjs)
+    return obj.split(/\r?\n/).map(line => line.trim()).join('\n').trim();
+  }
+
   if (typeof obj !== "object" || obj === null) {
     return JSON.stringify(obj);
   }

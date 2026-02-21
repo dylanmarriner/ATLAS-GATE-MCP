@@ -84,7 +84,7 @@ export function flushPreSessionBuffer(auditLogPath) {
 
 let cachedKeyPair = null;
 
-async function loadOrGenerateKeyPair(workspaceRoot) {
+export async function loadOrGenerateKeyPair(workspaceRoot) {
    if (cachedKeyPair) {
      return cachedKeyPair;
    }

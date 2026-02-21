@@ -53,7 +53,9 @@ async function main() {
       const pkgData = JSON.parse(pkg.content);
       console.log('[OK] Package loaded:', pkgData.name, 'v' + pkgData.version);
     } catch (err) {
-      console.log('[SKIP] package.json not found (expected if not in root)');
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('[WARNING] Failed to load package.json:', errorMsg);
+      throw new Error(`Failed to read package.json: ${errorMsg}`);
     }
     console.log('');
 
@@ -75,7 +77,9 @@ async function main() {
       await client.updateSessionWorkspace(altPath);
       console.log('[OK] Switched to:', altPath);
     } catch (err) {
-      console.log('[SKIP] Alternative path not accessible');
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error('[WARNING] Failed to switch workspace:', errorMsg);
+      throw new Error(`Failed to update session workspace: ${errorMsg}`);
     }
     console.log('');
 
@@ -102,11 +106,12 @@ async function main() {
     console.log('[SUCCESS] All examples completed!');
 
   } catch (err) {
-    console.error('[ERROR]', err.message);
-    if (err.stack && process.env.DEBUG) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('[ERROR]', errorMsg);
+    if (err instanceof Error && err.stack && process.env.DEBUG) {
       console.error(err.stack);
     }
-    process.exit(1);
+    throw new Error(`Client example execution failed: ${errorMsg}`);
   }
 }
 

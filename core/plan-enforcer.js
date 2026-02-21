@@ -38,7 +38,7 @@ export async function enforcePlan(planSignatureOrName, targetPath) {
   // We expect a signature header (format TBD based on storage mechanism)
   // For now, maintain backward compatibility with hash-based headers
   // but prefer signature-based validation.
-  const signatureHeaderMatch = fileContent.match(/<!--\s*PLAN_SIGNATURE:\s*([A-Za-z0-9+/=]+)[\s\S]*?STATUS:\s*APPROVED\s*-->/);
+  const signatureHeaderMatch = fileContent.match(/<!--\s*(?:PLAN_SIGNATURE|COSIGN_SIGNATURE):\s*([A-Za-z0-9+/=]+)[\s\S]*?STATUS:\s*APPROVED\s*-->/);
   const hashHeaderMatch = fileContent.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
   if (!signatureHeaderMatch && !hashHeaderMatch) {
@@ -47,19 +47,43 @@ export async function enforcePlan(planSignatureOrName, targetPath) {
 
   const embeddedSignature = signatureHeaderMatch ? signatureHeaderMatch[1] : null;
 
-  // Verify signature equality if present
-  if (embeddedSignature && embeddedSignature !== planSignature) {
-    throw new Error(`REFUSE: Signature mismatch. Filename ${planSignature} does not match embedded signature ${embeddedSignature}`);
+  // Load public key for signature verification
+  let publicKey = null;
+  try {
+    const pubPath = path.join(getRepoRoot(), ".atlas-gate", ".cosign-keys", "public.pem");
+    if (fs.existsSync(pubPath)) {
+      publicKey = fs.readFileSync(pubPath, "utf8");
+    }
+  } catch (err) {
+    throw new Error(`REFUSE: Failed to load public key for plan verification: ${err.message}`);
   }
 
-  // GATE: RE-LINT PLAN AT EXECUTION TIME (FAIL IF MODIFIED)
-  const lintResult = await lintPlan(fileContent, planSignature);
-  if (!lintResult.passed) {
-    throw new Error(
-      `REFUSE: Plan execution blocked. Linting failed with ${lintResult.errors.length} error(s). ` +
-      `Plan may have been modified after approval. Errors: ${lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
-      }`
-    );
+  // GATE: VERIFY CRYPTOGRAPHIC INTEGRITY
+  // Instead of full structural linting, Windsurf only verifies the cryptographic signature/hash.
+  if (publicKey && embeddedSignature) {
+    const { verifyPlanSignature } = await import("./plan-linter.js");
+    try {
+      const isValid = await verifyPlanSignature(fileContent, embeddedSignature, publicKey);
+      if (!isValid) {
+        throw new Error("Signature mathematically failed verification.");
+      }
+    } catch (err) {
+      throw new Error(`REFUSE: Plan signature verification failed. ${err.message}`);
+    }
+  } else if (hashHeaderMatch) {
+    const expectedHash = hashHeaderMatch[1];
+    const { canonicalizeForSigning } = await import("./cosign-hash-provider.js");
+    const lines = fileContent.split('\n');
+    const headerEnd = lines.findIndex(l => l.includes('-->'));
+    const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
+    const striped = bodyLines.join('\n').replace(/<!--[\s\S]*?-->\s*/gm, "").replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
+    const canonicalized = canonicalizeForSigning(striped);
+    const actualHash = crypto.createHash('sha256').update(canonicalized).digest('hex');
+    if (actualHash !== expectedHash) {
+      throw new Error(`REFUSE: Plan hash mismatch. Expected ${expectedHash}, got ${actualHash}`);
+    }
+  } else if (embeddedSignature && !publicKey) {
+    throw new Error(`REFUSE: Cannot verify COSIGN_SIGNATURE because public.pem is missing from .atlas-gate/.cosign-keys/`);
   }
 
   // SCOPE CHECK: Still mandatory (RF2 says plans stay with local dir)

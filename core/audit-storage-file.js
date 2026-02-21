@@ -64,78 +64,61 @@ export class FileAuditStorage extends AuditStorage {
   }
 
   async read(filters = {}) {
-     try {
-       const { session_id, tool, role, plan_signature, limit = 1000, offset = 0 } = filters;
+      const { session_id, tool, role, plan_signature, limit = 1000, offset = 0 } = filters;
 
-      // Read file (may not exist initially)
-      let content = '';
       try {
-        content = await fs.readFile(this.logPath, 'utf8');
+        const content = await fs.readFile(this.logPath, 'utf8');
+
+        // Parse JSONL
+        const entries = content
+          .split('\n')
+          .filter(line => line.trim())
+          .map(line => {
+            try {
+              return JSON.parse(line);
+            } catch (err) {
+              throw new Error(`Failed to parse audit log line: ${err.message}`);
+            }
+          });
+
+        // Apply filters
+        let filtered = entries;
+
+        if (session_id) {
+          filtered = filtered.filter(e => e.session_id === session_id);
+        }
+
+        if (tool) {
+          filtered = filtered.filter(e => e.tool === tool);
+        }
+
+        if (role) {
+          filtered = filtered.filter(e => e.role === role);
+        }
+
+        if (plan_signature) {
+          filtered = filtered.filter(e => e.plan_signature === plan_signature);
+        }
+
+        // Pagination
+        return filtered.slice(offset, offset + limit);
       } catch (err) {
-        if (err.code !== 'ENOENT') throw err;
-        return [];
+        throw new Error(`Failed to read audit log: ${err.message}`);
       }
-
-      // Parse JSONL
-      const entries = content
-        .split('\n')
-        .filter(line => line.trim())
-        .map(line => {
-          try {
-            return JSON.parse(line);
-          } catch (err) {
-            console.error(`[AUDIT] Failed to parse line: ${line}`);
-            return null;
-          }
-        })
-        .filter(e => e !== null);
-
-      // Apply filters
-      let filtered = entries;
-
-      if (session_id) {
-        filtered = filtered.filter(e => e.session_id === session_id);
-      }
-
-      if (tool) {
-        filtered = filtered.filter(e => e.tool === tool);
-      }
-
-      if (role) {
-        filtered = filtered.filter(e => e.role === role);
-      }
-
-      if (plan_signature) {
-         filtered = filtered.filter(e => e.plan_signature === plan_signature);
-       }
-
-      // Pagination
-      return filtered.slice(offset, offset + limit);
-
-    } catch (err) {
-      throw new Error(`Failed to read audit log: ${err.message}`);
-    }
   }
 
   async getLastEntry() {
-    try {
-      let content = '';
       try {
-        content = await fs.readFile(this.logPath, 'utf8');
+        const content = await fs.readFile(this.logPath, 'utf8');
+        
+        const lines = content.split('\n').filter(line => line.trim());
+        if (lines.length === 0) return null;
+
+        const lastLine = lines[lines.length - 1];
+        return JSON.parse(lastLine);
       } catch (err) {
-        if (err.code !== 'ENOENT') throw err;
-        return null;
+        throw new Error(`Failed to get last audit entry: ${err.message}`);
       }
-
-      const lines = content.split('\n').filter(line => line.trim());
-      if (lines.length === 0) return null;
-
-      const lastLine = lines[lines.length - 1];
-      return JSON.parse(lastLine);
-
-    } catch (err) {
-      throw new Error(`Failed to get last audit entry: ${err.message}`);
-    }
   }
 
   async verify(sessionId) {
@@ -184,24 +167,20 @@ export class FileAuditStorage extends AuditStorage {
   }
 
   async health() {
-    try {
-      // Try to read the audit log file
       try {
         await fs.access(this.logPath);
+        return true;
       } catch (err) {
         if (err.code === 'ENOENT') {
-          // File doesn't exist yet, but directory should be accessible
-          await fs.access(this.workspaceRoot);
-        } else {
-          throw err;
+          try {
+            await fs.access(this.workspaceRoot);
+            return true;
+          } catch (accessErr) {
+            console.error(`[AUDIT] Workspace not accessible: ${accessErr.message}`);
+            throw new Error(`Audit storage health check failed: workspace not accessible`);
+          }
         }
+        throw new Error(`Audit storage health check failed: ${err.message}`);
       }
-
-      return true;
-
-    } catch (err) {
-      console.error(`[AUDIT] Health check failed: ${err.message}`);
-      return false;
-    }
   }
 }

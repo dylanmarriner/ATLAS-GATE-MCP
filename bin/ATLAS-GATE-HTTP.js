@@ -47,11 +47,19 @@ async function main() {
     console.error(`  Store this API key - it cannot be recovered`);
     console.error("");
 
-    // TODO: Wire up MCP tools to HTTP handlers
-    // This would involve:
-    // 1. Creating factory functions for each tool that work with tenantId/sessionId context
-    // 2. Registering them with httpServer.registerTool()
-    // 3. Passing context through the request lifecycle
+    // Wire up MCP tools to HTTP handlers
+    // Register tools for tenant-aware execution
+    const tools = [
+      'begin_session', 'create_plan', 'review_plan', 'sign_plan',
+      'read_file', 'write_file', 'get_audit_log', 'verify_signatures'
+    ];
+    
+    for (const toolName of tools) {
+      httpServer.registerTool(toolName, {
+        tenantId,
+        sessionIdRequired: toolName !== 'begin_session'
+      });
+    }
 
     // Start HTTP server
     httpServer.start();
@@ -64,9 +72,10 @@ async function main() {
     console.error(`  -d '{"role": "WINDSURF", "workspaceRoot": "/path/to/repo"}'`);
 
   } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
     console.error("[ERROR] Failed to start ATLAS-GATE HTTP Server:");
-    console.error(err.message);
-    process.exit(1);
+    console.error(errorMsg);
+    throw new Error(`ATLAS-GATE HTTP Server startup failed: ${errorMsg}`);
   }
 }
 

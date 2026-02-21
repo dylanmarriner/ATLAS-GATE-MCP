@@ -86,49 +86,54 @@ const FORBIDDEN_PATH_PATTERNS = [
  */
 async function initializeSpectral() {
   try {
-    const { Spectral } = await import("@stoplight/spectral-core");
+    const core = await import("@stoplight/spectral-core");
+    const Spectral = core.Spectral || (core.default && core.default.Spectral);
+
     const { truthy, pattern } = await import("@stoplight/spectral-functions");
-    
+
     const spectral = new Spectral();
 
     // Define custom rules for plan validation
-    spectral.setRules({
-      "plan-required-sections": {
-        description: "Plan must contain all required sections",
-        severity: "error",
-        given: "$",
-        then: {
-          function: truthy,
-        },
-      },
-      "plan-no-stubs": {
-        description: "Plan must not contain stub/incomplete code",
-        severity: "error",
-        given: "$",
-        then: {
-          function: pattern,
-          functionOptions: {
-            notMatch: STUB_PATTERNS.map(p => p.source).join("|"),
+    spectral.setRuleset({
+      rules: {
+        "plan-required-sections": {
+          description: "Plan must contain all required sections",
+          severity: "error",
+          given: "$",
+          then: {
+            function: truthy,
           },
         },
-      },
-      "plan-phase-format": {
-        description: "Phase IDs must be uppercase alphanumeric + underscore",
-        severity: "error",
-        given: "$",
-        then: {
-          function: pattern,
-          functionOptions: {
-            match: "^[A-Z0-9_]+$",
+        "plan-no-stubs": {
+          description: "Plan must not contain stub/incomplete code",
+          severity: "error",
+          given: "$",
+          then: {
+            function: pattern,
+            functionOptions: {
+              notMatch: STUB_PATTERNS.map(p => p.source).join("|"),
+            },
           },
         },
-      },
+        "plan-phase-format": {
+          description: "Phase IDs must be uppercase alphanumeric + underscore",
+          severity: "error",
+          given: "$",
+          then: {
+            function: pattern,
+            functionOptions: {
+              match: "^[A-Z0-9_]+$",
+            },
+          },
+        }
+      }
     });
 
     return spectral;
   } catch (err) {
-    // Spectral is optional - return null if not installed
-    return null;
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error(`[SPECTRAL] Failed to initialize Spectral: ${errorMsg}`);
+    throw new Error(`Failed to initialize Spectral linter: ${errorMsg}`);
   }
 }
 
@@ -184,9 +189,22 @@ export async function verifyPlanSignature(planContent, signature, publicKey) {
  * Strip HTML comments and signature footers before hashing
  */
 function stripComments(content) {
-  return content
-    .replace(/<!--[\s\S]*?-->\s*/m, "")
-    .replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/m, "");
+  const lines = content.split('\n');
+  let headerEnd = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].includes('-->')) {
+      headerEnd = i;
+      break;
+    }
+  }
+
+  // If a header end was found, the body starts after it
+  const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
+
+  // Replace any subsequent single-line or block signature markers just in case
+  return bodyLines.join('\n')
+    .replace(/<!--[\s\S]*?-->\s*/gm, "")
+    .replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
 }
 
 /**
@@ -408,12 +426,12 @@ async function runSpectralLinting(planContent) {
   const violations = [];
   try {
     const spectral = await initializeSpectral();
-    
+
     // Spectral is optional - skip if not available
     if (!spectral) {
       return violations;
     }
-    
+
     const results = await spectral.run(planContent);
 
     for (const result of results) {
@@ -426,8 +444,16 @@ async function runSpectralLinting(planContent) {
       });
     }
   } catch (err) {
-    // Spectral errors are logged but don't block plan
-    console.error("[SPECTRAL_LINTING_ERROR]", err.message);
+    // Spectral errors are captured as plan violations
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error("[SPECTRAL_LINTING_ERROR]", errorMsg);
+    violations.push({
+      code: PLAN_LINT_ERROR_CODES.SPECTRAL_ERROR,
+      message: `Spectral linting failed: ${errorMsg}`,
+      severity: "ERROR",
+      invariant: "SPECTRAL_LINT",
+    });
+    throw new Error(`Spectral linting failed: ${errorMsg}`);
   }
 
   return violations;
@@ -491,12 +517,8 @@ export async function lintPlan(planContent, expectedSignature = null, publicKey 
         });
       }
     } catch (err) {
-      violations.push({
-        code: PLAN_LINT_ERROR_CODES.SIGNATURE_MISMATCH,
-        message: `Signature verification failed: ${err.message}`,
-        severity: "ERROR",
-        invariant: "PLAN_IMMUTABILITY",
-      });
+      const errorMsg = err instanceof Error ? err.message : String(err);
+        throw new Error(`Signature verification failed: ${errorMsg}`);
     }
   }
 

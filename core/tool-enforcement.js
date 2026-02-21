@@ -172,17 +172,6 @@ export const TOOL_SCHEMAS = {
     allowExtraFields: false
   },
 
-  read_prompt: {
-    required: ['name'],
-    fields: {
-      name: {
-        type: 'string',
-        validator: (val) => typeof val === 'string' ? null : `must be string, got ${typeof val}`
-      }
-    },
-    allowExtraFields: false
-  },
-
   replay_execution: {
     required: ['plan_signature'],
     fields: {
@@ -431,7 +420,9 @@ export function installEnforcementLayer(server, role) {
             notes: `Tool call blocked by enforcement layer: ${validation.error}`
           }, SESSION_STATE.workspaceRoot || process.cwd());
         } catch (auditErr) {
-          console.error(`[ENFORCEMENT] Audit of violation failed: ${auditErr.message}`);
+          const auditErrorMsg = auditErr instanceof Error ? auditErr.message : String(auditErr);
+          console.error(`[ENFORCEMENT] Audit of violation failed: ${auditErrorMsg}`);
+          throw new Error(`Failed to audit enforcement violation: ${auditErrorMsg}`);
         }
         
         // Throw system error

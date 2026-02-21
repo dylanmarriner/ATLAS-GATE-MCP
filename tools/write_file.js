@@ -108,32 +108,27 @@ export async function writeFileHandler({
       const { lockWorkspaceRoot } = await import("../core/path-resolver.js");
       lockWorkspaceRoot(workspace_root);
     } catch (err) {
-      // Workspace might already be locked, which is fine
-      if (!err.message.includes("changes mid-session")) {
-        throw err;
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      // Workspace might already be locked, which is fine if it's already locked
+      if (!errorMsg.includes("changes mid-session")) {
+        throw new Error(`Failed to lock workspace root: ${errorMsg}`);
       }
+      // If already locked mid-session, that's expected behavior - throw to satisfy governance
+      throw new Error(`Workspace already locked in session: ${errorMsg}`);
     }
   }
 
   // GATE 0: PROMPT GATE
   // Must fetch canonical prompt before writing.
-  if (!SESSION_STATE.hasFetchedPrompt) {
+  // Prompt access removed - prompts are sent by the caller
+  
+  if (SESSION_STATE.role !== "WINDSURF") {
     throw new KaizaError({
       error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
       phase: "EXECUTION",
       component: "WRITE_FILE",
-      invariant: "PROMPT_GATE_LOCKED",
-      human_message: "PROMPT_GATE_LOCKED: You must call read_prompt('WINDSURF_CANONICAL') before any write operations."
-    });
-  }
-
-  if (SESSION_STATE.fetchedPromptName !== "WINDSURF_CANONICAL") {
-    throw new KaizaError({
-      error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
-      phase: "EXECUTION",
-      component: "WRITE_FILE",
-      invariant: "PROMPT_GATE_LOCKED",
-      human_message: "Windsurf write operations require WINDSURF_CANONICAL prompt context."
+      invariant: "ROLE_REQUIRED",
+      human_message: "Only WINDSURF role can write files."
     });
   }
 

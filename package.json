@@ -42,6 +42,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3",
+    "@sigstore/sign": "^4.1.0",
+    "@sigstore/verify": "^3.1.0",
     "@stoplight/spectral-cli": "^6.12.0",
     "@stoplight/spectral-core": "^1.13.0",
     "acorn": "^8.15.0",
@@ -52,8 +54,8 @@
     "qs": "^6.14.1"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.9.1",
     "markdown-link-check": "^3.12.2",
-    "markdownlint-cli": "^0.42.0",
-    "@mermaid-js/mermaid-cli": "^10.9.1"
+    "markdownlint-cli": "^0.42.0"
   }
 }

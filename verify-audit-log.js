@@ -23,29 +23,35 @@ async function verifyAuditLog() {
     let validLines = 0;
     let errors = 0;
 
-    lines.forEach((line, idx) => {
+    for (let idx = 0; idx < lines.length; idx++) {
+      const line = lines[idx];
       try {
         JSON.parse(line);
         validLines++;
       } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
         console.error(`❌ Invalid JSON at line ${idx + 1}: ${line.substring(0, 50)}...`);
+        console.error(`   Error: ${errorMsg}`);
         errors++;
+        throw new Error(`Invalid JSON at line ${idx + 1}: ${errorMsg}`);
       }
-    });
+    }
 
     console.log(`✅ Audit log contains ${validLines} valid entries`);
 
     if (errors > 0) {
       console.error(`❌ Found ${errors} invalid entries in audit log`);
-      process.exit(1);
+      throw new Error(`Audit log contains ${errors} invalid entries`);
     }
-  } catch (err) {
-    console.error('[AUDIT_VERIFY] Error reading audit log:', err.message);
-    process.exit(1);
-  }
-}
+    } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error('[AUDIT_VERIFY] Error reading audit log:', errorMsg);
+    throw new Error(`Failed to verify audit log: ${errorMsg}`);
+    }
+    }
 
 verifyAuditLog().catch((err) => {
-  console.error('[AUDIT_VERIFY] Unexpected error:', err.message);
-  process.exit(1);
+  const errorMsg = err instanceof Error ? err.message : String(err);
+  console.error('[AUDIT_VERIFY] Unexpected error:', errorMsg);
+  throw new Error(`Audit verification failed: ${errorMsg}`);
 });

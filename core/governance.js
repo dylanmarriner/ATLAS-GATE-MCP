@@ -1,15 +1,50 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { getRepoRoot, getGovernancePath as getResolvedGovernancePath, getPlansDir } from "./path-resolver.js";
 import { lintPlan } from "./plan-linter.js";
-import { hmacSha256, timingSafeEqual, signWithCosign } from "./cosign-hash-provider.js";
+import { hmacSha256, timingSafeEqual, signWithCosign, generateCosignKeyPair } from "./cosign-hash-provider.js";
 
 const GOVERNANCE_FILE = "governance.json";
+const COSIGN_KEYS_DIR = ".cosign-keys";
 
 // Delegate to path resolver for canonical governance path
 function getGovernancePath(repoRoot = null) {
     // Path resolver already has the correct repoRoot cached
     return getResolvedGovernancePath();
+}
+
+/**
+ * Load or generate ECDSA P-256 key pair for plan signing
+ * Keys are stored in .atlas-gate/.cosign-keys/
+ */
+async function loadOrGenerateKeyPair(repoRoot) {
+    const keyDir = path.join(repoRoot, ".atlas-gate", COSIGN_KEYS_DIR);
+    const pubPath = path.join(keyDir, "public.pem");
+    const privPath = path.join(keyDir, "private.pem");
+
+    // Try to load existing keys
+    if (fs.existsSync(pubPath) && fs.existsSync(privPath)) {
+        return {
+            publicKey: fs.readFileSync(pubPath, "utf8"),
+            privateKey: fs.readFileSync(privPath, "utf8")
+        };
+    }
+
+    // Generate new keys if missing
+    try {
+        fs.mkdirSync(keyDir, { recursive: true });
+        const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', {
+            namedCurve: 'prime256v1',
+            publicKeyEncoding: { type: 'spki', format: 'pem' },
+            privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+        });
+        fs.writeFileSync(pubPath, publicKey, 'utf8');
+        fs.writeFileSync(privPath, privateKey, 'utf8');
+        return { publicKey, privateKey };
+    } catch (err) {
+        throw new Error(`COSIGN_KEYGEN_FAILED: ${err.message}`);
+    }
 }
 
 function readGovernanceState(repoRoot) {
@@ -78,26 +113,29 @@ export function verifyBootstrapAuth(payload, signature) {
  }
 
 export async function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
-     // 1. Verify Enabled
-     if (!isBootstrapEnabled(getRepoRoot())) {
-         throw new Error("BOOTSTRAP_DISABLED");
-     }
+      // 1. Verify Enabled
+      if (!isBootstrapEnabled(getRepoRoot())) {
+          throw new Error("BOOTSTRAP_DISABLED");
+      }
 
-     // 2. Verify Auth
-     verifyBootstrapAuth(payload, signature);
+      // 2. Verify Auth
+      verifyBootstrapAuth(payload, signature);
 
-     // 3. GATE: LINT THE PLAN AT APPROVAL (MANDATORY)
-     const lintResult = await lintPlan(planContent);
-     if (!lintResult.passed) {
-         throw new Error(
-             `APPROVAL_BLOCKED: Plan linting failed with ${lintResult.errors.length} error(s). ` +
-             lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
-         );
-     }
+      // 3. GATE: LINT THE PLAN AT APPROVAL (MANDATORY)
+      const lintResult = await lintPlan(planContent);
+      if (!lintResult.passed) {
+          throw new Error(
+              `APPROVAL_BLOCKED: Plan linting failed with ${lintResult.errors.length} error(s). ` +
+              lintResult.errors.map(e => `${e.code}: ${e.message}`).join("; ")
+          );
+      }
 
-     // 4. Write Plan using canonical path resolver
-     // Generate cosign signature for the plan content
-     const planSignature = await signWithCosign(planContent);
+      // 4. Load or generate ECDSA P-256 key pair for plan signing
+      const repoRootPath = getRepoRoot();
+      const keyPair = await loadOrGenerateKeyPair(repoRootPath);
+
+      // 5. Generate cosign signature for the plan content
+      const planSignature = await signWithCosign(planContent, keyPair);
 
      // Embed signature in content according to protocol
      let finalContent = planContent;

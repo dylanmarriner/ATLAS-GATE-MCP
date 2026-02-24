@@ -12,7 +12,7 @@
 - `begin_session({ workspace_root })` — MANDATORY first call
 - `read_file({ path })` — read workspace files
 - `lint_plan({ content })` — validate plan structure; returns `{ passed, errors, warnings }`
-- `save_plan({ content })` — sign + save to `docs/plans/<signature>.md`; returns `{ signature, path }`
+- `save_plan({ content })` — sign + save docs/plans/ `<signature>.md` and `<signature>.bundle.json`; returns `{ signature, path, bundlePath }`
 - `list_plans()` — list existing approved plans
 
 ### Key Responsibilities
@@ -66,7 +66,7 @@ const lint = await lint_plan({ content: draftPlan });
 
 // 4. Sign and save
 const result = await save_plan({ content: draftPlan });
-// result → { signature: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o", path: "docs/plans/y6RIU0X...md" }
+// result → { signature: "MEUCIQDlQ...", path: "docs/plans/MEUCIQDlQ...md", bundlePath: "docs/plans/MEUCIQDlQ...bundle.json" }
 ```
 
 ### Execution Phase (WINDSURF)

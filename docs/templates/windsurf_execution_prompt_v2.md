@@ -53,7 +53,7 @@ You will receive EXACTLY these two values:
 2. **Read Plan**: Use `read_file({ path: "docs/plans/<SIGNATURE>.md" })`.
 3. **Verify Plan Integrity**:
    - Confirm all 7 required sections are present.
-   - The MCP server will verify the cryptographic signature internally on every `write_file` call.
+   - The MCP server will automatically load and verify the Sigstore bundle (`<signature>.bundle.json`) mathematically against the content on every `write_file` call.
 
 ---
 

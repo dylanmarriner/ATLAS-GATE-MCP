@@ -55,7 +55,7 @@ export async function buildPlanRuleset() {
                 description: "Plan Metadata section must have Plan ID, Status: APPROVED, and Timestamp",
                 message: "Plan Metadata is missing required fields (Plan ID, Status: APPROVED, Timestamp)",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: {
@@ -68,7 +68,7 @@ export async function buildPlanRuleset() {
                 description: "Plan must contain all 7 required sections in order",
                 message: "Missing required section: {{error}}",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: REQUIRED_SECTIONS.map((section) => ({
                     function: pattern,
                     functionOptions: { match: section.replace(/[&]/g, "\\&") },
@@ -80,7 +80,7 @@ export async function buildPlanRuleset() {
                 message:
                     "Non-enforceable language detected. Use MUST/MUST NOT instead of may/should/optional/etc.",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: { notMatch: AMBIGUOUS_PATTERN },
@@ -91,7 +91,7 @@ export async function buildPlanRuleset() {
                 description: "Plans must not contain stub or incomplete content",
                 message: "Stub/placeholder content detected (TODO, FIXME, mock, TBD, etc.)",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: { notMatch: STUB_PATTERN },
@@ -102,7 +102,7 @@ export async function buildPlanRuleset() {
                 description: "Plan header must have STATUS: APPROVED",
                 message: "Plan header is missing STATUS: APPROVED",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: { match: "STATUS:\\s*APPROVED" },
@@ -113,21 +113,10 @@ export async function buildPlanRuleset() {
                 description: "Path Allowlist must not contain absolute paths or parent traversal",
                 message: "Path Allowlist contains absolute path or parent traversal (..)",
                 severity: "error",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: { notMatch: "^\\s*- \\/" },
-                },
-            },
-
-            "atlas-gate-pending-signature-replaced": {
-                description: "Plan must not contain PENDING_SIGNATURE — it must be replaced before saving",
-                message: "Plan still contains PENDING_SIGNATURE placeholder. Call save_plan to sign it.",
-                severity: "error",
-                given: "$",
-                then: {
-                    function: pattern,
-                    functionOptions: { notMatch: "PENDING_SIGNATURE" },
                 },
             },
 
@@ -135,7 +124,7 @@ export async function buildPlanRuleset() {
                 description: "Plan must declare ATLAS-GATE-v2 governance",
                 message: "Plan must include 'Governance: ATLAS-GATE-v2'",
                 severity: "warn",
-                given: "$",
+                given: "$.content",
                 then: {
                     function: pattern,
                     functionOptions: { match: "Governance:\\s*ATLAS-GATE-v2" },

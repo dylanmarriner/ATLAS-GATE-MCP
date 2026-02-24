@@ -273,10 +273,10 @@ async function runSpectralLinting(planContent) {
   try {
     const { spectral, Document, Parsers } = await initializeSpectral();
 
-    // Spectral expects a Document object, not a raw string
-    // Markdown doesn't have a specific parser in Spectral, but the YAML parser
-    // gracefully handles falling back to raw text for regex pattern rules
-    const doc = new Document(planContent, Parsers.Yaml, "plan.md");
+    // Spectral expects a Document object and its parsers choke on raw Markdown.
+    // Wrap the raw markdown in a JSON object property so the Json parser succeeds cleanly
+    const payload = JSON.stringify({ content: planContent });
+    const doc = new Document(payload, Parsers.Json, "plan.json");
     const results = await spectral.run(doc);
 
     for (const result of results) {

@@ -9,9 +9,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function verifySecurity() {
   console.log('🔒 Running security verification...');
 
-  const coreDir = path.join(__dirname, 'core');
-  const toolsDir = path.join(__dirname, 'tools');
-  const testDir = path.join(__dirname, 'tests');
+  const srcDir = path.join(__dirname, '../src');
+  const testDir = path.join(__dirname, '../tests');
 
   let errors = 0;
 
@@ -61,8 +60,7 @@ async function verifySecurity() {
     }
   };
 
-  walkDir(coreDir);
-  walkDir(toolsDir);
+  walkDir(srcDir);
 
   if (errors > 0) {
     console.error(`\n❌ Security verification failed with ${errors} issues`);

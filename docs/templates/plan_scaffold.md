@@ -11,7 +11,7 @@ Version: 1.0
 Author: ANTIGRAVITY
 Status: APPROVED
 Timestamp: [ISO 8601, e.g., 2026-02-22T10:00:00Z]
-Governance: ATLAS-GATE-v1
+Governance: ATLAS-GATE-v2
 
 ---
 
@@ -59,8 +59,8 @@ Failure stop conditions: [When to halt]
 ## Gate 1: [Gate Name]
 Trigger: [When to run]
 Check: [Command]
-Required: [Success condition]
-Failure action: REJECT and ROLLBACK
+Required: Exit code 0 (success)
+Failure: REJECT and ROLLBACK
 
 ---
 

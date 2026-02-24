@@ -11,6 +11,7 @@ import { readFileHandler } from "./tools/read_file.js";
 import { readAuditLogHandler } from "./tools/read_audit_log.js";
 import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
 import { lintPlanHandler } from "./tools/lint_plan.js";
+import { savePlanHandler } from "./tools/save_plan.js";
 import { replayExecutionHandler } from "./tools/replay_execution.js";
 import { verifyWorkspaceIntegrityHandler } from "./tools/verify_workspace_integrity.js";
 import { generateAttestationBundleHandler } from "./tools/generate_attestation_bundle.js";
@@ -44,13 +45,13 @@ function runSelfAudit() {
   // Audit the server's own source code, excluding governance/analysis/infrastructure files, test files, verification scripts, and main server
   const violations = analyzeDirectoryGovernance(__dirname).filter(
     violation => !violation.file.includes("static-analyzer.js") &&
-                 !violation.file.includes("stub-detector.js") &&
-                 !violation.file.includes("file-lock.js") &&
-                 !violation.file.includes("server.js") &&
-                 !violation.file.includes("startup-audit.js") &&
-                 !violation.file.includes("test") &&
-                 !violation.file.includes("tests/") &&
-                 !violation.file.includes("verify_security.js")
+      !violation.file.includes("stub-detector.js") &&
+      !violation.file.includes("file-lock.js") &&
+      !violation.file.includes("server.js") &&
+      !violation.file.includes("startup-audit.js") &&
+      !violation.file.includes("test") &&
+      !violation.file.includes("tests/") &&
+      !violation.file.includes("verify_security.js")
   );
   if (violations.length > 0) {
     const msg = `SELF_AUDIT_FAILURE: MCP refused startup. ${violations.length} files violate error handling governance. Fix empty catch blocks or swallowed errors.`;
@@ -120,18 +121,18 @@ function wrapHandler(handler, toolName) {
     } catch (err) {
       // STEP 2: Convert any error to SystemError canonical envelope
       let systemErr;
-      
+
       if (err instanceof SystemError) {
         systemErr = err;
       } else {
         // Determine error code from error type if available
         let errorCode = SYSTEM_ERROR_CODES.INTERNAL_ERROR;
-        
+
         // Check if error has a code field that maps to a system error code
         if (err?.code && Object.values(SYSTEM_ERROR_CODES).includes(err.code)) {
           errorCode = err.code;
         }
-        
+
         // Create SystemError from unknown error with full context
         systemErr = SystemError.fromUnknown(err, {
           error_code: errorCode,
@@ -289,7 +290,7 @@ export async function startServer(role = "ANTIGRAVITY") {
       },
       wrapHandler(bootstrapPlanHandler, "bootstrap_create_foundation_plan")
     );
-    
+
     // ANTIGRAVITY: Lint Plan Tool (read-only, non-mutating)
     server.registerTool(
       "lint_plan",
@@ -302,6 +303,18 @@ export async function startServer(role = "ANTIGRAVITY") {
         }),
       },
       wrapHandler(lintPlanHandler, "lint_plan")
+    );
+
+    // ANTIGRAVITY: Save Plan Tool (sign + persist to docs/plans/)
+    server.registerTool(
+      "save_plan",
+      {
+        description: "Sign and save a lint-passing plan to docs/plans/<signature>.md (ANTIGRAVITY only)",
+        inputSchema: z.object({
+          content: z.string().describe("Complete lint-passing plan markdown content"),
+        }),
+      },
+      wrapHandler(savePlanHandler, "save_plan")
     );
   }
 

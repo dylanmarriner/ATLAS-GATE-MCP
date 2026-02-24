@@ -13,8 +13,9 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 
 **Key Features**:
 - Mandatory `begin_session` initialization.
-- Uses `lint_plan` for multi-stage validation and automated signing.
-- Defines signature-based save locations in `docs/plans/`.
+- Uses `lint_plan` for validation (returns errors/warnings — does not sign).
+- Uses `save_plan` to sign and persist plans to `docs/plans/`.
+- Complete ANTIGRAVITY tool list with accurate schemas.
 
 ---
 
@@ -22,9 +23,9 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 **Purpose**: Canonical prompt for WINDSURF agents to execute signed plans with full governance.
 
 **Key Features**:
-- Mandatory `begin_session` and `read_prompt` sequence.
-- Signature-based plan discovery and internal verification.
-- Precise `write_file` parameter alignment with audit logging.
+- Mandatory `begin_session` (no `read_prompt` — that tool does not exist).
+- Correct `write_file` schema with intent gate options.
+- Signature-based plan verification enforced by MCP server on every write.
 
 ---
 
@@ -74,6 +75,6 @@ docs/templates/
 
 ---
 
-**Index Version**: 2.0  
-**Last Updated**: 2026-02-22  
+**Index Version**: 2.1
+**Last Updated**: 2026-02-24
 **Status**: Production-Ready

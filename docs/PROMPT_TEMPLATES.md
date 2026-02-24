@@ -1,40 +1,44 @@
 # AI Agent Prompt Templates for ATLAS-GATE MCP
 
-**Purpose**: Templates for instructing AI agents (Claude, GPT, etc.) how to use ATLAS-GATE MCP effectively. These templates align with the v2 signature-based governance system.
+**Purpose**: Templates for instructing AI agents how to use ATLAS-GATE MCP tools correctly. These align with the v2 signature-based governance system.
 
 ---
 
-## 1. Role: Software Architect (ANTIGRAVITY)
+## 1. Role: Planning Agent (ANTIGRAVITY)
 
 **Template**: [antigravity_planning_prompt_v2.md](file:///media/linnyux/development1/developing/ATLAS-GATE-MCP/docs/templates/antigravity_planning_prompt_v2.md)
 
+### Core Tools
+- `begin_session({ workspace_root })` — MANDATORY first call
+- `read_file({ path })` — read workspace files
+- `lint_plan({ content })` — validate plan structure; returns `{ passed, errors, warnings }`
+- `save_plan({ content })` — sign + save to `docs/plans/<signature>.md`; returns `{ signature, path }`
+- `list_plans()` — list existing approved plans
+
 ### Key Responsibilities
 1. **Analyze**: Use `begin_session` and `read_file` to understand requirements.
-2. **Design**: Create a detailed plan without stubs or placeholders.
-3. **Validate**: Use `lint_plan` to verify structure and sign the plan.
-4. **Publish**: Save the signed plan to `docs/plans/<signature>.md`.
-
-### Core Tools
-- `begin_session({ workspace_root })`
-- `read_file({ path })`
-- `lint_plan({ content })`
+2. **Design**: Draft a complete plan following the 7-section scaffold.
+3. **Validate**: Use `lint_plan` to verify structure — iterate until `passed: true`.
+4. **Save**: Use `save_plan` to sign and persist the plan.
+5. **Deliver**: Provide the `signature` and `path` to the operator.
 
 ---
 
-## 2. Role: Code Executor (WINDSURF)
+## 2. Role: Execution Agent (WINDSURF)
 
 **Template**: [windsurf_execution_prompt_v2.md](file:///media/linnyux/development1/developing/ATLAS-GATE-MCP/docs/templates/windsurf_execution_prompt_v2.md)
 
-### Key Responsibilities
-1. **Initialize**: Use `begin_session` and `read_prompt({ name: "WINDSURF_CANONICAL" })`.
-2. **Verify**: Read the plan and ensure it matches the provided signature.
-3. **Execute**: Use `write_file` with the plan's `authority` (the signature).
-4. **Audit**: Ensure every write is documented in the audit log.
-
 ### Core Tools
-- `begin_session({ workspace_root })`
-- `read_prompt({ name: "WINDSURF_CANONICAL" })`
-- `write_file({ path, content, plan, role, purpose, intent, authority, failureModes })`
+- `begin_session({ workspace_root })` — MANDATORY first call
+- `read_file({ path })` — read the signed plan and workspace files
+- `write_file({ path, plan, intent, content, ... })` — audited file write
+- `list_plans()` — verify plan exists
+
+### Key Responsibilities
+1. **Initialize**: Call `begin_session`.
+2. **Read Plan**: Use `read_file` with the plan path from the operator.
+3. **Execute**: Use `write_file` for every file change — must reference the plan signature.
+4. **Verify**: Run gates defined in the plan after writes.
 
 ---
 
@@ -42,45 +46,47 @@
 
 **Template**: [plan_scaffold.md](file:///media/linnyux/development1/developing/ATLAS-GATE-MCP/docs/templates/plan_scaffold.md)
 
-Use this as a starting point for any new implementation plan.
+Use as a starting point for any new implementation plan. Guaranteed to pass `lint_plan` structure validation when filled in correctly.
 
 ---
 
-## Example Implementation Workflow
+## Example Workflow
 
-### Planning Phase
+### Planning Phase (ANTIGRAVITY)
 ```javascript
-// 1. Start session
+// 1. Lock workspace
 await begin_session({ workspace_root: "/path/to/project" });
 
-// 2. Draft plan (following scaffold)
-const draft = `...`;
+// 2. Read relevant files
+const code = await read_file({ path: "src/auth.js" });
 
-// 3. Lint and Sign
-const result = await lint_plan({ content: draft });
-// result.signature -> "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o"
+// 3. Validate draft
+const lint = await lint_plan({ content: draftPlan });
+// lint → { passed: true, errors: [], warnings: [] }
+
+// 4. Sign and save
+const result = await save_plan({ content: draftPlan });
+// result → { signature: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o", path: "docs/plans/y6RIU0X...md" }
 ```
 
-### Execution Phase
+### Execution Phase (WINDSURF)
 ```javascript
-// 1. Start session and unlock
+// 1. Lock workspace
 await begin_session({ workspace_root: "/path/to/project" });
-await read_prompt({ name: "WINDSURF_CANONICAL" });
 
-// 2. Execute write
+// 2. Read signed plan
+await read_file({ path: "docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md" });
+
+// 3. Execute write
 await write_file({
   path: "src/auth.js",
-  content: "...",
-  plan: "PLAN_AUTH_V1",
-  role: "EXECUTABLE",
-  purpose: "...",
-  intent: "...",
-  authority: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o", // Signature from linter
-  failureModes: "..."
+  content: "... complete implementation ...",
+  plan: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
+  intent: "Implement JWT token validation with refresh and error handling"
 });
 ```
 
 ---
 
 **STATUS**: PRODUCTION-READY
-**LAST UPDATED**: 2026-02-22
+**LAST UPDATED**: 2026-02-24

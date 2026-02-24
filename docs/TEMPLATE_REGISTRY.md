@@ -2,9 +2,9 @@
 
 **Status**: ✓ ALL TEMPLATES ALIGNED WITH MCP V2
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-02-24
 
-**Registry Version**: 2.0
+**Registry Version**: 2.1
 
 ---
 
@@ -22,9 +22,9 @@ All templates are designed for use with:
 
 **File**: `docs/templates/antigravity_planning_prompt_v2.md`
 
-**Purpose**: Instructions for generating signed implementation plans using `lint_plan`.
+**Purpose**: Instructions for ANTIGRAVITY agents. Covers `lint_plan` (validation only, returns errors/warnings) and `save_plan` (signs + saves plan to `docs/plans/`).
 
-**Verified**: ✓ YES (V2)
+**Verified**: ✓ YES (V2.1)
 
 ---
 
@@ -32,9 +32,9 @@ All templates are designed for use with:
 
 **File**: `docs/templates/windsurf_execution_prompt_v2.md`
 
-**Purpose**: Instructions for executing plans using `begin_session` and `read_prompt`.
+**Purpose**: Instructions for executing plans. Covers `begin_session`, `read_file`, and `write_file` with the correct intent gate schema.
 
-**Verified**: ✓ YES (V2)
+**Verified**: ✓ YES (V2.1)
 
 ---
 

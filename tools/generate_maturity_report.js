@@ -6,7 +6,8 @@
  */
 
 import path from "path";
-import { computeMaturityScore, writeMaturityReport } from "../core/maturity-scoring-engine.js";
+import { computeMaturityScore } from "../core/maturity-scoring-engine.js";
+import { writeMaturityReport } from "../core/maturity-report-generator.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 import { appendAuditEntry } from "../core/audit-system.js";
 
@@ -32,7 +33,7 @@ export async function generateMaturityReportHandler(params) {
         const scoreResult = computeMaturityScore(workspace_root, { auditLogPath });
 
         // Format to markdown
-        const { generateMaturityReport } = await import("../core/maturity-report-generator.js");
+        const { generateMaturityReport, writeMaturityReport } = await import("../core/maturity-report-generator.js");
         const reportMarkdown = generateMaturityReport(scoreResult);
 
         // Write out the file

@@ -162,35 +162,44 @@
 ## 🎯 Key Changes by Audience
 
 ### For Decision-Makers
+
 **Files to read**:
+
 1. [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md) — Updated with v2.0 features
 2. [V2_UPDATE_SUMMARY.md](./V2_UPDATE_SUMMARY.md) — This file
 
 **What's new**:
+
 - MCP-only sandbox enforcement (can't access filesystem/shell)
 - Tool parameter validation (can't misuse tools)
 - Process-level lockdown (globals frozen, process locked)
 - 7 comprehensive documentation files
 
 ### For Operators
+
 **Files to read**:
+
 1. [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) — Doc index
 2. [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) — How sandbox works
 3. [AGENTS.md](./AGENTS.md) — Updated with sandbox requirements
 
 **What's new**:
+
 - Run Windsurf/Antigravity normally—sandbox automatic
 - Startup logs show enforcement status
 - Audit trail shows sandbox violations
 - No operational changes needed
 
 ### For IDE/Client Developers
+
 **Files to read**:
+
 1. [ENFORCEMENT_QUICKSTART.md](./ENFORCEMENT_QUICKSTART.md) — Quick start
 2. [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) — Tool schemas
 3. [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md) — Quick reference
 
 **What's new**:
+
 - All tools have strict parameter schemas
 - Wrong types/fields rejected with clear errors
 - Error messages include which field is wrong
@@ -198,24 +207,30 @@
 - Test examples provided
 
 ### For Developers/Contributors
+
 **Files to read**:
+
 1. [AGENTS.md](./AGENTS.md) — Updated code standards
 2. [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) — Doc overview
 3. [CHANGELOG.md](./CHANGELOG.md) — What changed
 
 **What's new**:
+
 - Sandbox startup in entrypoints
 - Tool enforcement installation in server
 - Tool schemas in `core/tool-enforcement.js`
 - Sandbox implementation in `core/mcp-sandbox.js`
 
 ### For Security Team
+
 **Files to read**:
+
 1. [SECURITY.md](./SECURITY.md) — Updated security policy
 2. [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) — Sandbox details
 3. [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) — Validation details
 
 **What's new**:
+
 - Process-level sandbox (no escape routes)
 - All globals frozen (no prototype pollution)
 - Modules blocked (fs, child_process, etc.)
@@ -227,6 +242,7 @@
 ## 🔍 Documentation Consistency
 
 All documentation has been reviewed for:
+
 - ✅ Consistent terminology
 - ✅ Updated version numbers (2.0.0)
 - ✅ Updated dates (2026-01-31)
@@ -235,6 +251,7 @@ All documentation has been reviewed for:
 - ✅ Links working
 
 ### Version Number Updates
+
 - README.md → v2.0.0 badge added
 - SECURITY.md → 1.0.0 → 2.0.0
 - EXECUTIVE_OVERVIEW.md → 1.0.0 → 2.0.0
@@ -242,6 +259,7 @@ All documentation has been reviewed for:
 - CHANGELOG.md → [2.0.0] - 2026-01-31 (new)
 
 ### Date Updates
+
 - SECURITY.md → 2026-01-31
 - EXECUTIVE_OVERVIEW.md → 2026-01-31
 - CHANGELOG.md → 2026-01-31
@@ -303,18 +321,21 @@ Documentation/
 ## 🚀 Next Steps
 
 ### For Immediate Use
+
 1. Read [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)
 2. Read [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md)
 3. Read [AGENTS.md](./AGENTS.md)
 4. Start servers: `node bin/ATLAS-GATE-MCP-windsurf.js`
 
 ### For Deep Understanding
+
 1. Read [ENFORCEMENT_SUMMARY.md](./ENFORCEMENT_SUMMARY.md)
 2. Read [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md)
 3. Read [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md)
 4. Review schemas in `core/tool-enforcement.js`
 
 ### For Implementation
+
 1. Review [ENFORCEMENT_QUICKSTART.md](./ENFORCEMENT_QUICKSTART.md)
 2. Check tool schemas
 3. Test enforcement: See [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md)
@@ -328,8 +349,8 @@ Documentation/
 - **Enforcement Questions**: [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md)
 - **Tool Usage**: [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md)
 - **Quick Help**: [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md)
-- **GitHub**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
-- **Security**: security@ATLAS-GATE-MCP.org
+- **GitHub**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
+- **Security**: <security@ATLAS-GATE-MCP.org>
 
 ---
 

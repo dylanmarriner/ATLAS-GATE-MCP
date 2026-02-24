@@ -19,6 +19,7 @@
 These patterns are detected in GATE 4 of write_file and cause immediate rejection with no possibility of override.
 
 **Files**:
+
 - `core/stub-detector.js` — Detection logic with HARD_BLOCK_PATTERNS
 - `docs/HARD_BLOCK_POLICY.md` — Complete hard block policy documentation
 
@@ -29,17 +30,20 @@ These patterns are detected in GATE 4 of write_file and cause immediate rejectio
 **Comprehensive audit specification for 15 programming languages:**
 
 Languages covered:
+
 - Java, Python, JavaScript/TypeScript, C#, C/C++
 - Go, Rust, PHP, Ruby, Kotlin, Swift, Scala
 - SQL, Bash, PowerShell
 
 Each construct includes:
+
 - Definition and risk classification
 - Language-specific examples
 - Detection signals
 - True positive/false positive guidance
 
 **Files**:
+
 - `docs/CONSTRUCT_TAXONOMY.md` — Complete taxonomy (6000+ lines)
 - `core/construct-detection-rules.json` — Machine-readable detection rules
 - `docs/CONSTRUCT_AUDIT_GUIDE.md` — Developer audit reference
@@ -51,18 +55,22 @@ Each construct includes:
 **GATE 4 enforcement with multi-phase detection:**
 
 Phase 1: **HARD BLOCKS** (immediate rejection)
+
 - Scans for C2, C3, C5, C8, null/undefined returns
 - No plan can override
 
 Phase 2: **CRITICAL** (rejection)
+
 - Scans for C1, C4, C6, C7
 - All non-real constructs blocked
 
 Phase 3: **AST Analysis** (JavaScript/TypeScript)
+
 - Analyzes code structure
 - Detects unconditional returns, empty functions, swallowed exceptions
 
 **Files**:
+
 - `core/stub-detector.js` — Enforcement logic
 
 ---
@@ -72,12 +80,14 @@ Phase 3: **AST Analysis** (JavaScript/TypeScript)
 **Supports multiple plan locations:**
 
 Priority order:
+
 1. `.atlas-gate/approved_plans/` (with underscore)
 2. `.atlas-gate/plans/`
 3. `.atlas-gate/approvedplans/` (no underscore)
 4. `docs/plans/`
 
 **Files updated**:
+
 - `core/plan-enforcer.js` — Multi-location discovery
 - `core/plan-registry.js` — Plan loading with fallbacks
 - `tools/list_plans.js` — List all available plans
@@ -89,16 +99,19 @@ Priority order:
 **Complete guides for using the three core tools:**
 
 #### read_prompt
+
 - Unlocks write gates
 - Required before any write_file call
 - Usage: `await readPrompt({ name: "ANTIGRAVITY_CANONICAL" })`
 
 #### read_file
+
 - Read any file in the repository
 - Understand existing code before writing
 - Usage: `await readFile({ path: "src/auth.js" })`
 
 #### write_file
+
 - Create/modify files with full governance
 - Requires approved plan
 - Detects non-real constructs and blocks
@@ -107,6 +120,7 @@ Priority order:
 - Usage: `await writeFile({ path, content, plan, role })`
 
 **Files**:
+
 - `docs/MCP_USAGE_GUIDE.md` — Complete step-by-step guide (700+ lines)
 - `docs/MCP_QUICK_REFERENCE.md` — One-page reference card
 - Real examples for each tool with correct and incorrect usage
@@ -129,6 +143,7 @@ Priority order:
 Only exception: Plans can authorize C1, C4, C6, C7 if documented. C2, C3, C5, C8 can NEVER be authorized.
 
 **Files**:
+
 - `core/construct-detection-rules.json` — Policy configuration
 - `docs/HARD_BLOCK_POLICY.md` — No exceptions policy
 
@@ -139,12 +154,14 @@ Only exception: Plans can authorize C1, C4, C6, C7 if documented. C2, C3, C5, C8
 ### 1. Hard Block (C2, C3, C5, C8)
 
 **Why permanent blocks?**
+
 - **C5 (Policy Bypass)** — Security critical. If code says "return true", users can access anything.
 - **C8 (Simulated Outcome)** — Data integrity. If code says "SIMULATE", orders get marked paid without charging.
 - **C3 (TODO/FIXME)** — Incomplete code. TODOs become permanent technical debt.
 - **C2 (Mock/Fake)** — Test doubles cause data loss and compliance violations.
 
 **Why no plan override?**
+
 - These aren't business decisions (which plans could authorize)
 - These are fundamental integrity violations
 - No amount of documentation makes them safe
@@ -162,6 +179,7 @@ GATE 4 Enforcement:
 ```
 
 **Why separate phases?**
+
 - Hard blocks are absolute (no negotiation)
 - Critical patterns need same enforcement
 - AST analysis provides deeper code structure validation
@@ -176,6 +194,7 @@ GATE 4 Enforcement:
 - If not found: Proceeds to other gates (role validation, preflight)
 
 **Why?**
+
 - Prevents accidental shipping of dev/test code
 - Developers write real code intentionally, not accidentally
 - Easier to review intent than to catch all bypass patterns
@@ -244,11 +263,13 @@ Success: { status: "OK", plan, preflight: "PASSED" }
 **3 levels of documentation:**
 
 ### Level 1: Quick Reference
+
 - `docs/MCP_QUICK_REFERENCE.md` (1 page)
 - The 3 tools, workflow, error fixes, best practices
 - Start here if you know what you're doing
 
 ### Level 2: Complete Guide
+
 - `docs/MCP_USAGE_GUIDE.md` (700+ lines)
 - Step-by-step walkthrough
 - Real examples for each tool
@@ -256,6 +277,7 @@ Success: { status: "OK", plan, preflight: "PASSED" }
 - Start here for first time
 
 ### Level 3: Reference Specifications
+
 - `docs/CONSTRUCT_TAXONOMY.md` (6000+ lines)
   - All 8 constructs, 15 languages, examples
 - `docs/CONSTRUCT_AUDIT_GUIDE.md` (600+ lines)
@@ -272,12 +294,14 @@ Success: { status: "OK", plan, preflight: "PASSED" }
 ## Files Modified/Created
 
 ### Core Enforcement
+
 - ✅ `core/stub-detector.js` — HARD_BLOCK_PATTERNS, 3-phase enforcement
 - ✅ `core/plan-enforcer.js` — Multi-location plan discovery
 - ✅ `core/plan-registry.js` — Fallback plan loading
 - ✅ `tools/list_plans.js` — Plan discovery
 
 ### Documentation
+
 - ✅ `docs/CONSTRUCT_TAXONOMY.md` — Complete 15-language taxonomy
 - ✅ `docs/CONSTRUCT_AUDIT_GUIDE.md` — Developer guide
 - ✅ `docs/CONSTRUCT_POLICY.md` — Policy document
@@ -286,6 +310,7 @@ Success: { status: "OK", plan, preflight: "PASSED" }
 - ✅ `docs/MCP_QUICK_REFERENCE.md` — One-page reference
 
 ### Configuration
+
 - ✅ `core/construct-detection-rules.json` — Machine-readable rules
 
 ---
@@ -340,21 +365,25 @@ await writeFile({
 ## Principles
 
 ### 1. Real Code Only
+
 - No stubs, mocks, or placeholders
 - No hardcoded test data
 - No temporary hacks
 
 ### 2. Complete Code Only
+
 - No TODOs or FIXMEs shipped
 - All logic implemented
 - No "will do later"
 
 ### 3. Auditable Code Only
+
 - Every change tracked
 - Plans documented
 - No silent bypasses
 
 ### 4. Production-Ready Code Only
+
 - Passes linting and tests
 - No technical debt
 - Real error handling
@@ -364,21 +393,25 @@ await writeFile({
 ## What This Prevents
 
 ### Data Loss
+
 - ✅ Prevents mocks/fakes that don't actually charge/transfer/persist
 - ✅ No simulated outcomes that claim work was done
 - ✅ No null returns that hide errors
 
 ### Security Breaches
+
 - ✅ Prevents hardcoded "return true" in auth
 - ✅ Prevents access control bypasses
 - ✅ Prevents privilege escalation via fake policies
 
 ### Compliance Violations
+
 - ✅ Prevents fake approval logic
 - ✅ Prevents audit trail manipulation
 - ✅ Prevents incomplete security controls
 
 ### Production Incidents
+
 - ✅ Prevents shipped TODOs from breaking features
 - ✅ Prevents hardcoded test data from going live
 - ✅ Prevents silent failures via null returns
@@ -398,8 +431,8 @@ await writeFile({
 7. ✅ Real code only guarantee
 
 **Result**: Production code that is:
+
 - **Real** — Actual implementations, not placeholders
 - **Complete** — No incomplete markers
 - **Auditable** — Full provenance tracking
 - **Verified** — Passes all gates before shipping
-

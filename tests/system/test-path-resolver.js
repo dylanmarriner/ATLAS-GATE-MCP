@@ -28,7 +28,7 @@ import {
   getGovernancePath,
   normalizePathForDisplay,
   ensureDirectoryExists,
-} from "../../core/path-resolver.js";
+} from "../src/infrastructure/path-resolver.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = __dirname;

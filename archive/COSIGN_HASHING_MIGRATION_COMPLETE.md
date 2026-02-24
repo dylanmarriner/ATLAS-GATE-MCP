@@ -13,6 +13,7 @@ This is the ONLY module allowed to use direct crypto operations for hashing.
 ## Changes Made
 
 ### Core Module Created
+
 - **`core/cosign-hash-provider.js`** - Centralized hashing provider
   - `sha256(input)` - SHA256 hashing (uses cosign infrastructure)
   - `canonicalizeForHash(obj)` - Deterministic JSON canonicalization
@@ -24,6 +25,7 @@ This is the ONLY module allowed to use direct crypto operations for hashing.
 ### Files Updated
 
 #### Core Infrastructure (11 files)
+
 1. **audit-system.js** - Removed local sha256/canonicalize functions, imports from provider
 2. **attestation-engine.js** - All hashing via provider, deprecated HMAC kept for compatibility
 3. **replay-engine.js** - Hash chain verification uses provider
@@ -38,6 +40,7 @@ This is the ONLY module allowed to use direct crypto operations for hashing.
 12. **plan-linter.js** - Plan content hashing via provider
 
 #### Tools (2 files)
+
 1. **tools/write_file.js** - Content hash checking via provider
 2. **tools/verification/verify-audit-log.js** - Audit log verification via provider
 

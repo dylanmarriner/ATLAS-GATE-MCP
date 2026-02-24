@@ -23,6 +23,7 @@ npm run example:client
 **File**: multi-tenant-client.js
 
 **What it demonstrates:**
+
 - Connecting to remote ATLAS-GATE server
 - Creating a workspace session
 - Reading files
@@ -32,11 +33,13 @@ npm run example:client
 - Listing sessions
 
 **Run:**
+
 ```bash
 npm run example:client
 ```
 
 **Expected output:**
+
 ```
 [CLIENT] Connecting to ATLAS-GATE...
 [OK] Server healthy: healthy
@@ -62,6 +65,7 @@ npm run example:client
 ## Example 2: CI/CD Integration (Coming Soon)
 
 Would demonstrate:
+
 - Automated plan creation
 - Multi-repo validation
 - Audit trail verification
@@ -70,6 +74,7 @@ Would demonstrate:
 ## Example 3: Multi-Workspace Operations (Coming Soon)
 
 Would demonstrate:
+
 - Creating session once
 - Switching between multiple repos
 - Batch operations across repos
@@ -78,6 +83,7 @@ Would demonstrate:
 ## Example 4: Custom Tool Integration (Coming Soon)
 
 Would demonstrate:
+
 - Creating custom MCP tools
 - Registering with HTTP server
 - Calling via client SDK
@@ -134,21 +140,27 @@ main();
 ## Troubleshooting
 
 **Connection refused**
+
 ```
 Error: connect ECONNREFUSED 127.0.0.1:3000
 ```
+
 Solution: Start HTTP server with `npm run start:http`
 
 **Invalid API key**
+
 ```
 Error: [401] Invalid API key
 ```
+
 Solution: Get the API key from server startup output
 
 **Workspace root does not exist**
+
 ```
 Error: [400] Workspace root does not exist: /invalid/path
 ```
+
 Solution: Use a valid absolute path that exists on the server
 
 ## See Also

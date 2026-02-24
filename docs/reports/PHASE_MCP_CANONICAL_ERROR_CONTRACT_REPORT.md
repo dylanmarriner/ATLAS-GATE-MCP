@@ -40,6 +40,7 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
 ## 2. Files Modified
 
 ### server.js
+
 - Added import of `SystemError` and `SYSTEM_ERROR_CODES`
 - Replaced `wrapHandler` function (60 lines → 95 lines)
   - Now enforces SystemError enveloping at tool boundary
@@ -48,6 +49,7 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
   - Extracts role context from SESSION_STATE
 
 ### tools/write_file.js
+
 - Added `SystemError` import
 - Converted 6 raw `throw new Error()` calls to `SystemError.toolFailure()`:
   - Line 101: `INVALID_PATH`
@@ -58,6 +60,7 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
   - Line 247: `PREFLIGHT_FAILED`
 
 ### tools/read_file.js
+
 - Added `SystemError` import
 - Converted 5 raw `throw new Error()` calls to `SystemError.toolFailure()`:
   - Line 27: `INVALID_INPUT_TYPE`
@@ -67,6 +70,7 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
   - Line 51: `FILE_NOT_FOUND`
 
 ### tools/read_prompt.js
+
 - Added `SystemError` import
 - Converted 3 raw `throw new Error()` calls to `SystemError.toolFailure()`:
   - Line 410: `UNAUTHORIZED_ACTION` (Antigravity role check)
@@ -74,11 +78,13 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
   - Line 422: `INVALID_INPUT_VALUE` (unknown prompt)
 
 ### tools/list_plans.js
+
 - Added `SystemError` import
 - Converted 1 raw `throw new Error()` call to `SystemError.toolFailure()`:
   - Line 39: `PLAN_NOT_FOUND`
 
 ### tools/bootstrap_tool.js
+
 - Added `SystemError` import
 - Converted 1 raw `throw new Error()` call to `SystemError.toolFailure()`:
   - Line 37: `UNAUTHORIZED_ACTION` (Windsurf plan creation block)
@@ -110,6 +116,7 @@ Implemented a canonical error envelope contract for the ATLAS-GATE MCP server th
 **Status**: ALL PASSING ✓
 
 Test Coverage:
+
 1. ✓ Raw Error → SystemError (with full context)
 2. ✓ String → SystemError (normalized)
 3. ✓ Object → SystemError (normalized)
@@ -124,6 +131,7 @@ Test Coverage:
 12. ✓ Invalid error code rejection
 
 Run tests:
+
 ```bash
 node test-system-error.js
 ```
@@ -133,18 +141,21 @@ node test-system-error.js
 ## 5. Determinism Guarantees
 
 ### Serialization
+
 - All envelopes are JSON-safe (no circular references)
 - All fields are string | number | boolean | null | object
 - Cause field normalized: Error → `{ message, code, name }`
 - Timestamps always ISO 8601 format
 
 ### Code
+
 - Same condition → same error_code (always)
 - No random error IDs or codes
 - Error codes never change mid-runtime
 - Invariant IDs are stable identifiers
 
 ### Transport
+
 - Every thrown SystemError reaches MCP client unmodified
 - No error swallowing or conversion
 - Audit log records exactly what was thrown
@@ -157,6 +168,7 @@ node test-system-error.js
 **Function**: `logHardFailure()` enhanced to accept `SystemError`
 
 On every tool failure:
+
 1. `SystemError` is created at boundary
 2. `logHardFailure(systemErr, { tool: toolName }, SESSION_ID)` is called
 3. Entry appended to `audit-log.jsonl` with:
@@ -174,6 +186,7 @@ Audit append occurs BEFORE throwing to MCP transport.
 ## 7. Gateway Verification
 
 ### Pre-Write Gates (in write_file)
+
 - ✓ PROMPT_GATE_LOCKED: Requires canonical prompt context
 - ✓ INTENT_AUTHORITY: Requires intent or metadata
 - ✓ INPUT_VALIDATION: Path is string and non-empty
@@ -194,6 +207,7 @@ All gates throw `SystemError` on failure.
 ## 8. Commands Run
 
 ### Test Execution
+
 ```bash
 npm test
 # Output: PASS
@@ -203,7 +217,9 @@ node test-system-error.js
 ```
 
 ### Verification
+
 All existing tests still pass:
+
 ```bash
 npm run verify
 ```

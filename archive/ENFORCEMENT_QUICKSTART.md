@@ -98,6 +98,7 @@ export async function myToolHandler(args) {
 ## Common Schemas by Tool Type
 
 ### Read-Only Tools
+
 ```javascript
 {
   required: [],
@@ -109,6 +110,7 @@ export async function myToolHandler(args) {
 ```
 
 ### Write Tools  
+
 ```javascript
 {
   required: ['path', 'plan'],
@@ -125,6 +127,7 @@ export async function myToolHandler(args) {
 ```
 
 ### Planning Tools
+
 ```javascript
 {
   required: ['description'],
@@ -140,6 +143,7 @@ export async function myToolHandler(args) {
 ## Testing Your Enforcement
 
 ### Valid Call (Should Succeed)
+
 ```bash
 curl -X POST http://localhost:8000/call_tool \
   -H "Content-Type: application/json" \
@@ -151,6 +155,7 @@ curl -X POST http://localhost:8000/call_tool \
 ```
 
 ### Missing Required Field (Should Fail)
+
 ```bash
 curl -X POST http://localhost:8000/call_tool \
   -H "Content-Type: application/json" \
@@ -162,6 +167,7 @@ curl -X POST http://localhost:8000/call_tool \
 ```
 
 ### Unknown Field (Should Fail)
+
 ```bash
 curl -X POST http://localhost:8000/call_tool \
   -H "Content-Type: application/json" \
@@ -173,6 +179,7 @@ curl -X POST http://localhost:8000/call_tool \
 ```
 
 ### Wrong Type (Should Fail)
+
 ```bash
 curl -X POST http://localhost:8000/call_tool \
   -H "Content-Type: application/json" \

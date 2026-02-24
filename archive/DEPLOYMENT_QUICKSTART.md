@@ -3,6 +3,7 @@
 ## 5-Minute Local Setup (Testing)
 
 ### Prerequisites
+
 - Docker & Docker Compose installed
 - 4 GB RAM available
 - Port 80, 443, 3000, 3001, 9090 available
@@ -63,6 +64,7 @@ docker-compose down -v  # Remove all volumes
 ### 1. Infrastructure Setup (15 minutes)
 
 #### Create VPC
+
 ```bash
 # 1. VPC with 3 availability zones
 aws ec2 create-vpc --cidr-block 10.0.0.0/16
@@ -80,6 +82,7 @@ aws ec2 create-route --route-table-id rtb-xxx --destination-cidr-block 0.0.0.0/0
 ```
 
 #### Create RDS PostgreSQL (Multi-AZ)
+
 ```bash
 aws rds create-db-instance \
   --db-instance-identifier atlas-gate-db \
@@ -98,6 +101,7 @@ aws rds create-db-instance \
 ```
 
 #### Create ElastiCache Redis
+
 ```bash
 aws elasticache create-cache-cluster \
   --cache-cluster-id atlas-gate-redis \
@@ -110,6 +114,7 @@ aws elasticache create-cache-cluster \
 ```
 
 #### Create Application Load Balancer
+
 ```bash
 aws elbv2 create-load-balancer \
   --name atlas-gate-alb \
@@ -163,6 +168,7 @@ done
 ```
 
 **user-data.sh:**
+
 ```bash
 #!/bin/bash
 set -e
@@ -265,11 +271,13 @@ aws logs create-log-group --log-group-name /atlas-gate/mcp
 ## Deployment on Azure
 
 ### 1. Create Resource Group
+
 ```bash
 az group create --name atlas-gate-rg --location eastus
 ```
 
 ### 2. Deploy Container Instances (via template)
+
 ```bash
 az container create \
   --resource-group atlas-gate-rg \
@@ -293,6 +301,7 @@ az network lb create \
 ```
 
 ### 3. Create Managed PostgreSQL
+
 ```bash
 az postgres flexible-server create \
   --resource-group atlas-gate-rg \
@@ -311,6 +320,7 @@ az postgres flexible-server create \
 ## GCP Deployment
 
 ### 1. Create Project & Enable APIs
+
 ```bash
 gcloud projects create atlas-gate-prod
 gcloud config set project atlas-gate-prod
@@ -323,6 +333,7 @@ gcloud services enable \
 ```
 
 ### 2. Deploy with Cloud Run (Serverless)
+
 ```bash
 gcloud run deploy atlas-gate-mcp \
   --source . \
@@ -340,6 +351,7 @@ gcloud run deploy atlas-gate-mcp \
 ```
 
 ### 3. Setup Cloud SQL Proxy (For PostgreSQL)
+
 ```bash
 gcloud sql instances create atlas-gate-db \
   --database-version POSTGRES_15 \
@@ -354,6 +366,7 @@ gcloud sql instances create atlas-gate-db \
 ## Verification & Health Checks
 
 ### Check Cluster Health
+
 ```bash
 # From any instance, verify connectivity
 curl -i http://localhost:3000/health
@@ -367,6 +380,7 @@ redis-cli -h redis-host PING
 ```
 
 ### Verify Replication
+
 ```bash
 # PostgreSQL replication status
 psql -h primary-db -U atlas_user -d atlas_gate -c "SELECT * FROM pg_stat_replication;"
@@ -376,6 +390,7 @@ psql -h standby-db -U atlas_user -d atlas_gate -c "SELECT * FROM pg_last_xact_re
 ```
 
 ### Check Metrics
+
 ```bash
 # Prometheus queries
 curl "http://localhost:9090/api/v1/query?query=up{job=%22mcp%22}"
@@ -392,6 +407,7 @@ curl "http://localhost:9090/api/v1/query?query=mcp_uptime_seconds"
 ### Prometheus Targets
 
 **prometheus.yml:**
+
 ```yaml
 global:
   scrape_interval: 15s
@@ -478,6 +494,7 @@ aws elasticache create-cache-cluster \
 | **Total** | | **$200/month** |
 
 ### Cost Reduction
+
 - Use reserved instances (40% discount for 1-year)
 - Enable CloudWatch autoscaling
 - Use spot instances for test environments
@@ -488,6 +505,7 @@ aws elasticache create-cache-cluster \
 ## Troubleshooting
 
 ### Server Won't Start
+
 ```bash
 # Check logs
 docker-compose logs mcp-server-1
@@ -500,6 +518,7 @@ netstat -tlnp | grep 3000
 ```
 
 ### High Memory Usage
+
 ```bash
 # Check Node process
 ps aux | grep node
@@ -512,6 +531,7 @@ node --expose-gc bin/server-network.js
 ```
 
 ### Database Connection Errors
+
 ```bash
 # Verify credentials
 psql -h postgres-host -U atlas_user -d atlas_gate

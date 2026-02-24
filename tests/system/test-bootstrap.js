@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { lockWorkspaceRoot } from "../../core/path-resolver.js";
+import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
 import { bootstrapPlanHandler } from "../../tools/bootstrap_tool.js";
 
 const REPO_ROOT = process.cwd();

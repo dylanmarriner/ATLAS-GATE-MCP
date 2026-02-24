@@ -17,7 +17,7 @@ import { dirname } from "path";
 import {
   lockWorkspaceRoot,
   resetWorkspaceRootForTesting,
-} from "../core/path-resolver.js";
+} from "../src/infrastructure/path-resolver.js";
 import { bootstrapPlanHandler } from "../tools/bootstrap_tool.js";
 
 const __filename = fileURLToPath(import.meta.url);

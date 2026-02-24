@@ -42,17 +42,20 @@ Implemented a production-grade, append-only, hash-chained audit logging system f
 
 ### 1.2 Discovery Findings
 
-**Session State**: 
+**Session State**:
+
 - `SESSION_ID`: Random UUID per server run ✓
 - `SESSION_STATE.workspaceRoot`: Locked after begin_session ✓
 - `SESSION_STATE.isLocked`: Failure lock state ✓
 
 **Tool Boundary**:
+
 - `wrapHandler()` in server.js wraps all tool handlers ✓
 - Currently calls `logHardFailure()` for errors only
 - Must integrate new audit system for both success + failure
 
 **Workspace Authority**:
+
 - `workspace_root` is locked by `begin_session` ✓
 - `getRepoRoot()` returns locked root ✓
 - All paths resolved via `path-resolver.js` ✓
@@ -213,6 +216,7 @@ All existing tests continue to pass.
 ### 5.2 Redaction Example
 
 **Input args**:
+
 ```json
 {
   "path": "config.json",
@@ -223,6 +227,7 @@ All existing tests continue to pass.
 ```
 
 **Logged args_hash** (of redacted):
+
 ```json
 {
   "path": "config.json",

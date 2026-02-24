@@ -31,6 +31,7 @@ Ability to operate without failure; incident response and recovery.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Plan-based authorization prevents unauthorized changes
 - ✅ Cryptographic audit logging for all operations
 - ✅ Comprehensive error handling with audit trail integration
@@ -40,6 +41,7 @@ Ability to operate without failure; incident response and recovery.
 - ✅ Audit log verification tools available
 
 **Gaps:**
+
 - No automated failover
 - Limited metrics on operational reliability
 - No SLA reporting
@@ -48,6 +50,7 @@ Ability to operate without failure; incident response and recovery.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Automated health checks and alerting
 - [ ] Metrics dashboard for availability (uptime, latency)
 - [ ] Graceful degradation modes
@@ -55,6 +58,7 @@ Ability to operate without failure; incident response and recovery.
 - [ ] Real-time incident detection
 
 **Deliverables:**
+
 - Health check API endpoint
 - Prometheus metrics exporter
 - Incident notification system
@@ -63,6 +67,7 @@ Ability to operate without failure; incident response and recovery.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] Predictive failure detection (ML-based anomaly detection)
 - [ ] Self-healing infrastructure
 - [ ] Zero-downtime deployments
@@ -78,6 +83,7 @@ Governance, threat prevention, and risk management.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Zero-trust architecture (all operations require explicit authorization)
 - ✅ Dual-role governance (ANTIGRAVITY/WINDSURF separation)
 - ✅ Role-based access control (RBAC)
@@ -90,6 +96,7 @@ Governance, threat prevention, and risk management.
 - ✅ OWASP Top 10 compliance review
 
 **Gaps:**
+
 - No automated vulnerability scanning in CI/CD
 - No compliance reporting (SOC 2, ISO 27001)
 - Limited secret rotation mechanisms
@@ -99,6 +106,7 @@ Governance, threat prevention, and risk management.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Automated dependency vulnerability scanning
 - [ ] Automated secret rotation
 - [ ] SOC 2 Type II certification audit
@@ -107,6 +115,7 @@ Governance, threat prevention, and risk management.
 - [ ] Security metrics dashboard
 
 **Deliverables:**
+
 - Dependabot/Snyk integration
 - Secret rotation automation
 - Security compliance dashboard
@@ -115,6 +124,7 @@ Governance, threat prevention, and risk management.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] ISO 27001 certification
 - [ ] Real-time threat detection (SIEM integration)
 - [ ] Adaptive security policies
@@ -130,6 +140,7 @@ Visibility into system behavior, debugging, and performance.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Comprehensive audit logging (every operation recorded)
 - ✅ Audit log verification tools
 - ✅ Execution replay (forensic analysis)
@@ -139,6 +150,7 @@ Visibility into system behavior, debugging, and performance.
 - ✅ Session state tracking
 
 **Gaps:**
+
 - No real-time monitoring/alerting
 - No metrics collection
 - Limited visualization (mostly logs)
@@ -149,6 +161,7 @@ Visibility into system behavior, debugging, and performance.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Prometheus metrics export
 - [ ] Log aggregation (ELK/Datadog integration)
 - [ ] Real-time dashboards (audit metrics, execution stats)
@@ -157,6 +170,7 @@ Visibility into system behavior, debugging, and performance.
 - [ ] Alert rules (anomaly detection)
 
 **Deliverables:**
+
 - Metrics exporter module
 - Grafana dashboard templates
 - Structured logging (JSON)
@@ -165,6 +179,7 @@ Visibility into system behavior, debugging, and performance.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] AI-driven anomaly detection
 - [ ] Predictive capacity planning
 - [ ] Self-describing telemetry
@@ -180,6 +195,7 @@ Ease of deployment, configuration, and maintenance.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Documented deployment procedures
 - ✅ Bootstrap automation scripts (bash, PowerShell)
 - ✅ Configuration via environment variables
@@ -189,6 +205,7 @@ Ease of deployment, configuration, and maintenance.
 - ✅ Tested on Windows, macOS, Linux
 
 **Gaps:**
+
 - No container support (Docker)
 - No Kubernetes integration
 - No automated deployment pipeline
@@ -199,6 +216,7 @@ Ease of deployment, configuration, and maintenance.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Docker image and Compose file
 - [ ] Kubernetes Helm chart
 - [ ] Infrastructure-as-Code templates (Terraform)
@@ -207,6 +225,7 @@ Ease of deployment, configuration, and maintenance.
 - [ ] Automated health checks in deployment
 
 **Deliverables:**
+
 - Dockerfile and docker-compose.yml
 - Helm chart (with values validation)
 - Terraform modules
@@ -215,6 +234,7 @@ Ease of deployment, configuration, and maintenance.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] Multi-region deployment support
 - [ ] Automatic scaling and load balancing
 - [ ] Service mesh integration (Istio)
@@ -230,6 +250,7 @@ Organizational controls, audit, and regulatory alignment.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Dual-role governance model enforced in code
 - ✅ Plan-based authorization (explicit approval required)
 - ✅ Audit trails (immutable, cryptographically verified)
@@ -242,6 +263,7 @@ Organizational controls, audit, and regulatory alignment.
 - ✅ Access control per role
 
 **Gaps:**
+
 - No automated compliance checking
 - No audit report generation
 - No delegation/approval workflows
@@ -252,6 +274,7 @@ Organizational controls, audit, and regulatory alignment.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Automated compliance reporting (OWASP, NIST, SOC 2)
 - [ ] Approval workflow automation (multi-approver support)
 - [ ] User provisioning/deprovisioning
@@ -260,6 +283,7 @@ Organizational controls, audit, and regulatory alignment.
 - [ ] Formal governance documentation
 
 **Deliverables:**
+
 - Compliance dashboard
 - Approval workflow engine
 - User management API
@@ -268,6 +292,7 @@ Organizational controls, audit, and regulatory alignment.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] Real-time compliance monitoring
 - [ ] Automated remediation of non-compliance
 - [ ] Formal governance board structure
@@ -283,6 +308,7 @@ Quality, completeness, and maintainability of documentation.
 ### Current Status (Level 3: Managed)
 
 **Capabilities:**
+
 - ✅ Comprehensive guides (beginners to experts)
 - ✅ Architecture documentation
 - ✅ Security policies
@@ -296,6 +322,7 @@ Quality, completeness, and maintainability of documentation.
 - ✅ DOCUMENTATION_CHANGELOG.md
 
 **Gaps:**
+
 - No automated doc generation from code
 - Limited API reference automation
 - No interactive tutorials
@@ -305,6 +332,7 @@ Quality, completeness, and maintainability of documentation.
 ### Level 4 (Planned: v2.0)
 
 **Goals:**
+
 - [ ] Automated API documentation (JSDoc → markdown)
 - [ ] Link validation in CI/CD
 - [ ] Documentation coverage metrics
@@ -313,6 +341,7 @@ Quality, completeness, and maintainability of documentation.
 - [ ] Multilingual documentation (Spanish, Chinese, Japanese)
 
 **Deliverables:**
+
 - JSDoc-to-markdown generator
 - Example code validation tests
 - Interactive tutorial platform
@@ -321,6 +350,7 @@ Quality, completeness, and maintainability of documentation.
 ### Level 5 (Planned: v3.0)
 
 **Goals:**
+
 - [ ] AI-powered documentation generation
 - [ ] Self-updating code examples
 - [ ] Documentation-driven development (docs first)
@@ -332,11 +362,13 @@ Quality, completeness, and maintainability of documentation.
 ## Multi-Year Roadmap
 
 ### Phase 1: Foundation (v1.0 - Current)
+
 **Timeline**: 2024 - Now
 
 **Focus**: Establish core governance and audit capabilities.
 
 **Delivered:**
+
 - Dual-role governance model
 - Plan-based authorization
 - Cryptographic audit logging
@@ -349,11 +381,13 @@ Quality, completeness, and maintainability of documentation.
 ---
 
 ### Phase 2: Operationalization (v2.0)
+
 **Timeline**: 2026 Q1 - Q3 (6 months)
 
 **Focus**: Deployment automation, monitoring, and compliance reporting.
 
 **Key Deliverables:**
+
 - Docker & Kubernetes support
 - Prometheus metrics exporter
 - Automated vulnerability scanning
@@ -362,6 +396,7 @@ Quality, completeness, and maintainability of documentation.
 - Interactive tutorials
 
 **Success Criteria:**
+
 - 95% availability SLA demonstrated
 - Automated deployments in place
 - SOC 2 Type II certification audit initiated
@@ -372,11 +407,13 @@ Quality, completeness, and maintainability of documentation.
 ---
 
 ### Phase 3: Intelligence (v3.0)
+
 **Timeline**: 2027 Q1 - Q2 (6 months)
 
 **Focus**: Intelligent automation, predictive analytics, self-healing.
 
 **Key Deliverables:**
+
 - Anomaly detection (ML-based)
 - Predictive scaling
 - Automated incident remediation
@@ -385,6 +422,7 @@ Quality, completeness, and maintainability of documentation.
 - ISO 27001 certification
 
 **Success Criteria:**
+
 - 99.95% uptime achieved
 - Automated incident response active
 - Certification awarded
@@ -395,11 +433,13 @@ Quality, completeness, and maintainability of documentation.
 ---
 
 ### Phase 4: Scale (v4.0+)
+
 **Timeline**: 2028 and beyond
 
 **Focus**: Multi-tenant support, advanced features, ecosystem.
 
 **Potential Deliverables:**
+
 - SaaS offering
 - Multi-tenant isolation
 - Advanced policy engine (Rego/OPA)
@@ -411,16 +451,19 @@ Quality, completeness, and maintainability of documentation.
 ## Investment & Resources
 
 ### Current (v1.0)
+
 - **Team**: 4-5 engineers + 1 DevEx lead
 - **Burn Rate**: $200K-250K annually
 - **Focus**: Core product stability
 
 ### Phase 2 (v2.0)
+
 - **Team**: 6-8 engineers + 1 DevOps engineer + 1 Security engineer
 - **Burn Rate**: $400K-500K annually
 - **Focus**: Operations and compliance
 
 ### Phase 3 (v3.0)
+
 - **Team**: 8-10 engineers + 2 DevOps + 1 Data scientist
 - **Burn Rate**: $600K-800K annually
 - **Focus**: Intelligence and scale
@@ -430,28 +473,34 @@ Quality, completeness, and maintainability of documentation.
 ## Success Metrics
 
 ### Reliability
+
 - Uptime: 99.9% → 99.95% → 99.99%
 - Mean Time to Recovery (MTTR): < 2 hours → < 15 min → < 1 min
 - Incident rate: < 1/week → < 1/month → preventive
 
 ### Security
+
 - Vulnerability response time: 7 days → 24 hours → 1 hour
 - Zero critical vulnerabilities (active)
 - Certifications: SOC 2 (v2.0) → ISO 27001 (v3.0)
 
 ### Observability
+
 - Query latency: N/A → < 1 second → < 100ms
 - Coverage: 70% → 90% → 95%+
 
 ### Operability
+
 - Deployment time: 30 min → 5 min → < 1 min
 - Configuration effort: 1 hour → 15 min → automated
 
 ### Governance
+
 - Compliance score: 80% → 95% → 100%
 - Audit cycles: Manual → Semi-automated → Continuous
 
 ### Documentation
+
 - Page coverage: 85% → 95% → 100%
 - Example validation: Manual → CI/CD → Automated
 
@@ -460,21 +509,25 @@ Quality, completeness, and maintainability of documentation.
 ## Stakeholder View
 
 ### For Executives
+
 - **v1.0**: Governance foundation, compliance baseline
 - **v2.0**: Operational credibility, SOC 2 readiness
 - **v3.0**: Enterprise-grade system, full compliance
 
 ### For Engineers
+
 - **v1.0**: Strong audit trail, clear architecture
 - **v2.0**: Easy deployment, observability
 - **v3.0**: Intelligent operations, self-healing
 
 ### For Security Teams
+
 - **v1.0**: Zero-trust, encrypted audit logs
 - **v2.0**: Compliance reporting, automated scanning
 - **v3.0**: Real-time threat detection, automation
 
 ### For Operations
+
 - **v1.0**: Documented procedures
 - **v2.0**: Automated deployments, dashboards
 - **v3.0**: Self-managing infrastructure
@@ -484,21 +537,25 @@ Quality, completeness, and maintainability of documentation.
 ## How to Use This Model
 
 ### For Planning
+
 - Align PRs to roadmap phases
 - Prioritize work against levels
 - Justify new features by capability gap
 
 ### For Roadmapping
+
 - Identify capability gaps in your use case
 - Match to phases and timelines
 - Plan resource allocation
 
 ### For Evaluation
+
 - Assess ATLAS-GATE MCP fitness for your environment
 - Identify features you need
 - Understand commitment levels
 
 ### For Contributing
+
 - See where you can help
 - Target specific dimensions or phases
 - Coordinate with maintainers
@@ -512,7 +569,7 @@ This roadmap is **not** set in stone. Community feedback shapes priorities:
 - **Unsure about a phase?** Open an issue
 - **Want to help?** See [CONTRIBUTING.md](../CONTRIBUTING.md)
 - **Disagree with priorities?** Start a discussion
-- **Have enterprise needs?** Contact security@atlas-gate-mcp.org
+- **Have enterprise needs?** Contact <security@atlas-gate-mcp.org>
 
 ---
 

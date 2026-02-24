@@ -118,3 +118,4 @@ Thumbs.db
 
 # Local credentials
 .atlas-gate-creds
+node_modules/

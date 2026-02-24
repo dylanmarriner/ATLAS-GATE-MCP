@@ -18,8 +18,8 @@ const __dirname = dirname(__filename);
 const REPO_ROOT = path.join(__dirname, "..");
 
 // Import core modules
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting, getRepoRoot } from "../core/path-resolver.js";
-import { lintPlan } from "../core/plan-linter.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting, getRepoRoot } from "../src/infrastructure/path-resolver.js";
+import { lintPlan } from "../src/application/plan-linter.js";
 import { bootstrapPlanHandler } from "../tools/bootstrap_tool.js";
 import { beginSessionHandler } from "../tools/begin_session.js";
 import { listPlansHandler } from "../tools/list_plans.js";
@@ -62,28 +62,28 @@ function logSection(title) {
 logSection("TEST 1: Core Module Imports");
 
 try {
-  await import("../core/governance.js");
+  await import("../src/domain/governance.js");
   logTest("governance.js", "PASS", "core governance module loads");
 } catch (err) {
   logTest("governance.js", "FAIL", err.message);
 }
 
 try {
-  await import("../core/audit-system.js");
+  await import("../src/domain/audit-system.js");
   logTest("audit-system.js", "PASS", "audit system module loads");
 } catch (err) {
   logTest("audit-system.js", "FAIL", err.message);
 }
 
 try {
-  await import("../core/plan-enforcer.js");
+  await import("../src/domain/plan-enforcer.js");
   logTest("plan-enforcer.js", "PASS", "plan enforcer module loads");
 } catch (err) {
   logTest("plan-enforcer.js", "FAIL", err.message);
 }
 
 try {
-  await import("../core/role-parser.js");
+  await import("../src/domain/role-parser.js");
   logTest("role-parser.js", "PASS", "role parser module loads");
 } catch (err) {
   logTest("role-parser.js", "FAIL", err.message);

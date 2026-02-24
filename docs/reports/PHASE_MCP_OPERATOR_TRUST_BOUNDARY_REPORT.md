@@ -88,17 +88,20 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 1. Operator Identity Binding (PHASE 2)
 
 **Functions**:
+
 - `bindOperatorIdentity(operator_id, operator_role, authentication_context)`
 - `getBoundOperatorIdentity()`
 - `verifyOperatorBound()`
 - `resetOperatorIdentity()` [testing only]
 
 **Constraints**:
+
 - Identity immutable mid-session
 - Requires valid role (OWNER, REVIEWER, AUDITOR)
 - No anonymous approvals
 
 **Tests**: 4 passing
+
 - Cannot rebind
 - Rejects missing ID
 - Rejects invalid role
@@ -109,6 +112,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 2. Risk Acknowledgement (PHASE 3)
 
 **Functions**:
+
 - `createRiskAcknowledgement(action_id, risk_level, files, reversibility, context)`
 - `generateConsequences(action_id, risk_level, files, context)`
 - `validateRiskAcknowledgement(acknowledgement)`
@@ -116,18 +120,21 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - `getRiskLevelName(level)`
 
 **Risk Levels**:
+
 - LOW (0): File modifications
 - MEDIUM (1): Config changes, audit impact
 - HIGH (2): Infrastructure changes
 - IRREVERSIBLE (3): Permanent, cannot undo
 
 **Consequences** (machine-generated):
+
 - File modification count
 - Audit trail creation
 - Governance recording
 - Blast radius per risk level
 
 **Tests**: 2 passing
+
 - HIGH-risk requires confirmation
 - Incomplete ack rejected
 
@@ -136,6 +143,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 3. Two-Step Confirmation (PHASE 4)
 
 **Functions**:
+
 - `initiateConfirmation(action_id, summary, consequences, context)`
 - `checkConfirmationDelay(confirmation_token)`
 - `completeConfirmation(confirmation_token, operator_consequences)`
@@ -143,12 +151,14 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - `getPendingConfirmation(confirmation_token)` [debugging]
 
 **Enforcement**:
+
 - 30-second minimum delay
 - Verbatim consequence matching
 - No copy-paste allowed
 - 5-minute timeout on pending confirmations
 
 **Tests**: 3 passing
+
 - Minimum delay enforced
 - Consequences must match exactly
 - Mismatch detected and refused
@@ -158,6 +168,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 4. Language Sanitization (PHASE 5)
 
 **Functions**:
+
 - `detectSocialEngineeringPatterns(text)` → {detected, patterns, severity}
 - `sanitizeUrgencyLanguage(text)` → sanitized text
 - `highlightHighRiskTerms(text)` → {has_high_risk, highlighted_terms}
@@ -165,16 +176,19 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - `enforceLanguageSanitization(text, allow_high_risk)` → throws on detection
 
 **Detected Patterns**:
+
 - Urgency: urgent, immediately, emergency, asap, etc.
 - Manipulation: trust me, I know what I'm doing, just this once
 - Vague approvals: "ok", "sure", "yep"
 
 **High-Risk Terms** (highlighted):
+
 - Irreversible, cannot be undone, permanent
 - Policy exception, bypass, override
 - Disable security, expand permissions
 
 **Tests**: 4 passing
+
 - Detects urgency keywords
 - Strips urgency language
 - Highlights high-risk terms
@@ -185,6 +199,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 5. Fatigue Guards (PHASE 6)
 
 **Functions**:
+
 - `checkOperatorFatigue()` → {is_fatigued, reasons, remaining}
 - `enforceFatigueGuards()` → throws on fatigue
 - `recordApproval()` → updates tracking
@@ -194,12 +209,14 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - `configureFatigueLimits(config)` [testing]
 
 **Limits** (configurable):
+
 - `MAX_APPROVALS_PER_SESSION`: 10
 - `MAX_APPROVALS_PER_HOUR`: 20
 - `APPROVALS_BEFORE_MANDATORY_PAUSE`: 5
 - `MANDATORY_PAUSE_MS`: 60,000 (1 minute)
 
 **Tests**: 3 passing
+
 - Blocks on session limit
 - Resets after pause
 - Consecutive counter increments
@@ -209,6 +226,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 6. Human-Factor Audit (PHASE 7)
 
 **Functions**:
+
 - `logHumanFactorDecision(decision, sessionId)` → audit entry
 - `logOperatorBinding(binding, sessionId)`
 - `logFatigueGuardTrigger(data, sessionId)`
@@ -219,6 +237,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - `logRiskAcknowledgement(data, sessionId)`
 
 **Entry Types**:
+
 - HUMAN_FACTOR_DECISION
 - OPERATOR_IDENTITY_BOUND
 - FATIGUE_GUARD_TRIGGERED
@@ -235,12 +254,14 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ### 7. Operator Inspection Tools (PHASE 8)
 
 **Functions**:
+
 - `inspectOperatorActions(options)` → {summary, actions}
 - `inspectHighRiskApprovals(options)` → {summary, approvals, non_coder_summary}
 - `getOperatorStatistics(options)` → {total, approved, refused, by_operator, ...}
 - `generateNonCoderSummary(approvals)` → human-readable text
 
 **Filters**:
+
 - operator_id
 - operator_role
 - time_start_ms / time_end_ms
@@ -250,6 +271,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 **Read-Only**: No state mutation, purely analytical
 
 **Tests**: 2 passing
+
 - Operator actions readable
 - High-risk approvals isolated
 
@@ -260,6 +282,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 **Command**: `node test-operator-trust-boundary.js`
 
 **Results** (16/16 PASSING):
+
 ```
 ✓ Operator identity binding: cannot rebind mid-session
 ✓ Operator identity validation: rejects missing operator_id
@@ -280,6 +303,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ```
 
 **Test Metrics**:
+
 - Total Tests: 16
 - Passed: 16 (100%)
 - Failed: 0
@@ -290,12 +314,14 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ## Guards Implemented
 
 ### Identity Guards
+
 - ✅ Operator ID binding (immutable, session-scoped)
 - ✅ Role validation (OWNER, REVIEWER, AUDITOR)
 - ✅ Rejects anonymous actions
 - ✅ Mid-session rebind prevented
 
 ### Risk Acknowledgement Guards
+
 - ✅ Structured acknowledgement required
 - ✅ Machine-generated consequences
 - ✅ Risk level enforcement (LOW/MEDIUM/HIGH/IRREVERSIBLE)
@@ -303,6 +329,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - ✅ Reversibility checking
 
 ### Confirmation Guards
+
 - ✅ 30-second minimum delay
 - ✅ Verbatim consequence matching
 - ✅ Copy-paste detection (exact string matching)
@@ -310,6 +337,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - ✅ State tracking per pending action
 
 ### Language Guards
+
 - ✅ Urgency keyword detection (12+ patterns)
 - ✅ Manipulation phrase detection
 - ✅ High-risk term highlighting
@@ -317,6 +345,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - ✅ Social engineering pattern detection
 
 ### Fatigue Guards
+
 - ✅ Session-based rate limiting (10 max)
 - ✅ Hourly rate limiting (20 max)
 - ✅ Mandatory pause enforcement (after 5)
@@ -324,6 +353,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - ✅ Configurable limits for testing
 
 ### Audit Guards
+
 - ✅ Operator context recorded
 - ✅ Risk levels logged
 - ✅ Confirmation delays tracked
@@ -331,6 +361,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 - ✅ Identity binding recorded
 
 ### Inspection Guards
+
 - ✅ Read-only access only (no mutation)
 - ✅ High-risk action filtering
 - ✅ Non-coder readable output
@@ -378,6 +409,7 @@ Implemented comprehensive human-factor defenses and operator trust boundaries fo
 ## Commands Run & Results
 
 ### Build/Lint/Format
+
 ```bash
 # Tests only (no build step required for JS modules)
 node test-operator-trust-boundary.js
@@ -385,6 +417,7 @@ node test-operator-trust-boundary.js
 ```
 
 ### Verification
+
 - ✅ Core modules load without errors
 - ✅ No syntax errors detected
 - ✅ All imports resolve correctly
@@ -407,6 +440,7 @@ node test-operator-trust-boundary.js
 ## Deliverables Checklist
 
 ✅ **7 Core Modules Created**
+
 - operator-identity.js (87 lines)
 - risk-acknowledgement.js (180 lines)
 - two-step-confirmation.js (183 lines)
@@ -416,17 +450,21 @@ node test-operator-trust-boundary.js
 - operator-inspection.js (280 lines)
 
 ✅ **Test Suite** (16/16 passing)
+
 - test-operator-trust-boundary.js (290 lines)
 
 ✅ **Documentation**
+
 - docs/reports/MCP_OPERATOR_TRUST_BOUNDARY_SPEC.md (650+ lines)
 - docs/reports/PHASE_MCP_OPERATOR_TRUST_BOUNDARY_REPORT.md (this file)
 
 ✅ **Threat Model Coverage**
+
 - All 6 threats mitigated
 - All 15 requirements implemented
 
 ✅ **Verification Gates**
+
 - Lint: PASS (no syntax errors)
 - Tests: PASS (16/16)
 - Integration: PASS (compatible with existing modules)
@@ -436,12 +474,14 @@ node test-operator-trust-boundary.js
 ## Integration Notes
 
 **Existing Modules Used**:
+
 - `session.js` - SESSION_ID, SESSION_STATE
 - `core/audit-log.js` - appendAuditLog()
 - `core/path-resolver.js` - getAuditLogPath()
 - `core/error.js` - Error handling patterns
 
 **New Tool Endpoints** (proposed for MCP interface):
+
 - `begin_operator_session(operator_id, operator_role, authentication_context)`
 - `acknowledge_risk(action_id, risk_level, blast_radius, reversibility)`
 - `initiate_confirmation(action_id, action_summary, consequences)`

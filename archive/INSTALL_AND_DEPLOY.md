@@ -18,6 +18,7 @@ sudo ./deploy.sh docker
 ```
 
 **That's it!** The script will:
+
 1. ✓ Detect your OS (Ubuntu, Debian, CentOS, etc.)
 2. ✓ Install Docker if missing
 3. ✓ Install Docker Compose if missing
@@ -27,6 +28,7 @@ sudo ./deploy.sh docker
 7. ✓ Show you how to connect
 
 Output will be:
+
 ```
 Server URL:     http://100.93.214.100:3000
 API Key:        5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c
@@ -46,6 +48,7 @@ sudo ./deploy.sh docker --server 100.93.214.100
 ```
 
 **Auto-installs:**
+
 - Docker
 - Docker Compose
 - Builds image
@@ -58,6 +61,7 @@ sudo ./deploy.sh kubernetes --domain atlas-gate.example.com
 ```
 
 **Auto-installs:**
+
 - kubectl
 - kind (Kubernetes in Docker)
 - Creates 3-node cluster
@@ -75,11 +79,13 @@ sudo ./deploy.sh kubernetes --domain atlas-gate.example.com --registry gcr.io/my
 ## 📋 What Gets Auto-Installed
 
 ### For Docker Mode
+
 - **Docker Engine** - Container runtime
 - **Docker Compose** - Multi-container orchestration
 - Detects and supports: Ubuntu, Debian, CentOS, RHEL, Fedora, Alpine
 
 ### For Kubernetes Mode
+
 - **kubectl** - Kubernetes CLI
 - **kind** - Kubernetes in Docker (creates local cluster)
 - **nginx-ingress** - For HTTPS/routing
@@ -242,6 +248,7 @@ curl -X POST $ATLAS_GATE_URL/sessions/create \
 ## 📊 What Gets Installed
 
 ### Docker Installation
+
 ```
 - Docker Engine (~30MB)
 - Docker Compose (~50MB)
@@ -249,6 +256,7 @@ curl -X POST $ATLAS_GATE_URL/sessions/create \
 ```
 
 ### Kubernetes Installation
+
 ```
 - kubectl (~50MB)
 - kind (~500MB)

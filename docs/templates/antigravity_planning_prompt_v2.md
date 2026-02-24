@@ -60,6 +60,7 @@ STATUS: APPROVED
 ```
 
 The `save_plan` tool will:
+
 1. Validate the structure using `lint_plan` internally (via Spectral).
 2. Sign the content using ECDSA P-256 keys from the workspace and wrap it in a Sigstore Bundle.
 3. Replace `PENDING_SIGNATURE` with the actual cryptographic signature.
@@ -144,6 +145,7 @@ Failure stop conditions: Test failure, Lint error, File outside allowlist
 ```
 
 **Critical**:
+
 - Phase ID must be uppercase alphanumeric + underscore
 - All fields MUST be plain text (NO markdown bold/italic)
 - Verification commands must be real shell commands
@@ -162,6 +164,7 @@ Failure stop conditions: Test failure, Lint error, File outside allowlist
 ```
 
 **Critical**:
+
 - Paths are workspace-relative (no leading `/`)
 - Only these paths can be modified during execution
 - Violations → IMMEDIATE HALT and ROLLBACK

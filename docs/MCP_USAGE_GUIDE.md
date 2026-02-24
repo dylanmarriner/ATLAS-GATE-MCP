@@ -72,6 +72,7 @@
 ```
 
 **Flow**:
+
 1. **You** → request via MCP tool (read_file, write_file, etc.)
 2. **ATLAS-GATE** → validates plan, checks constructs, runs preflight tests
 3. **Filesystem** → changes persisted
@@ -84,6 +85,7 @@
 ### Prerequisites
 
 1. **Repository must be governed**
+
    ```bash
    ls -la .atlas-gate/
    # Should show:
@@ -93,12 +95,14 @@
    ```
 
 2. **At least one approved plan must exist**
+
    ```bash
    ls .atlas-gate/approved_plans/ | head
    # PLAN_SOMETHING.md
    ```
 
 3. **MCP server must be running**
+
    ```bash
    cd /path/to/ATLAS-GATE-MCP-server
    npm install
@@ -115,6 +119,7 @@
 3. **WRITE** — Make changes under plan authorization
 
 **Each write requires**:
+
 - `path` — File to create/modify
 - `content` or `patch` — Code changes
 - `plan` — Name of approved plan authorizing this change
@@ -131,16 +136,19 @@
 **When to use**: BEFORE your first write. Always.
 
 **What it does**:
+
 - Locks the session to enforce prompt-awareness
 - Returns the canonical ANTIGRAVITY_CANONICAL prompt
 - Prevents writes until this is called
 
 **Example request**:
+
 ```javascript
 await readPrompt("ANTIGRAVITY_CANONICAL");
 ```
 
 **Response**:
+
 ```json
 {
   "name": "ANTIGRAVITY_CANONICAL",
@@ -159,12 +167,14 @@ await readPrompt("ANTIGRAVITY_CANONICAL");
 **When to use**: Before writing—understand what you're modifying.
 
 **What it does**:
+
 - Returns file contents
 - Works with any file path (relative or absolute)
 - Resolves relative paths from workspace root
 - Can read plans, code, docs, configs
 
 **Restrictions**:
+
 - Read-only (no side effects)
 - Must be in repo (path traversal blocked)
 
@@ -204,6 +214,7 @@ await readFile({ path: "package.json" });
 6. **Records audit log**
 
 **Required parameters**:
+
 ```javascript
 {
   path: "src/auth.js",           // File to write
@@ -218,6 +229,7 @@ await readFile({ path: "package.json" });
 ```
 
 **Optional metadata** (auto-generates role header):
+
 ```javascript
 {
   role: "EXECUTABLE",             // EXECUTABLE | BOUNDARY | INFRASTRUCTURE | VERIFICATION
@@ -229,6 +241,7 @@ await readFile({ path: "package.json" });
 ```
 
 **Response**:
+
 ```json
 {
   "status": "OK",
@@ -534,6 +547,7 @@ Authorized under: PLAN_JWT_VALIDATION
 ### Result
 
 All three writes succeed:
+
 ```json
 {
   "status": "OK",
@@ -544,6 +558,7 @@ All three writes succeed:
 ```
 
 **Audit log entry created**:
+
 ```json
 {
   "timestamp": "2026-01-12T10:30:00Z",
@@ -564,12 +579,14 @@ All three writes succeed:
 ### Example 1: Reading Phase
 
 **Your prompt to the system**:
+
 ```
 I need to add JWT validation to the auth system. 
 Let me first understand the existing authentication code.
 ```
 
 **Call to MCP**:
+
 ```javascript
 // Step 1: Get canonical prompt (required)
 tool: "read_prompt"
@@ -593,6 +610,7 @@ args: { path: ".atlas-gate/approved_plans/PLAN_JWT_VALIDATION.md" }
 ### Example 2: Writing Phase (Real Code)
 
 **Your prompt**:
+
 ```
 Implement the JWT validator as described in PLAN_JWT_VALIDATION.
 - Real JWT validation with RS256
@@ -602,6 +620,7 @@ Implement the JWT validator as described in PLAN_JWT_VALIDATION.
 ```
 
 **Correct call to MCP**:
+
 ```javascript
 tool: "write_file"
 args: {
@@ -616,6 +635,7 @@ args: {
 ```
 
 **✅ Why this is CORRECT**:
+
 - Uses real JWT library (jsonwebtoken)
 - Fetches real public keys from JWKS endpoint
 - Validates with real cryptography (RS256)
@@ -625,6 +645,7 @@ args: {
 - References approved plan
 
 **❌ What would be BLOCKED**:
+
 ```javascript
 // BAD: Stub implementation
 async function validateToken(token) {
@@ -659,12 +680,14 @@ async function validateToken(token) {
 **Scenario**: You only need to modify a specific function in an existing file.
 
 **Correct prompt**:
+
 ```
 Update the /api/users endpoint to use the new JWT validator.
 Apply a patch that replaces the old auth check with the new one.
 ```
 
 **Correct MCP call**:
+
 ```javascript
 tool: "write_file"
 args: {
@@ -741,6 +764,7 @@ await writeFile({
 ### Error 1: Plan Not Found
 
 **Error message**:
+
 ```
 PLAN_NOT_APPROVED: PLAN_WRONG_NAME not found in /path/to/.atlas-gate/approved_plans
 ```
@@ -748,6 +772,7 @@ PLAN_NOT_APPROVED: PLAN_WRONG_NAME not found in /path/to/.atlas-gate/approved_pl
 **What happened**: You referenced a plan that doesn't exist.
 
 **Fix**:
+
 1. Check plan name spelling
 2. Verify plan exists: `ls .atlas-gate/approved_plans/ | grep PLAN_NAME`
 3. Use correct plan name in write_file call
@@ -765,6 +790,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN_AUTH_SYSTEM" }
 ### Error 2: Construct Taxonomy Violation
 
 **Error message**:
+
 ```
 CONSTRUCT_TAXONOMY_VIOLATION [BLOCKED]:
 Detected non-real code constructs that are NOT ALLOWED:
@@ -794,7 +820,9 @@ const user = await database.users.findById(userId);
 ```
 
 **If you MUST use a non-real construct** (rare):
+
 1. Add to your plan:
+
    ```markdown
    ## Authorized Non-Real Constructs
    
@@ -806,6 +834,7 @@ const user = await database.users.findById(userId);
    ```
 
 2. Reference in write_file:
+
    ```javascript
    await writeFile({
      path: "src/auth.js",
@@ -819,6 +848,7 @@ const user = await database.users.findById(userId);
 ### Error 3: Preflight Failed
 
 **Error message**:
+
 ```
 PREFLIGHT_FAILED: Code rejected because it breaks the build.
 npm ERR! Cannot find module 'missing-dependency'
@@ -827,6 +857,7 @@ npm ERR! Cannot find module 'missing-dependency'
 **What happened**: Your code doesn't pass tests or linting.
 
 **Fix**:
+
 1. Install missing dependencies
 2. Fix linting errors
 3. Ensure tests pass
@@ -844,6 +875,7 @@ npm run build
 ### Error 4: Missing Prompt Gate
 
 **Error message**:
+
 ```
 PROMPT_GATE_LOCKED: You must call read_prompt('ANTIGRAVITY_CANONICAL') 
 before any write operations.
@@ -852,6 +884,7 @@ before any write operations.
 **What happened**: You tried to write without calling read_prompt first.
 
 **Fix**: Always call read_prompt before your first write:
+
 ```javascript
 // ✅ First call
 await readPrompt("ANTIGRAVITY_CANONICAL");
@@ -867,12 +900,14 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
 ### ✅ DO
 
 1. **Read existing code first**
+
    ```javascript
    await readFile({ path: "src/module.js" });
    // Understand structure, patterns, dependencies
    ```
 
 2. **Create detailed plans**
+
    ```markdown
    ---
    status: APPROVED
@@ -893,6 +928,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 3. **Use proper role metadata**
+
    ```javascript
    {
      role: "EXECUTABLE",        // Main logic
@@ -903,6 +939,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 4. **Include comprehensive errors**
+
    ```javascript
    if (!token) {
      throw new Error('MISSING_TOKEN: Authorization header required');
@@ -920,6 +957,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
 ### ❌ DON'T
 
 1. **Don't write temporary code**
+
    ```javascript
    // ❌ NO
    function getUser(id) {
@@ -929,6 +967,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 2. **Don't use test frameworks in production code**
+
    ```javascript
    // ❌ NO
    const { jest } = require('jest');
@@ -936,6 +975,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 3. **Don't hardcode test data**
+
    ```javascript
    // ❌ NO
    const TEST_TOKEN = "eyJ...";
@@ -943,6 +983,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 4. **Don't bypass enforcement**
+
    ```javascript
    // ❌ NO
    // Commenting out the REAL code doesn't help
@@ -952,6 +993,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
    ```
 
 5. **Don't reference non-existent plans**
+
    ```javascript
    // ❌ NO
    await writeFile({
@@ -966,6 +1008,7 @@ await writeFile({ path: "src/foo.js", content: "...", plan: "PLAN" });
 ## Complete Reference
 
 ### read_prompt
+
 ```javascript
 const prompt = await readPrompt({
   name: "ANTIGRAVITY_CANONICAL"  // Required before writes
@@ -974,6 +1017,7 @@ const prompt = await readPrompt({
 ```
 
 ### read_file
+
 ```javascript
 const content = await readFile({
   path: "src/auth.js"  // Relative to repo root
@@ -982,6 +1026,7 @@ const content = await readFile({
 ```
 
 ### write_file
+
 ```javascript
 const result = await writeFile({
   path: "src/auth.js",                    // Required
@@ -1005,6 +1050,7 @@ const result = await writeFile({
 ```
 
 ### list_plans
+
 ```javascript
 const plans = await listPlans({
   path: "."  // Repo root
@@ -1017,6 +1063,7 @@ const plans = await listPlans({
 ## Summary
 
 **The workflow**:
+
 1. Read the canonical prompt (unlocks writes)
 2. Read existing code to understand
 3. Create/review an approved plan
@@ -1046,4 +1093,3 @@ Plans default to APPROVED if placed in `.atlas-gate/approved_plans/` with correc
 
 **"What if I make a mistake?"**
 Every write is audited. Audit log is immutable. Create a new plan to fix.
-

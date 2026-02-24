@@ -21,6 +21,7 @@ related_to: ["{Other ADR number}"]
 What is the issue that we're seeing that is motivating this decision or change?
 
 Include:
+
 - Background information
 - Problem statement
 - Constraints
@@ -38,6 +39,7 @@ State the decision concisely in an active voice sentence(s).
 Why is this the best choice among the considered alternatives?
 
 Include:
+
 - Benefits of this decision
 - How it addresses the context/problem
 - How it aligns with project goals
@@ -48,14 +50,17 @@ Include:
 What other options did we consider?
 
 For each alternative, explain:
+
 - How it would work
 - Why we didn't choose it
 - Trade-offs vs. the chosen decision
 
 ### Alternative 1: [Name]
+
 ...
 
 ### Alternative 2: [Name]
+
 ...
 
 ## Consequences
@@ -63,15 +68,19 @@ For each alternative, explain:
 What becomes easier or harder to do because of this change?
 
 ### Positive Consequences
+
 - ...
 
 ### Negative Consequences
+
 - ...
 
 ### Risks
+
 - ...
 
 ### Mitigation Strategies
+
 - ...
 
 ## Implementation
@@ -79,6 +88,7 @@ What becomes easier or harder to do because of this change?
 How will this decision be implemented?
 
 Include:
+
 - Required changes
 - Timeline
 - Dependencies
@@ -90,6 +100,7 @@ Include:
 How will we know if this decision was the right one?
 
 Include:
+
 - Metrics to track
 - Review schedule
 - Success criteria

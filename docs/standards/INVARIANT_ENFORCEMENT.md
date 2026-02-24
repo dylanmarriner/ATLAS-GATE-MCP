@@ -118,6 +118,7 @@ These ensure all errors are intentional and typed.
 ### Core Path Resolver (`core/path-resolver.js`)
 
 **Lines with Invariants:**
+
 - 30: Imports invariant utilities
 - 108-146: `initializePathResolver()` - Enforces single initialization, absolute paths, directory existence
 - 177-203: `getRepoRoot()` - Enforces initialization and immutability
@@ -125,7 +126,8 @@ These ensure all errors are intentional and typed.
 - 276-317: `resolvePlanPath()` - Enforces plan existence and non-escape
 - 304-353: `resolveWriteTarget()` - Enforces path traversal protection and containment
 
-**Invariants Enforced:** 
+**Invariants Enforced:**
+
 - `INV_REPO_ROOT_SINGLE`
 - `INV_REPO_ROOT_INITIALIZED`
 - `INV_PATH_ABSOLUTE`
@@ -139,11 +141,13 @@ These ensure all errors are intentional and typed.
 ### Plan Enforcer (`core/plan-enforcer.js`)
 
 **Lines with Invariants:**
+
 - 6: Imports invariant utilities
 - 21-110: `enforcePlan()` - Enforces plan existence, approval, ID/hash matching
 - 112-119: Plan integrity check - Enforces hash match
 
 **Invariants Enforced:**
+
 - `INV_WRITE_AUTHORIZED_PLAN`
 - `INV_PLANS_DIR_EXISTS`
 - `INV_PLAN_STABLE_ID`
@@ -156,11 +160,13 @@ These ensure all errors are intentional and typed.
 ### Write File Handler (`tools/write_file.js`)
 
 **Lines with Invariants:**
+
 - (refactored to use `resolveWriteTarget()` which contains invariants)
 - Gates 1-5 enforce policy, role, and stub detection
 - `ensureDirectoryExists()` call enforces safe directory creation
 
 **Invariants Delegated To:**
+
 - `INV_PATH_WITHIN_REPO` (via `resolveWriteTarget()`)
 - `INV_TOOL_INPUT_NORMALIZED` (via `resolveWriteTarget()`)
 - `INV_WRITE_AUTHORIZED_PLAN` (via `enforcePlan()`)
@@ -168,10 +174,12 @@ These ensure all errors are intentional and typed.
 ### Server Initialization (`server.js`)
 
 **Lines with Invariants:**
+
 - 13-16: `autoInitializePathResolver()` - Enforces repo root discovery
 - 20: `WORKSPACE_ROOT = getRepoRoot()` - Caches initialized root
 
 **Invariants Enforced:**
+
 - `INV_REPO_ROOT_INITIALIZED`
 
 ---
@@ -222,6 +230,7 @@ try {
 **Statement**: Given the same repository state, plan discovery always finds the same plans in the same location.
 
 **Proof by Invariant**:
+
 1. `INV_REPO_ROOT_SINGLE` - Ensures one cached root
 2. `INV_PLANS_DIR_CANONICAL` - Plans directory derived from same root
 3. `INV_PLAN_DISCOVERY_CANONICAL` - Discovery scans canonical directory only
@@ -235,6 +244,7 @@ try {
 **Statement**: No plan can be written outside the canonical plans directory.
 
 **Proof by Invariant**:
+
 1. Plan creation calls `getPlansDir()` → `INV_PLANS_DIR_CANONICAL`
 2. `getPlansDir()` enforces `INV_PATH_WITHIN_REPO`
 3. Result directory verified with `INV_PLAN_NOT_ESCAPED`
@@ -249,6 +259,7 @@ try {
 **Statement**: No write can occur without a valid, approved, existing plan.
 
 **Proof by Invariant**:
+
 1. `write_file()` calls `enforcePlan()`
 2. `enforcePlan()` enforces `INV_WRITE_AUTHORIZED_PLAN`
 3. `enforcePlan()` enforces `INV_PLAN_EXISTS`
@@ -264,6 +275,7 @@ try {
 **Statement**: No write target can escape the repository root via path traversal.
 
 **Proof by Invariant**:
+
 1. `resolveWriteTarget()` checks `INV_PATH_WITHIN_REPO`
 2. Check explicitly rejects ".." in paths
 3. Normalized path verified to start with repo root
@@ -278,6 +290,7 @@ try {
 **Statement**: Any invalid state is detected and reported immediately.
 
 **Proof by Invariant**:
+
 1. All critical operations guarded by explicit assertions
 2. `InvariantViolationError` cannot be silently caught
 3. Error includes code and message for traceability
@@ -292,6 +305,7 @@ try {
 ### Path Resolver Test Suite (`test-path-resolver.js`)
 
 Verifies all path invariants:
+
 - 20 test cases
 - 100% pass rate
 - Tests single initialization, path containment, traversal rejection
@@ -318,12 +332,14 @@ Verifies all path invariants:
 ### For Tool Authors
 
 **Before:**
+
 ```javascript
 import { WORKSPACE_ROOT } from "../server.js";
 const filePath = path.join(WORKSPACE_ROOT, userInput);
 ```
 
 **After:**
+
 ```javascript
 import { resolveWriteTarget } from "../core/path-resolver.js";
 const filePath = resolveWriteTarget(userInput); // Invariants checked
@@ -332,11 +348,13 @@ const filePath = resolveWriteTarget(userInput); // Invariants checked
 ### For Core Modules
 
 **Before:**
+
 ```javascript
 const plans = fs.readdirSync(path.join(repoRoot, "docs/plans"));
 ```
 
 **After:**
+
 ```javascript
 import { getPlansDir } from "../core/path-resolver.js";
 const plansDir = getPlansDir(); // INV_PLANS_DIR_CANONICAL enforced
@@ -346,12 +364,14 @@ const plans = fs.readdirSync(plansDir);
 ### For Plan Operations
 
 **Before:**
+
 ```javascript
 const planFile = path.join(someDir, `${planId}.md`);
 if (fs.existsSync(planFile)) { /* use it */ }
 ```
 
 **After:**
+
 ```javascript
 import { resolvePlanPath } from "../core/path-resolver.js";
 const planFile = resolvePlanPath(planId); // INV_PLAN_EXISTS enforced
@@ -363,6 +383,7 @@ const planFile = resolvePlanPath(planId); // INV_PLAN_EXISTS enforced
 ## Performance Impact
 
 All invariants are **O(1)** operations:
+
 - Single variable dereference
 - String comparison
 - Filesystem checks (already performed by normal operations)

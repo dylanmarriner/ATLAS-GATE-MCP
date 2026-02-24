@@ -11,7 +11,9 @@ The planning prompt template (`docs/templates/antigravity_planning_prompt_v2.md`
 ## Key Updates in the Planning Prompt
 
 ### 1. Header Format
+
 **Old**:
+
 ```
 <!--
 ATLAS-GATE_PLAN_HASH: [placeholder - linter will compute]
@@ -22,6 +24,7 @@ STATUS: APPROVED
 ```
 
 **New**:
+
 ```
 <!--
 ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
@@ -31,14 +34,18 @@ STATUS: APPROVED
 ```
 
 ### 2. Linting Stage 7 (Cosign Signing)
+
 The prompt now correctly documents:
+
 - **Format**: URL-safe base64 (43 characters)
 - **Key Storage**: `.atlas-gate/.cosign-keys/private.pem`
 - **Return Format**: URL-safe signature, no `/`, `+`, or `=` characters
 - **Filename**: Plans use signature as filename: `docs/plans/<signature>.md`
 
 ### 3. Signature Computation Section
+
 Updated to explain:
+
 - Strips HTML comment header (lines 1-5)
 - Strips existing `ATLAS-GATE_PLAN_SIGNATURE: ...` line (not footer)
 - Canonicalizes by removing comments (not just trimming lines)
@@ -46,13 +53,16 @@ Updated to explain:
 - Returns URL-safe base64 (43 chars, exact example: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`)
 
 ### 4. Save Location Section
+
 **Why signature-based addressing**:
+
 - Plans are looked up by their `ATLAS-GATE_PLAN_SIGNATURE` value
 - Signature is cryptographically unique per plan content
 - If plan is modified, signature verification fails and execution stops
 - Prevents undetected tampering or version confusion
 
 ### 5. Workflow (Updated to 9 Steps)
+
 ```
 1. Receive operator input (Objective, Target Files, Plan ID, Constraints)
 2. Analyze target files and current code
@@ -72,7 +82,9 @@ Updated to explain:
 ```
 
 ### 6. Plan Signature to Filename Mapping
+
 Detailed explanation of how WINDSURF:
+
 1. Receives plan signature from operator
 2. Looks for file: `docs/plans/<signature>.md`
 3. Loads plan and canonicalizes content
@@ -81,7 +93,9 @@ Detailed explanation of how WINDSURF:
 6. If signature valid: Proceeds with plan execution
 
 ### 7. Signature Properties
+
 Documents that signatures:
+
 - Are 43 characters long (URL-safe base64)
 - Contain no `/`, `+`, or `=` characters (safe for filenames)
 - Use ECDSA P-256 cryptography
@@ -91,6 +105,7 @@ Documents that signatures:
 ## Complete Plan Example
 
 The complete plan example in the prompt now uses:
+
 ```
 <!--
 ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
@@ -100,6 +115,7 @@ STATUS: APPROVED
 ```
 
 Instead of:
+
 ```
 <!--
 ATLAS-GATE_PLAN_HASH: placeholder
@@ -134,6 +150,7 @@ When you use this prompt to generate a plan, ANTIGRAVITY will:
 8. Describe plan in binary language (MUST, MUST NOT)
 
 Then when the plan is linted:
+
 1. All 7 validation stages run
 2. Plan is signed with cosign (ECDSA P-256)
 3. Signature is returned (43 chars, URL-safe base64)
@@ -141,6 +158,7 @@ Then when the plan is linted:
 5. Plan now includes `ATLAS-GATE_PLAN_SIGNATURE: <signature>` in header
 
 WINDSURF can then:
+
 1. Load the plan by signature
 2. Verify the cosign signature using public key
 3. Execute the approved plan
@@ -148,6 +166,7 @@ WINDSURF can then:
 ## Testing
 
 The planning prompt has been verified to:
+
 - ✅ Match actual MCP implementation
 - ✅ Explain signature-based addressing correctly
 - ✅ Document all 7 linting stages accurately
@@ -163,6 +182,7 @@ The planning prompt has been verified to:
 - `docs/templates/PLAN_EXAMPLE_JWT_AUTH.md` - JWT auth example with new header
 
 All templates are now consistent in their use of:
+
 - `ATLAS-GATE_PLAN_SIGNATURE` (not HASH)
 - URL-safe base64 signatures (not hex hashes)
 - Filename-based plan addressing by signature

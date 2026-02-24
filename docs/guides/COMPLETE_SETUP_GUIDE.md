@@ -108,6 +108,7 @@ npm list
 ```
 
 **Expected output:**
+
 ```
 mcp-server@1.0.0
 ├── @modelcontextprotocol/sdk@1.25.1
@@ -248,36 +249,42 @@ node server.js
 ATLAS-GATE MCP exposes 6 main tools that work together:
 
 ### Tool 1: `bootstrap_create_foundation_plan`
+
 **Purpose**: Create the very first governance plan in a fresh repository  
 **When to Use**: Once per repository, during initial setup  
 **Security**: Requires cryptographic signature and secret  
 **Returns**: Plan ID and file path  
 
 ### Tool 2: `read_prompt`
+
 **Purpose**: Read the canonical governance prompt (required before writes)  
 **When to Use**: Before any write operations  
 **Security**: Enforces plan-aware LLM context  
 **Returns**: The governance prompt text  
 
 ### Tool 3: `list_plans`
+
 **Purpose**: Discover all approved governance plans in the repository  
 **When to Use**: To find available plans before using write_file  
 **Security**: Only lists APPROVED plans  
 **Returns**: List of plan names and count  
 
 ### Tool 4: `read_file`
+
 **Purpose**: Read files from the repository (read-only access)  
 **When to Use**: To examine code before modifying  
 **Security**: Path traversal prevention  
 **Returns**: File contents  
 
 ### Tool 5: `read_audit_log`
+
 **Purpose**: View the immutable audit trail of all operations  
 **When to Use**: To verify what operations were performed  
 **Security**: Hash-chained integrity protection  
 **Returns**: JSON audit log entries  
 
 ### Tool 6: `write_file`
+
 **Purpose**: Write or modify files with full enforcement (THE MAIN TOOL)  
 **When to Use**: To make code changes  
 **Security**: Plan enforcement, stub detection, audit logging  
@@ -291,12 +298,14 @@ ATLAS-GATE MCP exposes 6 main tools that work together:
 
 **What it does**: Creates the first governance plan for your repository.
 
-**When to use**: 
+**When to use**:
+
 - Only on the very first setup
 - Only once per repository
 - After this, use `write_file` to create additional plans
 
 **Prerequisites**:
+
 - ATLAS-GATE_BOOTSTRAP_SECRET environment variable set
 - Fresh repository (no existing plans)
 
@@ -332,11 +341,13 @@ Expected Response:
 ```
 
 **Result**:
+
 - Creates `docs/plans/FOUNDATION-{uuid}.md`
 - Disables bootstrap mode (prevents further plan creation via bootstrap)
 - Makes the plan immediately available for use
 
 **After Bootstrap**:
+
 ```bash
 # Check that plan was created
 ls -la docs/plans/
@@ -351,7 +362,8 @@ ls -la docs/plans/
 
 **What it does**: Reads the canonical governance prompt that guides LLM behavior.
 
-**When to use**: 
+**When to use**:
+
 - BEFORE any write operations (enforced)
 - To understand governance requirements
 - To ensure you're operating within the correct context
@@ -365,6 +377,7 @@ ls -la docs/plans/
 ```
 
 **Valid names**:
+
 - `ANTIGRAVITY_CANONICAL` - Planning agent prompt
 - `WINDSURF_CANONICAL` - Execution agent prompt
 
@@ -383,11 +396,13 @@ You must respect the plan.
 ```
 
 **Why it matters**:
+
 - Sets the governance context for all subsequent operations
 - Enables the write_file tool (without this, writes are blocked)
 - Must be called before any modifications can be made
 
 **After Reading**:
+
 ```bash
 # The system now knows you've read the governance requirements
 # write_file tool is now available
@@ -400,6 +415,7 @@ You must respect the plan.
 **What it does**: Shows all approved plans available in the repository.
 
 **When to use**:
+
 - To see what plans are available
 - To find plan names for use with write_file
 - To verify a plan was created successfully
@@ -431,12 +447,14 @@ Expected Response:
 ```
 
 **What each field means**:
+
 - `repoRoot`: The repository root directory
 - `plansDir`: Where plans are stored
 - `count`: Number of approved plans
 - `plans`: List of plan names (use these with write_file)
 
 **After Listing**:
+
 ```bash
 # Pick a plan from the list to use with write_file
 # Example: "FOUNDATION-a1b2c3d4-e5f6-7890"
@@ -449,6 +467,7 @@ Expected Response:
 **What it does**: Reads file contents from the repository.
 
 **When to use**:
+
 - To examine code before modifying
 - To understand the current state
 - To check dependencies
@@ -462,6 +481,7 @@ Expected Response:
 ```
 
 **Valid paths**:
+
 - `src/index.js` - Relative path
 - `docs/README.md` - Any file in repo
 - `/absolute/path/file.js` - Absolute paths also work
@@ -497,6 +517,7 @@ Error: INVALID_PATH: Path is outside repository root
 ```
 
 **After Reading**:
+
 ```bash
 # You now have the file contents
 # Use this information to plan your modifications
@@ -510,6 +531,7 @@ Error: INVALID_PATH: Path is outside repository root
 **What it does**: Shows the immutable record of all operations performed.
 
 **When to use**:
+
 - To verify what was written
 - To audit changes
 - To understand the operation history
@@ -543,6 +565,7 @@ Expected Response:
 ```
 
 **Log Entry Fields**:
+
 - `timestamp`: When the operation occurred (ISO 8601)
 - `sessionId`: Which MCP session performed it
 - `path`: What file was modified (relative to repo)
@@ -552,6 +575,7 @@ Expected Response:
 - `hash`: Hash of this entry (for integrity)
 
 **Hash Chain Verification**:
+
 ```
 Entry 1: prevHash="GENESIS", hash="abc123"
 Entry 2: prevHash="abc123", hash="def456"
@@ -561,6 +585,7 @@ If anyone modifies an entry, the hash chain breaks and it's detected!
 ```
 
 **After Reading**:
+
 ```bash
 # You can verify:
 # - What files were modified
@@ -576,12 +601,14 @@ If anyone modifies an entry, the hash chain breaks and it's detected!
 **What it does**: Writes or modifies files with full enforcement (validation, auditing, stub detection).
 
 **When to use**:
+
 - To create new files
 - To modify existing files
 - To apply patches
 - To generate code
 
 **Prerequisites** (CRITICAL):
+
 1. ✅ Call `read_prompt` first (enables write gate)
 2. ✅ Have an APPROVED plan (get from `list_plans`)
 3. ✅ Content must pass quality checks (no TODOs, mocks, stubs)
@@ -607,11 +634,13 @@ If anyone modifies an entry, the hash chain breaks and it's detected!
 ```
 
 **Required Fields**:
+
 - `path` - File location (relative to repo root)
 - `content` OR `patch` - Either full content or a unified diff
 - `plan` - Plan name that authorizes this write
 
 **Optional Fields** (enhance documentation):
+
 - `role` - EXECUTABLE, BOUNDARY, INFRASTRUCTURE, VERIFICATION
 - `purpose` - What this file does
 - `usedBy` - Where this is used
@@ -709,21 +738,25 @@ Expected Response:
 **Validation Gates** (What will BLOCK writes):
 
 1. ❌ No PROMPT_GATE satisfied
+
    ```
    Error: PROMPT_GATE_LOCKED: You must call read_prompt first
    ```
 
 2. ❌ Plan doesn't exist
+
    ```
    Error: PLAN_NOT_FOUND: Plan not found: invalid-plan-name
    ```
 
 3. ❌ Plan not approved
+
    ```
    Error: PLAN_NOT_APPROVED: Plan is not approved
    ```
 
 4. ❌ Stub code detected
+
    ```
    Error: HARD_BLOCK_VIOLATION: Detected TODO in code
    Error: HARD_BLOCK_VIOLATION: Empty function body
@@ -731,22 +764,26 @@ Expected Response:
    ```
 
 5. ❌ Mock data detected
+
    ```
    Error: HARD_BLOCK_VIOLATION: mockUserData variable found
    Error: HARD_BLOCK_VIOLATION: fakeResponse variable found
    ```
 
 6. ❌ Path outside repo
+
    ```
    Error: INV_PATH_WITHIN_REPO: Path is outside repository root
    ```
 
 7. ❌ Path traversal attempted
+
    ```
    Error: INV_PATH_WITHIN_REPO: Path traversal (..) not permitted
    ```
 
 **After Successful Write**:
+
 - File is created/modified on disk
 - Audit log entry is created (hash-chained)
 - Preflight tests pass (code doesn't break build)
@@ -761,6 +798,7 @@ Expected Response:
 **Goal**: Set up a new repository with ATLAS-GATE governance
 
 **Step 1: Bootstrap**
+
 ```
 User: "Create the initial governance plan for this repository. 
        Allow modifications to src/, docs/, and config files."
@@ -770,6 +808,7 @@ Result: Plan created and approved
 ```
 
 **Step 2: Read Governance**
+
 ```
 User: "Show me the governance requirements I need to follow."
 
@@ -778,6 +817,7 @@ Result: Governance prompt displayed
 ```
 
 **Step 3: Verify Plan**
+
 ```
 User: "List all available plans."
 
@@ -786,6 +826,7 @@ Result: FOUNDATION-xxxxx displayed
 ```
 
 **Step 4: Create Initial Code**
+
 ```
 User: "Create src/main.js with the main application entry point."
 
@@ -804,6 +845,7 @@ Result: File created, audit logged
 **Goal**: Review and improve existing code
 
 **Step 1: Read Current Code**
+
 ```
 User: "Show me the contents of src/handler.js"
 
@@ -812,6 +854,7 @@ Result: File contents displayed
 ```
 
 **Step 2: Understand**
+
 ```
 User: "This code is missing error handling. 
        Let me review the governance requirements first."
@@ -821,6 +864,7 @@ Result: Governance prompt confirmed
 ```
 
 **Step 3: Modify**
+
 ```
 User: "Now update src/handler.js to add proper error handling.
        The code should be production-ready with no TODOs."
@@ -834,6 +878,7 @@ Result: File updated, audit logged
 ```
 
 **Step 4: Verify**
+
 ```
 User: "Show me the audit log to confirm the change was recorded."
 
@@ -850,6 +895,7 @@ Result: Two entries shown:
 **Goal**: Create a complete feature with multiple files
 
 **Step 1: Plan**
+
 ```
 User: "I'm implementing user authentication. 
        Before starting, show me the current structure."
@@ -860,6 +906,7 @@ Result: Current structure shown, plan listed
 ```
 
 **Step 2: Create Files Sequentially**
+
 ```
 User: "Create src/auth/middleware.js - authentication middleware"
 Agent calls: write_file
@@ -875,6 +922,7 @@ Result: File 3 created
 ```
 
 **Step 3: Verify**
+
 ```
 User: "Show me all the changes we've made."
 
@@ -889,6 +937,7 @@ Result: All 3 files listed in audit trail
 **Goal**: Fix a bug with minimal code changes
 
 **Step 1: Identify Issue**
+
 ```
 User: "Read src/validator.js and check for bugs"
 
@@ -897,6 +946,7 @@ Result: Code displayed (bug identified)
 ```
 
 **Step 2: Plan Fix**
+
 ```
 User: "I need to fix the validation logic. 
        This is a critical bug that must be fixed correctly."
@@ -906,6 +956,7 @@ Result: Governance confirmed
 ```
 
 **Step 3: Apply Minimal Patch**
+
 ```
 User: "Apply this patch to fix the validation bug:"
 
@@ -918,6 +969,7 @@ Result: Minimal change applied, audit logged
 ```
 
 **Step 4: Confirm**
+
 ```
 User: "Verify the audit shows this exact change."
 
@@ -934,6 +986,7 @@ Result: Exact change shown in hash-chained log
 **Problem**: Getting "You must call read_prompt first" error
 
 **Solution**:
+
 ```
 User: "Before we make any changes, I need to read the 
        governance prompt to understand the requirements."
@@ -942,7 +995,8 @@ Agent should call: read_prompt
 Then: write_file will work
 ```
 
-**Why this happens**: 
+**Why this happens**:
+
 - Security feature to ensure LLM understands governance
 - Must read prompt before making any modifications
 
@@ -953,6 +1007,7 @@ Then: write_file will work
 **Problem**: Getting "Plan not found" error
 
 **Solution**:
+
 ```
 User: "Show me what plans are available."
 
@@ -964,6 +1019,7 @@ Agent calls: write_file with correct plan name
 ```
 
 **Why this happens**:
+
 - Typo in plan name
 - Plan hasn't been created yet
 - Using old plan name that changed
@@ -975,6 +1031,7 @@ Agent calls: write_file with correct plan name
 **Problem**: Getting "Plan status is not APPROVED" error
 
 **Solution**:
+
 ```
 User: "Create a new plan with APPROVED status."
 
@@ -986,6 +1043,7 @@ Agent calls: write_file
 ```
 
 **Why this happens**:
+
 - Plan was created but not approved
 - Only APPROVED plans can authorize writes
 
@@ -996,6 +1054,7 @@ Agent calls: write_file
 **Problem**: Code with TODO comments is rejected
 
 **Solution**:
+
 ```
 User: "The code I'm writing has a TODO comment, 
        but I want to implement it completely."
@@ -1017,6 +1076,7 @@ function process(data) {
 ```
 
 **Why this happens**:
+
 - Quality enforcement: incomplete code can't ship
 - TODOs indicate unfinished work
 - All code must be production-ready
@@ -1028,6 +1088,7 @@ function process(data) {
 **Problem**: Empty functions are rejected
 
 **Solution**:
+
 ```
 User: "Create a function but I don't have the logic yet."
 
@@ -1048,6 +1109,7 @@ function process(data) {
 ```
 
 **Why this happens**:
+
 - Empty functions are stubs/placeholders
 - Production code must be complete
 
@@ -1058,6 +1120,7 @@ function process(data) {
 **Problem**: Functions returning null are rejected
 
 **Solution**:
+
 ```
 User: "I need a function that returns null for missing data."
 
@@ -1081,6 +1144,7 @@ function getData() {
 ```
 
 **Why this happens**:
+
 - Null returns cause downstream errors
 - Forces explicit error handling
 - Better code reliability
@@ -1092,6 +1156,7 @@ function getData() {
 **Problem**: Mock/test data variable names are rejected
 
 **Solution**:
+
 ```
 User: "I need to create test data for validation."
 
@@ -1111,6 +1176,7 @@ const items = [1, 2, 3];
 ```
 
 **Why this happens**:
+
 - Mock data in production code indicates incomplete implementation
 - Forces use of real implementations
 
@@ -1121,6 +1187,7 @@ const items = [1, 2, 3];
 **Problem**: Getting path traversal error
 
 **Solution**:
+
 ```
 User: "Write to src/../config.json"
 
@@ -1132,6 +1199,7 @@ RIGHT: config.json
 ```
 
 **Why this happens**:
+
 - Security protection against directory escape
 - Keeps all writes within repository
 
@@ -1142,6 +1210,7 @@ RIGHT: config.json
 **Problem**: File doesn't exist
 
 **Solution**:
+
 ```
 User: "Read src/utils.js"
 Agent calls: read_file
@@ -1154,6 +1223,7 @@ OR look at file structure first
 ```
 
 **Why this happens**:
+
 - File name typo
 - File location is different
 - File hasn't been created yet
@@ -1193,6 +1263,7 @@ node server.js 2>&1
 **Problem**: Hash chain broken in audit log
 
 **Solution**:
+
 ```bash
 # Check audit log
 cat audit-log.jsonl
@@ -1205,6 +1276,7 @@ cat audit-log.jsonl
 ```
 
 **Prevention**:
+
 - Never edit audit-log.jsonl manually
 - Only use the server to make changes
 - The hash chain will be maintained automatically
@@ -1455,4 +1527,3 @@ node server.js
 ```
 
 **You're ready to go! 🚀**
-

@@ -20,15 +20,18 @@
 # Scope & Constraints
 
 Affected Files:
+
 - [NEW] `src/feature.js`: Core implementation module
 - [MODIFY] `tests/feature.test.js`: Feature test suite
 
 Out of Scope:
+
 - Database schema changes
 - API contract changes
 - Environment variable additions
 
 Constraints:
+
 - All changes MUST be tested before execution
 - No breaking changes to existing APIs
 - Changes MUST maintain full auditability
@@ -64,18 +67,21 @@ Failure stop conditions: Any test fails, Syntax errors detected, Feature handler
 # Verification Gates
 
 Verification Gate 1: Code Syntax Validation
+
 - Trigger: After file creation
 - Check: node -c src/feature.js
 - Required: MUST pass without errors
 - Failure action: REJECT and ROLLBACK
 
 Verification Gate 2: Unit Test Execution
+
 - Trigger: After implementation complete
 - Check: npm test tests/feature.test.js
 - Required: MUST pass without errors
 - Failure action: REJECT and ROLLBACK
 
 Verification Gate 3: Integrity Verification
+
 - Trigger: Before approval
 - Check: Workspace integrity verification
 - Required: MUST report no conflicts
@@ -84,6 +90,7 @@ Verification Gate 3: Integrity Verification
 # Forbidden Actions
 
 Actions STRICTLY PROHIBITED during plan execution:
+
 - MUST NOT execute arbitrary shell commands
 - MUST NOT modify files outside Path Allowlist
 - MUST NOT create symlinks or hard links
@@ -96,18 +103,21 @@ Actions STRICTLY PROHIBITED during plan execution:
 # Rollback / Failure Policy
 
 Automatic Rollback Triggers:
+
 1. Any verification gate fails
 2. Syntax error detected in code
 3. Test failure occurs
 4. Workspace integrity violation
 
 Rollback Procedure:
+
 1. Delete `src/feature.js`
 2. Revert `tests/feature.test.js` using `git checkout tests/feature.test.js`
 3. Verify workspace matches pre-execution state
 4. Generate rollback audit log entry
 
 Recovery Steps:
+
 1. Review failure logs
 2. Identify root cause
 3. Modify implementation
@@ -143,6 +153,7 @@ describe('Feature Handler', () => {
 ## Plan Processing
 
 **Linting Stages** (executed automatically):
+
 1. ✓ Structure Validation
 2. ✓ Phase Validation  
 3. ✓ Path Validation

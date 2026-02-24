@@ -15,6 +15,7 @@ STATUS: APPROVED
 ```
 
 **NOT**:
+
 ```
 <!--
 ATLAS-GATE_PLAN_HASH: [hash]
@@ -92,11 +93,13 @@ Auto-generated on first run if missing.
 **MUST be**: `UPPERCASE_WITH_UNDERSCORES`
 
 **Valid**:
+
 - `PHASE_IMPLEMENTATION`
 - `PHASE_TESTING`
 - `PHASE_1_DEPLOYMENT`
 
 **Invalid**:
+
 - `Phase Implementation` (spaces)
 - `phase-implementation` (lowercase, hyphens)
 - `PhaseImplementation` (mixed case)
@@ -106,12 +109,14 @@ Auto-generated on first run if missing.
 ## Constraints Language
 
 **MUST use** binary language:
+
 - `MUST ...` ✓
 - `MUST NOT ...` ✓
 - `SHALL ...` ✓
 - `SHALL NOT ...` ✓
 
 **AVOID** ambiguous language:
+
 - `may`, `should`, `might` ✗
 - `optional`, `if possible` ✗
 - `try to`, `attempt to` ✗
@@ -121,6 +126,7 @@ Auto-generated on first run if missing.
 ## Forbidden Patterns in Plans
 
 **Never include**:
+
 - `TODO`, `FIXME`, `XXX`, `HACK` (stub markers)
 - `stub`, `mock`, `placeholder` (incomplete code)
 - Code symbols in objectives: backticks, `${}`, `<>`

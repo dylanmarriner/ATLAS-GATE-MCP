@@ -1,4 +1,5 @@
 # ATLAS-GATE MCP Server: Canonical Path Resolution & Invariant Enforcement
+
 ## Executive Summary & Complete Implementation Report
 
 ---
@@ -195,12 +196,14 @@ core/plan-registry.js
 **Statement**: Same repo → same plans found every time
 
 **Why It's True**:
+
 1. `getPlansDir()` returns single cached path
 2. Plans stored in that single directory
 3. Discovery always scans same location
 4. No fallback paths checked
 
 **Implementation**:
+
 ```javascript
 // All plan operations use this one function
 const plansDir = getPlansDir(); // INV_PLANS_DIR_CANONICAL enforced
@@ -214,12 +217,14 @@ const plansDir = getPlansDir(); // INV_PLANS_DIR_CANONICAL enforced
 **Statement**: No write can escape repository bounds
 
 **Why It's True**:
+
 1. Write calls `resolveWriteTarget(userPath)`
 2. This function checks: `path.startsWith(repoRoot)`
 3. If check fails: `InvariantViolationError` thrown
 4. No fallback, no degradation, no silence
 
 **Implementation**:
+
 ```javascript
 // Every write path goes through this
 const absPath = resolveWriteTarget(filePath); 
@@ -234,12 +239,14 @@ const absPath = resolveWriteTarget(filePath);
 **Statement**: No write without valid, approved, existing plan
 
 **Why It's True**:
+
 1. `write_file()` calls `enforcePlan()`
 2. `enforcePlan()` checks plan exists
 3. `enforcePlan()` checks plan approved
 4. All checks throw on failure
 
 **Implementation**:
+
 ```javascript
 // Before any write
 const plan = enforcePlan(planId);
@@ -256,12 +263,14 @@ const plan = enforcePlan(planId);
 **Statement**: Invalid state → explicit error always
 
 **Why It's True**:
+
 1. All operations guarded by invariants
 2. Invariants throw on violation
 3. Errors include code + message + stack
 4. No catch handler at app level
 
 **Implementation**:
+
 ```javascript
 // Invariants prevent all silent failures
 invariant(condition, "INV_CODE", "Message");
@@ -341,6 +350,7 @@ invariant(condition, "INV_CODE", "Message");
 ### Plan Discovery
 
 **Before**:
+
 ```javascript
 // Fragile: multiple locations, unclear priority
 const plansDir = 
@@ -354,6 +364,7 @@ const plansDir =
 ```
 
 **After**:
+
 ```javascript
 // Deterministic: single source of truth
 const plansDir = getPlansDir();  
@@ -366,6 +377,7 @@ const plansDir = getPlansDir();
 ### Write Target Resolution
 
 **Before**:
+
 ```javascript
 // Could escape repo, no verification
 let abs;
@@ -377,6 +389,7 @@ if (path.isAbsolute(filePath)) {
 ```
 
 **After**:
+
 ```javascript
 // Verified to stay within bounds
 const abs = resolveWriteTarget(filePath);
@@ -389,6 +402,7 @@ const abs = resolveWriteTarget(filePath);
 ### Plan Enforcement
 
 **Before**:
+
 ```javascript
 // Could silently accept invalid plans
 if (!fs.existsSync(planFile)) {
@@ -405,6 +419,7 @@ if (requiredPlanHash && currentHash !== requiredPlanHash) {
 ```
 
 **After**:
+
 ```javascript
 // Explicit, unrecoverable, traceable
 invariantTrue(
@@ -547,6 +562,7 @@ invariant(
 ### For Operations
 
 All paths are now:
+
 - ✅ **Absolute** - No relative paths, no context dependency
 - ✅ **Normalized** - Consistent separators, no redundancy
 - ✅ **Verified** - No escapes, no traversal attacks
@@ -572,6 +588,7 @@ The ATLAS-GATE MCP Server is now **provably correct by construction**.
 > **"If a plan exists and is approved, the write tool will always find it—guaranteed by the system itself."**
 
 This guarantee is no longer based on hope or manual review. It's **enforced by code** through:
+
 - Single canonical path resolver
 - 40+ structural invariants
 - 100% test coverage

@@ -14,8 +14,10 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 ## Updated Files
 
 ### 1. **antigravity_planning_prompt_v2.md** (PRIMARY PLANNING GUIDE)
+
 **Purpose**: Instructions for ANTIGRAVITY to generate plans that pass governance  
 **Updates**:
+
 - Header format: `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE`
 - Removed separate HASH and SIGNATURE fields
 - Stage 7 now explains URL-safe base64 cosign signing
@@ -28,8 +30,10 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 **Critical**: This is the prompt that ANTIGRAVITY agents follow when generating plans.
 
 ### 2. **LINTING_AND_SIGNING_GUIDE.md** (TECHNICAL LINTING REFERENCE)
+
 **Purpose**: Deep-dive into the 7-stage linting process  
 **Updates**:
+
 - Stage 7: Updated signature format and filename usage
 - Verification section: How WINDSURF loads, canonicalizes, and verifies plans
 - Common failures: Updated signature verification troubleshooting
@@ -39,8 +43,10 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 **Critical**: Reference for understanding how plans pass governance.
 
 ### 3. **plan_scaffold.md** (PLAN TEMPLATE)
+
 **Purpose**: Minimal copy-paste starting point for new plans  
 **Updates**:
+
 - Header: `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE`
 - Removed PLAN_HASH field
 - Rollback policy: References signature verification
@@ -49,8 +55,10 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 **Critical**: Used by ANTIGRAVITY as starting template for all plans.
 
 ### 4. **README.md** (COMPREHENSIVE REFERENCE)
+
 **Purpose**: Complete guide to plan structure, linting, and workflow  
 **Updates**:
+
 - Plan Structure: New header format
 - Signature Validation section (was Hash Validation)
 - Cosign Signing: Key storage location, URL-safe format
@@ -62,8 +70,10 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 **Critical**: Main reference document for templates directory.
 
 ### 5. **antigravity_output_plan_example.md** (OUTPUT EXAMPLE)
+
 **Purpose**: Show what a completed, linted plan looks like  
 **Updates**:
+
 - Replaced SHA256_HASH footer with Plan Processing section
 - Listed all 7 linting stages
 - Example signature: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
@@ -73,23 +83,28 @@ All ATLAS-GATE MCP template documentation has been updated to reflect the **SHA2
 **Critical**: Demonstrates final output quality for plan creators.
 
 ### 6. **PLAN_EXAMPLE_JWT_AUTH.md** (REAL PLAN EXAMPLE)
+
 **Purpose**: Complete, real-world example plan with JWT authentication  
 **Updates**:
+
 - Header: `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE`
 - Removed separate PLAN_HASH field
 
 **Critical**: Reference for writing production plans.
 
 ### 7. **windsurf_execution_prompt_v2.md** (NOT MODIFIED)
+
 **Status**: No changes needed  
 **Reason**: Execution side is already designed for signature-based verification
 **Note**: May be updated in future for consistency
 
 ### 8. **antigravity_planning_prompt_template.md** (LEGACY)
+
 **Status**: Kept for historical reference  
 **Note**: v2 is the current active template
 
 ### 9. **windsurf_implementation_prompt_template.md** (LEGACY)
+
 **Status**: Kept for historical reference  
 **Note**: v2 is the current active template
 
@@ -132,6 +147,7 @@ All updated templates now consistently document:
 ### For ANTIGRAVITY Planning Agents
 
 **Use these templates in order**:
+
 1. Read: `docs/templates/antigravity_planning_prompt_v2.md`
 2. Reference: `docs/templates/PLAN_EXAMPLE_JWT_AUTH.md`
 3. Copy: `docs/templates/plan_scaffold.md`
@@ -139,6 +155,7 @@ All updated templates now consistently document:
 5. Generate: Plan with `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE`
 
 **Expected Workflow**:
+
 ```
 Write Plan → Lint Plan → Get Signature → Save to docs/plans/<sig>.md → Deliver
 ```
@@ -146,12 +163,14 @@ Write Plan → Lint Plan → Get Signature → Save to docs/plans/<sig>.md → D
 ### For WINDSURF Execution Agents
 
 **Use these templates**:
+
 1. Read: `docs/templates/windsurf_execution_prompt_v2.md`
 2. Understand: `docs/templates/LINTING_AND_SIGNING_GUIDE.md`
 3. Verify: Plan signature before execution
 4. Execute: Approved plans
 
 **Expected Workflow**:
+
 ```
 Receive Signature → Load Plan → Verify Signature → Execute → Audit
 ```
@@ -159,6 +178,7 @@ Receive Signature → Load Plan → Verify Signature → Execute → Audit
 ### For System Operators
 
 **Reference these**:
+
 1. `docs/templates/README.md` - Comprehensive overview
 2. `docs/templates/LINTING_AND_SIGNING_GUIDE.md` - Technical details
 3. Template files in `docs/templates/` - Exact requirements
@@ -170,6 +190,7 @@ Receive Signature → Load Plan → Verify Signature → Execute → Audit
 All templates have been validated against:
 
 ✅ **Actual Implementation**
+
 - `core/plan-linter.js` - 7-stage linting with cosign signing
 - `core/cosign-hash-provider.js` - ECDSA P-256 signature generation
 - `core/governance.js` - Plan governance and bootstrap
@@ -177,11 +198,13 @@ All templates have been validated against:
 - `tests/system/test-bootstrap.js` - Passing bootstrap test
 
 ✅ **System Tests**
+
 - `npm test` - AST policy enforcement verified
 - `npm run verify` - Full verification suite passes
 - Bootstrap test - Plans created, signed, and stored correctly
 
 ✅ **Documentation Consistency**
+
 - All 6 updated template files consistent
 - No conflicting information
 - Examples match actual system behavior
@@ -192,26 +215,34 @@ All templates have been validated against:
 ## Key Features Now Documented
 
 ### 1. Signature-Based Plan Addressing
+
 Plans are now identified by their cosign signatures, not hashes:
+
 - Signature = filename = unique identity
 - Cryptographically secure
 - Tampering is immediately detected
 
 ### 2. URL-Safe Base64 Encoding
+
 Signatures are safe for use as filenames:
+
 - No path separators (`/`)
 - No special characters (no `+`, `=`)
 - 43 characters (fits in filesystem)
 
 ### 3. Automatic Key Generation
+
 EC P-256 keys auto-generated on first run:
+
 - Stored in `.atlas-gate/.cosign-keys/`
 - Private key for signing
 - Public key for verification
 - Survives execution restarts
 
 ### 4. Complete 7-Stage Linting
+
 Plans pass through comprehensive validation:
+
 1. Structure (sections, ordering)
 2. Phases (IDs, required fields)
 3. Paths (workspace-relative, no escapes)
@@ -221,7 +252,9 @@ Plans pass through comprehensive validation:
 7. Cosign Signing (cryptographic proof)
 
 ### 5. Plan Immutability
+
 Once signed:
+
 - Signature links plan content to authorization
 - Any modification invalidates signature
 - Verification failure stops execution
@@ -232,6 +265,7 @@ Once signed:
 ## Next Steps for Teams
 
 ### For AI Agents (ANTIGRAVITY/WINDSURF)
+
 - Use updated templates as system prompts
 - Follow exact 7-section plan structure
 - Use correct header format: `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE`
@@ -239,12 +273,14 @@ Once signed:
 - Handle signature-based verification correctly
 
 ### For System Operators
+
 - Read `docs/templates/README.md` for overview
 - Reference `LINTING_AND_SIGNING_GUIDE.md` for technical issues
 - Verify plans contain valid signatures before execution
 - Monitor cosign verification in audit logs
 
 ### For Integration
+
 - Plans are now uniquely identified by signature
 - Store plans using signature as filename
 - Verify signatures using cosign public key

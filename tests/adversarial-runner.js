@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { writeFileHandler } from "../tools/write_file.js";
 import { SESSION_STATE } from "../session.js";
-import { lockWorkspaceRoot } from "../core/path-resolver.js";
+import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
 
 // Mock SESSION_STATE to unlock prompt gate for testing if needed
 // or we can test the prompt gate itself.

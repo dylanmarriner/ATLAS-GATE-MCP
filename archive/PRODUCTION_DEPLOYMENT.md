@@ -457,6 +457,7 @@ node bin/ATLAS-GATE-HTTP.js
 ⚠️ **SINGLE-WORKSPACE-PER-INSTANCE ARCHITECTURE**
 
 Each ATLAS-GATE instance locks ONE workspace. For multiple workspaces:
+
 - Deploy separate instances, one per workspace
 - Use load balancer for health + routing
 - Share audit log storage (via network drive)
@@ -497,16 +498,19 @@ If you encounter these, disable the system immediately:
 ## Roadmap
 
 ### Near-term (1-2 quarters)
+
 - [ ] Performance optimizations for large audit logs
 - [ ] HTTP/2 server push for real-time updates
 - [ ] Role-based access control (RBAC) for multi-tenant
 
 ### Medium-term (2-4 quarters)
+
 - [ ] Distributed audit log consensus
 - [ ] Real-time plan collaboration
 - [ ] Advanced maturity scoring
 
 ### Long-term (6+ months)
+
 - [ ] Decentralized plan verification (blockchain-style)
 - [ ] Cross-workspace plan composition
 - [ ] AI-assisted plan generation

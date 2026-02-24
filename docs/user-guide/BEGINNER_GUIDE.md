@@ -34,6 +34,7 @@ By the end of this guide, you'll understand:
 ### **Prerequisites**
 
 You need:
+
 - A computer with **Node.js 18 or newer** installed
   - Check by opening terminal/command prompt and typing: `node --version`
   - If you don't have it: [Download Node.js](https://nodejs.org/)
@@ -61,6 +62,7 @@ Before diving into installation, let's understand the three main ideas:
 A "Plan" is like a purchase order. Before the AI can do important work, someone says: "Yes, we approve this work. Here's the plan."
 
 **Real example:**
+
 ```
 Plan: Update README.md
 
@@ -83,6 +85,7 @@ ATLAS-GATE-MCP knows about two different AI "roles":
 | **Antigravity** | Read Only | Planning and analysis (no changes allowed) |
 
 Think of it like:
+
 - **Windsurf**: Editor with a pen (can change things)
 - **Antigravity**: Editor with a highlighter (can only mark things, not change)
 
@@ -118,6 +121,7 @@ npm install
 ```
 
 **What's happening:**
+
 - `git clone`: Downloads the ATLAS-GATE-MCP code to your computer
 - `cd`: Changes to that directory
 - `npm install`: Downloads all the helper libraries ATLAS-GATE-MCP needs
@@ -131,6 +135,7 @@ npm test
 ```
 
 You should see something like:
+
 ```
 ✓ Tests passed
 ✓ System is ready
@@ -153,6 +158,7 @@ npm run start:antigravity
 ```
 
 You should see:
+
 ```
 ATLAS-GATE-MCP server started
 Listening on stdio
@@ -216,6 +222,7 @@ Role: Windsurf (can write)
 ```
 
 The AI will use ATLAS-GATE-MCP. It will:
+
 1. Check: "Is plan-001 approved?" → Yes
 2. Check: "Can Windsurf role do this?" → Yes
 3. Perform the operation
@@ -239,6 +246,7 @@ Open `audit-log.jsonl` in your text editor. You'll see entries like:
 ### **Task 1: Give the AI Permission to Make Changes**
 
 **What to do:**
+
 1. Create a plan document (`.md` file)
 2. Write what you want the AI to do
 3. Save it in your project
@@ -249,11 +257,13 @@ The AI will check this plan before making changes.
 ### **Task 2: Review What the AI Actually Did**
 
 **How:**
+
 1. Open `audit-log.jsonl`
 2. Search for a timestamp or filename
 3. See what happened, when, and why
 
 You can use any tool:
+
 - Text editor: Open and search (Ctrl+F)
 - Command line: `grep "filename.txt" audit-log.jsonl`
 - JSON viewer: Paste into [jsoncrack.com](https://jsoncrack.com)
@@ -263,11 +273,13 @@ You can use any tool:
 ATLAS-GATE-MCP supports two roles:
 
 **For work that modifies files:**
+
 ```bash
 npm run start:windsurf
 ```
 
 **For analysis (no file changes allowed):**
+
 ```bash
 npm run start:antigravity
 ```
@@ -290,8 +302,10 @@ If something went wrong:
 ### **Problem: "npm install" fails**
 
 **Solution:**
+
 - Make sure Node.js is version 18+: `node --version`
 - Try deleting `node_modules` folder and try again:
+
   ```bash
   rm -rf node_modules
   npm install
@@ -300,6 +314,7 @@ If something went wrong:
 ### **Problem: "npm test" fails**
 
 **Solution:**
+
 - Restart your computer
 - Make sure no other ATLAS-GATE-MCP instance is running
 - Try: `npm run verify`
@@ -307,16 +322,20 @@ If something went wrong:
 ### **Problem: Server won't start**
 
 **Solution:**
+
 - Check port 9000 isn't already in use
 - Try a different role:
+
   ```bash
   npm run start:antigravity
   ```
+
 - Check logs: errors are printed to terminal
 
 ### **Problem: AI says "unauthorized" or "not approved"**
 
 **Solution:**
+
 - Check that your plan file exists
 - Check that `.env` has correct `CURRENT_PLAN`
 - Verify plan status is "APPROVED"
@@ -325,6 +344,7 @@ If something went wrong:
 ### **Problem: Audit log is missing**
 
 **Solution:**
+
 - Check `.env` has correct `AUDIT_LOG_FILE` path
 - Make sure directory exists and is writable
 - Try: `touch audit-log.jsonl` to create the file
@@ -343,19 +363,23 @@ If something went wrong:
 Now that you understand the basics:
 
 ### **Want to Do More?**
+
 - **Configuration**: [CONFIGURATION.md](./CONFIGURATION.md) — All options explained
 - **Usage**: [USAGE_GUIDE.md](./USAGE_GUIDE.md) — Daily operations
 - **Examples**: [EXAMPLES.md](./EXAMPLES.md) — Real-world scenarios
 
 ### **Ready to Contribute?**
+
 - [Development Setup](../contributor-guide/DEVELOPMENT_SETUP.md)
 - [Contributing Guide](../contributor-guide/CONTRIBUTING.md)
 
 ### **Going to Production?**
+
 - [Deployment Guide](../enterprise-guide/DEPLOYMENT.md)
 - [Compliance Guide](../enterprise-guide/COMPLIANCE.md)
 
 ### **Something Unclear?**
+
 - **Glossary**: [GLOSSARY.md](../GLOSSARY.md)
 - **FAQ**: [FAQ.md](./FAQ.md)
 - **Troubleshooting**: [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)

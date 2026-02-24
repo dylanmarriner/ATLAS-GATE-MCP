@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { writeFileHandler } from "../../tools/write_file.js";
-import { lockWorkspaceRoot } from "../../core/path-resolver.js";
+import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
 const REPO_ROOT = process.cwd();
 try {
     lockWorkspaceRoot(REPO_ROOT);

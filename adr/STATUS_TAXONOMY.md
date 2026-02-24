@@ -28,12 +28,14 @@ Rejected
 **What it means:** This decision has been proposed but not yet formally accepted by the project leadership.
 
 **Characteristics:**
+
 - Under discussion
 - May be revised based on feedback
 - Not yet binding on the project
 - Open for stakeholder comments
 
 **When to use:**
+
 - When proposing a new architectural direction
 - When exploring alternatives
 - During design review phase
@@ -49,17 +51,20 @@ Rejected
 **What it means:** This decision has been formally approved and is now binding on the project. New code and architectural decisions should follow this ADR.
 
 **Characteristics:**
+
 - Officially decided
 - Informs future work
 - Binding on all future decisions in this domain
 - Can still be superseded if needed (with justification)
 
 **When to use:**
+
 - After leadership review and approval
 - When decision is ready to guide implementation
 - For all major decisions in active development
 
 **How decisions become Accepted:**
+
 1. ADR is written and proposed
 2. Team discussion and feedback (async or sync)
 3. Stakeholders review and approve
@@ -75,17 +80,20 @@ Rejected
 **What it means:** This decision is no longer recommended, but the implementation remains in the codebase for backward compatibility.
 
 **Characteristics:**
+
 - No longer the preferred approach
 - Old code using this pattern is still supported
 - Should not be used in new code
 - Will be removed in a future major version
 
 **When to use:**
+
 - When a better solution emerges
 - When a feature is being phased out
 - When best practices change
 
 **Migration path:**
+
 - Mark as "Deprecated" with sunset date
 - Provide migration guide to replacement pattern
 - Support for 1–2 major versions
@@ -100,23 +108,27 @@ Rejected
 **What it means:** This decision has been replaced by a newer decision. The old pattern should not be used. Old implementations may be gradually migrated.
 
 **Characteristics:**
+
 - No longer valid
 - Replaced by a better approach
 - Old code may still exist but is legacy
 - New code must use the superseding ADR
 
 **When to use:**
+
 - When a decision has been completely replaced
 - After deprecation period has ended
 - When a major architectural shift occurs
 
 **Migration path:**
+
 - Plan migration of old implementations
 - Provide timeline for full migration
 - May require multiple releases
 - Legacy code eventually removed
 
 **Related fields:**
+
 - `supersedes`: References the ADR this replaces
 - `superseded_by`: References the newer ADR (only filled in old ADR)
 
@@ -129,17 +141,20 @@ Rejected
 **What it means:** This proposal was considered but not accepted. It is included in documentation for historical reference and to avoid re-discussing the same decision.
 
 **Characteristics:**
+
 - Was proposed but not adopted
 - Included for completeness and historical context
 - Should not be used (decision was made against it)
 - Explains why we chose alternative path
 
 **When to use:**
+
 - When a significant proposal was rejected
 - To document decisions that were made against
 - To provide context for future discussions
 
 **Why keep Rejected ADRs:**
+
 - Explains past decisions
 - Prevents re-debating same topics
 - Provides history for new team members

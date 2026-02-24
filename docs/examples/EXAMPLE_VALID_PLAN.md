@@ -13,6 +13,7 @@ This plan establishes the Plan Linter system for the ATLAS-GATE MCP server. The 
 # Scope & Constraints
 
 All operations in this plan are scoped strictly to the ATLAS-GATE MCP server repository, specifically the following directories:
+
 - `core/plan-linter.js` - Core linter implementation
 - `test-plan-linter.js` - Test suite
 - `docs/reports/` - Documentation and reports
@@ -20,6 +21,7 @@ All operations in this plan are scoped strictly to the ATLAS-GATE MCP server rep
 - `core/governance.js` - Approval integration (pending next phase)
 
 Operations MUST NOT:
+
 - Modify files outside the MCP server repository
 - Execute arbitrary shell commands
 - Delete files (CREATE and MODIFY only)
@@ -31,6 +33,7 @@ Operations MUST NOT:
 # Phase Definitions
 
 ## Phase: CORE_IMPLEMENTATION
+
 Phase ID: CORE_IMPL_PHASE
 
 Objective: Implement the deterministic plan linter core module that validates plan structure, enforceability, and auditability.
@@ -50,6 +53,7 @@ Failure stop conditions: Any test failure MUST trigger immediate rollback. Any v
 ---
 
 ## Phase: DOCUMENTATION_PHASE
+
 Phase ID: DOC_PHASE
 
 Objective: Create comprehensive specification and example documentation for the plan linting system.
@@ -69,6 +73,7 @@ Failure stop conditions: Missing required sections MUST block completion
 ---
 
 ## Phase: INTEGRATION_PREPARATION
+
 Phase ID: INTEGRATION_PREP
 
 Objective: Prepare for integration of linter into approval and execution gates (deferred to next phase).
@@ -108,6 +113,7 @@ All of the following commands MUST pass before plan execution proceeds:
 - Lint result: All tests MUST PASS, zero failures
 
 Automated verification checks:
+
 - Example plans MUST pass linting
 - Invalid plans MUST be rejected by linter
 - All 14 lint tests MUST pass
@@ -133,6 +139,7 @@ The following operations are explicitly forbidden and will BLOCK execution:
 The rollback procedure for this plan is deterministic and automated:
 
 **On Test Failure**:
+
 1. Revert all file changes to previous version
 2. Restore original permissions and timestamps
 3. Document failure in audit log with error code and line number
@@ -140,12 +147,14 @@ The rollback procedure for this plan is deterministic and automated:
 5. Require explicit human review before retry
 
 **On Verification Failure**:
+
 1. Immediate rollback of all changes
 2. Run full repository verify suite to ensure no corruption
 3. Report failure to audit trail with diagnostic information
 4. Do not proceed until root cause is resolved
 
 **Recovery Procedure**:
+
 1. Fix identified errors in plan or code
 2. Increment plan version
 3. Resubmit for linting
@@ -158,6 +167,7 @@ The rollback procedure for this plan is deterministic and automated:
 This plan implements deterministic plan linting, a foundational governance system for the ATLAS-GATE MCP server.
 
 **Key Invariants Enforced**:
+
 - `PLAN_SCOPE_LAW` - Structure and path validation
 - `MECHANICAL_LAW_ONLY` - Enforceability (binary language)
 - `PUBLIC_LAW_READABLE` - Non-coder auditability

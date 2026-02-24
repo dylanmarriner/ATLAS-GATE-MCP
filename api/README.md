@@ -121,6 +121,7 @@ curl http://localhost:3000/health
 ```
 
 Response includes:
+
 - Server status
 - Version
 - Tenant count (useful for tracking growth)

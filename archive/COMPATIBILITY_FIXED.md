@@ -25,6 +25,7 @@ Result: The `pre_mcp_tool_use_atlas_gate.py` hook would **BLOCK all tool calls**
 ## What Was Fixed
 
 ### 1. Updated Policy File
+
 **File:** `/windsurf-hooker/windsurf/policy/policy.json`
 
 ```diff
@@ -39,6 +40,7 @@ Result: The `pre_mcp_tool_use_atlas_gate.py` hook would **BLOCK all tool calls**
 Now uses bare tool names that match ATLAS-GATE MCP registration.
 
 ### 2. Updated Hook Validation
+
 **File:** `/windsurf-hooker/windsurf-hooks/pre_mcp_tool_use_atlas_gate.py`
 
 Added support for both naming conventions:
@@ -61,6 +63,7 @@ if not (is_prefixed or is_bare):
 ```
 
 Now accepts:
+
 - ✅ Bare names: `begin_session`, `write_file`, etc.
 - ✅ Prefixed names: `mcp_atlas-gate-mcp_begin_session` (legacy support)
 - ❌ Non-ATLAS-GATE tools: `read_system_config`, `execute_bash`, etc.
@@ -173,18 +176,21 @@ Both layers are **independent and non-interfering**.
 If you have the old windsurf-hooker policy deployed:
 
 1. **Update policy.json** in production:
+
    ```bash
    cp /home/linnyux/Documents/ATLAS-GATE-MCP/windsurf-hooker/windsurf/policy/policy.json \
       /etc/windsurf/policy/policy.json
    ```
 
 2. **Update the hook** (optional but recommended):
+
    ```bash
    cp /home/linnyux/Documents/ATLAS-GATE-MCP/windsurf-hooker/windsurf-hooks/pre_mcp_tool_use_atlas_gate.py \
       /usr/local/share/windsurf-hooks/
    ```
 
 3. **Test your Windsurf installation**:
+
    ```bash
    # Verify policy is loaded
    cat /etc/windsurf/policy/policy.json | jq '.mcp_tool_allowlist | .[0]'
@@ -197,6 +203,7 @@ If you have the old windsurf-hooker policy deployed:
 ### For New Deployments
 
 Use the fixed versions directly from this repository:
+
 - Policy: `/windsurf-hooker/windsurf/policy/policy.json`
 - Hook: `/windsurf-hooker/windsurf-hooks/pre_mcp_tool_use_atlas_gate.py`
 
@@ -218,14 +225,17 @@ Use the fixed versions directly from this repository:
 ## Files Changed
 
 ### Modified
+
 - `/windsurf-hooker/windsurf/policy/policy.json` (tool names)
 - `/windsurf-hooker/windsurf-hooks/pre_mcp_tool_use_atlas_gate.py` (validation logic)
 
 ### Created
+
 - `/WINDSURF_COMPATIBILITY_CHECK.md` (analysis)
 - `/COMPATIBILITY_FIXED.md` (this file)
 
 ### Unchanged
+
 - ATLAS-GATE MCP tool registration (server.js)
 - All other windsurf-hooker components
 - All other ATLAS-GATE MCP components
@@ -237,6 +247,7 @@ Use the fixed versions directly from this repository:
 ### Tool Name Resolution
 
 **In Windsurf IDE Request:**
+
 ```json
 {
   "tool_info": {
@@ -246,6 +257,7 @@ Use the fixed versions directly from this repository:
 ```
 
 **Hook Processing:**
+
 1. Extract `tool_name: "begin_session"`
 2. Check policy execution profile → "standard" (not locked)
 3. Validate: Is `"begin_session".startswith("mcp_atlas-gate-mcp_")`? → **No**

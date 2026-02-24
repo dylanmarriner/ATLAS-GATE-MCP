@@ -9,9 +9,11 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 ### Core Templates (v2.0 - Production-Ready)
 
 #### 1. **antigravity_planning_prompt_v2.md**
+
 **Purpose**: Canonical prompt for ANTIGRAVITY agents to generate sealed implementation plans.
 
 **Key Features**:
+
 - Mandatory `begin_session` initialization.
 - Uses `lint_plan` for validation (returns errors/warnings — does not sign).
 - Uses `save_plan` to sign and persist plans to `docs/plans/`.
@@ -20,9 +22,11 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 ---
 
 #### 2. **windsurf_execution_prompt_v2.md**
+
 **Purpose**: Canonical prompt for WINDSURF agents to execute signed plans with full governance.
 
 **Key Features**:
+
 - Mandatory `begin_session` (no `read_prompt` — that tool does not exist).
 - Correct `write_file` schema with intent gate options.
 - Signature-based plan verification enforced by MCP server on every write.
@@ -30,9 +34,11 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 ---
 
 #### 3. **plan_scaffold.md**
+
 **Purpose**: A clean scaffold for creating new implementation plans.
 
 **Key Features**:
+
 - Guaranteed to pass `lint_plan` structure validation.
 - Includes placeholders for all 7 mandatory sections.
 - Embedded header comment for signature injection.
@@ -42,9 +48,11 @@ Complete reference guide to all template files for ANTIGRAVITY (planning) and WI
 ### Supporting Documentation
 
 #### 4. **TEMPLATE_REGISTRY.md**
+
 **Purpose**: Tracks all active templates and their verification status.
 
 #### 5. **PROMPT_TEMPLATES.md** (Docs Root)
+
 **Purpose**: General guide for setting up AI agents with the ATLAS-GATE MCP.
 
 ---

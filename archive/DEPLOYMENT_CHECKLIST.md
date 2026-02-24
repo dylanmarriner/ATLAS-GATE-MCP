@@ -3,24 +3,28 @@
 ## Phase 1: Local Testing (Day 1)
 
 ### Setup
+
 - [ ] Install Docker & Docker Compose
 - [ ] Clone repo: `git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git`
 - [ ] Navigate to directory: `cd ATLAS-GATE-MCP`
 - [ ] Read LOCAL_TESTING.md
 
 ### Verify Docker Environment
+
 - [ ] `docker --version` (≥ 20.10)
 - [ ] `docker-compose --version` (≥ 1.29)
 - [ ] Docker daemon running
 - [ ] No permission errors (user in docker group)
 
 ### Start Local Stack
+
 - [ ] Run: `docker-compose up -d`
 - [ ] Wait 30 seconds for services to boot
 - [ ] Run: `docker-compose ps` (all services RUNNING)
 - [ ] No error logs
 
 ### Verify Services
+
 - [ ] Health: `curl http://localhost:3000/health` (200 OK)
 - [ ] PostgreSQL accessible: `docker exec atlas-gate-postgres psql ...`
 - [ ] Redis accessible: `docker exec atlas-gate-redis redis-cli PING`
@@ -28,12 +32,14 @@
 - [ ] Sessions work: Redis `DBSIZE` > 0
 
 ### Test API
+
 - [ ] POST to `/mcp` with begin_session works
 - [ ] GET `/audit/export` returns data
 - [ ] GET `/metrics` returns Prometheus format
 - [ ] Failover works (kill one server, health still 200)
 
 ### Load Testing
+
 - [ ] Install k6: `apt-get install k6`
 - [ ] Run load test: `k6 run load-test.js`
 - [ ] No errors under load
@@ -41,12 +47,14 @@
 - [ ] Error rate < 1%
 
 ### Data Persistence
+
 - [ ] Stop everything: `docker-compose down`
 - [ ] Start again: `docker-compose up -d`
 - [ ] Data still present in database
 - [ ] Audit logs intact
 
 ### Cleanup (Optional)
+
 - [ ] `docker-compose down -v` (removes data)
 
 **Status: ✅ READY FOR CLOUD**
@@ -56,12 +64,14 @@
 ## Phase 2: Cloud Preparation (Day 2)
 
 ### SSH Key Setup
+
 - [ ] SSH key exists: `/home/kubuntux/Downloads/.ssh/id_rsa`
 - [ ] SSH key is 600 permissions: `chmod 600 ~/.ssh/id_rsa`
 - [ ] Can SSH to server: `ssh -i key root@49.12.230.179 "echo ok"`
 - [ ] SSH key is not in git
 
 ### Server Access
+
 - [ ] Hetzner server provisioned: 49.12.230.179
 - [ ] Server is Ubuntu 22.04+
 - [ ] Can SSH without password (key-based auth)
@@ -69,6 +79,7 @@
 - [ ] Ports 22, 80, 443, 30000 accessible
 
 ### SSH Tunnel Setup
+
 - [ ] Read SSH_TUNNEL_SETUP.md
 - [ ] Create tunnel script: `~/.ssh/atlas-tunnel.sh`
 - [ ] Make executable: `chmod +x ~/.ssh/atlas-tunnel.sh`
@@ -76,6 +87,7 @@
 - [ ] Verify access: `curl http://localhost:3000/health` through tunnel
 
 ### Deployment Script
+
 - [ ] deploy.sh exists and is readable
 - [ ] Make executable: `chmod +x deploy.sh`
 - [ ] Review deploy.sh for custom settings
@@ -89,12 +101,14 @@
 ## Phase 3: Cloud Deployment (Day 2-3)
 
 ### Pre-Deployment
+
 - [ ] SSH tunnel not already running
 - [ ] Disk space on server: `ssh root@server "df -h"` (>10GB free)
 - [ ] Internet connection stable
 - [ ] At least 30 minutes available (deployment takes 3-5 min + pod startup 2-3 min)
 
 ### Run Deployment
+
 - [ ] Execute: `./deploy.sh 49.12.230.179 /home/kubuntux/Downloads/.ssh/id_rsa`
 - [ ] No SSH errors in output
 - [ ] k3s installation completes successfully
@@ -105,6 +119,7 @@
 - [ ] MCP server pod starts (wait 1-2 min)
 
 ### Verify Deployment
+
 - [ ] SSH into server: `ssh -i key root@49.12.230.179`
 - [ ] Kubernetes cluster ready: `kubectl get nodes` (STATUS: Ready)
 - [ ] Pods running: `kubectl get pods -n atlas-gate` (all Running)
@@ -116,20 +131,25 @@
 - [ ] No crash loops in pods
 
 ### Verify Services
+
 From server:
+
 - [ ] PostgreSQL healthy: `kubectl logs deployment/postgres -n atlas-gate` (no errors)
 - [ ] Redis healthy: `kubectl logs deployment/redis -n atlas-gate` (no errors)
 - [ ] MCP healthy: `kubectl logs deployment/mcp-server -n atlas-gate` (no errors)
 - [ ] Database schema created: `kubectl exec deployment/postgres ... psql -c "SELECT * FROM audit_log LIMIT 1;"`
 
 ### SSH Tunnel & Local Access
+
 - [ ] Start tunnel: `ssh -L 3000:localhost:3000 root@49.12.230.179`
 - [ ] Test through tunnel: `curl http://localhost:3000/health` (200 OK)
 - [ ] Response JSON includes uptime, memory, backend status
 - [ ] All backends show "ready"
 
 ### First API Calls
+
 Through tunnel:
+
 - [ ] POST begin_session: `curl -X POST http://localhost:3000/mcp ...`
 - [ ] Verify response includes session_id
 - [ ] GET /audit/export: returns audit entries (JSONL format)
@@ -137,6 +157,7 @@ Through tunnel:
 - [ ] Health endpoint consistent
 
 ### Data Verification
+
 - [ ] Audit log has entries from deployment
 - [ ] Sessions table has recent entries
 - [ ] Plans table created (even if empty)
@@ -149,9 +170,11 @@ Through tunnel:
 ## Phase 4: Client Integration (Day 3)
 
 ### Configure Windsurf
+
 - [ ] Read KUBERNETES_CLIENT_CONFIG.md section "Windsurf Configuration"
 - [ ] Get .mcp.json config location
 - [ ] Create/update config with:
+
   ```json
   {
     "mcpServers": {
@@ -166,18 +189,21 @@ Through tunnel:
     }
   }
   ```
+
 - [ ] SSH tunnel running: `ssh -L 3000:localhost:3000 root@49.12.230.179`
 - [ ] Windsurf can see MCP server
 - [ ] Can list plans
 - [ ] Can call tools
 
 ### Configure Antigravity
+
 - [ ] Same as Windsurf above
-- [ ] URL: http://localhost:3000
+- [ ] URL: <http://localhost:3000>
 - [ ] Can create bootstrap plan
 - [ ] Can lint plans
 
 ### Test Workflow
+
 - [ ] Begin session from Windsurf
 - [ ] Create plan from Antigravity
 - [ ] List plans from Windsurf
@@ -192,6 +218,7 @@ Through tunnel:
 ## Phase 5: TLS/HTTPS Setup (Optional, for Production)
 
 ### Self-Signed Cert (Testing)
+
 - [ ] Generate cert on server: `openssl req -x509 ...`
 - [ ] Place in: `/etc/nginx/certs/`
 - [ ] Update nginx.conf with cert paths
@@ -199,6 +226,7 @@ Through tunnel:
 - [ ] Test: `curl -k https://localhost:443/health`
 
 ### Let's Encrypt (Production)
+
 - [ ] Domain registered and points to server IP
 - [ ] SSH into server
 - [ ] Install certbot: `apt-get install certbot`
@@ -209,6 +237,7 @@ Through tunnel:
 - [ ] Test: `curl https://your-domain.com/health`
 
 ### Update Client Config (HTTPS)
+
 - [ ] Change URL to: `https://your-domain.com` or `https://localhost:443`
 - [ ] Set `"tlsVerify": true` (if valid cert)
 - [ ] Verify connection works
@@ -221,24 +250,28 @@ Through tunnel:
 ## Phase 6: Monitoring & Backups (Ongoing)
 
 ### Health Checks
+
 - [ ] Set up script to monitor: `watch -n 60 'curl -s http://localhost:3000/health'`
 - [ ] Check logs daily: `kubectl logs -n atlas-gate -l app=mcp-server -f`
 - [ ] Monitor disk usage: `ssh root@server "du -sh /mnt/atlas-data/*"`
 - [ ] Check database size growing: `psql -c "SELECT pg_database_size('atlas_gate');"`
 
 ### Backups
+
 - [ ] Manual PostgreSQL backup: `kubectl exec deployment/postgres ... pg_dump ... | gzip > backup.sql.gz`
 - [ ] Manual Redis backup: `kubectl exec deployment/redis ... redis-cli BGSAVE`
 - [ ] Copy to local machine: `scp -r root@server:/mnt/atlas-data/postgres ./backups/`
 - [ ] Schedule backups (cron or cloud provider)
 
 ### Scaling
+
 - [ ] Monitor CPU usage: `kubectl top pods -n atlas-gate`
 - [ ] Monitor memory: `kubectl top pods -n atlas-gate`
 - [ ] If >80% usage, scale up or optimize
 - [ ] Scale replicas: `kubectl scale deployment mcp-server --replicas=2`
 
 ### Security
+
 - [ ] Check SSH key permissions: `ls -la ~/.ssh/id_rsa` (should be 600)
 - [ ] Verify firewall allows only needed ports
 - [ ] Rotate PostgreSQL password every 90 days

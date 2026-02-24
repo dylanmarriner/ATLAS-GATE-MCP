@@ -7,8 +7,8 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { fileURLToPath } from "url";
-import { validateIntentArtifact, validateAllIntents } from "../../core/intent-validator.js";
-import { CANONICAL_INTENT_SCHEMA, checkForbiddenPatterns, hashIntent } from "../../core/intent-schema.js";
+import { validateIntentArtifact, validateAllIntents } from "../src/application/intent-validator.js";
+import { CANONICAL_INTENT_SCHEMA, checkForbiddenPatterns, hashIntent } from "../src/domain/intent-schema.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let testsPassed = 0;

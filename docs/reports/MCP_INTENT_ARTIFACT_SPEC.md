@@ -9,6 +9,7 @@
 Every file write in ATLAS-GATE MCP requires a corresponding intent artifact that explains WHY the change exists and what it does. This specification defines the canonical schema for intent artifacts.
 
 Intent artifacts are:
+
 - **Deterministic**: Identical content produces identical hash
 - **Schema-enforced**: Fail-closed on validation
 - **Non-negotiable**: Writes without valid intents are refused
@@ -43,33 +44,39 @@ No alternatives. No consolidated intents. No directories.
 Intent artifacts MUST contain the following sections in this EXACT order:
 
 ### 3.1 Title
+
 **Header**: `# Intent: <relative file path>`
 
 The title MUST reference the exact file path of the target file (relative to workspace root).
 
 **Valid:**
+
 ```
 # Intent: core/intent-validator.js
 ```
 
 **Invalid:**
+
 ```
 # Intent: validator.js
 # Intent: ./core/intent-validator.js
 ```
 
 ### 3.2 Purpose
+
 **Header**: `## Purpose`
 
 One paragraph (plain English) explaining why this file exists and what problem it solves.
 
 **Constraints:**
+
 - No code symbols: `{}`, `;`, `=>`, `function`, `const`, `let`, `var`
 - Minimum 30 characters
 - Non-technical language preferred
 - Single paragraph
 
 **Valid:**
+
 ```
 ## Purpose
 This file implements core functionality for validating intent artifacts.
@@ -77,6 +84,7 @@ It receives intent content, checks it against schema, and rejects invalid intent
 ```
 
 **Invalid:**
+
 ```
 ## Purpose
 function validate() {}
@@ -86,11 +94,13 @@ Validates stuff.
 ```
 
 ### 3.3 Authority
+
 **Header**: `## Authority`
 
 Declares the plan hash and phase ID that authorized this change.
 
 **Format:**
+
 ```
 ## Authority
 Plan Signature: <64-char hex sha256>
@@ -98,6 +108,7 @@ Phase ID: PHASE_<identifier>
 ```
 
 **Valid:**
+
 ```
 ## Authority
 Plan Signature: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
@@ -105,6 +116,7 @@ Phase ID: PHASE_INTENT_ARTIFACT
 ```
 
 **Invalid:**
+
 ```
 ## Authority
 Approved by John (author names forbidden)
@@ -115,6 +127,7 @@ Phase ID: phase_1 (must be uppercase PHASE_)
 ```
 
 ### 3.4 Inputs
+
 **Header**: `## Inputs`
 
 Bulleted list of input categories (data, events, function calls).
@@ -122,6 +135,7 @@ Bulleted list of input categories (data, events, function calls).
 Each item should describe a category, not types.
 
 **Valid:**
+
 ```
 ## Inputs
 - HTTP requests from clients
@@ -130,6 +144,7 @@ Each item should describe a category, not types.
 ```
 
 **Invalid:**
+
 ```
 ## Inputs
 None
@@ -138,11 +153,13 @@ None
 ```
 
 ### 3.5 Outputs
+
 **Header**: `## Outputs`
 
 Bulleted list of externally visible effects (side effects, return values, state mutations).
 
 **Valid:**
+
 ```
 ## Outputs
 - Validated requests forwarded downstream
@@ -151,16 +168,19 @@ Bulleted list of externally visible effects (side effects, return values, state 
 ```
 
 ### 3.6 Invariants
+
 **Header**: `## Invariants`
 
 Bulleted list of declarative rules that MUST hold.
 
 **Constraints:**
+
 - No conditional language: "might", "should", "could", "ideally"
 - No "if...then" conditions
 - Stated as facts, not aspirations
 
 **Valid:**
+
 ```
 ## Invariants
 - All inputs validated before processing
@@ -169,6 +189,7 @@ Bulleted list of declarative rules that MUST hold.
 ```
 
 **Invalid:**
+
 ```
 ## Invariants
 - Should validate inputs (conditional language)
@@ -176,6 +197,7 @@ Bulleted list of declarative rules that MUST hold.
 ```
 
 ### 3.7 Failure Modes
+
 **Header**: `## Failure Modes`
 
 Bulleted list describing what can fail and why it matters.
@@ -183,6 +205,7 @@ Bulleted list describing what can fail and why it matters.
 Format: `<what fails> → <consequence>`
 
 **Valid:**
+
 ```
 ## Failure Modes
 - Database timeout → return 503 Service Unavailable
@@ -191,6 +214,7 @@ Format: `<what fails> → <consequence>`
 ```
 
 ### 3.8 Debug Signals
+
 **Header**: `## Debug Signals`
 
 Bulleted list of names of logs, events, or snapshots that will exist on failure.
@@ -198,6 +222,7 @@ Bulleted list of names of logs, events, or snapshots that will exist on failure.
 Non-coder readable. Help humans debug.
 
 **Valid:**
+
 ```
 ## Debug Signals
 - Access log entries with status codes and latency
@@ -206,6 +231,7 @@ Non-coder readable. Help humans debug.
 ```
 
 **Invalid:**
+
 ```
 ## Debug Signals
 - console.log() calls (code references)
@@ -213,6 +239,7 @@ Non-coder readable. Help humans debug.
 ```
 
 ### 3.9 Out-of-Scope
+
 **Header**: `## Out-of-Scope`
 
 Bulleted list explicitly stating what this file must NEVER do.
@@ -220,6 +247,7 @@ Bulleted list explicitly stating what this file must NEVER do.
 These are boundary constraints.
 
 **Valid:**
+
 ```
 ## Out-of-Scope
 - This file must never modify the request body
@@ -248,27 +276,32 @@ The following patterns are ABSOLUTELY FORBIDDEN in intent artifacts:
 Intent artifacts are validated on every write via the policy engine:
 
 ### 5.1 Structural Validation
+
 - All required sections present
 - Section order correct
 - Section headers match exactly
 - Bulleted sections contain ≥1 item
 
 ### 5.2 Path Consistency
+
 - Title path matches target file path EXACTLY
 - Case-sensitive
 - Workspace-relative
 
 ### 5.3 Authority Binding
+
 - Plan Signature matches executing plan_signature
 - Phase ID matches executing phase_id
 - On mismatch: write REFUSED with INTENT_AUTHORITY_DRIFT
 
 ### 5.4 Language Sanity
+
 - Purpose must not contain code symbols
 - Invariants must be declarative
 - No forbidden content patterns
 
 ### 5.5 Determinism
+
 - No dynamic fields (timestamps, UUIDs, author names)
 - Identical intent content → identical hash
 - On failure: write REFUSED
@@ -276,11 +309,13 @@ Intent artifacts are validated on every write via the policy engine:
 ## 6. Intent-to-Plan Drift
 
 If a file is modified in a later phase:
+
 - Intent must be updated in that phase
 - Old intent referencing old phase is INVALID
 - Write is REFUSED on drift
 
 **Example:**
+
 - Intent created in PHASE_1 with `Plan Signature: abc123` and `Phase ID: PHASE_1`
 - If file modified in PHASE_2:
   - Intent must be updated to `Phase ID: PHASE_2`
@@ -311,6 +346,7 @@ On every intent validation:
 Tool: `validate_intents`
 
 Behavior:
+
 - Scans workspace for `*.intent.md` files
 - Validates against schema
 - Reports missing, invalid, and drifted intents

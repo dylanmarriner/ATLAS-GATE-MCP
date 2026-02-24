@@ -89,12 +89,14 @@ readFile({ path: "path/to/file.md" })
 ### Normalization Pipeline
 
 **Server Level** (`server.js`):
+
 1. If input is string, parse as JSON
 2. If parse fails, wrap in object (for `read_file`/`list_plans`)
 3. Validate result is object
 4. Pass to tool handler
 
 **Tool Level** (`read_file.js`, `write_file.js`):
+
 1. Validate input types explicitly
 2. Normalize path separators (`\` → `/`)
 3. Trim whitespace
@@ -298,6 +300,7 @@ Paths are repo-relative and auto-resolved.
 ### Enterprise Code Violations
 
 When enforcement blocks code:
+
 1. Error contains exact violation count
 2. Each violation categorized (comment, implementation, data, stub)
 3. Developer must remove ALL violations before retry
@@ -306,6 +309,7 @@ When enforcement blocks code:
 ### Audit Trail
 
 All writes are logged to `audit-log.jsonl`:
+
 ```json
 {
   "timestamp": "2026-01-04T10:00:00Z",

@@ -38,18 +38,21 @@ You must obtain ALL of the following from the operator before proceeding:
 Before generating the plan, you MUST perform this analysis:
 
 ### 1. Understand Current Architecture
+
 - Read the workspace-relative files mentioned in Target Files
 - Understand the current implementation, dependencies, and patterns
 - Identify architectural constraints and existing guardrails
 - Document what exists and what will change
 
 ### 2. Identify Side Effects
+
 - Trace all dependencies of target files
 - Document any files that import or use target modules
 - Identify configuration files, environment variables, or deployment changes needed
 - List all testing implications
 
 ### 3. Design the Solution
+
 - Specify the exact implementation approach (no vague language)
 - Document how each component integrates with existing code
 - Explain error handling and edge case coverage

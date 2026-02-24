@@ -13,6 +13,7 @@
 **File**: `core/audit-system.js` (420 lines)
 
 Implements:
+
 - Append-only file writer (POSIX atomic)
 - Hash chain integrity (SHA256, deterministic)
 - Sequence number allocation (locked, atomic)
@@ -26,6 +27,7 @@ Implements:
 **File**: `server.js` (modified, +50 lines)
 
 Changes:
+
 - Import `appendAuditEntry` and `flushPreSessionBuffer`
 - Integrate `appendAuditEntry()` into `wrapHandler()`
 - Audit both success and failure paths
@@ -37,6 +39,7 @@ Changes:
 **File**: `tools/begin_session.js` (modified, +25 lines)
 
 Changes:
+
 - Import audit system functions
 - Call `flushPreSessionBuffer()` on session init
 - Write buffered events to audit log
@@ -47,6 +50,7 @@ Changes:
 **File**: `test-audit-system.js` (450 lines, 12 tests)
 
 Tests:
+
 1. ✓ Audit directory created under workspace_root
 2. ✓ Successful tool call produces audit entry
 3. ✓ Failed tool call produces audit entry
@@ -67,6 +71,7 @@ Tests:
 **File**: `docs/reports/MCP_AUDIT_LOG_SPEC.md` (600+ lines)
 
 Includes:
+
 - File locations (.atlas-gate/audit.log)
 - Complete schema (18 required fields)
 - Field definitions and descriptions
@@ -88,6 +93,7 @@ Includes:
 **File**: `docs/reports/PHASE_MCP_AUDIT_LOG_IMPLEMENTATION_REPORT.md`
 
 Includes:
+
 - Executive summary
 - Discovery & analysis
 - Implementation artifacts
@@ -119,6 +125,7 @@ Any modification breaks the chain (detectable).
 ### Redaction Coverage
 
 Automatically redacts:
+
 - 15+ sensitive key names (token, apiKey, password, secret, etc.)
 - Pattern-based keys (.*secret.*, .*token.*, .*key.*, etc.)
 - Value-based detection (base64 > 64 chars, JWT patterns)
@@ -228,11 +235,13 @@ RESULTS: 12/12 passed, 0 failed
 **Audit log location**: `[workspace_root]/.atlas-gate/audit.log`
 
 **To inspect**:
+
 ```bash
 cat .atlas-gate/audit.log | jq -R 'fromjson'
 ```
 
 **To verify integrity**:
+
 ```bash
 node -e "
   const { verifyAuditLogIntegrity } = require('./core/audit-system.js');
@@ -242,6 +251,7 @@ node -e "
 ```
 
 **Key properties**:
+
 - Append-only (never truncate)
 - Hash chain breaks if modified (detectable)
 - Deterministic sequences (1, 2, 3, ...)

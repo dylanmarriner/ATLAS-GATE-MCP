@@ -26,6 +26,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
   - `hashScoringResult(scoreResult)` → SHA256 hash for audit trail
 
 **Key Features**:
+
 - Deterministic scoring: same input → identical output
 - Evidence-based: scores bind to audit log (JSONL)
 - Fail-closed: missing evidence caps dimensions at Level 2
@@ -40,6 +41,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
   - `toolExplainMaturityGap(input, workspaceRoot)` → MCP tool
 
 **Characteristics**:
+
 - No state mutations (boundary role)
 - Audit-logged on execution
 - Fail-closed on invalid input
@@ -53,6 +55,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
   - `writeMaturityReport(workspaceRoot, reportContent)` → file path
 
 **Report Sections**:
+
 - Executive summary (business language)
 - Dimension radar table (scores × status)
 - "Why not Level-5" explanation
@@ -68,6 +71,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 - **Pass Rate**: 100%
 
 **Coverage**:
+
 1. ✅ Missing evidence caps dimensions
 2. ✅ Policy bypass → Security ≤3.0
 3. ✅ Hash chain breaks → Reliability ≤3.0
@@ -106,6 +110,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 ## Dimension Scoring Rules (Enforced)
 
 ### 1. Reliability (Score: 1-5)
+
 - ≥99% audit coverage required
 - Zero uncaught exceptions
 - No hash chain breaks
@@ -113,6 +118,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 - **Caps**: Tamper → max 3.0, Replay fail → max 4.0
 
 ### 2. Security (Score: 1-5)
+
 - 100% policy validation pass rate
 - Zero policy bypasses
 - Audit chain integrity verified
@@ -120,24 +126,28 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 - **Caps**: Bypass → max 3.0, Tamper → max 2.0
 
 ### 3. Documentation (Score: 1-5)
+
 - Intent coverage ≥95% of files
 - Zero intent schema violations
 - Non-coder sections present
 - **Caps**: Drift unresolved → reduced score
 
 ### 4. Governance (Score: 1-5)
+
 - 100% executions tied to approved plan hash
 - Zero plan hash mismatches
 - All writes path-authorized
 - **Caps**: No approval → max 2.0
 
 ### 5. Integration (Score: 1-5)
+
 - Tool ecosystem ≥5 tools
 - Verification gates pass
 - Configuration deterministic
 - **Caps**: Manual steps → max 4.0
 
 ### 6. Performance (Score: 1-5)
+
 - Policy latency ≤5000ms
 - Audit latency ≤10000ms
 - No performance regressions
@@ -165,6 +175,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 ### compute_maturity_score
 
 **Input**:
+
 ```json
 {
   "workspace_root": "/repo",
@@ -173,6 +184,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 ```
 
 **Output**:
+
 ```json
 {
   "timestamp": "2026-01-19T...",
@@ -196,6 +208,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 ### explain_maturity_gap
 
 **Input**:
+
 ```json
 {
   "workspace_root": "/repo",
@@ -204,6 +217,7 @@ Implemented a **deterministic, evidence-based maturity scoring engine** for the 
 ```
 
 **Output**:
+
 ```json
 {
   "current_level": 4.2,
@@ -330,9 +344,11 @@ The MCP server now has a "health scorecard" that measures how well it's governed
 6. **Performance**: Is the system fast? (latency bounded)
 
 The **overall score** is the lowest score across all categories (weakest link wins). For example:
+
 - If Reliability is 5.0, Security is 5.0, but Documentation is 3.5, the overall is **3.5**.
 
 **Level-5 means**:
+
 - All 6 categories score 5.0
 - Perfect audit coverage, perfect policy compliance, perfect documentation, perfect governance, full automation, good performance
 - **No exceptions allowed**
@@ -382,6 +398,7 @@ Actions to Reach Level-5:
 ## Compliance Summary
 
 **Specification Compliance**: 100%
+
 - All 6 dimensions implemented ✅
 - All evidence gates enforced ✅
 - All hard caps applied ✅
@@ -405,6 +422,7 @@ The ATLAS-GATE MCP Maturity Scoring Engine is **production-ready** and provides:
 5. **Non-Negotiable Gates**: Hard rules, no exceptions
 
 The system is ready for integration into:
+
 - Governance dashboards
 - Automated remediation workflows
 - Compliance reporting

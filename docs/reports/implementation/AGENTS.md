@@ -11,12 +11,14 @@
 ## Architecture
 
 **Type**: Model Context Protocol (MCP) server written in Node.js  
-**Entry Points**: 
+**Entry Points**:
+
 - `bin/atlas-gate-mcp-antigravity.js` - Planning role (read-only analysis, plan creation)
 - `bin/atlas-gate-mcp-windsurf.js` - Execution role (file mutations, plan enforcement)
 - Both call `server.js`'s `startServer(role)` function
 
 **Core Components**:
+
 - `tools/` - MCP tool handlers (begin_session, write_file, read_file, list_plans, bootstrap_create_foundation_plan, read_audit_log, read_prompt)
 - `core/` - Infrastructure modules: path-resolver, plan-enforcer, policy-engine, invariant, governance, audit-log, stub-detector
 - `session.js` - Session state management (SESSION_STATE, SESSION_ID)
@@ -25,18 +27,21 @@
 - `governance.json` - Bootstrap state
 
 **Tool Distribution**:
+
 - **ANTIGRAVITY**: begin_session, list_plans, read_file, read_audit_log, read_prompt, bootstrap_create_foundation_plan
 - **WINDSURF**: begin_session, list_plans, read_file, read_audit_log, read_prompt, write_file
 
 ## Rust Enforcement Gates (Mandatory for Rust Projects)
 
 **Pre-Write Static Gate** (GATE 3.5 in write_file):
+
 - Detects forbidden patterns: unwrap(), panic!(), unsafe {}, static mut, etc.
 - Validates error handling: Result<T, SystemError> pattern required
 - Patterns can be allowed via plan with justification
 - Location: `core/rust-policy-engine.js`
 
 **Post-Write Verification Gates** (in preflight):
+
 - `cargo fmt --check` - Code style compliance
 - `cargo clippy -- -D warnings` - Lint compliance
 - `cargo build` - Compilation verification

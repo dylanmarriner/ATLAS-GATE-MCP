@@ -74,17 +74,20 @@ Scoring consumes ONLY these sources:
 ### 4.1 Reliability
 
 **Evidence Gates:**
+
 - ≥99% tool invocations audited (coverage)
 - 0 uncaught exceptions (error codes)
 - Replay PASS rate ≥99%
 - Mean time to diagnose ≤ threshold (audit→proposal latency)
 
 **Level Caps:**
+
 - Any tamper or divergence detected → max 3.0
 - Any replay FAIL unresolved → max 4.0
 - Hash chain break → max 3.0
 
 **Formula:**
+
 ```
 score = 5.0
 if auditCoverage < 0.99: score = min(score, 3.5)
@@ -97,16 +100,19 @@ return score
 ### 4.2 Security
 
 **Evidence Gates:**
+
 - 100% writes pass policy validation (P04)
 - 0 policy bypasses
 - Audit chain integrity PASS
 - Human gate enforced for remediation (P08)
 
 **Level Caps:**
+
 - Any policy bypass → max 3.0
 - Any audit tamper → max 2.0
 
 **Formula:**
+
 ```
 score = 5.0
 if policyPassRate < 1.0: score = min(score, 3.0)
@@ -118,14 +124,17 @@ return score
 ### 4.3 Documentation
 
 **Evidence Gates:**
+
 - Intent coverage ≥95% of written files (P05)
 - 0 intent schema violations
 - Non-coder sections present in intent schema
 
 **Level Caps:**
+
 - Unresolved drift → max 3.5
 
 **Formula:**
+
 ```
 score = 5.0
 if intentCoverage < 0.95: score = min(score, 3.5 - (gap * 2.0))
@@ -137,14 +146,17 @@ return score
 ### 4.4 Governance
 
 **Evidence Gates:**
+
 - 100% executions tied to approved plan hash (P06)
 - 0 executions with hash mismatch
 - All writes path-authorized
 
 **Level Caps:**
+
 - Any execution without approval → max 2.0
 
 **Formula:**
+
 ```
 score = 5.0
 if planSignatureCoverage < 1.0: score = 2.0
@@ -156,14 +168,17 @@ return score
 ### 4.5 Integration
 
 **Evidence Gates:**
+
 - Tool ecosystem coverage (≥5 tools)
 - Automated verification gates passing
 - Deterministic configuration detected
 
 **Level Caps:**
+
 - Manual steps required → max 4.0
 
 **Formula:**
+
 ```
 score = 5.0
 if toolCount === 0: score = 2.0
@@ -176,14 +191,17 @@ return score
 ### 4.6 Performance
 
 **Evidence Gates:**
+
 - Policy + lint overhead measured and bounded
 - Replay + audit verify time bounded
 - No performance regressions beyond threshold
 
 **Level Caps:**
+
 - Missing metrics → max 3.0
 
 **Formula:**
+
 ```
 score = 5.0
 if !metrics.policyLatency or !metrics.auditLatency: score = 3.0
@@ -198,10 +216,12 @@ return score
 ## 5. Scoring Algorithm (Deterministic)
 
 ### Step 1: Parse Evidence
+
 - Read audit log (JSONL)
 - Extract policy results, intent coverage, plan approvals, replay verdicts, remediation status
 
 ### Step 2: Compute Raw Metrics
+
 ```
 auditMetrics = {
   totalEntries: count(audit),
@@ -212,19 +232,23 @@ auditMetrics = {
 ```
 
 ### Step 3: Compute Dimension Scores
+
 For each dimension D:
+
 ```
 scoreD = scoreD_Function(auditMetrics, policyMetrics, ...)
 roundedScoreD = floor(scoreD * 10) / 10
 ```
 
 ### Step 4: Compute Overall
+
 ```
 overallScore = min(score_Reliability, score_Security, ...)
 roundedOverall = floor(overallScore * 10) / 10
 ```
 
 ### Step 5: Identify Blocking Reasons
+
 ```
 blockingReasons = []
 for each dimension:
@@ -237,6 +261,7 @@ for each dimension:
 ```
 
 ### Step 6: Output Result
+
 ```
 {
   timestamp: ISO,
@@ -278,6 +303,7 @@ If **any** requirement is unmet → Level-5 claim **blocked**.
 ### Tool 1: compute_maturity_score
 
 **Input:**
+
 ```json
 {
   "workspace_root": "/path/to/repo",
@@ -286,6 +312,7 @@ If **any** requirement is unmet → Level-5 claim **blocked**.
 ```
 
 **Output:**
+
 ```json
 {
   "timestamp": "2026-01-19T...",
@@ -311,6 +338,7 @@ If **any** requirement is unmet → Level-5 claim **blocked**.
 ```
 
 **Side Effects:**
+
 - Appends audit entry (intent: read, tool: compute_maturity_score)
 - No state mutations
 
@@ -319,6 +347,7 @@ If **any** requirement is unmet → Level-5 claim **blocked**.
 ### Tool 2: explain_maturity_gap
 
 **Input:**
+
 ```json
 {
   "workspace_root": "/path/to/repo",
@@ -328,6 +357,7 @@ If **any** requirement is unmet → Level-5 claim **blocked**.
 ```
 
 **Output:**
+
 ```json
 {
   "current_level": 4.2,
@@ -367,6 +397,7 @@ Generated reports (Markdown):
 - Trend vs. prior report
 
 **Format:**
+
 ```
 # MCP Maturity Assessment Report
 
@@ -408,15 +439,15 @@ Every scoring run:
 
 ### For Business Stakeholders
 
-> The MCP server's maturity score of 4.2/5.0 indicates a **mature, well-governed system**. 
+> The MCP server's maturity score of 4.2/5.0 indicates a **mature, well-governed system**.
 > The main gap is in Documentation (3.5), where 15% of changes lack written intent explanations.
-> Security and Governance are excellent (5.0 and 4.0). Improving documentation coverage to 95% 
+> Security and Governance are excellent (5.0 and 4.0). Improving documentation coverage to 95%
 > would close the gap and reach Level 5.
 
 ### For Engineers
 
 > Missing evidence: intent coverage 80% (need 95%), causing Documentation cap at 3.5.
-> Action: Ensure all file writes include .intent.md artifacts. Required evidence: 
+> Action: Ensure all file writes include .intent.md artifacts. Required evidence:
 > INTENT_COVERAGE ≥95%, INTENT_SCHEMA_VIOLATIONS=0, NON_CODER_SECTIONS=true.
 
 ---
@@ -424,6 +455,7 @@ Every scoring run:
 ## 11. Examples (Structure Only)
 
 ### Example 1: Perfect System (Level 5.0)
+
 ```json
 {
   "overall": 5.0,
@@ -440,6 +472,7 @@ Every scoring run:
 ```
 
 ### Example 2: Degraded Security (Level 3.0)
+
 ```json
 {
   "overall": 3.0,

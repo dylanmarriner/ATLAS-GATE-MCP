@@ -11,6 +11,7 @@
 **Issue**: BUG #1 - Module initialization order
 
 **Current Code** (lines 59-126):
+
 ```javascript
 // Register tools (THIS SDK STYLE)
 server.registerTool(
@@ -46,7 +47,7 @@ server.connect(transport);
 **Problem**: Import on line 117 is used on line 123 in same module scope.
 
 **Fix**:
-Move all `import` statements to the top of the file, then move all `registerTool()` calls to after all imports complete. Then call a registration function. 
+Move all `import` statements to the top of the file, then move all `registerTool()` calls to after all imports complete. Then call a registration function.
 
 **Exact Changes**:
 
@@ -56,6 +57,7 @@ Move all `import` statements to the top of the file, then move all `registerTool
 4. Call that function after all imports
 
 **Code**:
+
 ```javascript
 // ===== TOP OF FILE: IMPORTS FIRST =====
 import crypto from "crypto";
@@ -172,6 +174,7 @@ console.error(`[MCP] atlas-gate-mcp running | session=${SESSION_ID}`);
 ```
 
 **Verification**:
+
 ```bash
 node server.js  # Should print: [MCP] atlas-gate-mcp running | session=...
 ```
@@ -184,6 +187,7 @@ node server.js  # Should print: [MCP] atlas-gate-mcp running | session=...
 **Issue**: BUG #2 - `process.cwd()` dependency
 
 **Current Code** (lines 1-24):
+
 ```javascript
 import fs from "fs";
 import path from "path";
@@ -214,6 +218,7 @@ function getLastHash() {
 **Fix**: Import `WORKSPACE_ROOT` and use it instead of `process.cwd()`.
 
 **Exact Changes**:
+
 ```javascript
 import fs from "fs";
 import path from "path";
@@ -228,6 +233,7 @@ function getAuditLogPath() {
 ```
 
 **Verification**:
+
 ```bash
 # Should always write to same location regardless of cwd
 cd /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server
@@ -248,6 +254,7 @@ node -e "import('./core/audit-log.js').then(m => console.log(m.getAuditLogPath()
 **Issue**: BUG #3 - Duplicated logic in 3 files
 
 **Create New File**: `core/plan-discovery.js`
+
 ```javascript
 import fs from "fs";
 import path from "path";
@@ -307,6 +314,7 @@ export function getPlanFilePath(repoRoot, planName) {
 ```
 
 **Update File**: `core/plan-enforcer.js`
+
 ```javascript
 // ADD IMPORT AT TOP
 import { getPlanLocations, discoverPlansDir, getPlanFilePath } from "./plan-discovery.js";
@@ -336,6 +344,7 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 ```
 
 **Update File**: `tools/list_plans.js`
+
 ```javascript
 // ADD IMPORT AT TOP
 import { getPlanLocations, discoverPlansDir } from "../core/plan-discovery.js";
@@ -371,6 +380,7 @@ export async function listPlansHandler({ path: targetPath }) {
 ```
 
 **Update File**: `core/plan-registry.js`
+
 ```javascript
 // ADD IMPORT AT TOP
 import { getPlanLocations, discoverPlansDir } from "./plan-discovery.js";
@@ -396,6 +406,7 @@ export function loadPlan(planId) {
 ```
 
 **Verification**:
+
 ```bash
 # All three files now use same discovery function
 grep -n "discoverPlansDir\|getPlanLocations" \
@@ -415,6 +426,7 @@ grep -n "discoverPlansDir\|getPlanLocations" \
 This is a complex fix requiring architectural change. The issue is that `WORKSPACE_ROOT` is set once at startup. For proper monorepo support, each operation should discover its repo root dynamically.
 
 **Strategy**:
+
 1. Keep `WORKSPACE_ROOT` as default/fallback (for backward compatibility)
 2. Add dynamic repo resolution function
 3. Update critical paths to accept optional `repoRoot` parameter
@@ -538,6 +550,7 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 ```
 
 **Note**: This is a significant architectural change that requires testing. The full implementation details are complex, so the key principle is:
+
 - Discovery function walks upward from target path
 - Fallback to WORKSPACE_ROOT for backward compatibility
 - Each operation can specify target path for discovery
@@ -551,6 +564,7 @@ export function enforcePlan(planName, targetPath, requiredPlanId, requiredPlanHa
 **Issue**: BUG #5 - Hardcoded path instead of using shared function
 
 **Current Code** (line 7-13):
+
 ```javascript
 function readGovernanceState(repoRoot) {
   const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");  // HARDCODED
@@ -576,6 +590,7 @@ export function readGovernanceState(repoRoot) {
 ```
 
 **Verification**:
+
 ```bash
 grep -n "readGovernanceState" \
   core/governance.js \
@@ -592,12 +607,14 @@ grep -n "readGovernanceState" \
 
 **In server.js** (lines 69-71):
 Change from:
+
 ```javascript
 planId: z.string().optional(),
 planSignature: z.string().optional(),
 ```
 
 To:
+
 ```javascript
 planId: z.string(),  // REQUIRED
 planSignature: z.string(),  // REQUIRED
@@ -605,6 +622,7 @@ planSignature: z.string(),  // REQUIRED
 
 **In core/plan-enforcer.js** (lines 145-157):
 Replace the uncertain code:
+
 ```javascript
 if (!requiredPlanId) {
   // Maybe warn or throw?
@@ -613,6 +631,7 @@ if (!requiredPlanId) {
 ```
 
 With strict enforcement:
+
 ```javascript
 if (!requiredPlanId) {
   throw new Error(
@@ -636,6 +655,7 @@ if (currentHash !== requiredPlanHash) {
 ```
 
 **Verification**:
+
 ```bash
 # Try to call write_file without planId/planSignature
 node -e "
@@ -664,6 +684,7 @@ try {
 **Create Lock File Approach**:
 
 **In tools/read_prompt.js**:
+
 ```javascript
 import { SESSION_ID } from "../session.js";
 import { WORKSPACE_ROOT } from "../server.js";
@@ -715,6 +736,7 @@ export function hasPromptBeenFetched(sessionId) {
 ```
 
 **In tools/write_file.js**:
+
 ```javascript
 // ADD IMPORT AT TOP
 import { hasPromptBeenFetched } from "./read_prompt.js";
@@ -735,6 +757,7 @@ if (!hasPromptBeenFetched(SESSION_ID)) {
 ```
 
 **Verification**:
+
 ```bash
 # Prompt gate now persisted in .atlas-gate/sessions/{SESSION_ID}.lock
 ls -la /media/ubuntux/DEVELOPMENT/ATLAS-GATE-MCP-server/.atlas-gate/sessions/
@@ -809,6 +832,7 @@ export function enforcePlan(planName, ...) {
 **Issue**: BUG #10 - Fragile YAML frontmatter parsing
 
 **Current Code** (lines 68-85):
+
 ```javascript
 const match = fileContent.match(/^---\n([\s\S]+?)\n---/);
 ```
@@ -848,6 +872,7 @@ try {
 **Issue**: BUG #11 - No validation before creating plan directory
 
 **Current Code** (lines 58-83):
+
 ```javascript
 export function bootstrapCreateFoundationPlan(repoRoot = WORKSPACE_ROOT, planContent, payload, signature) {
      if (!isBootstrapEnabled(repoRoot)) {
@@ -980,6 +1005,7 @@ exit 0
 ```
 
 **Make executable**:
+
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
@@ -1006,6 +1032,7 @@ Replace all `fs.readFileSync()` with `fs.promises.readFile()` and add `async/awa
 **In tools/write_file.js**:
 
 Change signature:
+
 ```javascript
 // FROM
 export async function writeFileHandler({...}) {
@@ -1015,6 +1042,7 @@ export async function writeFileHandler({...}) {
 ```
 
 Change file I/O:
+
 ```javascript
 // FROM
 if (fs.existsSync(abs)) {
@@ -1054,6 +1082,7 @@ await fsPromises.unlink(abs);
 **Similar changes in all core modules**: `governance.js`, `plan-enforcer.js`, `audit-log.js`, etc.
 
 This is a large change requiring careful testing. The key is:
+
 1. Change all `fs.readFileSync` → `fsPromises.readFile` + `await`
 2. Change all `fs.writeFileSync` → `fsPromises.writeFile` + `await`
 3. Change all `fs.mkdirSync` → `fsPromises.mkdir` + `await`
@@ -1082,4 +1111,3 @@ This is a large change requiring careful testing. The key is:
 **Total Changes**: ~600 lines of code across 12 files
 
 **Testing**: Run `npm run verify` after each major fix group to ensure no regressions.
-

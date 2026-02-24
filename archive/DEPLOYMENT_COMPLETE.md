@@ -63,6 +63,7 @@ chmod +x deploy.sh
 ```
 
 **Output includes:**
+
 - Server URL: `http://100.93.214.100:3000`
 - API Key: `5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c`
 - Credentials file: `.atlas-gate-creds`
@@ -101,7 +102,8 @@ export ATLAS_GATE_WORKSPACE="/path/to/repo"
 export ATLAS_GATE_ROLE="ANTIGRAVITY"
 ```
 
-**Test:** 
+**Test:**
+
 ```bash
 antigravity session create --name test
 antigravity plan bootstrap --intent "Initial setup"
@@ -147,11 +149,13 @@ See: [ANTIGRAVITY_HTTP_INTEGRATION.md](./ANTIGRAVITY_HTTP_INTEGRATION.md)
 ## 📈 Scaling
 
 ### Docker (Single Server)
+
 - Up to ~1000 concurrent sessions
 - CPU: 500m, Memory: 512Mi per instance
 - Scale by adding replicas manually
 
 ### Kubernetes (Enterprise)
+
 - Auto-scales 3-10 replicas based on CPU/memory
 - Horizontal Pod Autoscaler configured
 - Pod Anti-Affinity spreads across nodes
@@ -160,12 +164,14 @@ See: [ANTIGRAVITY_HTTP_INTEGRATION.md](./ANTIGRAVITY_HTTP_INTEGRATION.md)
 ## 🔍 Monitoring
 
 ### Docker Compose
+
 ```bash
 docker-compose logs -f atlas-gate
 docker stats
 ```
 
 ### Kubernetes
+
 ```bash
 kubectl get pods -n atlas-gate
 kubectl logs -n atlas-gate -f deployment/atlas-gate
@@ -173,6 +179,7 @@ kubectl top pods -n atlas-gate
 ```
 
 ### Health Check
+
 ```bash
 curl http://100.93.214.100:3000/health
 ```
@@ -311,6 +318,7 @@ curl http://localhost:3000/health
 ## 🆘 Support & Troubleshooting
 
 ### Can't Connect to Server
+
 ```bash
 # Check server is running
 curl http://100.93.214.100:3000/health
@@ -324,6 +332,7 @@ docker logs atlas-gate-http
 ```
 
 ### API Key Issues
+
 ```bash
 # View key from logs
 docker logs atlas-gate-http 2>&1 | grep "API Key"
@@ -335,12 +344,14 @@ curl -X POST http://100.93.214.100:3000/tenants/create \
 ```
 
 ### Windsurf Can't Connect
+
 - Verify server URL is correct
 - Verify API key is correct
 - Check firewall allows port 3000
 - Try with curl first to debug
 
 ### Antigravity Can't Connect
+
 - Set ATLAS_GATE_URL environment variable
 - Set ATLAS_GATE_API_KEY environment variable
 - Test with `curl http://server/health`

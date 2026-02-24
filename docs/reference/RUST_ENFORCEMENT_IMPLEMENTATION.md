@@ -7,17 +7,20 @@
 **Implementation**: `core/rust-policy-engine.js`
 
 #### Forbidden Pattern Detection
+
 ```javascript
 scanRustForForbiddenPatterns(content, filePath, allowedPatterns)
 ```
 
 Detects and blocks 12 forbidden patterns:
+
 - ✋ `unwrap()`, `expect()`, `panic!()`, `todo!()`, `unimplemented!()`
 - ✋ `unsafe {}` blocks, `static mut`, `Box::leak()`
 - ✋ `unwrap_or(_)`, `unwrap_or_default()`, ignored Results
 - ✋ `cfg(test)` in non-test modules
 
 **Features**:
+
 - Regex-based token scanning
 - Comment detection (patterns in comments are allowed)
 - Line-level violation reporting
@@ -25,11 +28,13 @@ Detects and blocks 12 forbidden patterns:
 - Test file exceptions (cfg(test) allowed in tests/)
 
 #### Error Handling Law Enforcement
+
 ```javascript
 validateRustErrorHandling(content, filePath)
 ```
 
 Enforces hard-fail error patterns:
+
 - ❌ Rejects: `Option<T>` returns (use Result instead)
 - ❌ Rejects: `Result<T, Box<dyn Error>>` (use canonical error type)
 - ✅ Requires: `Result<T, SystemError>` pattern
@@ -43,6 +48,7 @@ Enforces hard-fail error patterns:
 **Implementation**: `core/rust-policy-engine.js` + `core/preflight.js`
 
 #### Verification Functions
+
 ```javascript
 runRustVerificationGates(repoRoot)
 ```
@@ -55,6 +61,7 @@ Executes 4 sequential gates (fail-fast):
 4. **Deny flags** - Verify `#![deny(...)]` attributes
 
 **Required Attributes**:
+
 ```rust
 #![deny(unsafe_code)]
 #![deny(clippy::unwrap_used)]
@@ -63,6 +70,7 @@ Executes 4 sequential gates (fail-fast):
 ```
 
 **Features**:
+
 - Automatic Rust project detection (checks for Cargo.toml)
 - Fail-fast on first gate failure
 - Detailed error messages with stdout/stderr
@@ -99,6 +107,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
 ## Files Modified
 
 ### Core Implementation
+
 1. **`core/rust-policy-engine.js`** (NEW - 330 lines)
    - `scanRustForForbiddenPatterns()`
    - `validateRustErrorHandling()`
@@ -108,6 +117,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
    - `runRustVerificationGates()`
 
 2. **`tools/write_file.js`** (MODIFIED - GATE 3.5 added)
+
    ```javascript
    // GATE 3.5: RUST STATIC ENFORCEMENT GATE (MANDATORY)
    if (normalizedPath.endsWith('.rs')) {
@@ -116,6 +126,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
    ```
 
 3. **`core/preflight.js`** (MODIFIED - Rust gates added at start)
+
    ```javascript
    // RUST VERIFICATION GATES (CRITICAL) - Must run first
    if (fs.existsSync(path.join(repoRoot, "Cargo.toml"))) {
@@ -128,10 +139,12 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
    - Renamed `PREFLIGHT_FAILURE` → `PREFLIGHT_FAILED` (consistent naming)
 
 ### Documentation
+
 5. **`RUST_ENFORCEMENT_GATES.md`** (NEW - comprehensive guide)
 6. **`AGENTS.md`** (UPDATED - added Rust enforcement section)
 
 ### Tests
+
 7. **`test-rust-policy.js`** (NEW - 16 tests)
    - Forbidden pattern detection (unwrap, panic, unsafe, etc.)
    - Error handling validation
@@ -151,6 +164,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
 ## Test Coverage
 
 ### Unit Tests (`test-rust-policy.js`)
+
 ```
 ✓ Test 1: Detect unwrap()
 ✓ Test 2: Detect expect()
@@ -171,6 +185,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
 ```
 
 ### Integration Tests (`test-rust-integration.js`)
+
 ```
 ✓ Test 1: enforceRustPolicy catches unwrap()
 ✓ Test 2: Clean code passes
@@ -187,6 +202,7 @@ GATE 4.5: PREFLIGHT → runRustVerificationGates()
 ```
 
 **Run tests**:
+
 ```bash
 node test-rust-policy.js          # Unit tests
 node test-rust-integration.js     # Integration tests
@@ -201,24 +217,28 @@ node test-rust-integration.js     # Integration tests
 When writing Rust files, ensure:
 
 1. **No forbidden patterns** (unless plan allows)
+
    ```rust
    ❌ let x = foo().unwrap();
    ✅ let x = foo()?;
    ```
 
 2. **Use Result error handling**
+
    ```rust
    ❌ fn parse() -> Option<Data> { ... }
    ✅ fn parse() -> Result<Data, MyError> { ... }
    ```
 
 3. **Use canonical error types**
+
    ```rust
    ❌ Result<T, Box<dyn Error>>
    ✅ Result<T, SystemError>
    ```
 
 4. **Include deny attributes** in `src/lib.rs` or `src/main.rs`
+
    ```rust
    #![deny(unsafe_code)]
    #![deny(clippy::unwrap_used)]
@@ -283,6 +303,7 @@ cargo clippy -- -D warnings failed:
 ### 1. Regex-Based Scanning (Not AST)
 
 **Rationale**:
+
 - Fast, no external dependencies (no `syn` crate needed)
 - Sufficient for catching common anti-patterns
 - Easy to understand and maintain
@@ -293,6 +314,7 @@ cargo clippy -- -D warnings failed:
 ### 2. Fail-Fast Approach
 
 **Rationale**:
+
 - Stops immediately on first violation
 - Prevents cascading errors
 - Forces developers to fix issues one at a time
@@ -301,6 +323,7 @@ cargo clippy -- -D warnings failed:
 ### 3. Mandatory Deny Attributes
 
 **Rationale**:
+
 - Enforces compiler-level safety
 - Prevents regression (patterns re-introduced later)
 - Makes expectations explicit in code
@@ -309,6 +332,7 @@ cargo clippy -- -D warnings failed:
 ### 4. Comment Exception
 
 **Rationale**:
+
 - Allows documentation of unsafe patterns
 - Enables reasoning about violations
 - Comments don't execute, so no real risk

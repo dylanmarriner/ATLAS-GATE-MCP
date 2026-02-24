@@ -5,11 +5,13 @@
 You now have a complete, production-ready cloud deployment architecture for ATLAS-GATE-MCP. This includes:
 
 ### 1. Documentation (3 files)
+
 - **CLOUD_DEPLOYMENT_GUIDE.md** — Comprehensive architecture & code changes needed
 - **DEPLOYMENT_QUICKSTART.md** — Step-by-step guides for AWS, Azure, GCP
 - **CLOUD_DEPLOYMENT_SUMMARY.md** — This file
 
 ### 2. Code Implementation (4 files)
+
 - **bin/server-network.js** — HTTP/TCP server with health checks, metrics, audit endpoints
 - **core/session-store.js** — Abstract session state interface
 - **core/session-store-memory.js** — In-memory session backend (dev/testing)
@@ -17,6 +19,7 @@ You now have a complete, production-ready cloud deployment architecture for ATLA
 - **core/audit-storage-file.js** — File-based audit backend (current implementation)
 
 ### 3. Infrastructure as Code (4 files)
+
 - **Dockerfile** — Multi-stage build with security hardening
 - **docker-compose.yml** — Complete local testing environment with 7 services
 - **nginx.conf** — Load balancer configuration with TLS, rate limiting, health checks
@@ -62,6 +65,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 ```
 
 **Key Properties:**
+
 - **Load Balancing**: Least-conn algorithm distributes requests
 - **Session State**: Shared via Redis (survives server restart)
 - **Audit Logs**: Replicated via PostgreSQL streaming replication
@@ -74,6 +78,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 ## Implementation Roadmap
 
 ### Phase 1: Containerization (Week 1)
+
 - [ ] Build Docker image from Dockerfile
 - [ ] Test locally with docker-compose
 - [ ] Verify all 7 services start correctly
@@ -82,6 +87,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 **Deliverable**: Running docker-compose environment
 
 ### Phase 2: Cloud Infrastructure (Week 2)
+
 - [ ] Choose cloud provider (AWS/Azure/GCP)
 - [ ] Create VPC, subnets, security groups
 - [ ] Launch RDS PostgreSQL (Multi-AZ)
@@ -92,6 +98,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 **Deliverable**: Infrastructure ready for app deployment
 
 ### Phase 3: Application Deployment (Week 3)
+
 - [ ] Deploy 2+ MCP servers to cloud
 - [ ] Configure environment variables for cloud backends
 - [ ] Migrate to PostgreSQL audit storage
@@ -101,6 +108,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 **Deliverable**: Application running on cloud
 
 ### Phase 4: Verification & Hardening (Week 4)
+
 - [ ] Run integration tests (99% pass rate required)
 - [ ] Load test (1000 concurrent clients)
 - [ ] Failover test (kill one server, verify recovery)
@@ -116,6 +124,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 ### What's Been Added
 
 **1. Network Server (bin/server-network.js)**
+
 - HTTP POST endpoint for MCP requests
 - Integrated health checks (/health)
 - Metrics endpoint for Prometheus (/metrics)
@@ -124,17 +133,20 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 - Authentication & rate limiting hooks
 
 **2. Backend Abstraction**
+
 - Session store interface (memory, Redis, PostgreSQL)
 - Audit storage interface (file, PostgreSQL, S3)
 - Pluggable architecture—swap backends via env vars
 
 **3. Docker & Orchestration**
+
 - Multi-stage build (optimized image size)
 - Security: Non-root user, read-only filesystem, minimal base image
 - Health checks built into container
 - Compose file: Complete local dev environment
 
 **4. Database Schema**
+
 - Audit log with hash chain integrity
 - Session tracking with expiry
 - Plan storage with versioning
@@ -146,6 +158,7 @@ Load Balancer (nginx/ALB) [SSL/TLS, Rate Limiting]
 ## Configuration via Environment Variables
 
 ### MCP Server
+
 ```bash
 MCP_PORT=3000              # Port to listen on
 MCP_BIND=0.0.0.0          # Bind address (0.0.0.0 = all interfaces)
@@ -155,6 +168,7 @@ SESSION_BACKEND=redis     # memory, redis
 ```
 
 ### Database
+
 ```bash
 DATABASE_URL=postgresql://user:pass@host:5432/atlas_gate
 REDIS_URL=redis://host:6379
@@ -162,6 +176,7 @@ AWS_BUCKET=my-bucket      # For S3 audit backend
 ```
 
 ### Security
+
 ```bash
 REQUIRE_AUTH=true         # Require authorization header
 VALID_TOKENS=token1,token2  # Comma-separated list
@@ -172,6 +187,7 @@ VALID_TOKENS=token1,token2  # Comma-separated list
 ## Testing & Validation
 
 ### Local Testing (docker-compose)
+
 ```bash
 # Start stack
 docker-compose up -d
@@ -192,6 +208,7 @@ docker-compose down -v
 ```
 
 ### Load Testing
+
 ```bash
 # Using Apache JMeter or k6
 k6 run load-test.js \
@@ -201,6 +218,7 @@ k6 run load-test.js \
 ```
 
 ### Failover Testing
+
 ```bash
 # Kill one server and verify recovery
 docker stop atlas-gate-mcp-1
@@ -220,12 +238,14 @@ psql -c "SELECT COUNT(*) FROM audit_log;"  # Should match
 ## Monitoring & Alerting
 
 ### Key Metrics
+
 - `mcp_uptime_seconds` — Server uptime
 - `mcp_memory_heapused_bytes` — Memory consumption
 - `mcp_requests_total` — Request count by tool
 - Database replication lag — For failover detection
 
 ### Alert Thresholds
+
 | Alert | Threshold | Action |
 |-------|-----------|--------|
 | Server Down | 90 seconds no heartbeat | Auto-failover to backup |
@@ -234,6 +254,7 @@ psql -c "SELECT COUNT(*) FROM audit_log;"  # Should match
 | Error Rate | > 1% of requests | Page on-call engineer |
 
 ### Dashboards
+
 - **Grafana** (localhost:3001) — Metrics visualization
 - **Prometheus** (localhost:9090) — Query metrics directly
 - **CloudWatch** (AWS) — Native cloud metrics
@@ -243,22 +264,26 @@ psql -c "SELECT COUNT(*) FROM audit_log;"  # Should match
 ## Security Considerations
 
 ### Network
+
 - TLS 1.2+ required for all traffic
 - Rate limiting: 10 req/sec per IP
 - IP whitelisting option via nginx config
 
 ### Authentication
+
 - API key validation (pluggable)
 - mTLS support (generate certs per client)
 - Session expiry: 1 hour by default
 
 ### Data Protection
+
 - Audit log: immutable (hash chain verified)
 - Encryption at rest: PostgreSQL encryption via AWS KMS
 - Encryption in transit: TLS 1.2+
 - Backup encryption: S3 encryption for audit exports
 
 ### Access Control
+
 - Non-root container user (mcp:mcp)
 - Read-only filesystem where possible
 - Minimal Docker image (alpine base)
@@ -269,6 +294,7 @@ psql -c "SELECT COUNT(*) FROM audit_log;"  # Should match
 ## Cost Estimation
 
 ### AWS (per month)
+
 - 2x t3.medium EC2: $60
 - RDS PostgreSQL Multi-AZ: $80
 - ElastiCache Redis: $30
@@ -279,6 +305,7 @@ psql -c "SELECT COUNT(*) FROM audit_log;"  # Should match
 With reserved instances (1-year commitment): ~$120/month (40% discount)
 
 ### Scaling Costs
+
 - Add 1 MCP server: +$30/month
 - Scale RDS: +$20-80/month per tier upgrade
 - Scale Redis: +$20/month per node
@@ -288,6 +315,7 @@ With reserved instances (1-year commitment): ~$120/month (40% discount)
 ## Migration Path from Current Setup
 
 ### Step 1: Run in Docker (Local)
+
 ```bash
 # Build and test locally first
 docker build -t atlas-gate-mcp:latest .
@@ -296,6 +324,7 @@ npm test  # Verify all tests pass
 ```
 
 ### Step 2: Deploy to Cloud
+
 ```bash
 # Push to registry
 docker tag atlas-gate-mcp:latest \
@@ -307,6 +336,7 @@ docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/atlas-gate-mcp:latest
 ```
 
 ### Step 3: Switch Clients
+
 ```bash
 # Update Windsurf/Antigravity to point to cloud endpoint
 # Instead of: node bin/ATLAS-GATE-MCP-windsurf.js (local stdio)

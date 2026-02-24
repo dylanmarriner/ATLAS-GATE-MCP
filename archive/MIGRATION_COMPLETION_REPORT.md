@@ -7,16 +7,19 @@
 ## Final Fixes Applied
 
 ### 1. Fixed Spectral Lazy Loading (plan-linter.js)
+
 - **Issue**: Top-level import of `@stoplight/spectral-core` blocked module loading
 - **Solution**: Converted to async lazy imports inside `initializeSpectral()`
 - **Impact**: Optional dependency now gracefully handled - system works without Spectral installed
 
 ### 2. Fixed Bootstrap Environment Variable (governance.js)
+
 - **Issue**: `process.env.ATLAS-GATE_BOOTSTRAP_SECRET` failed due to hyphen in property name
 - **Solution**: Changed to bracket notation `process.env['ATLAS-GATE_BOOTSTRAP_SECRET']`
 - **Impact**: Bootstrap authentication now works correctly
 
 ### 3. Fixed URL-Safe Base64 Encoding (cosign-hash-provider.js)
+
 - **Issue**: Base64 signatures contain `/` and `=` characters, creating invalid directory paths
 - **Solution**: Convert signatures to URL-safe base64:
   - `/` → `_`
@@ -25,6 +28,7 @@
 - **Impact**: Plan signatures now create valid filenames without subdirectories
 
 ### 4. Created Missing Directory (.atlas-gate/)
+
 - **Issue**: Tests failed due to missing workspace directory
 - **Solution**: Created `.atlas-gate/` directory in workspace root
 - **Impact**: Governance state can now be persisted
@@ -42,18 +46,21 @@ All critical tests now pass:
 ## System State
 
 ### Completed Migrations
+
 1. **Core Infrastructure**: All 5 governance modules migrated ✅
 2. **Tools & Server**: All 3 tool layers migrated ✅
 3. **Test Suite**: Import paths and field names corrected ✅
 4. **Documentation**: 70+ files updated with new terminology ✅
 
 ### Current Implementation
+
 - **Signing**: Cosign (ECDSA P-256) with URL-safe base64 encoding
 - **Mock Implementation**: SHA256-based for testing environments
 - **Key Storage**: EC P-256 keys in `.atlas-gate/.cosign-keys/`
 - **Plan Addressing**: By signature (filename = signature)
 
 ### Optional Dependencies
+
 - `@stoplight/spectral-core` - Optional (gracefully skipped if missing)
 - `@sigstore/cosign` - Can be installed for production ECDSA signatures
 
@@ -75,6 +82,7 @@ node tests/system/test-bootstrap.js
 To transition to production:
 
 1. **Install Real Cosign**:
+
    ```bash
    npm install @sigstore/cosign
    ```

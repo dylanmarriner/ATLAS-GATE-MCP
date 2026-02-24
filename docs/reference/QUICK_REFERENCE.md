@@ -169,6 +169,7 @@ function getValue() { return undefined; }
 ## Tool Parameters
 
 ### read_prompt
+
 ```json
 {
   "name": "ANTIGRAVITY_CANONICAL"
@@ -177,6 +178,7 @@ function getValue() { return undefined; }
 ```
 
 ### list_plans
+
 ```json
 {
   "path": "."
@@ -184,6 +186,7 @@ function getValue() { return undefined; }
 ```
 
 ### read_file
+
 ```json
 {
   "path": "src/handler.js"
@@ -191,6 +194,7 @@ function getValue() { return undefined; }
 ```
 
 ### write_file (MINIMAL)
+
 ```json
 {
   "path": "src/handler.js",
@@ -200,6 +204,7 @@ function getValue() { return undefined; }
 ```
 
 ### write_file (FULL)
+
 ```json
 {
   "path": "src/handler.js",
@@ -217,6 +222,7 @@ function getValue() { return undefined; }
 ```
 
 ### read_audit_log
+
 ```json
 {}
 // No parameters
@@ -283,11 +289,13 @@ function getValue() { return undefined; }
 ## Environment
 
 ### Required
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-32-chars-or-more"
 ```
 
 ### How to Generate Secret
+
 ```bash
 # Option 1: OpenSSL
 openssl rand -base64 32
@@ -297,6 +305,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 ### Make Permanent
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 echo 'export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret"' >> ~/.bashrc
@@ -365,6 +374,7 @@ node server.js
 ## Debugging
 
 ### Server won't start
+
 ```bash
 node --version     # Must be 18+
 npm list           # Check packages installed
@@ -372,6 +382,7 @@ npm install        # Reinstall if needed
 ```
 
 ### Tools not working
+
 ```bash
 # Check you're in repo directory
 pwd
@@ -384,6 +395,7 @@ echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 ### Errors writing
+
 ```
 1. Did you call read_prompt?     ← Required first
 2. Did you call list_plans?       ← Get plan name
@@ -431,8 +443,8 @@ Before using in production:
 **You're ready! 🚀**
 
 Keep this card handy. Most issues are solved by:
+
 1. Calling read_prompt first
 2. Getting plan name from list_plans
 3. Ensuring code is production-ready
 4. Checking paths are relative to repo root
-

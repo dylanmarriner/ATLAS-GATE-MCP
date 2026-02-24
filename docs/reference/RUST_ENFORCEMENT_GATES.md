@@ -12,6 +12,7 @@ ATLAS-GATE MCP enforces mandatory Rust policy gates at two critical phases:
 ## 1️⃣ Rust Static Enforcement Gate (MANDATORY)
 
 ### Location
+
 - **Module**: `core/rust-policy-engine.js`
 - **Function**: `enforceRustPolicy(filePath, content, repoRoot, planAllowances)`
 - **Invoked**: In `tools/write_file.js` GATE 3.5 (after role validation, before stubs detection)
@@ -92,6 +93,7 @@ All Rust code must comply with hard-fail error handling:
 Detects and rejects:
 
 1. **Option<T> returns** - Use Result with explicit error type
+
    ```rust
    // ❌ REJECTED
    fn get_value() -> Option<String> { ... }
@@ -101,6 +103,7 @@ Detects and rejects:
    ```
 
 2. **Result<T, Box<dyn Error>>** - Use canonical error type
+
    ```rust
    // ❌ REJECTED
    fn parse() -> Result<Vec<u8>, Box<dyn std::error::Error>> { ... }
@@ -112,6 +115,7 @@ Detects and rejects:
 ### Error Type Requirements
 
 All errors must:
+
 - Carry error codes (not just messages)
 - Carry invariant context
 - Be explainable in plain English
@@ -122,6 +126,7 @@ All errors must:
 ## 3️⃣ Compiler + Clippy Verification Gates (CRITICAL)
 
 ### Location
+
 - **Module**: `core/rust-policy-engine.js`
 - **Function**: `runRustVerificationGates(repoRoot)`
 - **Invoked**: In `core/preflight.js` (runs before JavaScript tests)
@@ -129,6 +134,7 @@ All errors must:
 ### Gates (Sequential, Fail-Fast)
 
 #### Gate 1: `cargo fmt --check`
+
 Verifies code formatting compliance.
 
 ```bash
@@ -139,6 +145,7 @@ cargo fmt --check
 - ❌ Fail: Code style violation detected
 
 #### Gate 2: `cargo clippy -- -D warnings`
+
 Runs clippy with warnings-as-errors.
 
 ```bash
@@ -149,6 +156,7 @@ cargo clippy -- -D warnings
 - ❌ Fail: Lint violations detected
 
 #### Gate 3: `cargo build`
+
 Verifies compilation succeeds.
 
 ```bash
@@ -159,9 +167,11 @@ cargo build
 - ❌ Fail: Compilation errors
 
 #### Gate 4: Compiler Deny Flags
+
 Verifies required deny attributes in `src/lib.rs` or `src/main.rs`.
 
 **Required deny attributes**:
+
 ```rust
 #![deny(unsafe_code)]
 #![deny(clippy::unwrap_used)]
@@ -382,5 +392,5 @@ npm test
 - **Tests**: `test-rust-policy.js`
 - **Integration**: `tools/write_file.js` (GATE 3.5), `core/preflight.js`
 - **Error Codes**: `core/error.js` (POLICY_VIOLATION, PREFLIGHT_FAILED)
-- **Clippy Docs**: https://doc.rust-lang.org/clippy/
-- **Deny Attributes**: https://doc.rust-lang.org/rustc/lints/levels.html
+- **Clippy Docs**: <https://doc.rust-lang.org/clippy/>
+- **Deny Attributes**: <https://doc.rust-lang.org/rustc/lints/levels.html>

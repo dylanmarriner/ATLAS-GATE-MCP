@@ -7,7 +7,9 @@
 ## What Do You Want to Do?
 
 ### 🚀 "I want to get started RIGHT NOW"
+
 → Read: **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** (5 minutes)
+
 - Installation one-liner
 - Tool overview table
 - Common errors & fixes
@@ -16,7 +18,9 @@
 ---
 
 ### 📚 "I want a complete setup guide with examples"
+
 → Read: **[COMPLETE_SETUP_GUIDE.md](COMPLETE_SETUP_GUIDE.md)** (30 minutes)
+
 - Step-by-step installation
 - Each tool explained with examples
 - Example prompts that work
@@ -25,7 +29,9 @@
 ---
 
 ### 📊 "I want to understand what was done to harden this system"
+
 → Read: **[HARDENING_SUMMARY.md](HARDENING_SUMMARY.md)** (10 minutes)
+
 - What issues were found
 - What was fixed
 - Test results
@@ -34,7 +40,9 @@
 ---
 
 ### 🔐 "I want to understand how zero-setup works"
+
 → Read: **[ZERO_SETUP_GUARANTEE.md](ZERO_SETUP_GUARANTEE.md)** (15 minutes)
+
 - How it works in any directory
 - Auto-creation of directories
 - Bootstrap mode explanation
@@ -43,7 +51,9 @@
 ---
 
 ### 📋 "I want complete technical details and verification"
+
 → Read: **[FINAL_VERIFICATION_REPORT.md](FINAL_VERIFICATION_REPORT.md)** (20 minutes)
+
 - All issues found and fixed
 - Global invariants verified
 - Code quality assessment
@@ -53,7 +63,9 @@
 ---
 
 ### 🔍 "I want to find specific documentation"
+
 → Read: **[HARDENING_INDEX.md](HARDENING_INDEX.md)** (5 minutes)
+
 - Complete documentation index
 - Links to all resources
 - Quick links table
@@ -136,24 +148,28 @@ node server.js
 ## Typical Workflow
 
 ### Step 1: Read Governance
+
 ```
 Agent: Call read_prompt()
 System: Governance requirements unlocked
 ```
 
 ### Step 2: Find Plan
+
 ```
 Agent: Call list_plans()
 System: Shows available plans
 ```
 
 ### Step 3: Check Current Code
+
 ```
 Agent: Call read_file("src/main.js")
 System: Shows current implementation
 ```
 
 ### Step 4: Make Changes
+
 ```
 Agent: Call write_file(
   path: "src/main.js",
@@ -164,6 +180,7 @@ System: Validates → Writes → Audits
 ```
 
 ### Step 5: Verify
+
 ```
 Agent: Call read_audit_log()
 System: Shows exact change recorded
@@ -201,24 +218,31 @@ These patterns are **ALWAYS ALLOWED**:
 ## Common Questions
 
 ### Q: Do I need to configure anything?
+
 **A:** Only set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable. Everything else is automatic.
 
 ### Q: Will it work in my repo structure?
+
 **A:** Yes. Works in any directory, auto-detects repo root, creates directories as needed.
 
 ### Q: Can I use it with my IDE?
+
 **A:** Yes, if your IDE supports MCP protocol (Windsurf, VSCode with Cline, etc.)
 
 ### Q: What happens if I try to write bad code?
+
 **A:** It gets rejected with a clear error message. You fix the code and retry.
 
 ### Q: Can I bypass the plan requirement?
+
 **A:** No. Plan enforcement is absolute. All writes require an approved plan.
 
 ### Q: Is the audit log secure?
+
 **A:** Yes. Hash-chained, immutable, impossible to modify without detection.
 
 ### Q: What if I make a mistake?
+
 **A:** Only the mistake is written. Previous files untouched. You can fix it with another write.
 
 ---
@@ -226,18 +250,23 @@ These patterns are **ALWAYS ALLOWED**:
 ## Getting Help
 
 ### Installation Issues?
+
 → **COMPLETE_SETUP_GUIDE.md** § Prerequisites section
 
 ### Tool Not Working?
+
 → **COMPLETE_SETUP_GUIDE.md** § Tool Usage Guide section
 
 ### Code Getting Rejected?
+
 → **COMPLETE_SETUP_GUIDE.md** § Troubleshooting section
 
 ### Want Examples?
+
 → **COMPLETE_SETUP_GUIDE.md** § Example Workflows section
 
 ### Technical Questions?
+
 → **FINAL_VERIFICATION_REPORT.md** § Technical details
 
 ---
@@ -266,17 +295,20 @@ Advanced (if needed):
 ## Recommended Reading Order
 
 ### For Quick Start (15 minutes)
+
 1. README_GETTING_STARTED.md (this file) ← You are here
 2. QUICK_REFERENCE.md
 3. Start using the system
 
 ### For Complete Understanding (1 hour)
+
 1. README_GETTING_STARTED.md (this file)
 2. COMPLETE_SETUP_GUIDE.md
 3. HARDENING_SUMMARY.md
 4. ZERO_SETUP_GUARANTEE.md
 
 ### For Deep Technical Knowledge (2 hours)
+
 1. All of the above, plus:
 2. FINAL_VERIFICATION_REPORT.md
 3. AUDIT_FINDINGS.md
@@ -353,15 +385,17 @@ Most MCP servers are **passive tools**. ATLAS-GATE is an **enforcement authority
 
 ## Ready to Get Started?
 
-### Pick Your Path:
+### Pick Your Path
 
 **Option A: Just Want to Use It**
+
 ```
 → QUICK_REFERENCE.md
 → Start using
 ```
 
 **Option B: Want to Understand Everything**
+
 ```
 → COMPLETE_SETUP_GUIDE.md
 → HARDENING_SUMMARY.md
@@ -369,6 +403,7 @@ Most MCP servers are **passive tools**. ATLAS-GATE is an **enforcement authority
 ```
 
 **Option C: Want Technical Details**
+
 ```
 → FINAL_VERIFICATION_REPORT.md
 → HARDENING_INDEX.md
@@ -396,4 +431,3 @@ Then come back here and click through to the next document.
 ---
 
 **You've got this. Let's build with confidence. 🚀**
-

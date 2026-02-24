@@ -17,21 +17,25 @@ Imagine you hire a very smart assistant (an AI model like ChatGPT) to help you w
 ## What Does It Actually Do?
 
 ### **1. Controls What AI Can Do**
+
 - Decides which operations are allowed
 - Requires approval before important actions
 - Prevents accidental damage or misuse
 
 ### **2. Keeps A Record**
+
 - Logs everything the AI does
 - Can't be deleted or faked (tamper-proof)
 - Proves compliance to auditors
 
 ### **3. Enforces Security**
+
 - Prevents unauthorized access
 - Validates all input
 - Isolates the AI from direct system access
 
 ### **4. Works With Modern AI Tools**
+
 - Works with Claude, ChatGPT, Windsurf, and similar tools
 - Uses a standard protocol (MCP) that AI systems understand
 - No special training required for the AI
@@ -56,6 +60,7 @@ Think of a bank:
 ## Who Should Use This?
 
 ### **YES, if you are:**
+
 - **A company** that uses AI tools to help with development
 - **Security-conscious** and need to prove governance
 - **Regulated** by GDPR, SOC 2, HIPAA, or ISO 27001
@@ -63,11 +68,13 @@ Think of a bank:
 - **Risk-averse** and want controls on AI actions
 
 ### **MAYBE, if you are:**
+
 - **A startup** with limited compliance requirements
 - **Building experimental** projects where flexibility matters more
 - **A small team** where everyone knows everyone
 
 ### **NO, if you are:**
+
 - **Building a hobby project** alone
 - **Needing maximum speed** over security
 - **Not concerned with audit trails**
@@ -97,20 +104,26 @@ ATLAS-GATE-MCP Security Gateway
 ## Key Concepts (Explained Simply)
 
 ### **Plan**
+
 A document that says "I approve this AI to do this work." Like a purchase order for AI actions.
 
 ### **Audit Trail**
+
 A detailed log of everything the AI did, when, and why. Like a receipts book that can't be edited.
 
 ### **Role**
+
 Different AI assistants have different permissions:
+
 - **Windsurf Role**: Can read and write (do work)
 - **Antigravity Role**: Can only read (analyze, plan, review)
 
 ### **Sandbox**
+
 A restricted environment where the AI can only interact through approved channels. Like a sandbox at the beach—the AI can play but can't escape.
 
 ### **MCP (Model Context Protocol)**
+
 The standard way AI assistants talk to tools. Like how your phone has standard charging ports so you can use different chargers.
 
 ---
@@ -131,18 +144,23 @@ The standard way AI assistants talk to tools. Like how your phone has standard c
 ## Getting Started (Depending on Your Role)
 
 ### **I'm an Executive or Decision-Maker**
+
 → Read: [Enterprise Deployment Guide](./docs/enterprise-guide/DEPLOYMENT.md) and [Compliance Guide](./docs/enterprise-guide/COMPLIANCE.md)
 
 ### **I'm an IT/Ops Person**
+
 → Read: [Installation Guide](./docs/user-guide/INSTALLATION.md) and [Configuration Guide](./docs/user-guide/CONFIGURATION.md)
 
 ### **I'm a Developer**
+
 → Read: [Beginner's Guide](./docs/user-guide/BEGINNER_GUIDE.md) and [Development Setup](./docs/contributor-guide/DEVELOPMENT_SETUP.md)
 
 ### **I'm a Security Professional**
+
 → Read: [Security Model](./docs/architecture/SECURITY_MODEL.md) and [Audit Readiness](./docs/enterprise-guide/AUDIT_READINESS.md)
 
 ### **I Want to Contribute**
+
 → Read: [Contributing Guide](./docs/contributor-guide/CONTRIBUTING.md)
 
 ---
@@ -150,17 +168,20 @@ The standard way AI assistants talk to tools. Like how your phone has standard c
 ## The 2-Minute Version
 
 **ATLAS-GATE-MCP is:**
+
 - A security gateway for AI assistants
 - Ensures AI follows rules and gets approvals
 - Keeps tamper-proof records of what AI does
 - Built for enterprise compliance and security
 
 **Use it if you:**
+
 - Give AI systems access to critical work
 - Need to prove governance to auditors
 - Want to prevent or catch mistakes
 
 **It provides:**
+
 - Authorization (only approved actions)
 - Audit trails (complete records)
 - Compliance features (SOC 2, GDPR, ISO 27001)
@@ -201,7 +222,7 @@ The standard way AI assistants talk to tools. Like how your phone has standard c
 - **Problem?** → See [Troubleshooting](./docs/user-guide/TROUBLESHOOTING.md)
 - **Unclear term?** → Look up [Glossary](./docs/GLOSSARY.md)
 - **Want to contribute?** → [Contributing Guide](./docs/contributor-guide/CONTRIBUTING.md)
-- **Security issue?** → Email security@atlas-gate-mcp.org
+- **Security issue?** → Email <security@atlas-gate-mcp.org>
 
 ---
 

@@ -5,6 +5,7 @@ Multi-tenant HTTP/REST API deployment with dynamic workspace routing.
 ## What This Is
 
 Transform ATLAS-GATE from a stdio-based MCP tool into a remote HTTP API server that:
+
 - Handles multiple tenants/teams via API keys
 - Routes requests to different repositories dynamically
 - Maintains isolated audit trails per tenant
@@ -60,6 +61,7 @@ curl -X POST "http://localhost:3000/tools/list_plans?sessionId=session_abc" \
 ## What's New
 
 ### Code
+
 - `core/multi-tenant-manager.js` - Tenant isolation
 - `api/http-server.js` - HTTP router
 - `api/client-sdk.js` - JavaScript client
@@ -67,9 +69,11 @@ curl -X POST "http://localhost:3000/tools/list_plans?sessionId=session_abc" \
 - `examples/multi-tenant-client.js` - Usage demo
 
 ### Configuration
+
 - Updated `package.json` with npm scripts
 
 ### Documentation
+
 - 9 new guides (80+ pages total)
 - 2 summary files
 - Code examples
@@ -93,6 +97,7 @@ Workspace Filesystem
 ## Use Cases
 
 ### 1. Team with Multiple Repos
+
 ```javascript
 const client = new AtlasGateClient({ baseUrl, apiKey });
 const session = await client.createSession({ 
@@ -104,6 +109,7 @@ await client.updateSessionWorkspace('/repos/repo-b');
 ```
 
 ### 2. CI/CD Across Multiple Projects
+
 ```bash
 # Single session, multiple workspaces
 for repo in /repos/*; do
@@ -118,6 +124,7 @@ done
 ```
 
 ### 3. Multiple Teams with Isolation
+
 ```bash
 # Team A: API Key A (isolated sessions & audit logs)
 # Team B: API Key B (isolated sessions & audit logs)
@@ -127,22 +134,26 @@ done
 ## Deployment Options
 
 ### Standalone
+
 ```bash
 node bin/ATLAS-GATE-HTTP.js --port 3000
 ```
 
 ### Docker
+
 ```bash
 docker build -t atlas-gate:latest .
 docker run -p 3000:3000 atlas-gate:latest
 ```
 
 ### Docker Compose
+
 ```bash
 docker-compose up -d
 ```
 
 ### Kubernetes
+
 ```bash
 kubectl apply -f k8s-deployment.yaml
 kubectl port-forward service/atlas-gate-service 3000:3000
@@ -212,6 +223,7 @@ const logs = await client.readAuditLog({ tool: 'read_file' });
 - Complete audit trail (accountability)
 
 For production, also use:
+
 - HTTPS/TLS (see MULTI_TENANT_DEPLOYMENT.md)
 - Rate limiting (see DEPLOYMENT_CHECKLIST_HTTP.md)
 - API key rotation (see DEPLOYMENT_CHECKLIST_HTTP.md)
@@ -227,12 +239,14 @@ For higher scale, implement persistent database (see MULTI_TENANT_DEPLOYMENT.md)
 ## Integration with Existing ATLAS-GATE
 
 The HTTP server:
+
 - ✓ Runs alongside existing stdio MCP (no conflicts)
 - ✓ Uses all existing tools (no modifications needed)
 - ✓ Feeds into same audit system
 - ✓ Enables gradual migration path
 
 Both can run simultaneously:
+
 ```bash
 # Terminal 1: Stdio MCP
 npm run start:windsurf

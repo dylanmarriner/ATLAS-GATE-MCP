@@ -24,6 +24,7 @@
 ## What's Ready
 
 ### Core Functionality
+
 - ✅ Plan creation with 7-stage linting
 - ✅ Cosign-based cryptographic signing
 - ✅ Append-only, hash-chained audit logging
@@ -34,6 +35,7 @@
 - ✅ Multi-tenant support
 
 ### Deployment Options
+
 - ✅ Standalone Node.js server
 - ✅ Raspberry Pi (3B+ or newer)
 - ✅ Docker containerized
@@ -42,6 +44,7 @@
 - ✅ nginx reverse proxy configuration
 
 ### Monitoring & Operations
+
 - ✅ Health check endpoint
 - ✅ Systemd journal logging
 - ✅ Centralized logging compatible
@@ -50,6 +53,7 @@
 - ✅ Recovery procedures
 
 ### Documentation
+
 - ✅ PRODUCTION_DEPLOYMENT.md - Full deployment guide
 - ✅ RPI_DEPLOYMENT.md - Raspberry Pi guide
 - ✅ RPI_QUICK_START.sh - Automated setup
@@ -61,6 +65,7 @@
 ## Deployment Paths
 
 ### Path A: Raspberry Pi (Easiest)
+
 ```bash
 # 1. Clone repo on RPi
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
@@ -83,6 +88,7 @@ curl http://localhost:3000/health
 ---
 
 ### Path B: Linux Server
+
 ```bash
 # 1. Install Node.js 18+
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -115,6 +121,7 @@ sudo systemctl start atlas-gate
 ---
 
 ### Path C: Docker
+
 ```bash
 # 1. Build image
 docker build -t atlas-gate-mcp:latest .
@@ -138,6 +145,7 @@ curl http://localhost:3000/health
 ---
 
 ### Path D: Kubernetes
+
 ```bash
 # See PRODUCTION_DEPLOYMENT.md for complete manifest
 kubectl apply -f k8s-deployment.yaml
@@ -155,6 +163,7 @@ kubectl logs -f deployment/atlas-gate-mcp
 ## Quick Deployment Checklist
 
 **Before deploying:**
+
 - [ ] Read DEPLOYMENT_FINAL_CHECKLIST.md
 - [ ] Choose deployment path (A, B, C, or D)
 - [ ] Gather secrets (generate with `openssl rand -hex 32`)
@@ -162,6 +171,7 @@ kubectl logs -f deployment/atlas-gate-mcp
 - [ ] Set up backup location
 
 **During deployment:**
+
 - [ ] Follow chosen path's instructions
 - [ ] Run `npm run verify` to confirm setup
 - [ ] Check systemd service status
@@ -169,6 +179,7 @@ kubectl logs -f deployment/atlas-gate-mcp
 - [ ] Create first workspace
 
 **After deployment:**
+
 - [ ] Enable centralized logging
 - [ ] Set up automated backups
 - [ ] Configure monitoring
@@ -180,14 +191,18 @@ kubectl logs -f deployment/atlas-gate-mcp
 ## Key Security Features
 
 ### Write-Time Enforcement
+
 Every file write blocked if it contains:
+
 - TODO/FIXME markers
 - Empty functions
 - Mock/fake/dummy patterns
 - Unsafe language constructs
 
 ### Plan Validation
+
 All plans must pass 7-stage linting:
+
 1. Structure validation
 2. Phase validation
 3. Path validation
@@ -197,12 +212,14 @@ All plans must pass 7-stage linting:
 7. Signature verification
 
 ### Cryptographic Signing
+
 - Plans signed with cosign (ECDSA P-256 or SHA256)
 - Audit entries individually signed
 - Hash-chaining for tamper-evidence
 - Deterministic signature computation
 
 ### Fail-Closed Enforcement
+
 - No exceptions to hard blocks
 - No override mechanisms
 - No backdoors
@@ -235,18 +252,21 @@ All plans must pass 7-stage linting:
 ## Scaling Considerations
 
 ### Single Instance
+
 - One workspace per instance
 - 1-2 concurrent users
 - Suitable for: RPi, single project
 - Max throughput: ~100 ops/min
 
 ### Multi-Instance
+
 - One instance per workspace
 - Load balancer in front
 - Shared audit storage (network drive)
 - Shared key management (e.g., AWS KMS)
 
 ### High-Volume (100+ ops/min)
+
 - Archive old audit logs
 - Index audit log for faster queries
 - Use SSD storage
@@ -257,6 +277,7 @@ All plans must pass 7-stage linting:
 ## Support Resources
 
 ### Documentation
+
 - **PRODUCTION_DEPLOYMENT.md** - Full production setup
 - **RPI_DEPLOYMENT.md** - Raspberry Pi specific
 - **SECURITY_HARDENING.md** - Security details
@@ -264,6 +285,7 @@ All plans must pass 7-stage linting:
 - **AGENTS.md** - Development guidelines
 
 ### Quick Commands
+
 ```bash
 # Health check
 curl http://your-server/health
@@ -284,6 +306,7 @@ curl -X POST http://your-server/sessions/create \
 ```
 
 ### Troubleshooting
+
 1. Check health endpoint: `curl http://localhost/health`
 2. Review logs: `journalctl -u atlas-gate -n 100`
 3. Verify tests: `npm run verify`
@@ -308,6 +331,7 @@ curl -X POST http://your-server/sessions/create \
 ## Getting Started Now
 
 ### Option 1: Deploy to Raspberry Pi (5 minutes)
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -315,6 +339,7 @@ bash RPI_QUICK_START.sh
 ```
 
 ### Option 2: Run locally (1 minute)
+
 ```bash
 npm install
 node bin/ATLAS-GATE-HTTP.js
@@ -322,6 +347,7 @@ curl http://localhost:3000/health
 ```
 
 ### Option 3: Docker (2 minutes)
+
 ```bash
 docker build -t atlas-gate .
 docker run -p 3000:3000 atlas-gate
@@ -344,7 +370,7 @@ curl http://localhost:3000/health
 
 ## Contact & Support
 
-- **Repository:** https://github.com/dylanmarriner/ATLAS-GATE-MCP
+- **Repository:** <https://github.com/dylanmarriner/ATLAS-GATE-MCP>
 - **Issue Tracker:** Check repository issues
 - **Documentation:** See included .md files
 - **Security:** See SECURITY_HARDENING.md
@@ -360,6 +386,7 @@ npm run verify && curl http://localhost:3000/health
 ```
 
 Expected output:
+
 ```
 ✓ AST Policy Verified
 ✓ Plan Linter: 14/14 PASS
@@ -375,7 +402,7 @@ Expected output:
 
 ---
 
-## You Are Ready!
+## You Are Ready
 
 This system is **production-ready** and can be deployed immediately.
 

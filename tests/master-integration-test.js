@@ -21,8 +21,8 @@ const __dirname = dirname(__filename);
 const REPO_ROOT = path.join(__dirname, "..");
 
 // Core imports
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting, getRepoRoot } from "../core/path-resolver.js";
-import { lintPlan } from "../core/plan-linter.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting, getRepoRoot } from "../src/infrastructure/path-resolver.js";
+import { lintPlan } from "../src/application/plan-linter.js";
 
 // Tool imports
 import { readFileHandler } from "../tools/read_file.js";

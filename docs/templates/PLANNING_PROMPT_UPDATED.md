@@ -38,17 +38,21 @@ You must obtain ALL of the following from the operator before proceeding:
 Before generating the plan, you MUST:
 
 ### 1. Read Target Files
+
 For each file in Target Files:
+
 - Call `read_file` with workspace-relative path
 - Understand current implementation and dependencies
 - Document existing patterns and guardrails
 
 ### 2. Identify Dependencies
+
 - Which other files import or use target modules?
 - Are there configuration files, environment variables, or deployment changes needed?
 - What are the testing implications?
 
 ### 3. Design the Solution
+
 - Specify the exact implementation approach (no vague language)
 - Document how each component integrates with existing code
 - Plan all error handling and edge cases

@@ -10,6 +10,7 @@
 The ATLAS-GATE MCP Server is designed to work **100% out of the box** in any directory, repository structure, or folder without requiring configuration, setup files, or markers.
 
 A user can:
+
 1. Clone/download the repository
 2. Run `npm install`
 3. Run `node server.js` from ANY working directory
@@ -26,21 +27,27 @@ A user can:
 The system uses a 4-tier fallback strategy for finding the repository root:
 
 **Tier 1: Explicit Governance Marker**
+
 ```
 .atlas-gate/ROOT
 ```
+
 If present, this is the repo root. Highest priority.
 
 **Tier 2: Git Repository Root**
+
 ```
 .git/
 ```
+
 If present, this is the repo root. Works in any Git-managed repo.
 
 **Tier 3: Legacy Governance Structure**
+
 ```
 docs/plans/
 ```
+
 If present, indicates a ATLAS-GATE-managed repo. Uses parent directory as root.
 
 **Tier 4: Current Directory (Fallback)**
@@ -64,6 +71,7 @@ return originalCurrent;
 The system automatically creates directories on first use:
 
 ### Plans Directory
+
 ```javascript
 // From list_plans.js
 if (!fs.existsSync(plansDir)) {
@@ -74,6 +82,7 @@ if (!fs.existsSync(plansDir)) {
 When `list_plans` is called and `docs/plans/` doesn't exist, it's created automatically.
 
 ### Audit Log Directory
+
 ```javascript
 // From audit-log.js
 const dir = path.dirname(auditPath);
@@ -85,6 +94,7 @@ if (!fs.existsSync(dir)) {
 When the first write happens, the audit log directory is created automatically.
 
 ### Governance File
+
 ```javascript
 // From governance.js
 if (!fs.existsSync(govPath)) {
@@ -110,6 +120,7 @@ bootstrap_enabled: true  // Allow plan creation in fresh repos
 ```
 
 This means:
+
 - Users can immediately create their first plan
 - No need to manually enable bootstrap
 - System is ready to use instantly
@@ -121,10 +132,11 @@ This means:
 ### Scenario 1: Random Developer Downloads ATLAS-GATE
 
 **Steps:**
+
 ```bash
-$ cd ~/my-project
-$ npm install ATLAS-GATE-MCP-server
-$ node node_modules/ATLAS-GATE-MCP-server/server.js
+cd ~/my-project
+npm install ATLAS-GATE-MCP-server
+node node_modules/ATLAS-GATE-MCP-server/server.js
 ```
 
 **Result:**
@@ -138,6 +150,7 @@ $ node node_modules/ATLAS-GATE-MCP-server/server.js
 ### Scenario 2: Using in Arbitrary Repository
 
 **Initial state:**
+
 ```
 my-repo/
 ├── src/
@@ -146,6 +159,7 @@ my-repo/
 ```
 
 **After running ATLAS-GATE from `my-repo` directory:**
+
 ```
 my-repo/
 ├── src/
@@ -161,6 +175,7 @@ my-repo/
 ### Scenario 3: Switching to Different Directory
 
 **Works identically:**
+
 ```bash
 $ cd /tmp/test-repo
 $ node /path/to/ATLAS-GATE-MCP-server/server.js
@@ -191,6 +206,7 @@ The following operations work **without any configuration**:
 ## Environmental Assumptions
 
 The ATLAS-GATE MCP Server makes **no assumptions** about:
+
 - Working directory
 - Repository structure
 - Git status
@@ -199,6 +215,7 @@ The ATLAS-GATE MCP Server makes **no assumptions** about:
 - Environment variables (except ATLAS-GATE_BOOTSTRAP_SECRET for bootstrap)
 
 It works identically whether you:
+
 - Are in a Git repo or not
 - Have specific folder structures
 - Have existing `.atlas-gate/` markers
@@ -212,6 +229,7 @@ It works identically whether you:
 The **only errors** users should see are:
 
 ### Policy Violations (Intentional)
+
 ```
 HARD_BLOCK_VIOLATION: Returning null
 HARD_BLOCK_VIOLATION: Empty function body
@@ -220,6 +238,7 @@ PLAN_NOT_APPROVED: Plan status is not APPROVED
 ```
 
 ### Valid Input Errors (Intentional)
+
 ```
 INVALID_PATH: Path traversal not permitted
 FILE_NOT_FOUND: File does not exist
@@ -227,6 +246,7 @@ PLAN_NOT_FOUND: Plan does not exist
 ```
 
 ### Environmental Errors (Should NOT Occur)
+
 ```
 NO_REPO_FOUND: Cannot determine repository root
 PLANS_DIR_NOT_FOUND: Expected plans directory
@@ -257,6 +277,7 @@ PLANS_DIR_NOT_FOUND: Expected plans directory
    - Works even on first write
 
 ### Result
+
 A system that is **impossible to misconfigure**.
 
 ---
@@ -306,6 +327,7 @@ cd /tmp/test_nested/subfolder2
 ## Why This Matters
 
 Traditional MCP servers often require:
+
 - Configuration files
 - Environment setup
 - Directory structures
@@ -360,4 +382,3 @@ The ATLAS-GATE MCP Server is designed for **zero friction** deployment. A user f
 This is the definition of a **production-ready system** - one that works correctly by default, adapts to its environment, and requires no configuration.
 
 **Status**: ✅ ZERO-SETUP GUARANTEE MET
-

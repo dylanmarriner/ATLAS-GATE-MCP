@@ -68,6 +68,7 @@ About 100 MB (mostly npm dependencies). Audit logs grow over time depending on u
 ### How do I use it with Claude/ChatGPT/Windsurf?
 
 Tell the AI to use ATLAS-GATE-MCP. It will automatically:
+
 1. Check plans
 2. Validate requests
 3. Log operations
@@ -96,6 +97,7 @@ Or in a JSON viewer. Each entry shows timestamp, operation, file, status.
 ### Can I search the audit log?
 
 Yes:
+
 ```bash
 # Find all file writes
 grep "file_write" audit-log.jsonl
@@ -110,6 +112,7 @@ grep "FAILED" audit-log.jsonl
 ### How do I delete the audit log?
 
 You shouldn't—it's your compliance record. But if you must:
+
 ```bash
 rm audit-log.jsonl
 ```
@@ -131,6 +134,7 @@ Currently, one workspace at a time. Multiple workspaces per instance is a planne
 ### Is it secure?
 
 ATLAS-GATE-MCP implements enterprise-grade security:
+
 - Zero-trust model (verify everything)
 - Role-based access control
 - Cryptographic audit trails
@@ -149,7 +153,7 @@ The sandbox is process-level isolation. The AI can only interact through MCP pro
 
 ### What if I find a security vulnerability?
 
-Report privately to security@atlas-gate-mcp.org (not public GitHub issues). See [SECURITY.md](../../SECURITY.md) for disclosure process.
+Report privately to <security@atlas-gate-mcp.org> (not public GitHub issues). See [SECURITY.md](../../SECURITY.md) for disclosure process.
 
 ### Is encryption supported?
 
@@ -185,6 +189,7 @@ Yes. Designed to align with ISO 27001 requirements. See [COMPLIANCE.md](../enter
 ### Can auditors review the logs?
 
 Yes. The audit log is designed for auditor review:
+
 - Immutable (can't be faked)
 - Complete (everything logged)
 - Signed (cryptographic proof)
@@ -197,11 +202,13 @@ Yes. The audit log is designed for auditor review:
 ### Server won't start
 
 **Possible causes:**
+
 1. Port 9000 in use: Try stopping other processes or using different port
 2. Dependencies not installed: Run `npm install`
 3. Wrong Node version: Check `node --version` (need 18+)
 
 **Solution:**
+
 ```bash
 npm install
 npm run start:antigravity  # Try this first (simpler)
@@ -210,6 +217,7 @@ npm run start:antigravity  # Try this first (simpler)
 ### "Plan not found" error
 
 The plan file doesn't exist. Check:
+
 1. Plan file exists in workspace
 2. `.env` has correct `CURRENT_PLAN`
 3. Filename matches exactly (case-sensitive on Linux/Mac)
@@ -217,11 +225,13 @@ The plan file doesn't exist. Check:
 ### Audit log not being created
 
 Check:
+
 1. `.env` has `AUDIT_LOG_FILE` path
 2. Directory exists and is writable
 3. No permission errors: `ls -la audit-log.jsonl`
 
 **Solution:**
+
 ```bash
 touch audit-log.jsonl
 npm run start:windsurf
@@ -230,11 +240,13 @@ npm run start:windsurf
 ### "Unauthorized" error
 
 AI lacks permission. Check:
+
 1. Are you using the right role? (Windsurf for writes, Antigravity for reads)
 2. Is plan approved?
 3. Does plan allow this operation?
 
 **Solution:**
+
 1. Create a simpler plan
 2. Approve it explicitly
 3. Try operation again
@@ -242,6 +254,7 @@ AI lacks permission. Check:
 ### Operations are slow
 
 Possible causes:
+
 1. Content validation takes time (normal)
 2. Logging adds ~100ms overhead
 3. File system slow
@@ -255,6 +268,7 @@ Usually not a problem. See [PERFORMANCE.md](../architecture/PERFORMANCE.md) for 
 ### Can I use it with multiple AI tools?
 
 Yes! ATLAS-GATE-MCP works with any tool that supports MCP protocol:
+
 - Claude (Anthropic)
 - ChatGPT (OpenAI)
 - Windsurf (Codeium)
@@ -263,6 +277,7 @@ Yes! ATLAS-GATE-MCP works with any tool that supports MCP protocol:
 ### Can I customize the rules?
 
 Yes. Configuration is flexible:
+
 - Role-based access control
 - Plan requirements
 - Content restrictions
@@ -319,7 +334,7 @@ Not yet, but you can follow security releases on [Watch Releases](https://github
 
 ### Can I get professional support?
 
-Contact info@atlas-gate-mcp.org for commercial support options.
+Contact <info@atlas-gate-mcp.org> for commercial support options.
 
 ---
 
@@ -344,6 +359,7 @@ Yes. Source code has comments explaining complex logic. See `core/`, `tools/` di
 ### What dependencies does it have?
 
 Minimal dependencies:
+
 - `@modelcontextprotocol/sdk` — MCP protocol
 - `zod` — Input validation
 - `acorn` — Code analysis
@@ -383,7 +399,7 @@ See [PERFORMANCE.md](../architecture/PERFORMANCE.md) for tuning guidelines.
 
 - **Check [Troubleshooting.md](./TROUBLESHOOTING.md)** for more help
 - **Ask in [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP/discussions)**
-- **Email: info@atlas-gate-mcp.org**
+- **Email: <info@atlas-gate-mcp.org>**
 
 ---
 

@@ -11,6 +11,7 @@ The MCP Forensic Replay system enables deterministic reconstruction of execution
 ## Purpose
 
 This system answers critical questions:
+
 - **What happened?** Deterministic timeline from audit log
 - **Why did it happen?** Intent artifacts and plan context
 - **Did it comply?** Authority, policy, and determinism validation
@@ -30,11 +31,13 @@ replayExecution(workspaceRoot, planSignature, filters = {})
 ```
 
 **Inputs:**
+
 - `workspaceRoot` (required): Workspace root path
 - `planSignature` (required): SHA256 plan hash (64-char hex)
 - `filters` (optional): Phase, tool, seq range filters
 
 **Filters:**
+
 ```javascript
 {
   phase_id: "01-setup",     // Filter to phase
@@ -45,6 +48,7 @@ replayExecution(workspaceRoot, planSignature, filters = {})
 ```
 
 **Output:**
+
 ```javascript
 {
   success: boolean,
@@ -118,6 +122,7 @@ verifyWorkspaceIntegrity(workspaceRoot)
 ```
 
 **Output:**
+
 ```javascript
 {
   pass: boolean,
@@ -134,6 +139,7 @@ verifyWorkspaceIntegrity(workspaceRoot)
 ```
 
 **Checked Invariants:**
+
 - `VALID_WORKSPACE_ROOT`: Workspace path valid
 - `AUDIT_LOG_EXISTS`: Audit log file exists
 - `HASH_CHAIN_INTACT`: Hash chain unbroken
@@ -147,6 +153,7 @@ generateForensicReport(replayResult, planSignature, generatedAt)
 ```
 
 **Generates markdown report with sections:**
+
 1. Executive Summary (non-coder friendly)
 2. Key Findings (violations by category)
 3. Execution Timeline (seq, tool, role, result)
@@ -158,30 +165,36 @@ generateForensicReport(replayResult, planSignature, generatedAt)
 ## Finding Codes (Non-Negotiable)
 
 ### Success States
+
 - `DETERMINISTIC_PASS`: Execution was deterministic and compliant
 - `COMPLIANCE_PASS`: No violations detected
 
 ### Divergence Violations
+
 - `DIVERGENCE_IDENTICAL_ARGS_DIFFERENT_RESULTS`: Same input → different outputs
 - `DIVERGENCE_SAME_PHASE_TOOL_DIFFERENT_RESULT`: Tool inconsistent in phase
 - `DIVERGENCE_RESULT_HASH_MISMATCH`: Expected result hash does not match
 
 ### Authority Violations
+
 - `AUTHORITY_VIOLATION_TOOL_OUTSIDE_PHASE`: Tool executed outside phase
 - `AUTHORITY_VIOLATION_ROLE_MISMATCH`: Role not authorized for tool
 - `AUTHORITY_VIOLATION_EXECUTION_WITHOUT_PLAN`: Execution without approved plan
 
 ### Policy Violations
+
 - `POLICY_VIOLATION_WRITE_REFUSED`: Write operation refused
 - `POLICY_VIOLATION_BLOCKED_BY_GATE`: Tool blocked by security gate
 - `POLICY_VIOLATION_INVARIANT_VIOLATION`: Invariant violation occurred
 
 ### Evidence Gaps
+
 - `EVIDENCE_GAP_MISSING_AUDIT_ENTRIES`: Audit entries missing
 - `EVIDENCE_GAP_INCOMPLETE_PLAN_EXECUTION`: Plan execution incomplete
 - `EVIDENCE_GAP_MISSING_RESULT_HASH`: Result hash missing
 
 ### Tamper Detection
+
 - `TAMPER_DETECTED_BROKEN_HASH_CHAIN`: Hash chain broken (tampering)
 - `TAMPER_DETECTED_SEQ_GAP`: Sequence gaps (entries removed)
 - `TAMPER_DETECTED_INVALID_JSON`: Invalid JSON (corruption)
@@ -192,6 +205,7 @@ generateForensicReport(replayResult, planSignature, generatedAt)
 ### `replay_execution` (Read-Only)
 
 **Schema:**
+
 ```javascript
 {
   plan_signature: string,           // SHA256 plan hash (required)
@@ -207,6 +221,7 @@ generateForensicReport(replayResult, planSignature, generatedAt)
 ### `verify_workspace_integrity` (Read-Only)
 
 **Schema:**
+
 ```javascript
 {}  // No input required
 ```
@@ -216,6 +231,7 @@ generateForensicReport(replayResult, planSignature, generatedAt)
 ## Audit Integration
 
 Every replay invocation is audited:
+
 ```javascript
 {
   tool: "replay_execution" | "verify_workspace_integrity",
@@ -232,11 +248,13 @@ Audit entries MUST be appended with full hash chain integrity.
 ## Non-Coder Output Format
 
 All findings are translated to plain English:
+
 - `TAMPER_DETECTED_BROKEN_HASH_CHAIN` → "Audit log hash chain is broken (tampering)"
 - `DIVERGENCE_IDENTICAL_ARGS_DIFFERENT_RESULTS` → "Same input produced different outputs"
 - `AUTHORITY_VIOLATION_ROLE_MISMATCH` → "User role was not authorized to execute this tool"
 
 Forensic reports include:
+
 - Executive summary (1-2 paragraphs)
 - Bulleted key findings with context
 - Execution timeline table
@@ -273,12 +291,14 @@ Forensic reports include:
 ## Fail-Closed Rules
 
 Replay MUST refuse if:
+
 - `workspace_root` is null, empty, or invalid
 - `plan_signature` is not a 64-char hex string
 - Audit log verification fails (corrupted entries)
 - Plan hash not found in audit log
 
 **Error codes:**
+
 - `REPLAY_INVALID_INPUT`: Input validation failed
 - `REPLAY_AUDIT_LOG_NOT_FOUND`: Audit log missing
 - `REPLAY_AUDIT_LOG_EMPTY`: No audit entries
@@ -287,6 +307,7 @@ Replay MUST refuse if:
 ## Testing Strategy
 
 Tests MUST cover (at least 12):
+
 1. ✓ Replay PASS on valid deterministic run
 2. ✓ Divergence detected on altered result_hash
 3. ✓ Tamper detected on broken hash chain

@@ -9,6 +9,7 @@
 **Template**: [antigravity_planning_prompt_v2.md](file:///media/linnyux/development1/developing/ATLAS-GATE-MCP/docs/templates/antigravity_planning_prompt_v2.md)
 
 ### Core Tools
+
 - `begin_session({ workspace_root })` — MANDATORY first call
 - `read_file({ path })` — read workspace files
 - `lint_plan({ content })` — validate plan structure; returns `{ passed, errors, warnings }`
@@ -17,6 +18,7 @@
 - `generate_maturity_report()` — compute workspace maturity and write formal report
 
 ### Key Responsibilities
+
 1. **Analyze**: Use `begin_session` and `read_file` to understand requirements.
 2. **Design**: Draft a complete plan following the 7-section scaffold.
 3. **Validate**: Use `lint_plan` to verify structure — iterate until `passed: true`.
@@ -30,6 +32,7 @@
 **Template**: [windsurf_execution_prompt_v2.md](file:///media/linnyux/development1/developing/ATLAS-GATE-MCP/docs/templates/windsurf_execution_prompt_v2.md)
 
 ### Core Tools
+
 - `begin_session({ workspace_root })` — MANDATORY first call
 - `read_file({ path })` — read the signed plan and workspace files
 - `write_file({ path, plan, intent, content, ... })` — audited file write (requires `.intent.md` file first)
@@ -38,6 +41,7 @@
 - `list_proposals()` — list pending remediation proposals
 
 ### Key Responsibilities
+
 1. **Initialize**: Call `begin_session`.
 2. **Read Plan**: Use `read_file` with the plan path from the operator.
 3. **Execute**: Use `write_file` for every file change — must reference the plan signature.
@@ -56,6 +60,7 @@ Use as a starting point for any new implementation plan. Guaranteed to pass `lin
 ## Example Workflow
 
 ### Planning Phase (ANTIGRAVITY)
+
 ```javascript
 // 1. Lock workspace
 await begin_session({ workspace_root: "/path/to/project" });
@@ -73,6 +78,7 @@ const result = await save_plan({ content: draftPlan });
 ```
 
 ### Execution Phase (WINDSURF)
+
 ```javascript
 // 1. Lock workspace
 await begin_session({ workspace_root: "/path/to/project" });

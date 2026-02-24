@@ -39,6 +39,7 @@ You will receive EXACTLY these two values:
 - **Plan Path**: Path to the signed plan file (always `docs/plans/<SIGNATURE>.md`)
 
 **CRITICAL**:
+
 - If the plan file doesn't exist at the given path → STOP.
 - If the signature in the operator input doesn't match the filename (excluding `.md`) → STOP.
 - If the plan content has been tampered with, `write_file` will reject it via signature verification.
@@ -96,7 +97,7 @@ All 7 sections are required.
 
 ## THE INTENT ARTIFACT LAW (CRITICAL)
 
-**Before you can write ANY file**, you MUST first create a corresponding intent artifact file named `<filename>.intent.md`. 
+**Before you can write ANY file**, you MUST first create a corresponding intent artifact file named `<filename>.intent.md`.
 The `write_file` tool will **mathematically reject** any write if it cannot find and validate this `.intent.md` file.
 
 The intent file MUST follow this exact 9-section canonical schema, with no deviations, code blocks, or conditional language:
@@ -155,9 +156,11 @@ await write_file({
 ## EXECUTION SEQUENCE
 
 ### Step 1: Initialization
+
 - Call `begin_session({ workspace_root })`.
 
 ### Step 2: Plan Validation
+
 - Read the plan file with `read_file`.
 - Confirm all 7 sections are present.
 - Extract the `Path Allowlist`.
@@ -171,6 +174,7 @@ For each file in `Scope & Constraints`:
 3. **Execute Write**: Call `write_file` for the actual target path (see schema above). It will automatically validate the intent file you just created.
 
 ### Step 4: Verification
+
 - Run the `Verification Gates` commands from the plan (e.g., `npm test`).
 - All commands MUST exit with code 0.
 
@@ -179,6 +183,7 @@ For each file in `Scope & Constraints`:
 ## FAILURE & ROLLBACK
 
 If ANY step fails or if the MCP server rejects a write:
+
 1. **STOP** immediately.
 2. **Rollback**: Revert changes using `git checkout` or by restoring backups.
 3. **Report**: Inform the operator of the exact failure.

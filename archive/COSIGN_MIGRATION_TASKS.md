@@ -9,10 +9,12 @@
 ### ✅ COMPLETED
 
 #### core/cosign-hash-provider.js
+
 - Removed: `sha256()`, `hmacSha256()`, `timingSafeEqual()`, `crypto` module
 - Kept: `signWithCosign()`, `verifyWithCosign()`, `generateCosignKeyPair()`, `canonicalizeForSigning()`
 
 #### core/audit-system.js
+
 - Replaced: SHA256 entry hashes with cosign signatures
 - Changed: `entry_hash` → `signature`, `prev_hash` → `prev_signature`
 - Added: Key pair loading, cosign signing in append
@@ -24,7 +26,9 @@
 ### ⏳ TO DO
 
 #### core/attestation-engine.js (CRITICAL)
+
 **Changes:**
+
 - Remove: `hmacSha256()` import and all HMAC signing
 - Replace: Bundle ID generation (remove SHA256)
 - Replace: Signature generation (use cosign instead of HMAC)
@@ -33,6 +37,7 @@
 - Make async: All functions using signing
 
 **Key methods:**
+
 - `computeBundleId()` → Remove or return signature
 - `signBundle()` → Replace with `signWithCosign()`
 - `verifyBundleSignature()` → Use `verifyWithCosign()`
@@ -40,6 +45,7 @@
 - `verifyAttestationBundle()` → Use cosign verification
 
 **Data structure:**
+
 ```javascript
 // OLD
 {
@@ -56,7 +62,9 @@
 ---
 
 #### core/replay-engine.js
+
 **Changes:**
+
 - Remove: `sha256()`, `canonicalizeForHash()` imports
 - Replace: Hash chain verification with signature verification
 - Change: `plan_hash` → `plan_signature` throughout
@@ -65,6 +73,7 @@
 - Make async: All verification functions
 
 **Key methods:**
+
 - `validateDeterminism()` → Compare signatures, not hashes
 - `verifyHashChain()` → `verifySignatureChain()`
 - `replayExecution()` → Make async
@@ -73,7 +82,9 @@
 ---
 
 #### core/plan-linter.js
+
 **Changes:**
+
 - Already imports cosign ✓
 - Replace: `sha256()` imports with cosign
 - Change: `hashPlanContent()` → `signPlanContent()`
@@ -82,12 +93,15 @@
 - Make async: All signing/verification methods
 
 **Key:**
+
 - `export function hashPlanContent()` → `export async function signPlanContent()`
 
 ---
 
 #### core/intent-schema.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Replace: `hashIntent()` with signature
 - Change: Return signature instead of hash
@@ -96,7 +110,9 @@
 ---
 
 #### core/operator-identity.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Remove: `identity_hash` field completely
 - Delete: Hash generation from operator binding
@@ -104,7 +120,9 @@
 ---
 
 #### core/governance.js
+
 **Changes:**
+
 - Remove: `hmacSha256()` import
 - Replace: HMAC verification with cosign verification
 - Change: Bootstrap signature from HMAC to cosign
@@ -113,7 +131,9 @@
 ---
 
 #### core/maturity-report-generator.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Remove: `hashReport()` function
 - Remove: Report hashing from report generation
@@ -121,7 +141,9 @@
 ---
 
 #### core/maturity-scoring-engine.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Remove: `hashScoringResult()` function
 - Remove: Score hashing
@@ -129,7 +151,9 @@
 ---
 
 #### core/audit-storage-file.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Replace: `_calculateHash()` with signature method
 - Change: `hash` field → `signature`
@@ -139,7 +163,9 @@
 ---
 
 #### core/two-step-confirmation.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Remove: `confirmation_hash` field
 - Delete: Confirmation hash generation
@@ -147,7 +173,9 @@
 ---
 
 #### core/remediation-engine.js
+
 **Changes:**
+
 - Remove: `sha256()` import from `generateProposalId()`
 - Replace: Hashing with signature for proposal IDs
 - Make async: Proposal generation
@@ -157,19 +185,24 @@
 ### TOOLS (6 files)
 
 #### tools/write_file.js
+
 **Changes:**
+
 - Remove: `sha256()` calls on lines 179, 236
 - Replace: With signature verification
 - Make async: Content verification
 
 **Locations:**
+
 - Line 179: `currentHash = sha256(oldContent)`
 - Line 236: `contentHash = sha256(finalContent)`
 
 ---
 
 #### tools/generate-remediation-proposals.js
+
 **Changes:**
+
 - Remove: `sha256()` calls on evidence hashing
 - Replace: With signature generation
 - Make async: Evidence processing
@@ -177,7 +210,9 @@
 ---
 
 #### tools/verification/verify-audit-log.js
+
 **Changes:**
+
 - Remove: `sha256()` import
 - Replace: Hash verification with signature verification
 - Make async: Verification loop
@@ -185,14 +220,18 @@
 ---
 
 #### tools/lint_plan.js
+
 **Changes:**
+
 - Verify already uses cosign ✓
 - Update: To return signature instead of hash
 
 ---
 
 #### tools/generate_attestation_bundle.js
+
 **Changes:**
+
 - Remove: `sha256()` calls if any
 - Ensure: Using cosign for bundle signing
 - Make async: Bundle generation
@@ -200,7 +239,9 @@
 ---
 
 #### tools/verify_attestation_bundle.js
+
 **Changes:**
+
 - Remove: HMAC verification
 - Replace: With cosign verification
 - Make async: Bundle verification
@@ -208,7 +249,9 @@
 ---
 
 #### tools/session.js
+
 **Changes:**
+
 - No changes needed (uses `crypto.randomUUID()` which is OK)
 
 ---
@@ -216,17 +259,23 @@
 ### DEPENDENT MODULES (3 files)
 
 #### core/audit-log.js
+
 **Changes:**
+
 - Review imports/usage
 - Verify using audit-system correctly
 
 #### core/write-time-policy-engine.js
+
 **Changes:**
+
 - Review plan_hash usage
 - Update to plan_signature where needed
 
 #### core/plan-enforcer.js
+
 **Changes:**
+
 - Review plan_hash references
 - Update to plan_signature
 
@@ -235,6 +284,7 @@
 ## Data Structure Migrations
 
 ### Audit Entry
+
 ```javascript
 // OLD
 {
@@ -257,6 +307,7 @@
 ```
 
 ### Plan Object
+
 ```javascript
 // OLD
 {
@@ -270,6 +321,7 @@
 ```
 
 ### Attestation Bundle
+
 ```javascript
 // OLD
 {

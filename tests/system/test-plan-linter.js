@@ -20,7 +20,7 @@
  * - Audit entry written on approval
  */
 
-import { lintPlan, signPlan, verifyPlanSignature } from "../../core/plan-linter.js";
+import { lintPlan, signPlan, verifyPlanSignature } from "../src/application/plan-linter.js";
 import crypto from "crypto";
 
 // Test helper: Generate deterministic signature for testing (not production)

@@ -3,6 +3,7 @@
 ## Critical Issues Found
 
 ### Issue 1: governance.js - Missing keyPair argument
+
 **File**: `core/governance.js:100`
 **Problem**: `signWithCosign(planContent)` called with NO keyPair argument
 **Function Signature**: `signWithCosign(content, keyPair)` REQUIRES keyPair object
@@ -20,6 +21,7 @@ const planSignature = await signWithCosign(planContent, keyPair);
 ---
 
 ### Issue 2: audit-log.js - Passing file path instead of keyPair object
+
 **File**: `core/audit-log.js:24-28`
 **Problem**: `signWithCosign(payload, privateKeyPath)` passes file path as second arg
 **Function Signature**: `signWithCosign(content, keyPair)` expects keyPair object, not a file path
@@ -45,9 +47,11 @@ async function signAuditEntry(entry, keyPair) {
 ---
 
 ### Issue 3: Inconsistent API - governance.js doesn't have keyPair available
+
 **File**: `core/governance.js:80-100`
 **Problem**: Function signature `bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature)` doesn't accept/have keyPair
 **Expected**: Need to either:
+
 - Load keyPair from somewhere (e.g., .atlas-gate/)
 - Pass keyPair as parameter
 - Generate new keyPair for this operation
@@ -57,15 +61,19 @@ async function signAuditEntry(entry, keyPair) {
 ## Current Correct Usage
 
 ### ✅ plan-linter.js:154
+
 ```javascript
 const signature = await signWithCosign(canonicalized, keyPair);
 ```
+
 CORRECT - passes canonicalized content and keyPair object
 
 ### ✅ audit-system.js:319
+
 ```javascript
 const signature = await signWithCosign(canonical, keyPair);
 ```
+
 CORRECT - passes canonical content and keyPair object
 
 ---

@@ -11,6 +11,7 @@
 > "i need the template of the prompt i send to generate the plan you need to pass the governance"
 
 **Answer**: The updated planning prompt is here:
+
 - 📄 **Primary**: `docs/templates/antigravity_planning_prompt_v2.md`
 - 📋 **Summary**: This file explains all updates
 - ⚡ **Quick Ref**: `TEMPLATES_QUICK_REFERENCE.md`
@@ -179,6 +180,7 @@
 ## Key Information at a Glance
 
 ### Plan Header (CRITICAL)
+
 ```
 <!--
 ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE
@@ -188,6 +190,7 @@ STATUS: APPROVED
 ```
 
 ### 7 Required Sections
+
 1. Plan Metadata
 2. Scope & Constraints
 3. Phase Definitions
@@ -197,18 +200,21 @@ STATUS: APPROVED
 7. Rollback / Failure Policy
 
 ### Signature Format
+
 - **Format**: URL-safe base64
 - **Length**: 43 characters
 - **Example**: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 - **Characters**: No `/`, `+`, or `=`
 
 ### File Location
+
 ```
 Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
 File: docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md
 ```
 
 ### Key Storage
+
 ```
 .atlas-gate/.cosign-keys/
 ├── private.pem (for signing)
@@ -220,6 +226,7 @@ File: docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md
 ## Testing Status
 
 ✅ **All Tests Passing**
+
 ```
 npm test         → AST Policy Verified
 npm run verify   → Full verification suite passes
@@ -233,16 +240,19 @@ npm run verify   → Full verification suite passes
 ## Reading Order (Recommended)
 
 ### For Quick Understanding (10 minutes)
+
 1. This file (TEMPLATES_UPDATE_INDEX.md)
 2. TEMPLATES_QUICK_REFERENCE.md
 
 ### For Creating Plans (30 minutes)
+
 1. TEMPLATES_QUICK_REFERENCE.md
 2. docs/templates/antigravity_planning_prompt_v2.md
 3. docs/templates/PLAN_EXAMPLE_JWT_AUTH.md
 4. docs/templates/plan_scaffold.md
 
 ### For Complete Understanding (1 hour)
+
 1. TEMPLATES_QUICK_REFERENCE.md
 2. docs/templates/README.md
 3. docs/templates/antigravity_planning_prompt_v2.md
@@ -251,6 +261,7 @@ npm run verify   → Full verification suite passes
 6. TEMPLATES_MIGRATION_COMPLETE.md
 
 ### For System Integration (2 hours)
+
 1. docs/templates/README.md
 2. docs/templates/LINTING_AND_SIGNING_GUIDE.md
 3. docs/templates/antigravity_planning_prompt_v2.md (Sections on signature computation and verification)
@@ -262,22 +273,27 @@ npm run verify   → Full verification suite passes
 ## What Changed (Summary)
 
 ### Header Format
+
 - **Old**: Separate `ATLAS-GATE_PLAN_HASH` and `COSIGN_SIGNATURE` fields
 - **New**: Single `ATLAS-GATE_PLAN_SIGNATURE` field with URL-safe base64 value
 
 ### Plan Addressing
+
 - **Old**: Hash-based (64 hex characters)
 - **New**: Signature-based (43 base64 characters)
 
 ### File Naming
+
 - **Old**: `docs/plans/<hash>.md`
 - **New**: `docs/plans/<signature>.md`
 
 ### Cryptography
+
 - **Old**: SHA256 for hashing, separate cosign for signing
 - **New**: ECDSA P-256 cosign for everything (unified)
 
 ### Linting Stages
+
 - **All 7 stages**: Unchanged in validation logic
 - **Stage 7**: Now produces URL-safe base64 signature instead of separate hash
 
@@ -314,12 +330,14 @@ A: Not unless debugging. Just follow the planning prompt and let the linter vali
 ## Important Notes
 
 ⚠️ **CRITICAL**:
+
 - Plans MUST have `ATLAS-GATE_PLAN_SIGNATURE: PENDING_SIGNATURE` header (not HASH)
 - Plans MUST be saved to `docs/plans/<signature>.md` (filename = signature)
 - Plans MUST have all 7 sections in the correct order
 - Phase IDs MUST be `UPPERCASE_WITH_UNDERSCORES`
 
 ✅ **VERIFIED**:
+
 - All 6 templates updated and consistent
 - All linting stages working correctly
 - All tests passing

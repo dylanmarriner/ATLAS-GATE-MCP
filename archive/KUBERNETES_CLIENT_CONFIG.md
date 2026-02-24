@@ -10,6 +10,7 @@ chmod +x deploy.sh
 ```
 
 This will:
+
 - Install k3s (Kubernetes)
 - Deploy PostgreSQL, Redis, nginx ingress
 - Deploy MCP server
@@ -433,6 +434,7 @@ Hetzner Server (49.12.230.179)
 ### Resource Limits
 
 The deployment includes:
+
 - **MCP Server**: 512Mi request, 1Gi limit
 - **PostgreSQL**: No limits set (adjust as needed)
 - **Redis**: No limits set (adjust as needed)
@@ -486,7 +488,7 @@ Once deployed, access:
 
 ## Support & Documentation
 
-- **Kubernetes**: https://kubernetes.io/docs/
-- **k3s**: https://docs.k3s.io/
-- **kubectl**: https://kubernetes.io/docs/reference/kubectl/
-- **Hetzner**: https://docs.hetzner.cloud/
+- **Kubernetes**: <https://kubernetes.io/docs/>
+- **k3s**: <https://docs.k3s.io/>
+- **kubectl**: <https://kubernetes.io/docs/reference/kubectl/>
+- **Hetzner**: <https://docs.hetzner.cloud/>

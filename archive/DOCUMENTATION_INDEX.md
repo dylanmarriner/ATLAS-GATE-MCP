@@ -9,12 +9,14 @@
 ## 📋 Quick Navigation
 
 ### For Your Role
+
 - **Decision-Maker** → [Executive Overview](./EXECUTIVE_OVERVIEW.md)
 - **Developer/Operator** → [Architecture Overview](#core-documentation)
 - **Security Engineer** → [Security Policy](./SECURITY.md) + [MCP Sandbox Enforcement](./MCP_SANDBOX_ENFORCEMENT.md)
 - **Contributing** → [Contributing Guide](./CONTRIBUTING.md)
 
 ### By Topic
+
 - **Enforcement & Security** → [Enforcement Summary](#enforcement--security)
 - **Getting Started** → [Installation & Setup](#installation--setup)
 - **Architecture** → [Core Documentation](#core-documentation)
@@ -27,24 +29,28 @@
 ### New in v2.0
 
 **MCP-Only Sandbox Enforcement**
+
 - Windsurf and Antigravity locked into MCP-only mode
 - No filesystem access outside of tools
 - No shell execution, no dangerous imports
 - Process-level lockdown with integrity verification
 
 **Tool Parameter Enforcement**
+
 - Strict schema enforcement for all tools
 - Wrong types/fields rejected at MCP boundary
 - Clear error messages for IDE developers
 - Comprehensive audit trail of violations
 
 **Documentation Updates**
+
 - 5 new enforcement documentation files
 - Updated AGENTS.md with sandbox requirements
 - Updated README with enforcement references
 - Architecture diagrams of enforcement flow
 
 **Files Added**
+
 - `core/mcp-sandbox.js` — Process-level sandbox
 - `core/tool-enforcement.js` — Tool parameter validation
 - `MCP_SANDBOX_ENFORCEMENT.md` — Sandbox documentation
@@ -54,6 +60,7 @@
 - `ENFORCEMENT_REFERENCE.md` — Quick reference card
 
 **Files Updated**
+
 - `AGENTS.md` — Added sandbox & enforcement section
 - `bin/ATLAS-GATE-MCP-windsurf.js` — Sandbox initialization
 - `bin/ATLAS-GATE-MCP-antigravity.js` — Sandbox initialization
@@ -72,6 +79,7 @@
 | [ANTIGRAVITY_SETUP.md](./ANTIGRAVITY_SETUP.md) | Antigravity role setup | Operators |
 
 **Quick Start**:
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 cd ATLAS-GATE-MCP-server
@@ -85,6 +93,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 ## Core Documentation
 
 ### Architecture & Design
+
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md) | 1-page strategic summary | Decision-makers |
@@ -93,6 +102,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | How to contribute code | Contributors |
 
 ### System Architecture
+
 - **Dual-Role Governance**: Separation of planning (ANTIGRAVITY) and execution (WINDSURF)
 - **Plan-Based Authorization**: Hash-addressed contracts prevent unauthorized changes
 - **Cryptographic Audit Trails**: Tamper-proof operation history
@@ -106,6 +116,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 ### 🔒 MCP-Only Sandbox (Process-Level)
 
 **Key Points**:
+
 - Windsurf and Antigravity cannot access filesystem directly
 - Cannot execute shell commands or spawn processes
 - Cannot import dangerous modules (fs, child_process, etc.)
@@ -114,6 +125,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 - All access goes through MCP tools only
 
 **Documentation**:
+
 | Document | Purpose |
 |----------|---------|
 | [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) | Complete sandbox documentation |
@@ -121,12 +133,14 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 | `core/mcp-sandbox.js` | Implementation |
 
 **Entrypoints**:
+
 - `bin/ATLAS-GATE-MCP-windsurf.js` — Applies sandbox before starting MCP
 - `bin/ATLAS-GATE-MCP-antigravity.js` — Applies sandbox before starting MCP
 
 ### 🛠️ Tool Parameter Enforcement (MCP Boundary)
 
 **Key Points**:
+
 - Every tool call validated against strict schemas
 - Wrong types, missing fields, extra fields → rejected
 - Clear error messages for IDE developers
@@ -134,6 +148,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 - No tool can be called with invalid parameters
 
 **Documentation**:
+
 | Document | Purpose |
 |----------|---------|
 | [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) | Complete tool validation documentation |
@@ -141,6 +156,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 | `core/tool-enforcement.js` | Implementation |
 
 **Integration**:
+
 - Installed in `server.js` at startup
 - Integrated into `validateToolInput()` override
 - Wraps all tool handlers
@@ -159,6 +175,7 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 ### Available MCP Tools
 
 **Read-Only Tools** (Both roles):
+
 - `read_file` — Read files
 - `read_audit_log` — Access audit trail
 - `read_prompt` — Read system prompts
@@ -170,16 +187,19 @@ node bin/ATLAS-GATE-MCP-antigravity.js # Start Antigravity (MCP-only)
 - `export_attestation_bundle` — Export attestation
 
 **Windsurf-Only Tools** (Execution role):
+
 - `begin_session` — Initialize session (both roles)
 - `write_file` — Write files (enforces plan hash)
 
 **Antigravity-Only Tools** (Planning role):
+
 - `bootstrap_create_foundation_plan` — Create first plan
 - `lint_plan` — Validate plan syntax
 
 ### Tool Usage
 
 All tools enforce strict parameter validation:
+
 - Required fields must be present
 - Field types must match (string, number, object, array)
 - Extra fields are rejected
@@ -200,22 +220,26 @@ See [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) for complete tool schemas.
 ### Common Tasks
 
 **Start Windsurf (MCP-only)**:
+
 ```bash
 node bin/ATLAS-GATE-MCP-windsurf.js
 ```
 
 **Start Antigravity (MCP-only)**:
+
 ```bash
 node bin/ATLAS-GATE-MCP-antigravity.js
 ```
 
 **Run Tests**:
+
 ```bash
 npm test
 npm run verify
 ```
 
 **Check Documentation**:
+
 ```bash
 npm run docs:build
 ```
@@ -225,12 +249,14 @@ npm run docs:build
 ## Audit & Compliance
 
 ### Audit Logging
+
 - **Location**: `audit-log.jsonl` (append-only)
 - **Content**: Every tool call with args, result, timestamp
 - **Integrity**: Hash-chained for tamper detection
 - **Tools**: `read_audit_log`, `replay_execution`, `verify_workspace_integrity`
 
 ### Compliance
+
 - **OWASP Top 10**: Compliant
 - **SOC 2 Ready**: Complete audit trail, access controls
 - **NIST Cybersecurity Framework**: Mapped to controls
@@ -299,6 +325,7 @@ ATLAS-GATE-MCP/
 ### Tool Schemas
 
 Each tool has a strict schema:
+
 - **Required fields**: Must be present
 - **Field types**: string, number, object, array
 - **Field values**: Custom validators (e.g., hash format)
@@ -307,6 +334,7 @@ Each tool has a strict schema:
 ### Audit Trail
 
 All operations logged to `audit-log.jsonl`:
+
 - Timestamps and session IDs
 - Tool names and arguments
 - Results (success or error)
@@ -328,12 +356,14 @@ All operations logged to `audit-log.jsonl`:
 ## Support & Resources
 
 ### Documentation
+
 - [README.md](./README.md) — Installation and overview
 - [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md) — For decision-makers
 - [AGENTS.md](./AGENTS.md) — For AI agents and developers
 - [SECURITY.md](./SECURITY.md) — Security policy and incident response
 
 ### Enforcement Docs
+
 - [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) — Process sandbox
 - [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) — Tool validation
 - [ENFORCEMENT_QUICKSTART.md](./ENFORCEMENT_QUICKSTART.md) — Quick start
@@ -341,11 +371,13 @@ All operations logged to `audit-log.jsonl`:
 - [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md) — Reference card
 
 ### Community
-- **GitHub**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
-- **Discussions**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions
-- **Security**: security@ATLAS-GATE-MCP.org
+
+- **GitHub**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
+- **Discussions**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions>
+- **Security**: <security@ATLAS-GATE-MCP.org>
 
 ### Commands
+
 ```bash
 npm test                            # Run tests
 npm run verify                      # Full verification
@@ -359,22 +391,26 @@ npm run docs:build                 # Build docs
 ## Document Map
 
 ### Getting Started
+
 1. [README.md](./README.md) — Installation
 2. [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md) — What is this?
 3. [AGENTS.md](./AGENTS.md) — How to use (for developers)
 
 ### Understanding Enforcement
+
 1. [ENFORCEMENT_SUMMARY.md](./ENFORCEMENT_SUMMARY.md) — Overview
 2. [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) — Deep dive: sandbox
 3. [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) — Deep dive: tool validation
 4. [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md) — Quick reference
 
 ### Security & Compliance
+
 1. [SECURITY.md](./SECURITY.md) — Security policy
 2. [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md) — Process sandbox details
 3. [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md) — Parameter validation details
 
 ### Contributing
+
 1. [CONTRIBUTING.md](./CONTRIBUTING.md) — Contribution workflow
 2. [AGENTS.md](./AGENTS.md) — Code standards
 3. [DOCUMENTATION_CHANGELOG.md](./DOCUMENTATION_CHANGELOG.md) — Doc updates
@@ -384,6 +420,7 @@ npm run docs:build                 # Build docs
 ## Next Steps
 
 **First Time?**
+
 1. Read [README.md](./README.md)
 2. Install: `npm install`
 3. Read [EXECUTIVE_OVERVIEW.md](./EXECUTIVE_OVERVIEW.md)
@@ -391,21 +428,24 @@ npm run docs:build                 # Build docs
 5. Start server: `node bin/ATLAS-GATE-MCP-windsurf.js`
 
 **Understanding Enforcement?**
+
 1. Read [ENFORCEMENT_SUMMARY.md](./ENFORCEMENT_SUMMARY.md)
 2. Read [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md)
 3. Read [TOOL_ENFORCEMENT.md](./TOOL_ENFORCEMENT.md)
 4. Use [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md) as reference
 
 **Contributing Code?**
+
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 2. Read [AGENTS.md](./AGENTS.md)
 3. Check [DOCUMENTATION_CHANGELOG.md](./DOCUMENTATION_CHANGELOG.md)
 4. Submit PR
 
 **Security Questions?**
+
 1. Read [SECURITY.md](./SECURITY.md)
 2. Read [MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md)
-3. Email: security@ATLAS-GATE-MCP.org
+3. Email: <security@ATLAS-GATE-MCP.org>
 
 ---
 

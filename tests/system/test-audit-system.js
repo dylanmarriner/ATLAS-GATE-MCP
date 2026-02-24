@@ -6,8 +6,8 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { appendAuditEntry, verifyAuditLogIntegrity, redactArgs, readAuditLog } from "../../core/audit-system.js";
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../../core/path-resolver.js";
+import { appendAuditEntry, verifyAuditLogIntegrity, redactArgs, readAuditLog } from "../src/application/audit-system.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../src/infrastructure/path-resolver.js";
 
 const TEST_WORKSPACE = path.join(os.tmpdir(), `atlas-gate-audit-test-${Date.now()}`);
 

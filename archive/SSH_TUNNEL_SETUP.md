@@ -17,6 +17,7 @@ curl http://localhost:3000/health
 ```
 
 **How it works:**
+
 - Local port 3000 → encrypted SSH tunnel → server:3000
 - Server sees requests as coming from localhost
 - No traffic exposed on public IP
@@ -54,6 +55,7 @@ done
 ```
 
 Make it executable:
+
 ```bash
 chmod +x ~/.ssh/atlas-tunnel.sh
 ```
@@ -80,6 +82,7 @@ WantedBy=default.target
 ```
 
 Start it:
+
 ```bash
 # Create directory if needed
 mkdir -p ~/.config/systemd/user
@@ -171,6 +174,7 @@ server {
 ```
 
 Then test with curl (ignore self-signed warning):
+
 ```bash
 curl -k https://localhost:443/health
 ```
@@ -206,6 +210,7 @@ exit
 ```
 
 Then deploy:
+
 ```bash
 ./deploy.sh 49.12.230.179 /path/to/ssh/key
 ```
@@ -234,11 +239,13 @@ curl -k https://localhost/health
 ### Via SSH Tunnel (Secure)
 
 1. Start SSH tunnel:
+
    ```bash
    ssh -L 3000:localhost:3000 root@49.12.230.179
    ```
 
 2. Configure client `.mcp.json`:
+
    ```json
    {
      "mcpServers": {
@@ -258,6 +265,7 @@ curl -k https://localhost/health
 
 1. Setup Let's Encrypt certificate on server
 2. Configure client:
+
    ```json
    {
      "mcpServers": {

@@ -75,28 +75,34 @@ rust-allowed-patterns:
 ## 🚨 Common Rejection Messages
 
 ### Forbidden Pattern
+
 ```
 Error: Rust static enforcement gate blocked write:
   Line 45: unwrap()
     Context: let x = some_func().unwrap();
 Forbidden patterns detected.
 ```
+
 **Fix**: Use `?` operator or match expression instead.
 
 ### Wrong Error Type
+
 ```
 Error: Rust error-handling law violation:
   Line 12: function returns Option<T>
   Reason: Use Result<T, SystemError> for meaningful failures
 ```
+
 **Fix**: Change `Option<T>` to `Result<T, SystemError>`.
 
 ### Build Failed
+
 ```
 Error: Code rejected because it breaks the build.
 cargo clippy -- -D warnings failed:
   error: this function has an average complexity of 18.6
 ```
+
 **Fix**: Run `cargo clippy -- -D warnings` locally and fix warnings.
 
 ---
@@ -117,6 +123,7 @@ For Rust projects, ensure `src/lib.rs` or `src/main.rs` has:
 ## 📚 Full Documentation
 
 See `RUST_ENFORCEMENT_GATES.md` for comprehensive details:
+
 - All forbidden patterns explained
 - Error handling law details
 - Verification gates (cargo fmt, clippy, build)
@@ -145,12 +152,14 @@ npm test
 ## 💡 Tips
 
 1. **Use `?` operator** instead of `.unwrap()`
+
    ```rust
    // ❌ let x = foo().unwrap();
    // ✅ let x = foo()?;
    ```
 
 2. **Pattern match on errors**
+
    ```rust
    match risky_operation() {
        Ok(value) => { /* success */ }
@@ -159,6 +168,7 @@ npm test
    ```
 
 3. **Create canonical error types**
+
    ```rust
    pub enum MyError {
        ParseError(String),
@@ -167,6 +177,7 @@ npm test
    ```
 
 4. **Use From trait for conversions**
+
    ```rust
    impl From<std::io::Error> for MyError {
        fn from(err: std::io::Error) -> Self {

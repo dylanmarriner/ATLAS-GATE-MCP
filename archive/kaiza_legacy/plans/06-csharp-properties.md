@@ -10,11 +10,13 @@ scope: "tests/lang/csharp/**"
 # C# Full-Stack Implementation Plan
 
 ## Overview
+
 Build a comprehensive healthcare platform with patient management, appointment scheduling, electronic health records, and medical billing integration using C# and .NET 7.
 
 ## Architecture
 
 ### Backend (.NET 7 + ASP.NET Core)
+
 - Microservices architecture with separate domain services
 - Entity Framework Core with complex model mappings
 - CQRS pattern with MediatR
@@ -22,6 +24,7 @@ Build a comprehensive healthcare platform with patient management, appointment s
 - Azure Service Bus for async messaging
 
 ### Frontend (Blazor WebAssembly)
+
 - Component-based reactive UI
 - Real-time updates with SignalR
 - Offline-first with local storage
@@ -31,6 +34,7 @@ Build a comprehensive healthcare platform with patient management, appointment s
 ## Data Model & Properties
 
 ### 1. Entity Models with Properties
+
 ```csharp
 public class Patient {
     public int Id { get; set; }
@@ -83,6 +87,7 @@ public class MedicalRecord {
 ```
 
 ### 2. Value Objects & DTOs
+
 ```csharp
 public class Address {
     public string Street { get; set; }
@@ -105,6 +110,7 @@ public record PatientDto(
 ## CQRS Pattern Implementation
 
 ### 1. Commands
+
 ```csharp
 public record CreateAppointmentCommand(
     int PatientId,
@@ -128,6 +134,7 @@ public class CreateAppointmentHandler : IRequestHandler<CreateAppointmentCommand
 ```
 
 ### 2. Queries
+
 ```csharp
 public record GetPatientAppointmentsQuery(int PatientId) : IRequest<List<AppointmentDto>>;
 
@@ -145,6 +152,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 ## Core Features
 
 ### 1. Patient Management
+
 - Patient registration with validation
 - Medical history tracking
 - Allergy and medication records
@@ -153,6 +161,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 - Document storage and access
 
 ### 2. Appointment System
+
 - Appointment scheduling with doctor availability
 - Automated reminders (SMS/Email)
 - Rescheduling and cancellation
@@ -161,6 +170,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 - Calendar integration
 
 ### 3. Electronic Health Records (EHR)
+
 - Structured clinical notes
 - Diagnostic codes (ICD-10)
 - Medication management
@@ -170,6 +180,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 - Audit trail for compliance
 
 ### 4. Billing & Insurance
+
 - Invoice generation
 - Insurance claim submission
 - Payment processing
@@ -178,6 +189,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 - Medical coding (CPT, ICD-10)
 
 ### 5. Doctor Portal
+
 - Schedule management
 - Patient lookup
 - Appointment notes
@@ -186,6 +198,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 - Performance metrics
 
 ### 6. Admin Dashboard
+
 - System analytics
 - User management
 - Report generation
@@ -195,6 +208,7 @@ public class GetPatientAppointmentsHandler : IRequestHandler<GetPatientAppointme
 ## Async/Await Patterns
 
 ### 1. Async Service Methods
+
 ```csharp
 public class AppointmentService {
     public async Task<AppointmentDto> CreateAppointmentAsync(CreateAppointmentRequest request) {
@@ -228,6 +242,7 @@ public class AppointmentService {
 ```
 
 ### 2. Parallel Processing
+
 ```csharp
 public async Task SendAppointmentRemindersAsync() {
     var appointments = await _appointmentRepository
@@ -244,6 +259,7 @@ public async Task SendAppointmentRemindersAsync() {
 ## Data Access with Entity Framework
 
 ### 1. DbContext Configuration
+
 ```csharp
 public class HealthcareDbContext : DbContext {
     public DbSet<Patient> Patients { get; set; }
@@ -265,6 +281,7 @@ public class HealthcareDbContext : DbContext {
 ```
 
 ### 2. Repository Pattern
+
 ```csharp
 public class PatientRepository : IRepository<Patient> {
     private readonly HealthcareDbContext _context;
@@ -284,6 +301,7 @@ public class PatientRepository : IRepository<Patient> {
 ## SignalR Real-Time Features
 
 ### 1. Hub Implementation
+
 ```csharp
 public class AppointmentHub : Hub {
     public async Task NotifyAppointmentCreated(AppointmentDto appointment) {
@@ -300,12 +318,14 @@ public class AppointmentHub : Hub {
 ## Security & Compliance
 
 ### 1. Authentication & Authorization
+
 - Azure AD integration for healthcare organizations
 - Role-based access control (RBAC)
 - Multi-factor authentication
 - Session management
 
 ### 2. Data Protection
+
 - Encryption at rest and in transit
 - PII masking in logs
 - HIPAA compliance
@@ -315,22 +335,26 @@ public class AppointmentHub : Hub {
 ## Testing Strategy
 
 ### 1. Unit Tests
+
 - Domain logic testing
 - Service layer testing with mocks
 - Property calculation testing
 
 ### 2. Integration Tests
+
 - EF Core with test database
 - API endpoint testing
 - Transaction testing
 
 ### 3. End-to-End Tests
+
 - Blazor component testing
 - Full workflow testing
 
 ## Deployment
 
 ### 1. Azure Deployment
+
 - App Service hosting
 - SQL Database
 - Blob Storage for documents
@@ -338,6 +362,7 @@ public class AppointmentHub : Hub {
 - Key Vault for secrets
 
 ### 2. DevOps Pipeline
+
 - GitHub Actions CI/CD
 - Container registry
 - Automated testing

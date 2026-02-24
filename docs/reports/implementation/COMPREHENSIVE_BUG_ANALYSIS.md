@@ -11,6 +11,7 @@
 The ATLAS-GATE-MCP Server has **12 critical and high-severity bugs** across path resolution, plan lifecycle management, audit logging, and module initialization. These bugs prevent the system from starting correctly and cause failures in normal operation.
 
 **Key Issues**:
+
 1. Module import ordering (hard fail on startup)
 2. Audit log path hardcoding (cwd-dependent, breaks in nested repos)
 3. Plan discovery inconsistency (duplicate logic, multiple locations, no canonical source)
@@ -28,10 +29,11 @@ The ATLAS-GATE-MCP Server has **12 critical and high-severity bugs** across path
 
 **Location**: `server.js` lines 117-125
 
-**Problem**: 
+**Problem**:
 The `bootstrapToolSchema` is imported on line 117 but used on line 123 (same statement). ES modules have temporal dead zone issues when the same file tries to register a tool before the import is complete.
 
 **Current Code**:
+
 ```javascript
 // Line 117
 import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
@@ -49,7 +51,8 @@ server.registerTool(
 
 **Root Cause**: The `registerTool` call happens synchronously at module parse time, but the import hasn't fully initialized yet.
 
-**Impact**: 
+**Impact**:
+
 - `node test-bootstrap.js` crashes immediately
 - `npm run verify` fails at startup
 - Server cannot start at all
@@ -65,6 +68,7 @@ server.registerTool(
 **Location**: `core/audit-log.js` line 6
 
 **Problem**:
+
 ```javascript
 function getAuditLogPath() {
   return path.join(process.cwd(), "audit-log.jsonl");
@@ -72,6 +76,7 @@ function getAuditLogPath() {
 ```
 
 The audit log path is computed from `process.cwd()` every time. In a monorepo or nested directory structure, this breaks:
+
 - Invoked from `/repo/workspace/nested/folder`, it writes to `nested/folder/audit-log.jsonl`
 - Invoked from `/repo`, it writes to `repo/audit-log.jsonl`
 - Plans created in `/repo/docs/plans/` may be validated against audit logs in wrong location
@@ -80,6 +85,7 @@ The audit log path is computed from `process.cwd()` every time. In a monorepo or
 **Root Cause**: `process.cwd()` is runtime-dependent, not captured at startup like `WORKSPACE_ROOT`.
 
 **Impact**:
+
 - Audit log may be created in wrong location
 - Cross-directory execution breaks audit chain
 - Plan validation may fail to find related audit entries
@@ -99,6 +105,7 @@ The audit log path is computed from `process.cwd()` every time. In a monorepo or
 Plan locations are hardcoded in multiple places with different priorities:
 
 **In `list_plans.js` (lines 25-30)**:
+
 ```javascript
 const planLocations = [
   path.join(absPath, ".atlas-gate", "approved_plans"),
@@ -109,6 +116,7 @@ const planLocations = [
 ```
 
 **In `plan-enforcer.js` (lines 28-33)**:
+
 ```javascript
 const planLocations = [
   path.join(repoRoot, ".atlas-gate", "approved_plans"),
@@ -119,6 +127,7 @@ const planLocations = [
 ```
 
 **In `plan-registry.js` (lines 7-12)**:
+
 ```javascript
 const planLocations = [
   path.join(WORKSPACE_ROOT, ".atlas-gate", "approved_plans"),
@@ -129,6 +138,7 @@ const planLocations = [
 ```
 
 **Problems**:
+
 1. **Duplication**: Same logic repeated 3 times (DRY violation)
 2. **Inconsistency**: `list_plans.js` uses `absPath` parameter, others use `WORKSPACE_ROOT` or `repoRoot`
 3. **No Single Source of Truth**: If locations change, 3 places must be updated
@@ -138,6 +148,7 @@ const planLocations = [
 **Root Cause**: Copy-paste during development without extracting common function.
 
 **Impact**:
+
 - Plan discovery may return different results in different code paths
 - Maintenance burden (3 places to update)
 - Nested repo support impossible
@@ -154,11 +165,13 @@ const planLocations = [
 **Location**: `server.js` line 17
 
 **Problem**:
+
 ```javascript
 export const WORKSPACE_ROOT = process.cwd();
 ```
 
 Captured once at server startup. In:
+
 - **Nested repos**: Server running at `/repo/a/b/c/`, plans in `/repo/docs/plans/` are not found
 - **Monorepos**: Multiple workspace roots, single `WORKSPACE_ROOT` breaks governance
 - **Symlinked repos**: Symlink resolution once at startup doesn't handle dynamic changes
@@ -166,6 +179,7 @@ Captured once at server startup. In:
 **Root Cause**: Assuming single, static repo root for process lifetime.
 
 **Impact**:
+
 - Server only works if invoked from repo root
 - Monorepo support impossible
 - Nested directory invocation breaks
@@ -185,6 +199,7 @@ Captured once at server startup. In:
 Governance state path constructed differently in different modules:
 
 **In `governance.js` (line 9)**:
+
 ```javascript
 function getGovernancePath(repoRoot) {
     return path.join(repoRoot, ".atlas-gate", GOVERNANCE_FILE);
@@ -192,6 +207,7 @@ function getGovernancePath(repoRoot) {
 ```
 
 **In `plan-enforcer.js` (line 8)**:
+
 ```javascript
 function readGovernanceState(repoRoot) {
   const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");
@@ -199,7 +215,8 @@ function readGovernanceState(repoRoot) {
 }
 ```
 
-**Problem**: 
+**Problem**:
+
 - `governance.js` uses `getGovernancePath()` function (good)
 - `plan-enforcer.js` hardcodes the path (bad)
 - If governance file location changes, only one location is updated
@@ -216,6 +233,7 @@ function readGovernanceState(repoRoot) {
 **Location**: `session.js`
 
 **Problem**:
+
 ```javascript
 export const SESSION_STATE = {
     hasFetchedPrompt: false,
@@ -224,11 +242,13 @@ export const SESSION_STATE = {
 ```
 
 Session state is in-memory, not persisted. In:
+
 - **Multi-tool workflows**: Each tool call gets fresh session
 - **Restart scenarios**: Session state lost after server restart
 - **Distributed MCP**: Different server instances have different session states
 
 The `write_file` handler checks `SESSION_STATE.hasFetchedPrompt` at line 44 of `write_file.js`. This check can be bypassed by:
+
 1. Calling `read_prompt()` in Session A
 2. Switching to Session B (or restarting)
 3. Calling `write_file()` without `read_prompt()` - prompt gate doesn't activate
@@ -236,11 +256,13 @@ The `write_file` handler checks `SESSION_STATE.hasFetchedPrompt` at line 44 of `
 **Root Cause**: Session state meant to be per-session, but implementation is global in-memory.
 
 **Impact**:
+
 - Prompt gate bypass possible through session switching
 - No guarantee that `read_prompt()` was called before `write_file()`
 - MCP bridges can start new sessions to bypass gate
 
-**Fix**: 
+**Fix**:
+
 - Move session state to memory-safe structure tied to session ID
 - Make prompt fetch a prerequisite stored in persistent session marker
 - Or make prompt gate keyed by SESSION_ID in a lock file
@@ -254,6 +276,7 @@ The `write_file` handler checks `SESSION_STATE.hasFetchedPrompt` at line 44 of `
 **Location**: `core/plan-enforcer.js` lines 145-157
 
 **Problem**:
+
 ```javascript
 if (!requiredPlanId) {
   // Maybe warn or throw?
@@ -265,6 +288,7 @@ if (!requiredPlanId) {
 ```
 
 Comments in code show uncertainty. The spec says "require plan_id + plan_signature" for non-bootstrap writes, but:
+
 - `planId` is optional (Zod line 70 of `server.js`)
 - `planSignature` is optional (Zod line 71 of `server.js`)
 - Enforcement is incomplete (conditional check without error)
@@ -273,6 +297,7 @@ Comments in code show uncertainty. The spec says "require plan_id + plan_signatu
 **Root Cause**: Half-implemented requirement, kept optional to avoid test failures.
 
 **Impact**:
+
 - Plan integrity cannot be verified (no hash check)
 - Plan can be modified between creation and write
 - RACE CONDITION: Plan file changed after approval but before write, write proceeds anyway
@@ -289,6 +314,7 @@ Comments in code show uncertainty. The spec says "require plan_id + plan_signatu
 **Location**: `core/governance.js` line 59
 
 **Problem**:
+
 ```javascript
 export function bootstrapCreateFoundationPlan(repoRoot = WORKSPACE_ROOT, planContent, payload, signature) {
      // 1. Verify Enabled
@@ -298,6 +324,7 @@ export function bootstrapCreateFoundationPlan(repoRoot = WORKSPACE_ROOT, planCon
 ```
 
 This function is not async, but it:
+
 1. Reads files synchronously (OK)
 2. Writes files synchronously (OK)
 3. But is called from async handler in `bootstrap_tool.js` line 59
@@ -305,12 +332,14 @@ This function is not async, but it:
 The issue is subtle: file I/O is synchronous (not awaited), which is fine for startup but creates implicit blocking. However, more critically:
 
 **In `write_file.js` line 175-176**:
+
 ```javascript
 fs.mkdirSync(path.dirname(abs), { recursive: true });
 fs.writeFileSync(abs, contentToWrite, "utf8");
 ```
 
 All I/O is synchronous. While not technically a bug (Node.js supports sync I/O), it:
+
 - Blocks the event loop in production
 - Cannot handle concurrent writes
 - Will deadlock under parallel tool invocations
@@ -319,12 +348,14 @@ All I/O is synchronous. While not technically a bug (Node.js supports sync I/O),
 **Root Cause**: Implementation uses sync I/O throughout, but system designed for concurrent MCP operations.
 
 **Impact**:
+
 - Concurrent writes may corrupt files
 - One slow write blocks all other operations
 - No parallel tool invocation support
 - Production scalability broken
 
 **Fix**: Convert critical paths to async:
+
 - `fs.promises` for file operations
 - Proper `await` in all handlers
 - Lock mechanism for plan discovery
@@ -338,6 +369,7 @@ All I/O is synchronous. While not technically a bug (Node.js supports sync I/O),
 **Location**: `core/plan-enforcer.js` lines 51-62
 
 **Problem**:
+
 ```javascript
 const baseName = path.basename(planName);
 const normalizedPlanName = baseName.endsWith(".md")
@@ -354,34 +386,39 @@ if (!fs.existsSync(planFile)) {
 ```
 
 The code:
+
 1. Takes plan name `"PLAN_FOO"` or `"PLAN_FOO.md"`
 2. Normalizes to `"PLAN_FOO"`
 3. Looks for `plansDir/PLAN_FOO.md`
 
 But what if:
+
 - Plan provided: `"/absolute/path/to/PLAN_FOO.md"`
 - After `basename`: `"PLAN_FOO.md"` (correct)
 
 But what if attacker provides:
+
 - `"../../../etc/passwd"` (relative path traversal attempt)
 
 Wait, `path.basename("../../../etc/passwd")` returns `"passwd"` (safe).
 But code earlier (lines 56-57) checks:
+
 ```javascript
 if (filePath.includes("..")) {
   throw new Error("INVALID_PATH: path traversal not permitted");
 }
 ```
 
-This is in `write_file.js` for the target file, but NOT in `plan-enforcer.js` for the plan name parameter. 
+This is in `write_file.js` for the target file, but NOT in `plan-enforcer.js` for the plan name parameter.
 
 **Actual Bug**: Plan name could be something like `"PLAN_FOO\0.md"` (null byte injection) or other tricks.
 
-Also: What if plan name passed as `"file:///PLAN_FOO"`? 
+Also: What if plan name passed as `"file:///PLAN_FOO"`?
 
 **Root Cause**: Plan name validation is minimal (only strips `.md`).
 
 **Impact**:
+
 - Null byte injection possible
 - URI scheme bypasses possible
 - Symlink attacks possible
@@ -397,6 +434,7 @@ Also: What if plan name passed as `"file:///PLAN_FOO"`?
 **Location**: `core/plan-enforcer.js` lines 68-85
 
 **Problem**:
+
 ```javascript
 const match = fileContent.match(/^---\n([\s\S]+?)\n---/);
 if (!match) {
@@ -412,16 +450,19 @@ try {
 ```
 
 The regex `/^---\n([\s\S]+?)\n---/` assumes:
+
 - File starts with `---\n`
 - No whitespace before first `---`
 - Frontmatter ends with `\n---` (no trailing content)
 
 If file has:
+
 - Blank lines before first `---`: Match fails
 - CRLF line endings (`\r\n`): Match fails
 - Extra whitespace in frontmatter: YAML parse may fail
 
 Examples that would fail:
+
 ```
 # Comment line
 ---
@@ -439,6 +480,7 @@ status: APPROVED
 **Root Cause**: Regex is too strict, doesn't account for variations.
 
 **Impact**:
+
 - Valid plans may be rejected due to formatting
 - Cross-platform issues (CRLF vs LF)
 - Extra whitespace breaks parsing
@@ -455,6 +497,7 @@ status: APPROVED
 
 **Problem**:
 When bootstrap plan is created:
+
 ```javascript
 const plansDir = path.join(repoRoot, "docs", "plans");
 
@@ -467,6 +510,7 @@ fs.writeFileSync(fullPlanPath, planContent, "utf8");
 ```
 
 This creates the directory if missing (OK), but:
+
 1. No guarantee that parent directories have correct governance marker (`.atlas-gate/ROOT`)
 2. No validation that this is actually a governed repo
 3. Could accidentally create `docs/plans` in wrong location
@@ -474,11 +518,13 @@ This creates the directory if missing (OK), but:
 **Root Cause**: Directory creation is automatic, no repo structure validation.
 
 **Impact**:
+
 - Plans created in arbitrary locations
 - No guarantee of correct repo structure
 - Multiple `docs/plans` directories possible in monorepo
 
-**Fix**: 
+**Fix**:
+
 1. Require `.atlas-gate/ROOT` to exist before plan creation
 2. Validate repo root before creating plan directory
 3. Fail if repo is not properly governed
@@ -493,12 +539,14 @@ This creates the directory if missing (OK), but:
 
 **Problem**:
 The ATLAS-GATE documentation mentions:
+
 ```
 git commit -m "..."
 (pre-commit validates)
 ```
 
 But there's no `.git/hooks/pre-commit` file in the repository. The system claims pre-commit validation happens, but:
+
 1. Git hooks are not version-controlled by default
 2. No mechanism to enforce hooks on clone
 3. Users can skip hooks with `--no-verify`
@@ -506,11 +554,13 @@ But there's no `.git/hooks/pre-commit` file in the repository. The system claims
 **Root Cause**: Pre-commit hook mentioned in docs but not implemented.
 
 **Impact**:
+
 - No automatic validation on commits
 - Files can be committed outside audit log
 - GLOBAL_INVARIANTS say "All code is audited (written via ATLAS-GATE-MCP)" but no enforcement
 
 **Fix**: Either:
+
 1. Implement pre-commit hook in repository
 2. Or remove claim of pre-commit validation from docs
 3. Or use git `core.hooksPath` to make hooks mandatory
@@ -554,6 +604,7 @@ But there's no `.git/hooks/pre-commit` file in the repository. The system claims
 ## Recommended Fix Priority
 
 **IMMEDIATE (Fix First)**:
+
 1. BUG #1 - Module hoisting (system cannot start)
 2. BUG #2 - Audit log path (data loss risk)
 
@@ -578,6 +629,7 @@ But there's no `.git/hooks/pre-commit` file in the repository. The system claims
 ## Quality Bar Post-Fixes
 
 After applying all fixes, the system will:
+
 - ✅ Start without errors
 - ✅ Work in nested directories
 - ✅ Support monorepos
@@ -594,10 +646,10 @@ After applying all fixes, the system will:
 ## Testing Strategy
 
 After fixes:
+
 1. Run `npm run verify` (should pass all tests)
 2. Test in nested directory: `cd docs && npm run verify` (should pass)
 3. Test in monorepo: Create parallel repos, verify separate governance
 4. Test concurrent writes: Parallel tool invocations
 5. Test plan integrity: Modify plan after creation, verify rejection
 6. Test portability: Different operating systems
-

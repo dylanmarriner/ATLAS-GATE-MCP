@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### 🔒 MCP-Only Sandbox Enforcement
+
 - **Process-level sandbox** in `core/mcp-sandbox.js`
   - Lock `process.env` (read-only, whitelisted vars only)
   - Block `process.exit()`, `process.kill()`, `process.abort()`
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fail startup if any check fails
 
 #### 🛠️ Tool Parameter Enforcement
+
 - **Strict schema validation** in `core/tool-enforcement.js`
   - Define `TOOL_SCHEMAS` for all registered tools
   - Validate required fields
@@ -52,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Audit trail of all violations
 
 #### 📚 Comprehensive Documentation
+
 - **[DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)** — Master index of all docs
 - **[MCP_SANDBOX_ENFORCEMENT.md](./MCP_SANDBOX_ENFORCEMENT.md)** — Process sandbox details
   - How it works
@@ -105,6 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 #### Documentation Updates
+
 - **[README.md](./README.md)**
   - Updated title to include "MCP-Only Sandbox Enforcement"
   - Added v2.0.0 badge
@@ -134,6 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated startup commands with sandbox references
 
 #### Code Changes
+
 - **[server.js](./server.js)**
   - Imported enforcement modules
   - Installed enforcement layer at startup
@@ -159,6 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added startup logging + read-only restriction note
 
 ### Fixed
+
 - Process-level vulnerabilities (filesystem access, shell execution)
 - Tool misuse via invalid parameters
 - Environment variable exposure
@@ -166,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Code execution attempts (eval, Function)
 
 ### Security
+
 - Process sandbox prevents escape attempts
 - Globals frozen to prevent prototype pollution
 - Module blocklist prevents dangerous imports
@@ -173,6 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive audit trail for forensics
 
 ### Documentation
+
 - Added 5 new enforcement documentation files
 - Updated 4 existing documentation files
 - Created master documentation index
@@ -185,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-01-19
 
 ### Added
+
 - Initial release of ATLAS-GATE-MCP
 - Dual-role governance (WINDSURF and ANTIGRAVITY)
 - Plan-based authorization system
@@ -198,6 +207,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replay execution for forensics
 
 ### Documentation
+
 - README with installation and setup
 - Executive Overview for decision-makers
 - Contributing Guide
@@ -222,9 +232,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### From v1.0 to v2.0
 
 #### Breaking Changes
+
 None. v2.0 is backward compatible with v1.0. However, there are new requirements:
 
 #### For Operators
+
 1. **Sandbox Requirements**
    - Windsurf and Antigravity now run in sandboxed mode automatically
    - No changes needed—sandbox is applied at startup
@@ -242,6 +254,7 @@ None. v2.0 is backward compatible with v1.0. However, there are new requirements
    - See [ENFORCEMENT_REFERENCE.md](./ENFORCEMENT_REFERENCE.md) for error codes
 
 #### For IDE/Client Developers
+
 1. **Tool Parameters**
    - Validate parameters against `TOOL_SCHEMAS` before sending
    - Reject calls with unknown fields
@@ -274,11 +287,13 @@ None. v2.0 is backward compatible with v1.0. However, there are new requirements
 ## Future Versions
 
 ### v2.1 (Planned 2026-04-30)
+
 - Automated compliance reporting (SOC 2)
 - Enhanced monitoring and metrics
 - Performance optimizations
 
 ### v3.0 (Planned 2026-12-31)
+
 - Multi-region deployment
 - ISO 27001 certification
 - Predictive anomaly detection
@@ -287,4 +302,4 @@ None. v2.0 is backward compatible with v1.0. However, there are new requirements
 
 **Last Updated**: 2026-01-31  
 **Maintainer**: ATLAS-GATE-MCP Team  
-**Repository**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+**Repository**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>

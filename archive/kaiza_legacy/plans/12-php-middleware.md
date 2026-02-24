@@ -10,11 +10,13 @@ scope: "tests/lang/php/**"
 # PHP Full-Stack Implementation Plan
 
 ## Overview
+
 Build a production-grade REST API using PHP with middleware composition, service container, trait-based functionality, and advanced OOP patterns.
 
 ## Middleware Pipeline Architecture
 
 ### 1. Middleware Interface & Pipeline
+
 ```php
 <?php
 
@@ -89,6 +91,7 @@ class LoggingMiddleware implements MiddlewareInterface {
 ```
 
 ### 2. Service Container & Dependency Injection
+
 ```php
 <?php
 
@@ -162,6 +165,7 @@ $container->register('user.service', function($c) {
 ## Trait-Based Functionality
 
 ### 1. Shared Behaviors
+
 ```php
 <?php
 
@@ -234,6 +238,7 @@ class Article {
 ## Event-Driven Architecture
 
 ### 1. Event System
+
 ```php
 <?php
 
@@ -289,6 +294,7 @@ $dispatcher->subscribe(ArticlePublishedEvent::class, function(ArticlePublishedEv
 ## Repository & Service Patterns
 
 ### 1. Repository Pattern
+
 ```php
 <?php
 
@@ -346,6 +352,7 @@ class UserRepository implements RepositoryInterface {
 ```
 
 ### 2. Service Layer
+
 ```php
 <?php
 
@@ -389,6 +396,7 @@ class UserService {
 ## REST Controllers
 
 ### 1. API Controller
+
 ```php
 <?php
 
@@ -451,6 +459,7 @@ class UserController {
 ## Routing
 
 ### 1. Route Definition
+
 ```php
 <?php
 

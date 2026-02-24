@@ -7,6 +7,7 @@
 **Status**: ✅ **COMPLETE AND PRODUCTION-READY**
 
 **Key Metrics**:
+
 - 20/20 tests passing
 - 40+ invariants enforced
 - 100% code syntax valid
@@ -18,35 +19,45 @@
 ## Quick Navigation
 
 ### For Decision Makers
+
 → Start with: **CANONICAL_PATH_RESOLUTION_EXECUTIVE_SUMMARY.md**
+
 - High-level overview
 - Business value explanation
 - Guarantees and proofs
 - Risk mitigation
 
 ### For Architects
+
 → Start with: **HARDENING_SUMMARY.md**
+
 - System design
 - Before/after comparison
 - Architecture decisions
 - Proofs of correctness
 
 ### For Developers
+
 → Start with: **QUICK_REFERENCE.md**
+
 - API contracts
 - Usage patterns
 - Common errors
 - Implementation guide
 
 ### For Operators
+
 → Start with: **INTEGRATION_VERIFICATION.md**
+
 - Test results
 - Deployment checklist
 - Performance metrics
 - Security validation
 
 ### For Auditors
+
 → Start with: **INVARIANT_ENFORCEMENT.md**
+
 - Complete invariant catalog
 - Integration points
 - Correctness proofs
@@ -98,6 +109,7 @@
 ### Path Resolver Test Suite: 20/20 ✅
 
 **Tests Passing**:
+
 - ✓ Auto-initialization
 - ✓ Cached root retrieval
 - ✓ Plans directory resolution
@@ -132,6 +144,7 @@ All modules have valid JavaScript syntax and are ready for production.
 ### By Category
 
 **Repository & Path (6)**
+
 - `INV_REPO_ROOT_SINGLE` - Single repo root per session
 - `INV_REPO_ROOT_INITIALIZED` - Initialized before use
 - `INV_PATH_ABSOLUTE` - All paths absolute
@@ -140,11 +153,13 @@ All modules have valid JavaScript syntax and are ready for production.
 - `INV_PLANS_DIR_CANONICAL` - Deterministic plans dir
 
 **Plan Directory (3)**
+
 - `INV_PLANS_DIR_EXISTS` - Directory exists
 - `INV_PLAN_NOT_ESCAPED` - Plans not misplaced
 - `INV_PLAN_DISCOVERY_CANONICAL` - Single discovery location
 
 **Plan Lifecycle (7)**
+
 - `INV_PLAN_EXISTS` - Plan must exist
 - `INV_PLAN_UNIQUE_ID` - IDs unique per repo
 - `INV_PLAN_STABLE_ID` - ID remains stable
@@ -154,6 +169,7 @@ All modules have valid JavaScript syntax and are ready for production.
 - `INV_PLAN_HASH_MATCH` - Integrity verified
 
 **Write Execution (5)**
+
 - `INV_WRITE_AUTHORIZED_PLAN` - Valid approved plan exists
 - `INV_WRITE_TARGET_AUTHORIZED` - Target in scope
 - `INV_WRITE_IDEMPOTENT` - Reproducible output
@@ -161,16 +177,19 @@ All modules have valid JavaScript syntax and are ready for production.
 - `INV_WRITE_AUDIT_LOGGED` - Write recorded
 
 **Policy Enforcement (3)**
+
 - `INV_POLICY_RUN_BEFORE_WRITE` - Checks before write
 - `INV_POLICY_REJECTION_FATAL` - Rejection aborts
 - `INV_POLICY_NO_BYPASS` - No conditional skipping
 
 **Tool Contract (3)**
+
 - `INV_TOOL_INPUT_NORMALIZED` - Inputs normalized
 - `INV_TOOL_INPUT_VALIDATED` - Schema validated
 - `INV_TOOL_SESSION_INTACT` - State consistent
 
 **Error Classification (3)**
+
 - `INV_ERROR_CLASSIFIED` - All errors typed
 - `INV_ERROR_DETERMINISTIC` - Consistent errors
 - `INV_ERROR_NO_RECOVERY` - Never caught/continued
@@ -180,26 +199,31 @@ All modules have valid JavaScript syntax and are ready for production.
 ## Key Guarantees
 
 ### ✅ Guarantee 1: Plan Discovery Determinism
+
 **Claim**: Same repo state → same plans discovered every time
 **Enforced By**: `INV_PLANS_DIR_CANONICAL` in `getPlansDir()`
 **Verification**: Test 4 - "Plans directory is always the same"
 
 ### ✅ Guarantee 2: Path Escape Prevention
+
 **Claim**: No write can escape repository bounds
 **Enforced By**: `INV_PATH_WITHIN_REPO` in `resolveWriteTarget()`
 **Verification**: Test 8, 10 - Path traversal rejection tests
 
 ### ✅ Guarantee 3: Unauthorized Write Prevention
+
 **Claim**: No write without valid, approved, existing plan
 **Enforced By**: `INV_PLAN_EXISTS`, `INV_PLAN_APPROVED` in `enforcePlan()`
 **Verification**: Tests integrated in plan-enforcer.js
 
 ### ✅ Guarantee 4: Silent Failure Prevention
+
 **Claim**: Invalid state → explicit error always
 **Enforced By**: All invariants throwing `InvariantViolationError`
 **Verification**: Error handling tests in test suite
 
 ### ✅ Guarantee 5: Path Consistency
+
 **Claim**: All paths absolute, normalized, within repo
 **Enforced By**: `INV_PATH_ABSOLUTE`, `INV_PATH_NORMALIZED` everywhere
 **Verification**: Tests 7, 15, 19 - Path resolution tests
@@ -295,15 +319,18 @@ Total Production Code:         1050+ lines
 ## Documentation Reading Order
 
 ### For Immediate Understanding
+
 1. This file (IMPLEMENTATION_INDEX.md)
 2. QUICK_REFERENCE.md (5-10 min read)
 3. CANONICAL_PATH_RESOLUTION_EXECUTIVE_SUMMARY.md (15-20 min read)
 
 ### For Detailed Understanding
+
 4. HARDENING_SUMMARY.md (20-30 min read)
 5. INVARIANT_ENFORCEMENT.md (30-45 min read)
 
 ### For Verification
+
 6. INTEGRATION_VERIFICATION.md (15-20 min read)
 7. IMPLEMENTATION_MANIFEST.txt (10 min read)
 
@@ -344,7 +371,7 @@ Total Production Code:         1050+ lines
 
 ## Support & Reference
 
-### If You Need to Understand...
+### If You Need to Understand
 
 **Path Resolution**:
 → See `core/path-resolver.js` and `QUICK_REFERENCE.md` - "Core API"

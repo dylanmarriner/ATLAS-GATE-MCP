@@ -34,7 +34,8 @@ Before proceeding to attestation bundle implementation, the following must be ex
 
 **Current Status**: Environment has Node.js `crypto` module (FIPS-capable SHA256, HMAC-SHA256 available).
 
-**Question**: 
+**Question**:
+
 - Should attestation bundles be signed with:
   - (A) HMAC-SHA256 (requires shared secret key in workspace)?
   - (B) RSA-4096 (requires key pair management)?
@@ -46,6 +47,7 @@ Before proceeding to attestation bundle implementation, the following must be ex
 ### 2. **Public Verification Material Distribution**
 
 **Question**: How should external verifiers obtain public keys/material?
+
 - (A) Embedded in the attestation bundle itself (audit risk)?
 - (B) Served from a canonical endpoint?
 - (C) Assumed pre-shared?
@@ -56,6 +58,7 @@ Before proceeding to attestation bundle implementation, the following must be ex
 **Question**: What should be included in the bundle?
 
 The prompt specifies:
+
 - ✓ Bundle metadata + bundle_id
 - ✓ Workspace root hash (not path)
 - ✓ Plan hashes (approved + executed)
@@ -67,7 +70,8 @@ The prompt specifies:
 - ✓ Time window (explicit range)
 - ✓ Verifier checksums
 
-**Missing**: 
+**Missing**:
+
 - Should raw audit entries be exportable separately (requested via separate tool)?
 - Should attestation bundles themselves be immutable (appended to special attestation log)?
 - Should bundle generation itself be audited (meta-audit)?
@@ -75,6 +79,7 @@ The prompt specifies:
 ### 4. **Time Window Semantics**
 
 **Question**: What defines the time window for attestation?
+
 - (A) Audit log entries between `start_ts` and `end_ts`?
 - (B) Plan execution span (from first to last audit entry for a plan)?
 - (C) Request time ± configurable window?
@@ -83,6 +88,7 @@ The prompt specifies:
 ### 5. **External Verifier Protocol Format**
 
 **Question**: Should the protocol be:
+
 - (A) JSON with explicit verification algorithm steps (reproducible)?
 - (B) YAML-based configuration?
 - (C) Custom DSL?
@@ -93,6 +99,7 @@ The prompt specifies:
 **Question**: When should `generate_attestation_bundle` refuse?
 
 Current understanding (from prompt):
+
 - If evidence incomplete → refuse
 - If audit chain fails → refuse
 - If replay divergence exists → refuse
@@ -100,6 +107,7 @@ Current understanding (from prompt):
 - If signature verification fails (on verify) → refuse
 
 **Missing specifics**:
+
 - Should attestation refuse if workspace has ANY unresolved audit violations?
 - Should attestation refuse if plan is still executing?
 - Should attestation bundle be readonly enforced by file permissions?
@@ -107,6 +115,7 @@ Current understanding (from prompt):
 ### 7. **Attestation Bundle Versioning**
 
 **Question**: Should bundles include a schema version?
+
 - (A) Yes, for forward/backward compatibility?
 - (B) No, keep immutable?
 
@@ -148,4 +157,3 @@ Once design decisions are clarified, execution will proceed in this order:
 9. Write completion report
 
 **BLOCKING ON**: Steps 1-3 require design clarity above.
-

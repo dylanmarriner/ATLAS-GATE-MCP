@@ -11,6 +11,7 @@
 The ATLAS-GATE MCP Server has been comprehensively audited, debugged, and hardened to achieve production-grade determinism, reliability, and security. All critical defects have been identified and fixed. The system is now ready for deployment across arbitrary repository structures with zero manual configuration.
 
 **Key Results**:
+
 - ✅ 14 critical/high-priority issues identified and fixed
 - ✅ Stub detector corrected to allow legitimate code
 - ✅ Empty function/catch block detection implemented
@@ -33,6 +34,7 @@ The ATLAS-GATE MCP Server has been comprehensively audited, debugged, and harden
 **Root Cause**: The pattern matching was context-agnostic. `return true` is legitimately used in validators, getters, and predicates. Only hardcoded policy bypasses in security contexts should be blocked.
 
 **Solution Implemented**:
+
 ```javascript
 // BEFORE:
 { pattern: "return true", category: "C5_HARD_BLOCK_POLICY_BYPASS", severity: "HARD_BLOCK" },
@@ -43,6 +45,7 @@ The ATLAS-GATE MCP Server has been comprehensively audited, debugged, and harden
 ```
 
 **Verification**:
+
 - ✅ Test: `function valid() { return true; }` now PASSES
 - ✅ Test: `const isReady = () => true;` now PASSES
 - ✅ All 10 stub detector tests passing
@@ -58,11 +61,13 @@ The ATLAS-GATE MCP Server has been comprehensively audited, debugged, and harden
 **Problem**: Empty function bodies and catch blocks were only logged, not blocked. The code would not throw, allowing stub code to pass through.
 
 **Solution Implemented**:
+
 - Changed from `violations.push()` to immediate `throw`
 - Empty function body now throws: `HARD_BLOCK_VIOLATION: Empty function body`
 - Empty catch block now throws: `HARD_BLOCK_VIOLATION: Empty catch block`
 
 **Code Change**:
+
 ```javascript
 // BEFORE:
 CatchClause(node) {
@@ -80,6 +85,7 @@ CatchClause(node) {
 ```
 
 **Verification**:
+
 - ✅ Test: `const x = () => {}` now FAILS with proper error
 - ✅ Test: `try { } catch(e) {}` now FAILS with proper error
 - ✅ All empty block tests blocking correctly
@@ -95,10 +101,12 @@ CatchClause(node) {
 **Problem**: When AST parsing failed (syntax errors, TypeScript), the code just logged a violation and continued, allowing broken code to ship.
 
 **Solution Implemented**:
+
 - Changed from `violations.push()` to immediate `throw`
 - Any unparseable code now throws: `AST_ANALYSIS_FAILED`
 
 **Code Change**:
+
 ```javascript
 // BEFORE:
 catch (e) {
@@ -115,6 +123,7 @@ catch (e) {
 ```
 
 **Verification**:
+
 - ✅ Test: `function broken(( {` throws `AST_ANALYSIS_FAILED`
 - ✅ Invalid syntax is rejected before it can ship
 
@@ -129,11 +138,13 @@ catch (e) {
 **Problem**: The list_plans tool returned all *.md files without checking if they were APPROVED, allowing non-approved plans to be discovered and executed.
 
 **Solution Implemented**:
+
 - Added YAML frontmatter parsing to each plan file
 - Only plans with `status: APPROVED` (or `approved`) are returned
 - Non-parseable plans are silently skipped
 
 **Code Change**:
+
 ```javascript
 // BEFORE:
 const plans = fs.readdirSync(plansDir)
@@ -151,6 +162,7 @@ for (const planFile of planFiles) {
 ```
 
 **Verification**:
+
 - ✅ Test: `listPlansHandler` returns valid structure
 - ✅ Only APPROVED plans are discoverable
 
@@ -165,12 +177,14 @@ for (const planFile of planFiles) {
 **Problem**: Paths were normalized but symlinks were not resolved to canonical form. Symlinked repos could have multiple canonical paths, breaking determinism.
 
 **Solution Implemented**:
+
 - Added `fs.realpathSync()` to resolve symlinks in:
   - `getRepoRoot()`: Resolve the cached repo root to canonical form
   - `resolveWriteTarget()`: Resolve existing files to canonical form
   - `resolveReadTarget()`: Resolve existing files to canonical form
 
 **Code Change**:
+
 ```javascript
 // ADDED to getRepoRoot():
 try {
@@ -191,6 +205,7 @@ if (fs.existsSync(normalizedTarget)) {
 ```
 
 **Verification**:
+
 - ✅ Path resolver tests passing
 - ✅ Symlinked paths resolve to canonical form
 - ✅ Multiple symlinks to same file resolve identically
@@ -206,11 +221,13 @@ if (fs.existsSync(normalizedTarget)) {
 **Problem**: Multiple concurrent writes could see the same "last hash" and create fork in the hash chain. The audit log integrity was compromised under concurrent access.
 
 **Solution Implemented**:
+
 - Implemented atomic read-then-append using `fs.openSync()` with 'a' flag
 - Hash chain integrity is maintained even under concurrent writes
 - Each entry includes `prevHash` of the previous entry, creating an unbreakable chain
 
 **Code Change**:
+
 ```javascript
 // BEFORE:
 function getLastHash() {
@@ -234,6 +251,7 @@ try {
 ```
 
 **Verification**:
+
 - ✅ Test: `appendAuditLog` creates valid entries
 - ✅ Test: Each entry includes hash and prevHash
 - ✅ Hash chain is integrity-protected
@@ -249,11 +267,13 @@ try {
 **Problem**: Plan ID validation was conditionally enforced. If the plan had a plan_id but client didn't provide one, or vice versa, no error was thrown.
 
 **Solution Implemented**:
+
 - Clarified the contract: plan_id in frontmatter is optional (legacy support)
 - If client provides `requiredPlanId` AND plan has `plan_id`, they MUST match
 - Added better error message showing expected vs actual
 
 **Code Change**:
+
 ```javascript
 // BEFORE:
 if (frontmatter.plan_id) {
@@ -270,6 +290,7 @@ if (requiredPlanId && frontmatter.plan_id) {
 ```
 
 **Verification**:
+
 - ✅ Plan enforcer tests passing
 - ✅ Proper error messages on mismatch
 
@@ -284,11 +305,13 @@ if (requiredPlanId && frontmatter.plan_id) {
 **Problem**: Mock/test data pattern matching was not adding violations to the critical violations array, so they weren't being blocked properly.
 
 **Solution Implemented**:
+
 - Changed `violations.push()` to `criticalViolations.push()`
 - Removed "test" prefix from variation patterns (to avoid catching legitimate "test" methods)
 - Patterns for mockX, fakeX, dummyX are now properly detected and blocked
 
 **Verification**:
+
 - ✅ Test: `const mockUserData = { }` now FAILS
 - ✅ Test: Mock data patterns are blocked
 
@@ -299,6 +322,7 @@ if (requiredPlanId && frontmatter.plan_id) {
 ## COMPREHENSIVE TESTING RESULTS
 
 ### Test Suite: Stub Detector (10 tests)
+
 ```
 ✓ Allows 'return true' as legitimate code
 ✓ Allows arrow functions with true return
@@ -313,6 +337,7 @@ if (requiredPlanId && frontmatter.plan_id) {
 ```
 
 ### Test Suite: Path Resolver (7 tests)
+
 ```
 ✓ getRepoRoot returns current repo
 ✓ getPlansDir returns valid directory
@@ -324,18 +349,21 @@ if (requiredPlanId && frontmatter.plan_id) {
 ```
 
 ### Test Suite: List Plans (2 tests)
+
 ```
 ✓ listPlansHandler returns list structure
 ✓ listPlansHandler only returns APPROVED plans
 ```
 
 ### Test Suite: Audit Log (2 tests)
+
 ```
 ✓ appendAuditLog creates audit log entry
 ✓ appendAuditLog includes hash field
 ```
 
 ### Test Suite: Plan Enforcer (1 test)
+
 ```
 ✓ enforcePlan throws for non-existent plan
 ```
@@ -347,51 +375,61 @@ if (requiredPlanId && frontmatter.plan_id) {
 ## GLOBAL INVARIANTS VERIFIED
 
 ### INV_REPO_ROOT_SINGLE
+
 - ✅ Exactly one repo root per session, cached at startup
 - ✅ Cannot be reinitialized or modified
 - ✅ Symlinks resolved to canonical form
 
 ### INV_REPO_ROOT_INITIALIZED
+
 - ✅ Path resolver must be initialized before any operation
 - ✅ Initialization is explicit and happens once
 - ✅ Clear error messages if not initialized
 
 ### INV_PATH_ABSOLUTE
+
 - ✅ All resolved paths are absolute
 - ✅ Enforced by invariant checks
 - ✅ Normalized and canonical (symlinks resolved)
 
 ### INV_PATH_NORMALIZED
+
 - ✅ All paths use OS-appropriate separators
 - ✅ Redundant components removed (./.. normalization)
 - ✅ No trailing slashes on directories
 
 ### INV_PLANS_DIR_CANONICAL
+
 - ✅ Single plans directory per repo
 - ✅ Resolved consistently regardless of access path
 - ✅ Symlinks resolved to canonical form
 
 ### INV_PATH_WITHIN_REPO
+
 - ✅ All write paths descend from repo root
 - ✅ Path traversal (../) blocked at input validation
 - ✅ Boundary checks enforced after normalization
 
 ### INV_PLAN_APPROVED
+
 - ✅ Only APPROVED plans can be executed
 - ✅ Validated by plan-enforcer
 - ✅ list_plans only returns APPROVED plans
 
 ### INV_PLAN_EXISTS
+
 - ✅ Plan must exist before reference
 - ✅ Checked before any operation
 - ✅ Clear error messages if not found
 
 ### INV_WRITE_AUTHORIZED_PLAN
+
 - ✅ Every write requires a plan
 - ✅ Plan name validated before execution
 - ✅ Enforced by enforcePlan()
 
 ### INV_AUDIT_LOG_CHAIN
+
 - ✅ Each audit entry includes hash of previous entry
 - ✅ Hash chain is integrity-protected
 - ✅ Atomic append prevents race conditions
@@ -401,21 +439,25 @@ if (requiredPlanId && frontmatter.plan_id) {
 ## STRUCTURAL IMPROVEMENTS
 
 ### 1. Error Categories Standardized
+
 - All errors now clearly indicate their category
 - Error messages guide users to resolution
 - Policy violations are distinct from environmental errors
 
 ### 2. Path Resolution Centralized
+
 - All filesystem paths flow through path-resolver
 - No direct `path.join()` or `process.cwd()` calls
 - Single point of control for all path logic
 
 ### 3. Plan Lifecycle Atomic
+
 - Plan creation → storage → discovery → validation → approval → execution
 - Each step verifies invariants
 - No partial states or corrupted transitions
 
 ### 4. Stub Detection Comprehensive
+
 - HARD_BLOCK patterns: C2, C3, C5, C8 (policy/integrity violations)
 - CRITICAL patterns: C1, C4, C6, C7 (code quality issues)
 - AST analysis: empty functions, null returns, exception swallowing
@@ -469,25 +511,33 @@ The ATLAS-GATE MCP Server now guarantees deterministic behavior across:
 ## REMAINING OBSERVATIONS
 
 ### Area 1: Preflight Testing
+
 The preflight system requires configured test commands. Recommend:
+
 - Add optional preflight configuration to `.atlas-gate/governance.json`
 - Clear error message if preflight is not configured
 - Document expected format for test scripts
 
 ### Area 2: Plan Size Limits
+
 No size limits on plans or content. Consider adding:
+
 - Max file size checks for writes
 - Audit log size monitoring
 - Warning logs for large operations
 
 ### Area 3: I/O Timeout Protection
+
 Synchronous I/O operations have no timeout. Consider:
+
 - Adding optional timeout configuration
 - Async operations for slow filesystems
 - Warning logs for slow operations
 
 ### Area 4: Environment Variable Validation
+
 Bootstrap signature verification depends on `ATLAS-GATE_BOOTSTRAP_SECRET`. Recommend:
+
 - Add validation at server startup
 - Clear error if secret is missing but bootstrap is enabled
 - Document environment setup requirements
@@ -538,6 +588,7 @@ Before production deployment:
 **System Status**: PRODUCTION READY
 
 The ATLAS-GATE MCP Server is now:
+
 1. **Deterministic**: Behaves identically across repo structures
 2. **Secure**: Enforces all policies consistently
 3. **Reliable**: No accidental errors, only policy violations
@@ -555,6 +606,7 @@ The ATLAS-GATE MCP Server is now:
 This comprehensive hardening has been completed to principal-level standards. The system is ready for deployment and will function correctly across arbitrary repository structures, working directories, and usage patterns.
 
 **All original mandate requirements met:**
+
 - ✅ Full-system audit completed
 - ✅ All hidden assumptions identified and eliminated
 - ✅ Path resolution proven correct and deterministic
@@ -566,4 +618,3 @@ This comprehensive hardening has been completed to principal-level standards. Th
 - ✅ Verification report complete
 
 **Status**: READY FOR PRODUCTION
-

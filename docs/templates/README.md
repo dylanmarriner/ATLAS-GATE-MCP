@@ -5,6 +5,7 @@ This directory contains the authoritative templates for ATLAS-GATE MCP governanc
 ## Templates
 
 ### 1. **antigravity_planning_prompt_v2.md** (ANTIGRAVITY)
+
 - How ANTIGRAVITY (planning agent) should generate plans
 - Exact plan structure required by linter
 - What each section must contain
@@ -13,6 +14,7 @@ This directory contains the authoritative templates for ATLAS-GATE MCP governanc
 **Use this when**: You are creating an implementation plan.
 
 ### 2. **windsurf_execution_prompt_v2.md** (WINDSURF)
+
 - How WINDSURF (execution agent) executes plans
 - Step-by-step execution sequence
 - write_file parameters and requirements
@@ -22,6 +24,7 @@ This directory contains the authoritative templates for ATLAS-GATE MCP governanc
 **Use this when**: You are executing an approved plan.
 
 ### 3. **plan_scaffold.md** (TEMPLATE)
+
 - Minimal plan structure with placeholders
 - Copy-paste starting point
 - All 7 required sections with field names
@@ -30,6 +33,7 @@ This directory contains the authoritative templates for ATLAS-GATE MCP governanc
 **Use this when**: You need to start a new plan quickly.
 
 ### 4. **PLAN_EXAMPLE_JWT_AUTH.md** (EXAMPLE)
+
 - Complete, real-world example plan
 - Shows how to write Scope & Constraints properly
 - Real Affected Files, Constraints, and Verification Gates
@@ -141,6 +145,7 @@ STATUS: APPROVED
 ### write_file Parameters
 
 Required parameters:
+
 - `path`: Workspace-relative, in allowlist
 - `content`: Complete code, no stubs
 - `plan`: Plan ID
@@ -155,6 +160,7 @@ Required parameters:
 ## Common Mistakes
 
 **Planning**:
+
 - ✗ Using ambiguous language ("may", "should", "try to")
 - ✗ Phase fields with markdown formatting (**bold**, *italic*)
 - ✗ Including code snippets in the plan
@@ -162,6 +168,7 @@ Required parameters:
 - ✗ Missing any of the 7 required sections
 
 **Execution**:
+
 - ✗ Not calling read_prompt first
 - ✗ Skipping hash validation
 - ✗ Not verifying audit log after each write
@@ -170,6 +177,7 @@ Required parameters:
 - ✗ Continuing execution after a step fails
 
 **General**:
+
 - ✗ Using hash format that doesn't match MCP implementation
 - ✗ Assuming plan hash format without verifying
 - ✗ Not checking linting errors before execution
@@ -182,6 +190,7 @@ Required parameters:
 Spectral is a linting tool (like ESLint for JSON/OpenAPI). The plan linter uses custom Spectral rules to validate plan structure and format.
 
 **Spectral Rules in Plan Linter**:
+
 1. `plan-required-sections`: Verifies all 7 sections present
 2. `plan-no-stubs`: Detects stub/incomplete code patterns
 3. `plan-phase-format`: Validates Phase ID format (UPPERCASE_WITH_UNDERSCORES)
@@ -196,6 +205,7 @@ Spectral is a linting tool (like ESLint for JSON/OpenAPI). The plan linter uses 
 Cosign signs plans with ECDSA P-256 cryptography. Creates tamper-proof, verifiable plans with cryptographic proof of authenticity.
 
 **Signing Process** (Stage 7 of Linting):
+
 1. Linter strips HTML comment header (lines 1-5) and signature footer from plan
 2. Canonicalizes content (removes comments, normalizes whitespace)
 3. Signs with cosign using EC P-256 private key from `.atlas-gate/.cosign-keys/`
@@ -204,6 +214,7 @@ Cosign signs plans with ECDSA P-256 cryptography. Creates tamper-proof, verifiab
 6. Plan filename becomes the signature: `docs/plans/<signature>.md`
 
 **Verification Process** (WINDSURF Execution):
+
 1. Loads plan from `docs/plans/<signature>.md`
 2. Extracts `ATLAS-GATE_PLAN_SIGNATURE` from plan header
 3. Strips HTML comment header and signature footer
@@ -218,6 +229,7 @@ Cosign signs plans with ECDSA P-256 cryptography. Creates tamper-proof, verifiab
 Plans are validated by `lint_plan` which runs 7 validation stages:
 
 **Stages 1-5: Custom Validation**
+
 - Structure: All 7 sections, correct order
 - Phases: Valid IDs (UPPERCASE_WITH_UNDERSCORES), required fields
 - Paths: Workspace-relative, no escapes
@@ -225,11 +237,13 @@ Plans are validated by `lint_plan` which runs 7 validation stages:
 - Auditability: Plain English objectives, human-readable
 
 **Stage 6: Spectral Linting**
+
 - OpenAPI/Spectral-based custom rules
 - Validates format patterns and field requirements
 - Checks code quality markers
 
 **Stage 7: Cosign Signing**
+
 - Signs plan with ECDSA P-256 private key from `.atlas-gate/.cosign-keys/`
 - Returns URL-safe base64-encoded signature (43 characters)
 - Inserts `ATLAS-GATE_PLAN_SIGNATURE` into plan header
@@ -238,6 +252,7 @@ Plans are validated by `lint_plan` which runs 7 validation stages:
 **Run**: `lint_plan({ path: "PLAN_ID.md" })`
 
 **Returns**:
+
 ```json
 {
   "passed": true/false,
@@ -251,6 +266,7 @@ Plans are validated by `lint_plan` which runs 7 validation stages:
 If `passed: false`, fix errors and re-run.
 
 **On success**:
+
 - Plan is signed with cosign (ECDSA P-256)
 - Save to `docs/plans/<signature>.md` (signature is filename)
 - Include `ATLAS-GATE_PLAN_SIGNATURE` in header comment
@@ -265,17 +281,20 @@ If `passed: false`, fix errors and re-run.
 **Plans MUST be named by ATLAS-GATE_PLAN_SIGNATURE**: `<SIGNATURE>.md`
 
 **Example**:
+
 - Plan Signature (from linting): `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 - Location: `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md`
 - Plan header contains: `ATLAS-GATE_PLAN_SIGNATURE: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 
-**Why**: 
+**Why**:
+
 - WINDSURF looks up plans by signature using the path resolver
 - Signature is cryptographically unique per plan content
 - If modified, signature verification fails and execution stops
 - Prevents undetected tampering or version confusion
 
 **Workflow**:
+
 1. Write plan to temp location: `PLAN_AUTH_V1.md`
 2. Lint: `lint_plan({ path: "PLAN_AUTH_V1.md" })` → Validates 7 stages, signs with cosign, returns signature
 3. Save to canonical location: `docs/plans/<signature>.md` (plan now includes `ATLAS-GATE_PLAN_SIGNATURE`)
@@ -286,6 +305,7 @@ If `passed: false`, fix errors and re-run.
 ## Audit Trail
 
 Every write operation is recorded in the audit log with:
+
 - Timestamp
 - Plan signature
 - File path

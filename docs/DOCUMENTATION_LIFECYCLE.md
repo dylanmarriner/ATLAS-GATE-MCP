@@ -102,6 +102,7 @@ All notable changes to ATLAS-GATE MCP documentation are recorded here.
 **Every software release includes a documentation change section:**
 
 1. **In CHANGELOG.md** (code release notes):
+
    ```markdown
    ## [1.0.2] - 2026-02-10
    
@@ -133,6 +134,7 @@ All notable changes to ATLAS-GATE MCP documentation are recorded here.
 **Deprecation workflow:**
 
 1. **Mark as deprecated** in the document:
+
    ```markdown
    > ⚠️ **Deprecated as of v1.1.0**  
    > This feature will be removed in v2.0.  
@@ -173,12 +175,14 @@ audience: ["developers", "operators", "stakeholders"]
 ### 3.3 Content Standards
 
 #### Headings
+
 - H1 (`#`): Document title only (once per file)
 - H2 (`##`): Major sections
 - H3 (`###`): Subsections
 - H4 and beyond: Rare; reconsider structure
 
 #### Code Blocks
+
 ```markdown
 # Always specify language for syntax highlighting
 \`\`\`bash
@@ -200,16 +204,19 @@ const atlas-gate = new KaizaMCP(config);
 ```
 
 #### Links
+
 - **Internal**: `[Guide](./GUIDE.md)` (relative)
 - **External**: `[GitHub](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server)` (absolute)
 - **Anchors**: `[Section](#section-heading)`
 
 #### Tables
+
 Use 3-column maximum for GitHub rendering clarity. For complex data, split into multiple tables.
 
 ### 3.4 Tone & Language
 
 **Rules:**
+
 - Plain English, short sentences
 - Active voice ("Users can configure" not "Configuration is possible")
 - No marketing hype or emojis (except in callouts like ⚠️ ✓ ❌)
@@ -229,6 +236,7 @@ Use 3-column maximum for GitHub rendering clarity. For complex data, split into 
 ### 4.1 Diagram Governance
 
 **All diagrams must have:**
+
 1. **Source file** (editable, in version control)
 2. **Rendered output** (SVG or PNG for GitHub display)
 3. **Documentation** (how to regenerate)
@@ -260,6 +268,7 @@ docs/diagrams/
 ### 4.4 Regenerating Diagrams
 
 **For Mermaid:**
+
 ```bash
 npm run docs:render
 # or manually:
@@ -267,11 +276,13 @@ npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/arch
 ```
 
 **For PlantUML:**
+
 ```bash
 java -jar plantuml.jar docs/diagrams/source/*.puml -svg -o ../rendered/
 ```
 
 **Document regeneration in:**
+
 - Commit message: "docs: regenerate diagrams for ADR-007"
 - CI/CD pipeline: `npm run docs:build`
 
@@ -350,11 +361,13 @@ npm run docs:build
 ### 6.2 Link Validation
 
 **Checks:**
+
 - Internal links resolve (`[Guide](./GUIDE.md)` → file exists)
 - External links are reachable (optional, slower)
 - No circular references in navigation
 
 **Run manually:**
+
 ```bash
 node scripts/validate-docs.js
 ```
@@ -435,6 +448,7 @@ Code v2.0.0     →    Docs v2.0.0 (in /docs/v2/)
 ### 9.1 Contributing to Docs
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b docs/add-feature-guide
    ```
@@ -445,6 +459,7 @@ Code v2.0.0     →    Docs v2.0.0 (in /docs/v2/)
    - Follow style guide
 
 3. **Build and validate**:
+
    ```bash
    npm run docs:build
    ```
@@ -495,6 +510,7 @@ Code v2.0.0     →    Docs v2.0.0 (in /docs/v2/)
 - `docs/feature`: Request for new guide
 
 **SLA for doc issues:**
+
 - Critical (incorrect security info): 24 hours
 - High (broken setup guide): 1 week
 - Medium (clarity improvements): 2 weeks
@@ -521,6 +537,7 @@ Code v2.0.0     →    Docs v2.0.0 (in /docs/v2/)
 ## Appendix: Tools & Scripts
 
 ### Documentation Build
+
 ```bash
 npm run docs:build        # Full build: render + validate
 npm run docs:render       # Regenerate diagrams only
@@ -528,11 +545,13 @@ npm run docs:validate     # Check links and metadata
 ```
 
 ### Diagram Regeneration
+
 ```bash
 npx mmdc -i docs/diagrams/source/*.mmd -o docs/diagrams/rendered/
 ```
 
 ### Link Validation
+
 ```bash
 node scripts/validate-docs.js
 ```

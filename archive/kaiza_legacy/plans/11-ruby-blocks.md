@@ -10,11 +10,13 @@ scope: "tests/lang/ruby/**"
 # Ruby Full-Stack Implementation Plan
 
 ## Overview
+
 Build a sophisticated content management system using Ruby on Rails with advanced metaprogramming, custom DSLs, blocks, procs, and lambdas for flexible content handling.
 
 ## Blocks, Procs & Lambdas
 
 ### 1. Block Usage
+
 ```ruby
 class ContentProcessor
   def process_with_logging(&block)
@@ -48,6 +50,7 @@ end
 ```
 
 ### 2. Procs vs Lambdas
+
 ```ruby
 class WorkflowEngine
   # Proc is more flexible
@@ -78,6 +81,7 @@ end
 ```
 
 ### 3. Advanced Block Patterns
+
 ```ruby
 class Collection
   attr_accessor :items
@@ -116,6 +120,7 @@ even, odd = collection.partition_by { |n| n.even? }
 ## Metaprogramming & DSLs
 
 ### 1. Custom DSL for Content Definition
+
 ```ruby
 module ContentBuilder
   def self.define_content(&block)
@@ -172,6 +177,7 @@ end
 ```
 
 ### 2. Dynamic Method Generation
+
 ```ruby
 class ActiveContent
   def self.has_many(association_name, **options)
@@ -219,6 +225,7 @@ puts article.comments_count
 ## Rails Conventions & Patterns
 
 ### 1. Model with Callbacks & Scopes
+
 ```ruby
 class Article < ApplicationRecord
   has_many :comments, dependent: :destroy
@@ -274,6 +281,7 @@ end
 ```
 
 ### 2. Controller with RESTful Actions
+
 ```ruby
 class ArticlesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
@@ -333,6 +341,7 @@ end
 ## Enumerator & Iterator Patterns
 
 ### 1. Custom Iterators
+
 ```ruby
 class ContentStream
   def initialize(items)
@@ -370,6 +379,7 @@ stream.batched(10) { |batch| import_batch(batch) }
 ## Testing with Blocks
 
 ### 1. RSpec Examples
+
 ```ruby
 describe Article do
   describe '#publish!' do

@@ -10,11 +10,13 @@ scope: "tests/lang/swift/**"
 # Swift Full-Stack Implementation Plan
 
 ## Overview
+
 Build a comprehensive iOS photography app with advanced features including image recognition, cloud sync, local gallery management, and social sharing capabilities using Swift and modern iOS frameworks.
 
 ## Architecture
 
 ### iOS App (Swift)
+
 - SwiftUI for modern UI
 - MVVM architecture pattern
 - Core Data for local persistence
@@ -22,6 +24,7 @@ Build a comprehensive iOS photography app with advanced features including image
 - Vision framework for ML image recognition
 
 ### Backend (Swift Server)
+
 - Vapor web framework
 - PostgreSQL database
 - RESTful API design
@@ -31,6 +34,7 @@ Build a comprehensive iOS photography app with advanced features including image
 ## Optional Type Usage
 
 ### 1. Core Models with Optionals
+
 ```swift
 class Photo {
     let id: UUID
@@ -68,6 +72,7 @@ struct User {
 ```
 
 ### 2. Optional Unwrapping Patterns
+
 ```swift
 // Guard let pattern
 func displayPhotoDetails(photo: Photo?) {
@@ -114,6 +119,7 @@ func processItem(_ item: Any?) {
 ## Error Handling
 
 ### 1. Do-Try-Catch
+
 ```swift
 enum PhotoError: Error {
     case failedToLoad
@@ -148,6 +154,7 @@ func uploadPhoto(_ photo: Photo) {
 ## MVVM & Binding
 
 ### 1. View Models
+
 ```swift
 @MainActor
 class PhotosViewModel: ObservableObject {
@@ -184,6 +191,7 @@ class PhotosViewModel: ObservableObject {
 ```
 
 ### 2. SwiftUI Views
+
 ```swift
 struct PhotoListView: View {
     @StateObject private var viewModel = PhotosViewModel()
@@ -233,6 +241,7 @@ struct PhotoListView: View {
 ## Core Data Integration
 
 ### 1. Model Setup
+
 ```swift
 @Model
 final class PhotoEntity {
@@ -267,6 +276,7 @@ final class TagEntity {
 ```
 
 ### 2. Data Access
+
 ```swift
 @MainActor
 class PhotoRepository {
@@ -293,6 +303,7 @@ class PhotoRepository {
 ## Vision Framework & ML
 
 ### 1. Image Recognition
+
 ```swift
 class ImageRecognizer {
     private let model: VNCoreMLModel?
@@ -341,6 +352,7 @@ class ImageRecognizer {
 ## CloudKit Sync
 
 ### 1. CloudKit Operations
+
 ```swift
 @MainActor
 class CloudSyncManager: NSObject, CKSyncEngine.Delegate {
@@ -378,6 +390,7 @@ class CloudSyncManager: NSObject, CKSyncEngine.Delegate {
 ## Async/Await
 
 ### 1. Async Functions
+
 ```swift
 actor PhotoService {
     func fetchPhoto(id: UUID) async throws -> Photo {

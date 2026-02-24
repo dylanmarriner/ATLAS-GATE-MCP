@@ -5,6 +5,7 @@
 ### 🎯 Start Here
 
 **START_HERE.md** (READ THIS FIRST)
+
 - Complete deployment flow in 4 main steps
 - Quick reference commands
 - Troubleshooting guide
@@ -15,24 +16,28 @@
 ### 📋 Step-by-Step Guides
 
 **LOCAL_TESTING.md**
+
 - How to test locally with docker-compose
 - Verify all services work before cloud
 - Load testing procedures
 - Data persistence tests
 
 **SSH_TUNNEL_SETUP.md**
+
 - Create secure SSH tunnels for access
 - Self-signed certificates for testing
 - Let's Encrypt for production HTTPS
 - Windows/Mac/Linux instructions
 
 **DEPLOY_INSTRUCTIONS.md**
+
 - Quick start (5 minutes)
 - What the deployment script does
 - Common commands
 - Troubleshooting reference
 
 **DEPLOYMENT_CHECKLIST.md**
+
 - 7-phase deployment verification
 - Phase 1: Local testing
 - Phase 2: Cloud prep
@@ -47,6 +52,7 @@
 ### 🚀 Deployment Script
 
 **deploy.sh** (MAIN AUTOMATION)
+
 - Fully automated Kubernetes deployment
 - Installs k3s on Hetzner server
 - Deploys PostgreSQL, Redis, nginx, MCP server
@@ -58,6 +64,7 @@
 ### 📖 Reference Documentation
 
 **CLOUD_DEPLOYMENT_GUIDE.md**
+
 - Server sizing recommendations
 - 99.9% uptime architecture
 - Required code changes (detailed)
@@ -66,6 +73,7 @@
 - Cost estimates for AWS/Azure/GCP
 
 **KUBERNETES_CLIENT_CONFIG.md**
+
 - Full Kubernetes reference guide
 - Pod management
 - Service scaling
@@ -75,6 +83,7 @@
 - Performance optimization
 
 **CLOUD_SETUP_SUMMARY.txt**
+
 - Overview of your setup
 - Your server specs (Hetzner cax31)
 - File descriptions
@@ -86,6 +95,7 @@
 ### 🔧 Infrastructure Code
 
 **bin/server-network.js**
+
 - HTTP/TCP MCP server for cloud
 - Health check endpoint
 - Metrics endpoint (Prometheus)
@@ -94,19 +104,23 @@
 - Graceful shutdown handling
 
 **core/session-store.js**
+
 - Abstract session storage interface
 - Pluggable backend support
 
 **core/session-store-memory.js**
+
 - In-memory session backend
 - For development/testing
 - Auto-expiry support
 
 **core/audit-storage.js**
+
 - Abstract audit log interface
 - File, PostgreSQL, S3 backends
 
 **core/audit-storage-file.js**
+
 - File-based audit logging
 - Hash chain integrity verification
 - JSONL format
@@ -116,12 +130,14 @@
 ### 🐳 Docker & Kubernetes
 
 **Dockerfile**
+
 - Multi-stage Docker build
 - Security hardening (non-root user)
 - Health checks
 - Alpine base image
 
 **docker-compose.yml**
+
 - Complete local testing environment
 - 7 services:
   - nginx (load balancer)
@@ -135,6 +151,7 @@
 - Health checks for each service
 
 **nginx.conf**
+
 - Load balancer configuration
 - TLS/SSL support
 - Rate limiting
@@ -143,6 +160,7 @@
 - Upstream server configuration
 
 **init-db.sql**
+
 - PostgreSQL schema initialization
 - Audit log table
 - Sessions table
@@ -194,12 +212,14 @@ ATLAS-GATE-MCP/
 ## How to Use These Files
 
 ### For Local Testing
+
 1. Read: **START_HERE.md** (Step 1)
 2. Use: **docker-compose.yml**
 3. Follow: **LOCAL_TESTING.md**
 4. Verify: **DEPLOYMENT_CHECKLIST.md** Phase 1
 
 ### For Cloud Deployment
+
 1. Read: **START_HERE.md** (Steps 2-3)
 2. Read: **SSH_TUNNEL_SETUP.md**
 3. Use: **deploy.sh**
@@ -207,16 +227,19 @@ ATLAS-GATE-MCP/
 5. Verify: **DEPLOYMENT_CHECKLIST.md** Phases 2-3
 
 ### For Client Integration
+
 1. Read: **START_HERE.md** (Step 4)
 2. Read: **KUBERNETES_CLIENT_CONFIG.md**
 3. Follow: **DEPLOYMENT_CHECKLIST.md** Phase 4
 
 ### For TLS/HTTPS
+
 1. Read: **START_HERE.md** (Step 5)
 2. Read: **SSH_TUNNEL_SETUP.md** "TLS/HTTPS Setup"
 3. Follow: **DEPLOYMENT_CHECKLIST.md** Phase 5
 
 ### For Advanced Tasks
+
 1. Read: **KUBERNETES_CLIENT_CONFIG.md**
 2. Reference: **CLOUD_DEPLOYMENT_GUIDE.md**
 3. Check: **DEPLOYMENT_CHECKLIST.md** Phase 6
@@ -248,12 +271,14 @@ curl http://localhost:3000/health
 ## Key Information
 
 **Your Setup:**
+
 - Server: Hetzner cax31
 - IP: 49.12.230.179
 - SSH Key: /home/kubuntux/Downloads/.ssh/id_rsa
 - Cost: $3.99/month
 
 **What Gets Deployed:**
+
 - k3s (Kubernetes)
 - PostgreSQL 15 (audit logs)
 - Redis 7 (sessions)
@@ -262,11 +287,13 @@ curl http://localhost:3000/health
 - Persistent volumes
 
 **Access Methods:**
+
 - Local tunnel: `http://localhost:3000` (via SSH)
 - Direct K8s NodePort: `http://49.12.230.179:30000`
 - HTTPS: `https://your-domain.com` (after DNS/cert setup)
 
 **Timeline:**
+
 - Local testing: 1-2 hours
 - SSH setup: 30 min
 - Cloud deploy: 5 min + 3 min
@@ -338,12 +365,12 @@ All should succeed with no errors.
 ## Support & Reference
 
 - **Official Docs**:
-  - Kubernetes: https://kubernetes.io/docs/
-  - k3s: https://docs.k3s.io/
-  - Hetzner: https://docs.hetzner.cloud/
+  - Kubernetes: <https://kubernetes.io/docs/>
+  - k3s: <https://docs.k3s.io/>
+  - Hetzner: <https://docs.hetzner.cloud/>
 
 - **GitHub**:
-  - Repository: https://github.com/dylanmarriner/ATLAS-GATE-MCP
+  - Repository: <https://github.com/dylanmarriner/ATLAS-GATE-MCP>
   - Issues: Report bugs or ask questions
 
 - **In This Project**:
@@ -357,6 +384,7 @@ All should succeed with no errors.
 ## Summary
 
 You have:
+
 - ✅ 8 comprehensive guides
 - ✅ 1 fully automated deployment script
 - ✅ 4 code modules for cloud networking

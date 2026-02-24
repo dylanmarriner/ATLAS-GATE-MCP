@@ -24,17 +24,21 @@ up to date, audited 643 packages in 2s
 ## Core Dependencies
 
 ### MCP (Model Context Protocol)
+
 - ✅ `@modelcontextprotocol/sdk@1.25.3`
 
 ### Cryptography & Signing (NEW)
+
 - ✅ `@sigstore/sign@4.1.0` - ECDSA P-256 signing
 - ✅ `@sigstore/verify@3.1.0` - Signature verification
 
 ### Code Quality & Linting
+
 - ✅ `@stoplight/spectral-cli@6.15.0` - API linting
 - ✅ `@stoplight/spectral-core@1.21.0` - Linting core
 
 ### Parsing & Utilities
+
 - ✅ `acorn@8.15.0` - JavaScript parser
 - ✅ `acorn-walk@8.3.4` - AST walker
 - ✅ `diff@8.0.3` - Diff utilities
@@ -42,9 +46,11 @@ up to date, audited 643 packages in 2s
 - ✅ `qs@6.14.1` - Query string parser
 
 ### Server Framework
+
 - ✅ `hono@4.11.7` - HTTP server framework
 
 ### Dev Dependencies
+
 - ✅ `markdown-link-check@3.12.2`
 - ✅ `markdownlint-cli@0.42.0`
 - ✅ `@mermaid-js/mermaid-cli@10.9.1`
@@ -177,6 +183,7 @@ All scripts should work with current dependencies.
 ## What's New
 
 Recent additions (2026-02-21):
+
 - Added `@sigstore/sign@4.1.0`
 - Added `@sigstore/verify@3.1.0`
 - Removed mock crypto fallbacks from `cosign-hash-provider.js`

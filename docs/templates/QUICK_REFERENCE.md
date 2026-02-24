@@ -163,6 +163,7 @@ Content:
 ## 🔑 Key Rules
 
 ### REALITY LOCK
+
 ```
 ✅ Complete, production-ready code only
 ❌ NO stubs, TODOs, placeholders, mocks
@@ -171,6 +172,7 @@ Content:
 ```
 
 ### BINARY LANGUAGE
+
 ```
 ✅ MUST, MUST NOT, SHALL, SHALL NOT
 ❌ may, should, try to, optional
@@ -178,6 +180,7 @@ Content:
 ```
 
 ### PATH FORMAT
+
 ```
 ✅ src/main.js (workspace-relative)
 ❌ /home/user/project/src/main.js (absolute)
@@ -185,6 +188,7 @@ Content:
 ```
 
 ### METADATA REQUIRED
+
 ```javascript
 // Every write_file MUST have:
 {
@@ -196,6 +200,7 @@ Content:
 ```
 
 ### AUDIT VERIFICATION
+
 ```javascript
 // AFTER every write_file, MUST do:
 const result = await read_audit_log({ limit: 1 });
@@ -209,6 +214,7 @@ const entry = JSON.parse(result)[0];
 ```
 
 ### PLAN HASHING
+
 ```
 1. Read plan content (including YAML frontmatter)
 2. Strip [SHA256_HASH: ...] footer
@@ -279,6 +285,7 @@ Stop execution IMMEDIATELY if:
 7. **Integrity violation**: Files outside allowlist modified
 
 On ANY halt:
+
 - [ ] Do NOT continue
 - [ ] Generate failure report
 - [ ] Initiate rollback
@@ -372,6 +379,7 @@ If ANY criterion fails → **EXECUTION FAILED**
 ## 📚 Template Versions
 
 **Current Version**: 2.0 (2026-02-21)
+
 - MCP-integrated
 - Mandatory session initialization
 - Mandatory audit verification
@@ -380,6 +388,7 @@ If ANY criterion fails → **EXECUTION FAILED**
 - All 9 plan sections required
 
 **Previous Version**: 1.2 (2026-02-14)
+
 - Basic structure
 - Optional MCP integration
 - No audit verification

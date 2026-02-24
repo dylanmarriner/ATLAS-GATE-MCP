@@ -11,7 +11,7 @@ AUDIENCE: [architects, engineers, auditors]
 
 ## Executive Summary
 
-This plan defines the minimal, enforceable bootstrap system that transforms ATLAS-GATE MCP from a code execution server into a **governance-first system** where **plans are law**. 
+This plan defines the minimal, enforceable bootstrap system that transforms ATLAS-GATE MCP from a code execution server into a **governance-first system** where **plans are law**.
 
 The bootstrap system enables the creation of the **first approved plan** in a fresh workspace (solving the classic bootstrap problem: how do you approve the first plan if plans require approval?). After the first plan is created, bootstrap mode disables and all subsequent operations require explicit plan authority.
 
@@ -142,6 +142,7 @@ workspace-root/
 The plan registry answers the question: "Is this plan ID valid and approved?"
 
 The registry serves as:
+
 - **Authority index**: Rapid lookup of which plans grant authority
 - **Approval record**: Immutable record of what plans are approved
 - **Audit anchor**: Each write operation references a plan ID; registry verifies that reference
@@ -151,6 +152,7 @@ The registry serves as:
 **Location**: `.atlas-gate/governance.json` (co-located with `.atlas-gate/ROOT` marker)
 
 **Structure**:
+
 ```json
 {
   "bootstrap_enabled": false,
@@ -233,6 +235,7 @@ Bootstrap is available if and only if:
 ```
 
 **Signature generation**:
+
 ```
 signature = HMAC-SHA256(
   key = ATLAS-GATE_BOOTSTRAP_SECRET,
@@ -241,11 +244,13 @@ signature = HMAC-SHA256(
 ```
 
 **Signature verification**:
+
 - Use timing-safe comparison (`crypto.timingSafeEqual`)
 - Reject if signature doesn't match
 - Reject if timestamp is older than 5 minutes (prevent replay attacks)
 
 **Plan validation**:
+
 - Markdown file with YAML frontmatter (must parse as valid YAML)
 - Frontmatter must include `STATUS: APPROVED` (case-insensitive)
 - Frontmatter must include `SCOPE`, `VERSION`, `PURPOSE`, `CREATED`
@@ -255,12 +260,14 @@ signature = HMAC-SHA256(
 ### Single-Use vs Repeatable Behavior
 
 **Single-use design** (MANDATORY):
+
 - Bootstrap succeeds only once per workspace
 - After first plan is created, `bootstrap_enabled` → `false` in governance.json
 - Subsequent bootstrap attempts are **hard-rejected** with error: `BOOTSTRAP_DISABLED`
 - No mechanism exists to re-enable bootstrap (immutable once disabled)
 
 **Idempotency**:
+
 - If bootstrap succeeds and plan file already exists (duplicate invocation), return success
 - If bootstrap fails (plan doesn't parse, linting fails, etc.), workspace state unchanged
 - Retry with corrected plan is allowed (doesn't count as second bootstrap)
@@ -297,12 +304,14 @@ Authority is established by citing an **approved plan**.
 Every write request (`write_file` tool call) traverses this pipeline:
 
 **GATE 1: Schema Validation**
+
 - Request must include: `path`, `content`, `plan` (plan ID)
 - Request schema is validated using Zod
 - Rejection: 400 Bad Request if missing required fields
 - Action: Parse and normalize inputs; proceed to Gate 2
 
 **GATE 2: Plan Authority Check**
+
 - Verify the cited plan ID exists in registry
 - Verify the plan file exists on disk at canonical path
 - Verify plan file content hasn't been modified (hash mismatch = tampering)
@@ -310,18 +319,21 @@ Every write request (`write_file` tool call) traverses this pipeline:
 - Action: Load plan frontmatter; proceed to Gate 3
 
 **GATE 3: Plan Scope Validation**
+
 - Verify the plan's SCOPE authorizes the write domain (e.g., SCOPE: "CORE_GOVERNANCE" allows edits to core/)
 - Check that the target file path is within the plan's authorized scope
 - Rejection: 403 Forbidden if file path outside plan scope
 - Action: Confirm write is in scope; proceed to Gate 4
 
 **GATE 4: Enterprise Quality Guard (Stub Detection)**
+
 - Scan the content payload for forbidden patterns (TODO, return null, mock, hardcoded, etc.)
 - Use regex matching to detect incomplete or placeholder code
 - Rejection: 400 Bad Request if stub patterns detected (hard block)
 - Action: Content passes quality bar; proceed to Gate 5
 
 **GATE 5: Filesystem & Audit Commit**
+
 - Write content to disk at the specified path
 - Append immutable audit entry to `audit-log.jsonl` with plan ID, timestamp, session ID
 - Rejection: 500 Internal Server Error if disk write fails (rare)
@@ -414,6 +426,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ```
 
 **Evidence integrity**:
+
 - Plan file hash must match filename (detect tampering)
 - Governance state must declare bootstrap disabled (prevent re-bootstrap)
 - Audit entry must reference the plan hash (link authority to operation)
@@ -435,20 +448,24 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Corrupt Plan File
 
 **Detection**:
+
 - Plan file exists in registry but cannot be parsed as markdown/YAML
 - Plan filename hash doesn't match file content hash
 
-**Impact**: 
+**Impact**:
+
 - Write requests citing this plan are rejected
 - Bootstrap cannot complete (plan linting fails)
 
 **Recovery**:
+
 1. Identify the corrupt plan (hash mismatch or parse error)
 2. Delete the corrupted .md file from docs/plans/
 3. Update governance.json to remove the plan from plan_index
 4. Retry bootstrap with corrected plan
 
 **Prevention**:
+
 - Validate plan content before writing (Gate 4: linting)
 - Use hash verification on every read
 - Keep backup copy of plan before bootstrap
@@ -458,20 +475,24 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Missing Governance State
 
 **Detection**:
+
 - `.atlas-gate/governance.json` file not found
 - OR governance.json exists but is unparseable JSON
 
 **Impact**:
+
 - System assumes `bootstrap_enabled: true` (default state)
 - Bootstrap is allowed (might complete twice if process retried)
 - Subsequent writes fail (no approved plans in registry)
 
 **Recovery**:
+
 1. Check if plan file exists in `docs/plans/` (manually verify)
 2. If plan exists: manually recreate governance.json with `bootstrap_enabled: false` and correct plan_index
 3. If plan missing: delete .atlas-gate/ directory and restart bootstrap from beginning
 
 **Prevention**:
+
 - Create governance.json atomically during bootstrap
 - Write backup copy to alternate location
 - Check governance state before accepting any write request
@@ -481,14 +502,17 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Broken Plan Reference
 
 **Detection**:
+
 - Write request cites plan ID that exists in registry
 - But plan file missing from disk
 
 **Impact**:
+
 - Write is rejected (plan file not found)
 - System cannot proceed with cited plan
 
 **Recovery**:
+
 1. Identify missing plan file from error message
 2. Check if plan content is recoverable (git history, backups)
 3. Restore plan file to `docs/plans/<HASH>.md` (exact filename critical)
@@ -496,6 +520,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 5. Retry write request
 
 **Prevention**:
+
 - Never manually delete plan files (use governance tools only)
 - Verify plan files before moving/renaming
 - Auto-register missing plans if auto_register_plans=true
@@ -505,20 +530,24 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Conflicting Plans
 
 **Detection**:
+
 - Two plan files exist with identical content hash
 - OR two plan files claim different hashes but have same content
 
 **Impact**:
+
 - System has ambiguity about which file is authoritative
 - Write requests may fail due to inconsistency
 
 **Recovery**:
+
 1. Identify the duplicate plans
 2. Keep the one that matches the filename hash
 3. Delete the mismatch file
 4. Update governance.json to reference only the correct file
 
 **Prevention**:
+
 - Plan creation enforces unique hashes (content-addressed)
 - Manual plan creation is not supported (use bootstrap only)
 
@@ -527,20 +556,24 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Bootstrap Misuse (Double Bootstrap)
 
 **Detection**:
+
 - Bootstrap request received when bootstrap_enabled=false
 - OR governance.json shows existing approved plan
 
 **Impact**:
+
 - Bootstrap handler rejects request with error: BOOTSTRAP_DISABLED
 - First plan remains unchanged (immutable)
 - No new authority is created
 
 **Recovery**:
+
 - Acknowledge that bootstrap is one-time only
 - If different first plan needed, manually delete governance.json and restart
 - This is rare and requires deliberate action (not accidental)
 
 **Prevention**:
+
 - Governance state transition is atomic
 - Once bootstrap_enabled set to false, no code can re-enable it
 - Clear error message guides user to correct workflow
@@ -550,15 +583,18 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### Scenario: Secret Exposure or Rotation
 
 **Detection**:
+
 - Operator suspects bootstrap secret was compromised
 - Need to rotate secret for future workspaces
 
 **Impact**:
+
 - Existing plans remain valid (already approved, signed)
 - Future bootstrap attempts with old secret fail
 - New secret required for any new bootstrap
 
 **Recovery**:
+
 1. Generate new secret: `openssl rand -base64 32`
 2. Update environment variable: `export ATLAS-GATE_BOOTSTRAP_SECRET=<new-secret>`
 3. Delete old secret from `.atlas-gate/bootstrap_secret.json` (if file-based)
@@ -566,6 +602,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 5. If needed, bootstrap new workspace with new secret
 
 **Prevention**:
+
 - Store secret in environment variable (not hardcoded)
 - Restrict file permissions on .atlas-gate/bootstrap_secret.json to 0600
 - Rotate secret after successful bootstrap (no longer needed)
@@ -578,6 +615,7 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 ### What Windsurf Must Implement
 
 **Core bootstrap handler** (`tools/bootstrap_tool.js`):
+
 - ✅ Input validation (Zod schema)
 - ✅ Secret verification (HMAC-SHA256 with timing-safe comparison)
 - ✅ Plan linting (reject stubs, incomplete code)
@@ -587,16 +625,19 @@ audit-log.jsonl                # Entry: { "tool": "bootstrap_create_foundation_p
 - ✅ Error handling (return structured errors, no filesystem corruption on failure)
 
 **Bootstrap preconditions** (in `core/governance.js`):
+
 - ✅ `isBootstrapEnabled()` - check bootstrap_enabled flag
 - ✅ `verifyBootstrapAuth()` - HMAC verification
 - ✅ `bootstrapCreateFoundationPlan()` - orchestrate bootstrap flow
 
 **Plan registry** (in `.atlas-gate/governance.json`):
+
 - ✅ Initialize with `bootstrap_enabled: true`, empty plan_index
 - ✅ Update after first plan with `bootstrap_enabled: false`, filled plan_index
 - ✅ Maintain consistency with plan files on disk
 
 **Execution gates** (in `tools/write_file.js`):
+
 - ✅ Verify plan exists and is approved
 - ✅ Verify plan scope authorizes write
 - ✅ Reject writes without valid plan citation
@@ -637,6 +678,7 @@ Bootstrap implementation is complete and correct if and only if:
 ## 12. Dependency Graph
 
 This plan depends on:
+
 - ✅ Existing `BOOTSTRAP_SECRET_GUIDE.md` (secret mechanics, user workflow)
 - ✅ Existing `core/governance.js` (bootstrap functions, state management)
 - ✅ Existing `tools/bootstrap_tool.js` (tool handler, Zod schema)
@@ -644,6 +686,7 @@ This plan depends on:
 - ✅ Existing `audit-log.jsonl` (audit infrastructure)
 
 This plan enables (unlocks):
+
 - ✅ Plan authority system (write_file can now require plan citations)
 - ✅ Role enforcement (Windsurf vs Antigravity boundaries)
 - ✅ Execution gates (multi-gate validation pipeline)

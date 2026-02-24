@@ -3,6 +3,7 @@
 ## Current Status
 
 ### **Completeness Hook** (`pre_write_completeness.py`)
+
 Checks for TODOs, stubs, placeholders - uses regex that works across languages.
 
 | Language | TODO Detection | Stub Detection | Placeholder Detection | Status |
@@ -23,6 +24,7 @@ Checks for TODOs, stubs, placeholders - uses regex that works across languages.
 | MATLAB | ✅ Yes | ❌ No | ✅ Yes | **NEEDS WORK** |
 
 ### **Documentation Hook** (`pre_write_comprehensive_comments.py`)
+
 Checks for docstrings, comments, naming - currently language-specific.
 
 | Language | Support | Details |
@@ -83,6 +85,7 @@ Regex: r"/\*\s*(TODO|FIXME|XXX)" matches:
 ### What's Missing by Language
 
 #### Java
+
 ```java
 // ✅ DETECTED
 public void process() {
@@ -100,6 +103,7 @@ public void process() {
 ```
 
 #### C/C++
+
 ```cpp
 // ✅ DETECTED
 void process() {
@@ -117,6 +121,7 @@ void process() {
 ```
 
 #### Go
+
 ```go
 // ✅ DETECTED
 func Process() {
@@ -130,6 +135,7 @@ func Process() {
 ```
 
 #### Rust
+
 ```rust
 // ✅ DETECTED
 fn process() {
@@ -148,18 +154,21 @@ fn process() {
 ## Documentation Hook: What's Needed
 
 ### Python (✅ FULL SUPPORT)
+
 ```python
 def validate_email(email: str) -> bool:
     """Validate email format."""
     pattern = r"^[a-z0-9]+@"
     return bool(re.match(pattern, email))
 ```
+
 - Extracts `def` function definitions
 - Validates `"""` docstrings
 - Checks comment density
 - Validates variable names
 
 ### JavaScript/TypeScript (✅ FULL SUPPORT)
+
 ```javascript
 function validateEmail(email) {
     /**
@@ -171,12 +180,14 @@ function validateEmail(email) {
     return pattern.test(email);
 }
 ```
+
 - Extracts `function` definitions
 - Validates JSDoc comments
 - Checks comment density
 - Validates variable names
 
 ### Java (❌ NEEDS IMPLEMENTATION)
+
 ```java
 /**
  * Validate email format.
@@ -188,13 +199,16 @@ public static boolean validateEmail(String email) {
     return email.matches(pattern);
 }
 ```
+
 **Needed:**
+
 - Extract `public/private/static function` definitions
 - Validate JavaDoc (`/** ... */`) comments
 - Check comment density
 - Validate variable naming (camelCase)
 
 ### C/C++ (❌ NEEDS IMPLEMENTATION)
+
 ```cpp
 /**
  * Validate email format.
@@ -209,7 +223,9 @@ bool validateEmail(const char* email) {
     return result;
 }
 ```
+
 **Needed:**
+
 - Extract function definitions (with/without types)
 - Validate Doxygen comments (`/** ... */`)
 - Handle complex C++ syntax (templates, overloads)
@@ -217,6 +233,7 @@ bool validateEmail(const char* email) {
 - Validate naming conventions
 
 ### Go (❌ NEEDS IMPLEMENTATION)
+
 ```go
 // ValidateEmail checks if email format is valid.
 // It uses a regex pattern to validate.
@@ -225,13 +242,16 @@ func ValidateEmail(email string) bool {
     return pattern.MatchString(email)
 }
 ```
+
 **Needed:**
+
 - Extract `func` definitions
 - Validate comment format (Go-style comments)
 - Check comment density (first sentence rule)
 - Validate naming (PascalCase for exported)
 
 ### Rust (❌ NEEDS IMPLEMENTATION)
+
 ```rust
 /// Validate email format using regex.
 ///
@@ -245,13 +265,16 @@ pub fn validate_email(email: &str) -> bool {
     pattern.is_match(email)
 }
 ```
+
 **Needed:**
+
 - Extract `fn` definitions
 - Validate `///` doc comments (Rust style)
 - Check documentation completeness (Args, Returns sections)
 - Validate naming (snake_case)
 
 ### C# (❌ NEEDS IMPLEMENTATION)
+
 ```csharp
 /// <summary>
 /// Validate email format.
@@ -264,13 +287,16 @@ public static bool ValidateEmail(string email)
     return pattern.IsMatch(email);
 }
 ```
+
 **Needed:**
+
 - Extract method definitions
 - Validate XML doc comments (`/// <summary>`)
 - Check parameter documentation
 - Validate naming (PascalCase)
 
 ### PHP (❌ NEEDS IMPLEMENTATION)
+
 ```php
 /**
  * Validate email format.
@@ -282,13 +308,16 @@ function validateEmail(string $email): bool {
     return preg_match('/^[a-z0-9]+@/', $email) === 1;
 }
 ```
+
 **Needed:**
+
 - Extract `function` definitions
 - Validate PHPDoc comments (`/** ... */`)
 - Check parameter/return documentation
 - Validate naming (snake_case for functions)
 
 ### Swift (❌ NEEDS IMPLEMENTATION)
+
 ```swift
 /// Validates email format using regex.
 ///
@@ -299,13 +328,16 @@ func validateEmail(_ email: String) -> Bool {
     return pattern.firstMatch(in: email) != nil
 }
 ```
+
 **Needed:**
+
 - Extract `func` definitions
 - Validate `///` doc comments
 - Check parameter documentation
 - Validate naming (camelCase)
 
 ### Kotlin (❌ NEEDS IMPLEMENTATION)
+
 ```kotlin
 /**
  * Validates email format.
@@ -318,13 +350,16 @@ fun validateEmail(email: String): Boolean {
     return pattern.containsMatchIn(email)
 }
 ```
+
 **Needed:**
+
 - Extract `fun` definitions
 - Validate KDoc comments (`/** ... */`)
 - Check parameter documentation
 - Validate naming (camelCase)
 
 ### Ruby (❌ NEEDS IMPLEMENTATION)
+
 ```ruby
 # Validates email format using regex
 # @param email [String] Email address to validate
@@ -333,13 +368,16 @@ def validate_email(email)
   /^[a-z0-9]+@/.match?(email)
 end
 ```
+
 **Needed:**
+
 - Extract `def` definitions
 - Validate YARD comments (`# @param`, `# @return`)
 - Check comment density
 - Validate naming (snake_case)
 
 ### R (❌ NEEDS IMPLEMENTATION)
+
 ```r
 #' Validate email format
 #'
@@ -354,13 +392,16 @@ validate_email <- function(email) {
   grepl("^[a-z0-9]+@", email)
 }
 ```
+
 **Needed:**
+
 - Extract function definitions (`<- function`)
 - Validate roxygen2 comments (`#'`)
 - Check parameter/return documentation
 - Validate naming (snake_case)
 
 ### MATLAB (❌ NEEDS IMPLEMENTATION)
+
 ```matlab
 function isValid = validateEmail(email)
     % Validate email format using regex pattern.
@@ -374,7 +415,9 @@ function isValid = validateEmail(email)
     isValid = matches(email, pattern);
 end
 ```
+
 **Needed:**
+
 - Extract `function` definitions
 - Validate `%` comment validation
 - Check documentation completeness
@@ -385,17 +428,21 @@ end
 ## Implementation Roadmap
 
 ### Phase 1 (Current ✅)
+
 - Python: ✅ Full support
 - JavaScript/TypeScript: ✅ Full support
 
 ### Phase 2 (Next Priority)
+
 **High-Traffic Languages (1-2 weeks each):**
+
 1. Java (widely used, large codebases)
 2. C/C++ (system programming, performance-critical)
 3. Go (microservices, growing ecosystem)
 4. Rust (memory safety, growing adoption)
 
 ### Phase 3 (Extended Support)
+
 **Popular Languages (3-5 days each):**
 5. C# (enterprise .NET ecosystem)
 6. PHP (web development)
@@ -404,6 +451,7 @@ end
 9. Ruby (rapid development, Rails ecosystem)
 
 ### Phase 4 (Specialized Support)
+
 **Domain-Specific (5-7 days each):**
 10. R (data science/statistics)
 11. MATLAB (numerical computing)
@@ -413,6 +461,7 @@ end
 ## Completeness Hook: Enhancements Needed
 
 ### Current Coverage
+
 Most patterns work across languages (TODOs, stubs), but need language-specific additions:
 
 | Pattern | Coverage |
@@ -426,6 +475,7 @@ Most patterns work across languages (TODOs, stubs), but need language-specific a
 ### What to Add
 
 **Java:**
+
 ```python
 # Add to INCOMPLETENESS_PATTERNS
 "java_stubs": [
@@ -436,6 +486,7 @@ Most patterns work across languages (TODOs, stubs), but need language-specific a
 ```
 
 **Go:**
+
 ```python
 "go_stubs": [
     r"panic\(.*not\s+implemented",  # Go panic
@@ -444,6 +495,7 @@ Most patterns work across languages (TODOs, stubs), but need language-specific a
 ```
 
 **C++/C#:**
+
 ```python
 "dotnet_stubs": [
     r"throw\s+NotImplementedException",  # C# stub
@@ -478,7 +530,9 @@ Most patterns work across languages (TODOs, stubs), but need language-specific a
 ## Quick Implementation Strategy
 
 ### Step 1: Enhance Completeness Hook (1 week)
+
 Add language-specific stub patterns:
+
 - Java: `NotImplementedError`, `UnsupportedOperationException`
 - Go: `panic()` calls
 - C#: `throw NotImplementedException`
@@ -487,13 +541,16 @@ Add language-specific stub patterns:
 - Result: 90% coverage across all languages
 
 ### Step 2: Add Core Language Support (4 weeks)
+
 Implement documentation hooks for:
+
 1. Java (common in enterprise)
 2. C/C++ (common in systems programming)
 3. Go (growing ecosystem)
 4. Rust (strong community)
 
 ### Step 3: Extended Language Support (4 weeks)
+
 Implement remaining languages in phases.
 
 ---
@@ -501,16 +558,19 @@ Implement remaining languages in phases.
 ## What You Can Do Right Now
 
 ### ✅ Currently Works
+
 - **All languages:** TODO/FIXME detection
 - **All languages:** Basic placeholder detection
 - **Python:** Full completeness + documentation enforcement
 - **JavaScript/TypeScript:** Full completeness + documentation enforcement
 
 ### ⚠️ Partial Support
+
 - **Java, C/C++, Go, Rust, etc.:** TODO detection only (not full completeness)
 - **All non-Python/JS:** No documentation enforcement
 
 ### ❌ Not Yet Supported
+
 - Language-specific stub patterns (except Python/JavaScript)
 - Language-specific documentation validation (except Python/JavaScript)
 
@@ -519,6 +579,7 @@ Implement remaining languages in phases.
 ## Recommendation for Your Codebase
 
 **If your code is primarily:**
+
 - ✅ Python → Full support NOW
 - ✅ JavaScript/TypeScript → Full support NOW
 - ⚠️ Java → Partial (TODOs blocked, need custom patterns for stubs)
@@ -526,6 +587,7 @@ Implement remaining languages in phases.
 - ⚠️ C/C++, C#, others → Partial (TODOs blocked only)
 
 **Recommendation:**
+
 1. Deploy Phase 1 now (works for all languages at TODO level)
 2. Request Phase 2 enhancements for your specific languages
 3. Customize patterns in policy.json for language-specific needs
@@ -535,6 +597,7 @@ Implement remaining languages in phases.
 ## Configuration for Multi-Language Support
 
 ### Current policy.json
+
 ```json
 {
   "prohibited_patterns": {
@@ -545,6 +608,7 @@ Implement remaining languages in phases.
 ```
 
 ### Enhanced for Multi-Language
+
 ```json
 {
   "prohibited_patterns": {
@@ -573,6 +637,7 @@ Implement remaining languages in phases.
 | Specialized Language Support (R, MATLAB) | 🔵 Phase 4 (Planned) |
 
 **Overall Coverage:**
+
 - Phase 1: 2 languages (Python, JavaScript)
 - Phase 1 + 2: 6 languages (add Java, C/C++, Go, Rust)
 - Phase 1 + 2 + 3: 11 languages

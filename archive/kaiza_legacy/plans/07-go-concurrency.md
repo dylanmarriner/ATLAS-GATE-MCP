@@ -10,11 +10,13 @@ scope: "tests/lang/go/**"
 # Go Full-Stack Implementation Plan
 
 ## Overview
+
 Build a high-performance message queue/broker system in Go leveraging goroutines, channels, and non-blocking I/O for handling millions of concurrent messages.
 
 ## Architecture
 
 ### Message Broker Core (Go)
+
 - Concurrent message handling with goroutines
 - Channel-based communication patterns
 - Consumer groups and topic subscriptions
@@ -22,12 +24,14 @@ Build a high-performance message queue/broker system in Go leveraging goroutines
 - Cluster coordination with Raft consensus
 
 ### Frontend (Go + gRPC Web)
+
 - gRPC services for client communication
 - REST gateway for HTTP clients
 - Web UI with real-time metrics
 - CLI tools for administration
 
 ### Storage Layer
+
 - RocksDB for fast key-value storage
 - Memory-mapped files for WAL
 - Snapshot management
@@ -36,6 +40,7 @@ Build a high-performance message queue/broker system in Go leveraging goroutines
 ## Goroutine Architecture
 
 ### 1. Message Producer Handler
+
 ```go
 type ProducerPool struct {
     producers chan *ProducerWorker
@@ -61,6 +66,7 @@ func (p *ProducerPool) handleProducers(ctx context.Context) {
 ```
 
 ### 2. Consumer Worker Pool
+
 ```go
 type ConsumerWorker struct {
     id int
@@ -83,6 +89,7 @@ func (c *ConsumerWorker) work(ctx context.Context) {
 ## Channel-Based Patterns
 
 ### 1. Fan-Out Pattern
+
 ```go
 func distributeMessages(input chan *Message, numWorkers int) {
     workers := make([]chan *Message, numWorkers)
@@ -98,6 +105,7 @@ func distributeMessages(input chan *Message, numWorkers int) {
 ```
 
 ### 2. Pipeline Pattern
+
 ```go
 func messagePipeline(ctx context.Context, input chan *Message) {
     validated := validate(ctx, input)
@@ -113,6 +121,7 @@ func messagePipeline(ctx context.Context, input chan *Message) {
 ## Core Components
 
 ### 1. Topic Management
+
 ```go
 type Topic struct {
     name string
@@ -135,6 +144,7 @@ func (t *Topic) publish(ctx context.Context, msg *Message) error {
 ```
 
 ### 2. Consumer Groups
+
 ```go
 type ConsumerGroup struct {
     id string
@@ -156,6 +166,7 @@ func (cg *ConsumerGroup) assignPartitions() {
 ```
 
 ### 3. Message Storage
+
 ```go
 type MessageStore struct {
     db *rocksdb.DB
@@ -190,6 +201,7 @@ func (ms *MessageStore) read(key string) (*Message, error) {
 ## Synchronization Patterns
 
 ### 1. WaitGroup for Coordination
+
 ```go
 func (broker *Broker) shutdown(ctx context.Context) {
     var wg sync.WaitGroup
@@ -216,6 +228,7 @@ func (broker *Broker) shutdown(ctx context.Context) {
 ```
 
 ### 2. Mutex for Shared State
+
 ```go
 type Broker struct {
     topics map[string]*Topic
@@ -241,6 +254,7 @@ func (b *Broker) getTopic(name string) *Topic {
 ## gRPC Services
 
 ### 1. Produce Service
+
 ```go
 type ProducerServer struct {
     broker *Broker
@@ -267,6 +281,7 @@ func (ps *ProducerServer) Produce(ctx context.Context, req *ProduceRequest) (*Pr
 ```
 
 ### 2. Consumer Service
+
 ```go
 type ConsumerServer struct {
     broker *Broker
@@ -294,6 +309,7 @@ func (cs *ConsumerServer) Consume(req *ConsumeRequest, stream ProducerConsumer_C
 ## Advanced Features
 
 ### 1. Replication with Raft
+
 ```go
 type Cluster struct {
     raftNode raft.Node
@@ -308,6 +324,7 @@ func (c *Cluster) replicate(msg *Message) error {
 ```
 
 ### 2. Monitoring & Metrics
+
 ```go
 type Metrics struct {
     messagesProduced prometheus.Counter
@@ -320,6 +337,7 @@ type Metrics struct {
 ## Performance Optimization
 
 ### 1. Batching
+
 ```go
 func (p *Partition) batchAppend(messages []*Message) error {
     batch := p.db.NewBatch()
@@ -335,6 +353,7 @@ func (p *Partition) batchAppend(messages []*Message) error {
 ```
 
 ### 2. Connection Pooling
+
 ```go
 type ConnectionPool struct {
     connections chan net.Conn
@@ -356,6 +375,7 @@ func (cp *ConnectionPool) get(ctx context.Context) (net.Conn, error) {
 ## Testing Strategy
 
 ### 1. Concurrent Testing
+
 ```go
 func TestConcurrentProducers(t *testing.T) {
     broker := NewBroker()
@@ -376,6 +396,7 @@ func TestConcurrentProducers(t *testing.T) {
 ```
 
 ### 2. Channel Testing
+
 ```go
 func TestChannelCommunication(t *testing.T) {
     input := make(chan *Message, 10)
@@ -394,12 +415,14 @@ func TestChannelCommunication(t *testing.T) {
 ## Deployment
 
 ### 1. Containerization
+
 - Docker image with scratch base
 - Multi-stage build for small size
 - Health checks
 - Graceful shutdown
 
 ### 2. Kubernetes Deployment
+
 - StatefulSet for broker cluster
 - Service discovery
 - PersistentVolumes for WAL

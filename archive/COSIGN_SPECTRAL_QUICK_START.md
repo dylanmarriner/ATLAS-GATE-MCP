@@ -7,6 +7,7 @@ Everything related to plan linting, hashing, and signing now uses **cosign + spe
 ## Key Points
 
 ### 1. Automatic Key Generation
+
 ```javascript
 const result = await lintPlan(planContent);
 // Keys auto-generated in .cosign-keys/ if not provided
@@ -14,6 +15,7 @@ const result = await lintPlan(planContent);
 ```
 
 ### 2. Signing & Hashing
+
 ```javascript
 const result = await lintPlan(planContent);
 // result.hash = SHA256 hex digest
@@ -21,6 +23,7 @@ const result = await lintPlan(planContent);
 ```
 
 ### 3. Spectral Validation
+
 ```javascript
 const result = await lintPlan(planContent);
 // result.errors from spectral + 5 custom validators
@@ -28,6 +31,7 @@ const result = await lintPlan(planContent);
 ```
 
 ### 4. Everything Is Async Now
+
 ```javascript
 // OLD: const result = lintPlan(content);
 // NEW: const result = await lintPlan(content);
@@ -42,6 +46,7 @@ const result = await lintPlan(planContent);
 ## Common Tasks
 
 ### Lint a Plan
+
 ```javascript
 import { lintPlan } from './core/plan-linter.js';
 
@@ -53,6 +58,7 @@ console.log(`Errors: ${result.errors.length}`);
 ```
 
 ### Hash a Plan
+
 ```javascript
 import { hashPlanContent } from './core/plan-linter.js';
 
@@ -61,6 +67,7 @@ const hash = hashPlanContent(planContent);
 ```
 
 ### Generate Keys Explicitly
+
 ```javascript
 import { generateCosignKeys } from './core/plan-linter.js';
 
@@ -69,6 +76,7 @@ const keys = await generateCosignKeys('./my-keys');
 ```
 
 ### Sign a Plan
+
 ```javascript
 import { signPlan } from './core/plan-linter.js';
 
@@ -77,6 +85,7 @@ const signature = await signPlan(planContent, privateKeyPath);
 ```
 
 ### Verify a Signature
+
 ```javascript
 import { verifyPlanSignature } from './core/plan-linter.js';
 
@@ -129,12 +138,14 @@ try {
 ## Integration Points
 
 ### As a Tool (MCP)
+
 ```javascript
 const result = await lintPlanHandler({ content: planMarkdown });
 // Returns MCP-formatted response with hash, signature, keys
 ```
 
 ### In Plan Enforcement
+
 ```javascript
 const enforcement = await enforcePlan(planHash, targetPath);
 // Re-lints plan at execution time
@@ -142,6 +153,7 @@ const enforcement = await enforcePlan(planHash, targetPath);
 ```
 
 ### In Plan Approval
+
 ```javascript
 const created = await bootstrapCreateFoundationPlan(repoRoot, planContent, payload, sig);
 // Lints before approval
@@ -150,6 +162,7 @@ const created = await bootstrapCreateFoundationPlan(repoRoot, planContent, paylo
 ```
 
 ### In Attestation
+
 ```javascript
 const bundle = await generateAttestationBundle(workspaceRoot);
 // Gathers evidence including linting all plans
@@ -174,12 +187,14 @@ const bundle = await generateAttestationBundle(workspaceRoot);
 ## Testing
 
 Run tests:
+
 ```bash
 npm test
 node tests/system/test-plan-linter.js
 ```
 
 Expected output:
+
 ```
 [TEST] Running 14+ plan linter tests...
 
@@ -204,6 +219,7 @@ Expected output:
 ## Backward Compatibility
 
 ✅ All changes are backward compatible:
+
 - Existing plans still work
 - Hash computation unchanged
 - Signatures only added when explicitly requested
@@ -220,6 +236,7 @@ Expected output:
 ## Questions?
 
 See:
+
 - `COSIGN_SPECTRAL_IMPLEMENTATION_SUMMARY.md` - Full details
 - `FINAL_ALIGNMENT_VERIFICATION.md` - Verification checklist
 - `docs/templates/LINTING_AND_SIGNING_GUIDE.md` - Comprehensive guide

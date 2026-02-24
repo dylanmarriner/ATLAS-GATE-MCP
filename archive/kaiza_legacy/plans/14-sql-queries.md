@@ -10,11 +10,13 @@ scope: "tests/lang/sql/**"
 # SQL Full-Stack Implementation Plan
 
 ## Overview
+
 Build a comprehensive data warehouse using SQL with advanced query optimization, dimensional modeling, and analytics capabilities.
 
 ## Schema Design
 
 ### 1. Fact and Dimension Tables
+
 ```sql
 -- Dimensional Tables
 CREATE TABLE dim_customer (
@@ -80,6 +82,7 @@ CREATE INDEX idx_fact_amount ON fact_sales(total_amount);
 ## Advanced Query Patterns
 
 ### 1. Common Table Expressions (CTEs)
+
 ```sql
 -- Revenue analysis with CTEs
 WITH monthly_sales AS (
@@ -119,6 +122,7 @@ ORDER BY year, month;
 ```
 
 ### 2. Window Functions
+
 ```sql
 -- Customer lifetime value and ranking
 SELECT
@@ -136,6 +140,7 @@ ORDER BY lifetime_value DESC;
 ```
 
 ### 3. Complex Aggregations
+
 ```sql
 -- Cohort analysis
 WITH customer_cohorts AS (
@@ -175,6 +180,7 @@ ORDER BY cohort_date, months_since_cohort;
 ## Performance Optimization
 
 ### 1. Query Optimization
+
 ```sql
 -- Inefficient: Multiple aggregations
 SELECT customer_id, COUNT(*) as order_count
@@ -208,6 +214,7 @@ ORDER BY total_spent DESC;
 ```
 
 ### 2. Materialized Views
+
 ```sql
 -- Create materialized view for frequent queries
 CREATE MATERIALIZED VIEW mv_customer_summary AS
@@ -236,6 +243,7 @@ CREATE INDEX idx_mv_customer_ltv ON mv_customer_summary(lifetime_value DESC);
 ## Data Analysis Queries
 
 ### 1. Sales Analysis
+
 ```sql
 -- Sales trend analysis
 SELECT
@@ -255,6 +263,7 @@ ORDER BY dd.year DESC, dd.month DESC;
 ```
 
 ### 2. Customer Segmentation
+
 ```sql
 -- RFM (Recency, Frequency, Monetary) Analysis
 WITH rfm_calc AS (
@@ -299,6 +308,7 @@ ORDER BY r_score DESC, f_score DESC, m_score DESC;
 ```
 
 ### 3. Product Performance
+
 ```sql
 -- Product analysis with market basket
 SELECT
@@ -322,6 +332,7 @@ ORDER BY category_rank;
 ## ETL Operations
 
 ### 1. Data Loading
+
 ```sql
 -- Incremental data load
 INSERT INTO fact_sales (customer_id, product_id, date_id, quantity, unit_price, total_amount)

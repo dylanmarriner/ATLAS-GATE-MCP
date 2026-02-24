@@ -55,6 +55,7 @@ The updated templates are tightly integrated with atlas-gate-mcp tools, requirin
 ```
 
 **Key differences**:
+
 - ✅ Session initialization is mandatory
 - ✅ read_file is mandatory (no native filesystem reads)
 - ✅ write_file is mandatory for plan saving
@@ -105,6 +106,7 @@ The updated templates are tightly integrated with atlas-gate-mcp tools, requirin
 ```
 
 **Key differences**:
+
 - ✅ Session initialization is mandatory
 - ✅ Plan hash validation is mandatory (not optional)
 - ✅ Audit log verification is mandatory after EACH write
@@ -453,6 +455,7 @@ const result = await lint_plan({
 ### What BREAKS with New Templates
 
 Old plans that:
+
 - [ ] Use absolute paths (must convert to relative)
 - [ ] Don't have proper YAML frontmatter (must add)
 - [ ] Are missing sections (must add all 9)
@@ -542,17 +545,20 @@ These plans MUST be updated or re-generated to execute under the new template.
 ## When to Migrate
 
 **Migrate immediately if**:
+
 - [ ] You're starting new planning work
 - [ ] You need audit trail integrity
 - [ ] You're using WINDSURF for execution
 - [ ] You want cryptographic plan verification
 
 **Can postpone if**:
+
 - [ ] You have old completed plans that don't need modification
 - [ ] You're not using WINDSURF for execution
 - [ ] You don't need audit trail verification
 
 **MUST migrate if**:
+
 - [ ] You want to use new atlas-gate-mcp tools
 - [ ] You need plan hash validation
 - [ ] You need audit log verification after each write

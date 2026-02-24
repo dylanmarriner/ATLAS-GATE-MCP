@@ -5,6 +5,7 @@
 ## Quick Reference
 
 ### For SHA256 Hashing
+
 ```javascript
 import { sha256 } from "../core/cosign-hash-provider.js";
 
@@ -16,6 +17,7 @@ const hash = sha256(JSON.stringify(obj));
 ```
 
 ### For Deterministic JSON
+
 ```javascript
 import { canonicalizeForHash } from "../core/cosign-hash-provider.js";
 
@@ -25,6 +27,7 @@ const hash = sha256(canonical);
 ```
 
 ### For Signature Verification (Timing-Safe)
+
 ```javascript
 import { timingSafeEqual } from "../core/cosign-hash-provider.js";
 
@@ -35,6 +38,7 @@ if (timingSafeEqual(signatureA, signatureB)) {
 ```
 
 ### For HMAC-SHA256 (Deprecated - Backward Compatibility Only)
+
 ```javascript
 import { hmacSha256 } from "../core/cosign-hash-provider.js";
 
@@ -43,6 +47,7 @@ const signature = hmacSha256(content, secret);
 ```
 
 ### For Cosign Signing (Preferred - Use This)
+
 ```javascript
 import { signWithCosign, verifyWithCosign } from "../core/cosign-hash-provider.js";
 
@@ -100,6 +105,7 @@ When adding hashing to a new module:
 ## Common Patterns
 
 ### Audit Log Entry Hashing
+
 ```javascript
 import { sha256, canonicalizeForHash } from "../core/cosign-hash-provider.js";
 
@@ -109,6 +115,7 @@ const entryHash = sha256(canonicalizeForHash(canonicalWithoutHash));
 ```
 
 ### Plan Content Hashing
+
 ```javascript
 import { sha256 } from "../core/cosign-hash-provider.js";
 
@@ -122,6 +129,7 @@ const hash = sha256(canonicalized);
 ```
 
 ### File Content Integrity Check
+
 ```javascript
 import { sha256 } from "../core/cosign-hash-provider.js";
 
@@ -132,6 +140,7 @@ if (currentHash !== expectedHash) {
 ```
 
 ### Evidence Hashing for Proposals
+
 ```javascript
 import { sha256 } from "../core/cosign-hash-provider.js";
 
@@ -145,32 +154,38 @@ for (const finding of forensic_findings) {
 ## Provider API Reference
 
 ### `sha256(input: string | object): string`
+
 - **Input:** String or object (auto-JSON.stringify)
 - **Output:** 64-char hex string (SHA256)
 - **Determinism:** Yes, uses canonical JSON for objects
 
 ### `canonicalizeForHash(obj: any): string`
+
 - **Input:** Any object
 - **Output:** Canonical JSON string with sorted keys
 - **Use:** When you need the canonical form separately
 
 ### `timingSafeEqual(a: string | Buffer, b: string | Buffer): boolean`
+
 - **Input:** Two buffers or hex strings
 - **Output:** Boolean (true if equal)
 - **Security:** Timing-safe comparison prevents attacks
 
 ### `hmacSha256(content: string, secret: string): string`
+
 - **Input:** Content and HMAC secret
 - **Output:** HMAC-SHA256 hex digest
 - **Status:** Deprecated - use signWithCosign for new code
 - **Use:** Only for backward compatibility with existing bundles
 
 ### `signWithCosign(content: string | Buffer, keyPair: Object): Promise<string>`
+
 - **Input:** Content and cosign key pair
 - **Output:** Base64 signature
 - **Use:** New ECDSA P-256 signing (preferred)
 
 ### `verifyWithCosign(content: string | Buffer, signature: string, keyPair: Object): Promise<boolean>`
+
 - **Input:** Content, signature, and public key
 - **Output:** Boolean (true if valid)
 - **Use:** Verify cosign signatures

@@ -25,6 +25,7 @@ A deterministic validation system that enforces plan structure, enforceability, 
 ### Test Suite: `test-plan-linter.js`
 
 14 comprehensive tests validating all lint rules:
+
 - ✓ Missing section detection
 - ✓ Missing phase field detection
 - ✓ Invalid phase ID format detection
@@ -82,23 +83,27 @@ A deterministic validation system that enforces plan structure, enforceability, 
 ## Key Design Decisions
 
 ### 1. Hash Computation Excludes Header
+
 - Plans embed their hash in an HTML comment header
 - Hash is computed on content WITHOUT the header
 - Avoids circular dependency (plan contains its own hash)
 - Enables validation without modifying plan file
 
 ### 2. Regex-Based Extraction
+
 - Phase extraction: Looks for `## Phase:` or `### Phase:` sections
 - Path allowlist: Extracts lines under `# Path Allowlist`
 - Section validation: Checks for required section headers in order
 
 ### 3. Deterministic Validation
+
 - No file I/O during validation
 - No external dependencies
 - Same input → same result (idempotent)
 - Can be called multiple times safely
 
 ### 4. Fail-Closed Enforcement
+
 - ANY lint error blocks approval/execution
 - Warnings are reported but don't block
 - No "warn-only" validation mode
@@ -108,6 +113,7 @@ A deterministic validation system that enforces plan structure, enforceability, 
 ## Linting Rules Summary
 
 ### Structure Requirements
+
 ```
 Required sections (in order):
 1. Plan Metadata
@@ -120,6 +126,7 @@ Required sections (in order):
 ```
 
 ### Phase Requirements (per phase)
+
 ```
 Each phase must have:
 - Phase ID (UPPERCASE_UNDERSCORE format)
@@ -133,12 +140,14 @@ Each phase must have:
 ```
 
 ### Enforceability Rules
+
 - FORBIDDEN: "may", "should", "if possible", "optional", "try to", "attempt to"
 - FORBIDDEN: "use best judgment", "use judgment"
 - REQUIRED: "MUST", "MUST NOT", "SHALL", "REQUIRED", "FORBIDDEN"
 - REQUIRED: Binary conditions ("IF X THEN Y" or "UNLESS Z DO NOT W")
 
 ### Path Rules
+
 - ✓ Workspace-relative: `core/plan-linter.js`
 - ✓ Globs: `tools/**/*.js`
 - ✗ Absolute paths: `/absolute/path`
@@ -146,6 +155,7 @@ Each phase must have:
 - ✗ Unresolved variables: `${VAR}`
 
 ### Auditability Rules
+
 - FORBIDDEN in objectives: Code symbols, `` `backticks` ``, function calls
 - REQUIRED: Plain English, clear success/failure, defined terms
 
@@ -154,11 +164,13 @@ Each phase must have:
 ## Usage
 
 ### Run Tests
+
 ```bash
 node test-plan-linter.js
 ```
 
 ### Validate a Plan
+
 ```javascript
 import { lintPlan } from './core/plan-linter.js';
 
@@ -171,6 +183,7 @@ if (result.passed) {
 ```
 
 ### Compute Plan Signature
+
 ```javascript
 import { computePlanHash } from './core/plan-linter.js';
 
@@ -183,6 +196,7 @@ const hash = computePlanHash(planContent);
 ## Integration Points (Pending Next Phase)
 
 ### 1. Plan Proposal (tools/bootstrap_tool.js)
+
 ```javascript
 const { lintPlan } = await import('./core/plan-linter.js');
 const result = lintPlan(planContent);
@@ -192,6 +206,7 @@ if (!result.passed) {
 ```
 
 ### 2. Plan Approval (core/governance.js)
+
 ```javascript
 const result = lintPlan(planContent, expectedHash);
 if (!result.passed) {
@@ -200,6 +215,7 @@ if (!result.passed) {
 ```
 
 ### 3. Plan Execution (tools/write_file.js)
+
 ```javascript
 const planContent = fs.readFileSync(planFile, 'utf8');
 const result = lintPlan(planContent, planSignature);
@@ -209,6 +225,7 @@ if (!result.passed) {
 ```
 
 ### 4. Lint Plan Tool (server.js)
+
 ```javascript
 server.registerTool(
   'lint_plan',
@@ -267,6 +284,7 @@ server.registerTool(
 ## Next Phase: Integration
 
 ### Required Work
+
 1. Integrate linter into bootstrap_tool.js (plan proposal)
 2. Integrate linter into governance.js (plan approval)
 3. Integrate linter into write_file.js (plan execution)
@@ -275,11 +293,13 @@ server.registerTool(
 6. Update audit logging to record lint results
 
 ### Estimated Effort
+
 - Integration: 2-3 hours
 - Testing: 1-2 hours
 - Documentation: 30 minutes
 
 ### Success Criteria
+
 - Plans cannot be created without passing linting
 - Plans cannot be approved without passing linting
 - Plans cannot be executed if hash doesn't match
@@ -291,12 +311,14 @@ server.registerTool(
 ## Known Limitations & Future Improvements
 
 ### Current Limitations
+
 1. Jargon detection is heuristic (may have false positives)
 2. Phase extraction uses regex (may fail on unusual formatting)
 3. Path validation doesn't simulate filesystem
 4. Ambiguous language detection is pattern-based
 
 ### Future Enhancements
+
 1. Formal glossary section in plans
 2. Structured YAML/JSON plan format
 3. Automated rollback script validation

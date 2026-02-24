@@ -31,7 +31,7 @@ import { replayExecutionHandler } from "../tools/replay_execution.js";
 
 // Session setup
 import { SESSION_STATE } from "../session.js";
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../core/path-resolver.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../src/infrastructure/path-resolver.js";
 
 console.log("\n╔════════════════════════════════════════════════════════════╗");
 console.log("║  WINDSURF TOOLS COMPREHENSIVE TEST                        ║");

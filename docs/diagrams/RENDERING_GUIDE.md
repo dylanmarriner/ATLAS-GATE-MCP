@@ -18,18 +18,21 @@ This guide provides comprehensive instructions for rendering, maintaining, and u
 ## Supported Diagram Formats
 
 ### Mermaid (.mmd)
+
 - **Use Case**: Flowcharts, sequence diagrams, state diagrams, Gantt charts
 - **Rendering**: Native GitHub support, static site generator compatible
 - **Tools**: VS Code extension, online editors, CLI tools
 - **Advantages**: Simple syntax, GitHub native rendering
 
 ### PlantUML (.puml)
+
 - **Use Case**: Complex architecture diagrams, UML diagrams, sequence diagrams
 - **Rendering**: Requires external renderer, high-quality outputs
 - **Tools**: PlantUML CLI, online servers, IDE plugins
 - **Advantages**: Powerful features, extensive diagram types
 
 ### Draw.io (.drawio)
+
 - **Use Case**: Complex diagrams, custom styling, professional outputs
 - **Rendering**: Export to PNG/SVG, high-quality outputs
 - **Tools**: Web interface, desktop application, CLI export
@@ -38,6 +41,7 @@ This guide provides comprehensive instructions for rendering, maintaining, and u
 ## Rendering Commands
 
 ### Mermaid Rendering
+
 ```bash
 # Install Mermaid CLI
 npm install -g @mermaid-js/mermaid-cli
@@ -53,6 +57,7 @@ npx mmdc -i input.mmd -o output.svg -t dark -b white -w 1200 -h 800
 ```
 
 ### PlantUML Rendering
+
 ```bash
 # Install PlantUML
 npm install -g plantuml
@@ -68,6 +73,7 @@ plantuml diagram.puml -tpng -o output/
 ```
 
 ### Draw.io Rendering
+
 ```bash
 # Using draw.io CLI (requires setup)
 drawio -x docs/diagrams/source/architecture/complex-diagram.drawio -o docs/diagrams/rendered/architecture/complex-diagram.svg
@@ -79,6 +85,7 @@ drawio -x diagram.drawio -f svg -f png -o rendered/
 ## Automated Rendering
 
 ### npm Scripts
+
 ```json
 {
   "scripts": {
@@ -92,6 +99,7 @@ drawio -x diagram.drawio -f svg -f png -o rendered/
 ```
 
 ### GitHub Actions
+
 ```yaml
 name: Render Diagrams
 on:
@@ -131,6 +139,7 @@ jobs:
 ## Diagram Maintenance
 
 ### File Organization
+
 ```
 docs/diagrams/
 ├── source/                      # Source diagram files
@@ -147,13 +156,16 @@ docs/diagrams/
 ```
 
 ### Naming Conventions
+
 - **Source Files**: `descriptive-name.extension` (kebab-case)
 - **Rendered Files**: Same name as source file
 - **Categories**: Organize by type (architecture, security, workflow, integration)
 - **Versioning**: Include version in filename for major changes
 
 ### Metadata Standards
+
 Every diagram source file should include:
+
 ```yaml
 ---
 title: "Diagram Title"
@@ -170,6 +182,7 @@ audience: ["technical", "executive"]
 ## Quality Assurance
 
 ### Validation Checklist
+
 - [ ] Diagram renders without errors
 - [ ] Output format is correct (SVG/PNG)
 - [ ] File size is optimized for web
@@ -180,6 +193,7 @@ audience: ["technical", "executive"]
 - [ ] Metadata is complete and accurate
 
 ### Automated Validation
+
 ```javascript
 // scripts/validate-diagrams.js
 const fs = require('fs');
@@ -198,6 +212,7 @@ function validateDiagrams() {
 ```
 
 ### Manual Review Process
+
 1. **Visual Review**: Check diagram clarity and accuracy
 2. **Technical Review**: Verify technical correctness
 3. **Accessibility Review**: Ensure accessibility compliance
@@ -208,26 +223,31 @@ function validateDiagrams() {
 ### Common Issues
 
 #### Mermaid Rendering Failures
+
 - **Problem**: Syntax errors in Mermaid code
 - **Solution**: Validate syntax using online Mermaid editor
 - **Prevention**: Use VS Code extension for real-time validation
 
 #### PlantUML Rendering Issues
+
 - **Problem**: Java runtime issues
 - **Solution**: Ensure Java is installed and configured
 - **Prevention**: Use Docker container for consistent environment
 
 #### File Size Issues
+
 - **Problem**: Rendered files too large
 - **Solution**: Optimize diagram complexity and use SVG format
 - **Prevention**: Monitor file sizes during development
 
 #### Format Compatibility
+
 - **Problem**: Diagrams not rendering in GitHub
 - **Solution**: Use Mermaid for GitHub-compatible diagrams
 - **Prevention**: Test rendering in target platforms
 
 ### Performance Optimization
+
 - **SVG Format**: Use SVG for scalable vector graphics
 - **Compression**: Compress PNG files for raster graphics
 - **Caching**: Implement caching for frequently accessed diagrams
@@ -236,18 +256,21 @@ function validateDiagrams() {
 ## Best Practices
 
 ### Design Principles
+
 - **Clarity**: Keep diagrams simple and easy to understand
 - **Consistency**: Use consistent styling and colors
 - **Accessibility**: Ensure diagrams are accessible to all users
 - **Maintainability**: Design for easy maintenance and updates
 
 ### Content Guidelines
+
 - **Focus**: Include only relevant information
 - **Hierarchy**: Use clear visual hierarchy
 - **Labels**: Use clear, concise labels
 - **Annotations**: Add helpful annotations where needed
 
 ### Technical Guidelines
+
 - **Version Control**: Track diagram changes in version control
 - **Documentation**: Document complex diagrams
 - **Testing**: Test diagrams in target environments
@@ -256,18 +279,21 @@ function validateDiagrams() {
 ## Tool Recommendations
 
 ### Editors
+
 - **VS Code**: With Mermaid and PlantUML extensions
 - **draw.io**: Web-based diagram editor
 - **PlantUML Online**: Online PlantUML editor
 - **Mermaid Live**: Online Mermaid editor
 
 ### CLI Tools
+
 - **mermaid-cli**: Command-line Mermaid rendering
 - **plantuml**: Command-line PlantUML rendering
 - **drawio-cli**: Command-line draw.io rendering
 - **imagemagick**: Image optimization and conversion
 
 ### Integration Tools
+
 - **GitHub Actions**: Automated rendering and validation
 - **npm scripts**: Local development automation
 - **Docker**: Consistent rendering environment

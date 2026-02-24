@@ -3,6 +3,7 @@
 ## Executive Checklist
 
 ### ✅ Cosign Integration
+
 - [x] Key pair generation (ECDSA P-256)
 - [x] Plan signing with cosign (`@sigstore/cosign`)
 - [x] Signature verification
@@ -12,6 +13,7 @@
 - [x] Automatic key directory creation
 
 ### ✅ Spectral Integration
+
 - [x] Spectral rule initialization
 - [x] Three custom plan-specific rules
 - [x] Pattern-based linting (stubs, phases, sections)
@@ -20,6 +22,7 @@
 - [x] Fail-open semantics (spectral errors don't block plan)
 
 ### ✅ Async/Await Alignment
+
 - [x] `lintPlan()` is async
 - [x] `enforcePlan()` is async + awaits `lintPlan()`
 - [x] `bootstrapCreateFoundationPlan()` is async + awaits `lintPlan()`
@@ -33,6 +36,7 @@
 - [x] Test runner handles both sync and async tests
 
 ### ✅ All Call Sites Fixed
+
 - [x] `tools/lint_plan.js` - ✅ Awaits `lintPlan()`
 - [x] `tools/bootstrap_tool.js` - ✅ Awaits `lintPlan()` and `bootstrapCreateFoundationPlan()`
 - [x] `tools/write_file.js` - ✅ Awaits `enforcePlan()`
@@ -43,6 +47,7 @@
 - [x] `tests/system/test-plan-linter.js` - ✅ All tests async
 
 ### ✅ Exports & Imports
+
 - [x] `hashPlanContent()` exported from plan-linter.js
 - [x] `generateCosignKeys()` exported
 - [x] `signPlan()` exported
@@ -53,6 +58,7 @@
 - [x] `REQUIRED_PHASE_FIELDS` exported
 
 ### ✅ Error Handling
+
 - [x] Plan hashing errors captured
 - [x] Cosign key generation errors handled
 - [x] Cosign signing errors handled
@@ -61,7 +67,9 @@
 - [x] All errors include context: `[ERROR_CODE] message`
 
 ### ✅ Return Values Consistency
+
 All `lintPlan()` calls return:
+
 ```javascript
 {
   passed: boolean,
@@ -75,11 +83,13 @@ All `lintPlan()` calls return:
 ```
 
 ### ✅ Spectral Rules Active
+
 1. `plan-required-sections` - Validates all 7 required sections present
 2. `plan-no-stubs` - Rejects TODO, FIXME, mock, placeholder, etc.
 3. `plan-phase-format` - Enforces Phase ID format: `^[A-Z0-9_]+$`
 
 ### ✅ Additional Validations Running
+
 - Stage 1: Plan structure (sections, ordering)
 - Stage 2: Phase definitions (IDs, required fields)
 - Stage 3: Path allowlist (no escapes, workspace-relative)
@@ -93,6 +103,7 @@ All `lintPlan()` calls return:
 ### Core Implementation
 
 **core/plan-linter.js**
+
 ```
 Imports:          ✅ cosign, spectral, crypto, fs, fs/promises
 Key Generation:   ✅ generateCosignKeys()
@@ -106,6 +117,7 @@ Exports:          ✅ All required functions + constants
 ```
 
 **core/plan-enforcer.js**
+
 ```
 enforcePlan():    ✅ Now async
 lintPlan call:    ✅ Now awaited
@@ -115,6 +127,7 @@ Scope validation: ✅ Backward compatible
 ```
 
 **core/governance.js**
+
 ```
 bootstrapCreateFoundationPlan(): ✅ Now async
 verifyBootstrapAuth():           ✅ HMAC-SHA256 verification
@@ -124,6 +137,7 @@ Governance state:                ✅ Bootstrap disabled after first plan
 ```
 
 **core/attestation-engine.js**
+
 ```
 gatherEvidence():         ✅ Now async
 Plan verification:        ✅ Calls lintPlan() on each plan
@@ -135,6 +149,7 @@ Awaits:                   ✅ gatherEvidence()
 ### Tools
 
 **tools/lint_plan.js**
+
 ```
 lintPlanHandler():  ✅ Async function
 Input modes:        ✅ path, hash, content
@@ -144,6 +159,7 @@ Error handling:     ✅ Proper MCP error wrapping
 ```
 
 **tools/bootstrap_tool.js**
+
 ```
 bootstrapPlanHandler(): ✅ Async function
 Role check:             ✅ Prevents Windsurf from creating plans
@@ -154,6 +170,7 @@ Audit logging:          ✅ Via governance module
 ```
 
 **tools/write_file.js**
+
 ```
 writeFileHandler(): ✅ Async function
 enforcePlan call:   ✅ Awaited
@@ -162,6 +179,7 @@ Error handling:     ✅ Proper MCP error wrapping
 ```
 
 **tools/verification/verify-example-plan.js**
+
 ```
 Wrapper:        ✅ Async IIFE
 lintPlan call:  ✅ Awaited
@@ -172,6 +190,7 @@ Error handling: ✅ Caught and logged
 ### Tests
 
 **tests/system/test-plan-linter.js**
+
 ```
 Test functions:    ✅ 14+ tests marked async
 lintPlan calls:    ✅ All awaited
@@ -186,6 +205,7 @@ Exit codes:        ✅ Proper success/failure
 ## Integration Points Verified
 
 ### Plan Creation Flow
+
 ```
 bootstrap_tool.js
   → lintPlan(planContent) [awaited]
@@ -206,6 +226,7 @@ bootstrap_tool.js
 ```
 
 ### Plan Execution Flow
+
 ```
 write_file.js
   → enforcePlan(planHash, targetPath) [awaited]
@@ -223,6 +244,7 @@ write_file.js
 ```
 
 ### Attestation Flow
+
 ```
 attestation-engine.js
   → generateAttestationBundle(workspaceRoot) [async]
@@ -246,6 +268,7 @@ attestation-engine.js
 ## Zero Regressions
 
 All changes are backward compatible:
+
 - Existing tests pass
 - Plan hashes unchanged (same canonicalization)
 - Signatures only added when explicitly requested
@@ -257,6 +280,7 @@ All changes are backward compatible:
 ## What's Ready to Use
 
 ### For Development/Testing
+
 ```javascript
 import { lintPlan } from './core/plan-linter.js';
 
@@ -269,6 +293,7 @@ if (result.passed) {
 ```
 
 ### For Production
+
 ```javascript
 // Keys can be provided explicitly
 const result = await lintPlan(
@@ -283,6 +308,7 @@ const result = await lintPlan(planContent);
 ```
 
 ### For CI/CD
+
 ```bash
 node tools/verification/verify-example-plan.js
 ```

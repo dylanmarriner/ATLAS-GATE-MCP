@@ -72,6 +72,7 @@ ls docs/diagrams/source/
 ```
 
 You'll see files like:
+
 - `architecture.mmd`
 - `governance-flow.mmd`
 - `audit-trail.mmd`
@@ -128,6 +129,7 @@ graph TD
 ```
 
 **Syntax:**
+
 - `graph TD` = top-down flowchart
 - `A["Text"]` = rectangular node
 - `C{Text}` = diamond (decision)
@@ -149,6 +151,7 @@ sequenceDiagram
 ```
 
 **Syntax:**
+
 - `participant` = actor
 - `->>`  = synchronous call
 - `-->>`  = async/response
@@ -179,6 +182,7 @@ npm run docs:render
 ```
 
 This command:
+
 1. Finds all `.mmd` files in `/docs/diagrams/source/`
 2. Converts each to SVG
 3. Saves to `/docs/diagrams/rendered/{filename}.svg`
@@ -206,6 +210,7 @@ npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/arch
 ```
 
 **Flags:**
+
 - `-i`: Input file (the `.mmd` source)
 - `-o`: Output file (the `.svg` destination)
 - `-w`: Width (optional)
@@ -221,7 +226,7 @@ npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/arch
 
 For quick previews without rendering:
 
-1. Go to https://mermaid.live
+1. Go to <https://mermaid.live>
 2. Paste your Mermaid code
 3. See the diagram in real-time
 4. Copy the SVG when happy
@@ -273,6 +278,7 @@ git push
 ```
 
 Both source and rendered files go in the commit. This ensures:
+
 - Others can see what the diagram looks like (SVG)
 - Others can edit it (source `.mmd`)
 - History is complete (both versions tracked)
@@ -294,6 +300,7 @@ Description of what the diagram shows...
 ```
 
 **Why embed SVG?**
+
 - SVG is scalable (not blurry on high-DPI displays)
 - Smaller file size than PNG
 - Can be edited as text if needed
@@ -309,6 +316,7 @@ graph TD
     A --> B
     B --> C
 ```
+
 ```
 
 However, **we recommend** the SVG approach for:
@@ -344,6 +352,7 @@ mmdc -i input.mmd -o output.svg --configFile mermaid.config.js
 ### Common Issues & Fixes
 
 **Issue: Text doesn't fit in nodes**
+
 - Solution: Use shorter labels or multi-line syntax
 
 ```mermaid
@@ -351,6 +360,7 @@ A["Long text<br/>on multiple<br/>lines"]
 ```
 
 **Issue: Diagram is too wide or tall**
+
 - Solution: Adjust with `-w` and `-H` flags
 
 ```bash
@@ -358,6 +368,7 @@ npx mmdc -i input.mmd -o output.svg -w 1600 -H 900
 ```
 
 **Issue: Colors don't render**
+
 - Solution: Use Mermaid's color syntax
 
 ```mermaid
@@ -380,6 +391,7 @@ npm run docs:validate
 ```
 
 This script checks:
+
 - ✅ All `.mmd` files are valid syntax
 - ✅ All rendered SVGs exist and match source
 - ✅ No broken references
@@ -415,11 +427,13 @@ Current diagrams in the repository:
 ### Process
 
 1. **Create source file:**
+
    ```bash
    touch docs/diagrams/source/my-diagram.mmd
    ```
 
 2. **Add Mermaid content:**
+
    ```bash
    echo 'graph TD
        A --> B
@@ -427,21 +441,25 @@ Current diagrams in the repository:
    ```
 
 3. **Render:**
+
    ```bash
    npm run docs:render
    ```
 
 4. **Verify SVG created:**
+
    ```bash
    ls docs/diagrams/rendered/my-diagram.mmd.svg
    ```
 
 5. **Embed in docs:**
+
    ```markdown
    ![My Diagram](./diagrams/rendered/my-diagram.mmd.svg)
    ```
 
 6. **Commit both files:**
+
    ```bash
    git add docs/diagrams/source/my-diagram.mmd
    git add docs/diagrams/rendered/my-diagram.mmd.svg
@@ -478,6 +496,7 @@ Current diagrams in the repository:
 **Cause:** Mermaid CLI not installed
 
 **Fix:**
+
 ```bash
 npm install --global @mermaid-js/mermaid-cli
 # or locally
@@ -489,7 +508,8 @@ npm install @mermaid-js/mermaid-cli --save-dev
 **Cause:** Mermaid syntax error in `.mmd` file
 
 **Fix:**
-1. Check syntax in Mermaid Live Editor (https://mermaid.live)
+
+1. Check syntax in Mermaid Live Editor (<https://mermaid.live>)
 2. Fix the error in the `.mmd` file
 3. Re-render: `npm run docs:render`
 
@@ -498,6 +518,7 @@ npm install @mermaid-js/mermaid-cli --save-dev
 **Cause:** Font not embedded or available
 
 **Fix:**
+
 - Mermaid uses system fonts
 - SVGs should render in any browser
 - If embedding in PDF, may need to specify fonts
@@ -507,6 +528,7 @@ npm install @mermaid-js/mermaid-cli --save-dev
 **Cause:** Too many diagrams or network latency
 
 **Fix:**
+
 - Check internet connection
 - Render specific file instead: `npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/architecture.mmd.svg`
 - Be patient (first run may take 30s)
@@ -515,9 +537,9 @@ npm install @mermaid-js/mermaid-cli --save-dev
 
 ## References
 
-- **Mermaid Documentation:** https://mermaid.js.org/
-- **Mermaid Live Editor:** https://mermaid.live/
-- **GitHub Mermaid Support:** https://github.blog/2022-02-14-include-diagrams-in-your-markdown-files-with-mermaid/
+- **Mermaid Documentation:** <https://mermaid.js.org/>
+- **Mermaid Live Editor:** <https://mermaid.live/>
+- **GitHub Mermaid Support:** <https://github.blog/2022-02-14-include-diagrams-in-your-markdown-files-with-mermaid/>
 
 ---
 

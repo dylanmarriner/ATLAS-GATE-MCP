@@ -466,6 +466,7 @@ The MCP system manages important operations. If something goes critically wrong 
 ### What Can I Do When It's Engaged?
 
 You can:
+
 - ✓ Read the audit log (see what happened)
 - ✓ Read workspace files
 - ✓ Read the HALT_REPORT
@@ -473,6 +474,7 @@ You can:
 - ✓ Investigate the root cause
 
 You cannot:
+
 - ✗ Write to files
 - ✗ Create plans
 - ✗ Execute plans

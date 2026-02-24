@@ -9,6 +9,7 @@
 **All non-real code constructs (C1-C8) are BLOCKED by default.**
 
 Code must be:
+
 - ✅ **Real** — Actual implementations, not stubs/mocks
 - ✅ **Complete** — No TODO/FIXME markers indicating unfinished work
 - ✅ **Production-ready** — No temporary bypasses or simulations
@@ -36,6 +37,7 @@ All of these are **BLOCKED unless explicitly authorized in plan**:
 ## What Gets Blocked (All Are Forbidden Unless Authorized in Plan)
 
 ### C5: Hardcoded Policy Bypass
+
 ```javascript
 // BAD ❌
 function canAccess(user, resource) { return true; }
@@ -51,6 +53,7 @@ if (user.role === "admin") return true; // always true for some role
 ---
 
 ### C1: Stub (Incomplete Implementation)
+
 ```javascript
 // BAD ❌
 function loadUser(id) { return { id, name: "DEMO" }; }
@@ -66,6 +69,7 @@ function fetchData() { return { value: 42 }; } // no real fetch
 ---
 
 ### C2: Mock/Fake (Test Double in Production)
+
 ```javascript
 // BAD ❌
 class FakePaymentClient implements PaymentClient {
@@ -83,6 +87,7 @@ class FakePaymentClient implements PaymentClient {
 ---
 
 ### C4: Hardcoded Return Values
+
 ```javascript
 // BAD ❌
 function getBalance(tenantId) { return 1000; } // all tenants same balance
@@ -98,6 +103,7 @@ function checkQuota(userId) { return { remaining: 9999 }; } // constant
 ---
 
 ### C6: Fake Approval Logic
+
 ```javascript
 // BAD ❌
 request.status = "APPROVED"; // no approver, no audit record
@@ -113,6 +119,7 @@ request.approvedBy = "SYSTEM"; // auto-approval, records claim manual review
 ---
 
 ### C8: Simulated Outcome
+
 ```javascript
 // BAD ❌
 if (process.env.SIMULATE) {
@@ -135,6 +142,7 @@ if (env.dryRun) {
 ---
 
 ### C3: TODO/FIXME
+
 ```javascript
 // BLOCKED ❌
 // TODO: replace with real RBAC
@@ -154,6 +162,7 @@ if (totalSpent + amount > limit) { /* should throw */ }
 ## Cross-Cutting Patterns
 
 ### Pattern: "Always True" / "Always Allow"
+
 ```
 Any of these are red flags:
   - return true;
@@ -164,6 +173,7 @@ Any of these are red flags:
 ```
 
 Legitimate? Only if:
+
 - Not in a security/policy context
 - Explicitly documented as by-design
 - Covered by tests asserting it's not in prod code paths
@@ -171,6 +181,7 @@ Legitimate? Only if:
 ---
 
 ### Pattern: Hardcoded Constants in Business Logic
+
 ```
 Detect:
   - Magic numbers (9999, 100000, 42)
@@ -186,6 +197,7 @@ Legitimate? Only if:
 ---
 
 ### Pattern: Feature Flags + Silent State Changes
+
 ```javascript
 // BAD ❌ (C8 worst case)
 if (env.simulate) {
@@ -204,6 +216,7 @@ if (env.dryRun) {
 ```
 
 **Fix**: Transactions that fail if writes attempted:
+
 ```javascript
 // OK ✅
 if (env.dryRun) {
@@ -280,6 +293,7 @@ Without this documentation, authorization is **DENIED**.
 ## How to Write Legitimate Code
 
 ### Rule 1: Real Implementations
+
 Always use real dependencies. Fail gracefully if they're unavailable:
 
 ```javascript
@@ -297,6 +311,7 @@ async function charge(amount) {
 ```
 
 ### Rule 2: Config-Driven Policies
+
 Use configuration files, not hardcoded values:
 
 ```javascript
@@ -309,6 +324,7 @@ if (spent + amount > config.SPENDING_CAP) throw new Error("cap");
 ```
 
 ### Rule 3: Immutable Audit Trails
+
 When approvals happen, log them:
 
 ```javascript
@@ -327,6 +343,7 @@ request.updateStatus("APPROVED", approval.id);
 ```
 
 ### Rule 4: Explicit Gating for Test Code
+
 If you need test doubles, gate them:
 
 ```javascript
@@ -344,6 +361,7 @@ if (process.env.TEST_MODE) {
 ```
 
 ### Rule 5: No Silent Bypasses
+
 If something is simulated, say so:
 
 ```javascript
@@ -413,6 +431,7 @@ Your code is scanned for:
    - AST empty functions, missing implementations
 
 If violations found:
+
 - **CRITICAL**: Block immediately
 - **HIGH**: Block, suggest creating a plan that authorizes
 - **MEDIUM**: Warn, may require plan reference
@@ -451,6 +470,7 @@ async function getUserProfile(userId) {
 ```
 
 **Why this passes**:
+
 - ✅ Uses real database query (not hardcoded)
 - ✅ Throws on missing data (doesn't return null/demo)
 - ✅ Logs audit event for security
@@ -461,7 +481,7 @@ async function getUserProfile(userId) {
 
 ## Questions?
 
-1. **"Can I use feature flags?"** 
+1. **"Can I use feature flags?"**
    - Yes, but they must prevent writes if simulating. And test that it works.
 
 2. **"Can I use deterministic test data in production code?"**
@@ -489,4 +509,3 @@ async function getUserProfile(userId) {
 - **Detection Rules**: `core/construct-detection-rules.json`
 - **Enforcement**: `core/stub-detector.js` (GATE 4)
 - **Plans**: `.atlas-gate/approved_plans/*.md`
-

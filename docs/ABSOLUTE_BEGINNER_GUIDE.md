@@ -3,6 +3,7 @@
 **For people who have never used a computer before.**
 
 ## Table of Contents
+
 1. [What This Is](#what-this-is)
 2. [Prerequisites & Setup](#prerequisites--setup)
 3. [Fast Path (5 minutes)](#fast-path-5-minutes)
@@ -15,6 +16,7 @@
 ## What This Is
 
 **ATLAS-GATE MCP** is a tool that lets you safely use AI (artificial intelligence) to help with software development. Think of it like having a very intelligent assistant who:
+
 - Suggests changes to your code
 - Keeps a detailed record of everything that happens
 - Only makes changes you've approved
@@ -39,7 +41,8 @@
 #### **Windows Computer**
 
 **Step 1: Install Git**
-1. Go to https://git-scm.com/download/win
+
+1. Go to <https://git-scm.com/download/win>
 2. Click the large blue "Download" button
 3. Open the file that downloads (usually in your "Downloads" folder)
 4. Click "Yes" if it asks for permission
@@ -48,7 +51,8 @@
 7. Click "Finish"
 
 **Step 2: Install Node.js**
-1. Go to https://nodejs.org
+
+1. Go to <https://nodejs.org>
 2. Click the large button that says "LTS" (Long Term Support)
 3. Open the file that downloads
 4. Click "Yes" if it asks for permission
@@ -58,6 +62,7 @@
 8. Click "Finish"
 
 **Verify Installation (Windows)**
+
 1. Right-click on your desktop
 2. Click "Open Terminal here" or "Open PowerShell window here"
 3. Type: `node --version` and press Enter
@@ -70,24 +75,31 @@
 #### **Mac Computer**
 
 **Step 1: Install Homebrew** (package manager)
+
 1. Open **Applications** → **Utilities** → **Terminal** (or press Cmd+Space, type "Terminal")
 2. Copy and paste this (all one line):
+
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
+
 3. Press Enter
 4. Type your computer password when asked, then press Enter
 5. Wait 5-10 minutes for installation to complete
 
 **Step 2: Install Git and Node.js**
+
 1. In Terminal, copy and paste:
+
 ```
 brew install git node
 ```
+
 2. Press Enter
 3. Wait for installation to complete
 
 **Verify Installation (Mac)**
+
 1. In Terminal, type: `node --version` and press Enter
 2. You should see a version number like `v18.0.0`
 3. Type: `git --version` and press Enter
@@ -98,17 +110,20 @@ brew install git node
 #### **Linux Computer**
 
 **For Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install -y git nodejs npm
 ```
 
 **For Fedora/CentOS:**
+
 ```bash
 sudo dnf install -y git nodejs npm
 ```
 
 **Verify Installation:**
+
 ```bash
 node --version
 git --version
@@ -126,15 +141,17 @@ git --version
    - **Linux**: Ctrl+Alt+T or open your terminal app
 
 2. **Copy and paste this command:**
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 ```
+
 3. Press Enter
 4. Wait for it to finish (you'll see text scrolling)
 
 #### **Option B: Download as ZIP File (If you prefer not to use Git)**
 
-1. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+1. Go to <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
 2. Click the green "Code" button
 3. Click "Download ZIP"
 4. Open your "Downloads" folder
@@ -147,19 +164,25 @@ git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 ### Navigate to the Folder
 
 **Windows (PowerShell/Command Prompt):**
+
 ```
 cd ATLAS-GATE-MCP-server
 ```
+
 or
+
 ```
 cd ATLAS-GATE-MCP-server-main
 ```
 
 **Mac/Linux (Terminal):**
+
 ```bash
 cd ATLAS-GATE-MCP-server
 ```
+
 or
+
 ```bash
 cd ATLAS-GATE-MCP-server-main
 ```
@@ -173,6 +196,7 @@ cd ATLAS-GATE-MCP-server-main
 Once you're inside the ATLAS-GATE-MCP-server folder:
 
 **All Platforms:**
+
 ```bash
 npm install
 ```
@@ -180,10 +204,12 @@ npm install
 **What this does:** Downloads all the code libraries ATLAS-GATE MCP needs to run. This takes 2-5 minutes.
 
 **What success looks like:**
+
 - No red error messages at the end
 - The command prompt returns (ready for new commands)
 
 **If it fails:**
+
 - Make sure Node.js is installed correctly (run `node --version` again)
 - Make sure you're in the right folder (run `ls` or `dir` and look for a "package.json" file)
 
@@ -196,16 +222,19 @@ ATLAS-GATE MCP requires a "bootstrap secret" — think of it like a password tha
 **Option 1: Automatic Setup (Easiest)**
 
 **Windows (PowerShell):**
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/setup-bootstrap.ps1
 ```
 
 **Mac/Linux:**
+
 ```bash
 bash scripts/setup-bootstrap.sh
 ```
 
 **What success looks like:**
+
 - A message saying "Bootstrap secret set successfully" or similar
 - An environment variable is created
 
@@ -214,18 +243,21 @@ bash scripts/setup-bootstrap.sh
 If the automatic script doesn't work:
 
 **Windows (PowerShell):**
+
 ```powershell
 $env:ATLAS-GATE_BOOTSTRAP_SECRET = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((New-Guid).ToString()))
 echo $env:ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 **Mac/Linux:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ```
 
 **What to do with the result:**
+
 - You'll see a long random string
 - **Copy it and save it somewhere safe** (a text file in your "Documents" folder)
 - You'll need this to start the server
@@ -239,12 +271,14 @@ echo $ATLAS-GATE_BOOTSTRAP_SECRET
 Once everything is installed and in the right folder:
 
 **Windows:**
+
 ```powershell
 $env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-bootstrap-secret-here"
 npm run verify
 ```
 
 **Mac/Linux:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET="your-bootstrap-secret-here"
 npm run verify
@@ -253,10 +287,12 @@ npm run verify
 Replace `your-bootstrap-secret-here` with the secret you saved earlier.
 
 **What success looks like:**
+
 - Green checkmarks or "passed" messages
 - No red error text
 
 **What happens next:**
+
 - ATLAS-GATE MCP is now ready to use with your AI client (Claude Desktop, Windsurf, etc.)
 - See the "For Developers" section in the main README for how to configure it
 
@@ -275,25 +311,30 @@ A Terminal (Mac/Linux) or Command Prompt/PowerShell (Windows) is a text-based wa
 #### How to Open Terminal/Command Prompt
 
 **Windows 11:**
+
 1. Right-click on your desktop
 2. Click "Open Terminal here"
 
 **Windows 10:**
+
 1. Press `Win + R`
 2. Type `cmd` and press Enter
 
 **Mac:**
+
 1. Press `Cmd + Space` (spotlight search)
 2. Type `Terminal` and press Enter
 3. Double-click "Terminal"
 
 **Linux:**
+
 1. Usually `Ctrl + Alt + T`
 2. Or look in Applications menu for "Terminal"
 
 #### Basic Terminal Commands
 
 **Listing files** (see what's in a folder):
+
 ```bash
 # On Windows (Command Prompt):
 dir
@@ -303,16 +344,19 @@ ls
 ```
 
 **Changing folders** (going into a folder):
+
 ```bash
 cd folder-name
 ```
 
 **Going back one folder** (going "up"):
+
 ```bash
 cd ..
 ```
 
 **Seeing where you are** (your current location):
+
 ```bash
 # Windows:
 cd
@@ -340,6 +384,7 @@ ATLAS-GATE-MCP-server/
 ```
 
 **You will mainly interact with:**
+
 - `docs/` — To read documentation
 - Your AI client (Claude Desktop, Windsurf) — To use ATLAS-GATE MCP
 - Terminal — To run commands
@@ -357,6 +402,7 @@ Configuration is a set of instructions that tells ATLAS-GATE MCP how to behave. 
 You need to tell Windsurf where ATLAS-GATE MCP is located.
 
 **Steps:**
+
 1. Open a text editor (Notepad on Windows, TextEdit on Mac, etc.)
 2. Create a file called `mcp_config.json`
 3. Paste this (replacing the path with your actual path):
@@ -375,11 +421,13 @@ You need to tell Windsurf where ATLAS-GATE MCP is located.
 ```
 
 **Where to save this file:**
+
 - **Windows**: `C:\Users\YourUsername\.codeium\windsurf\mcp_config.json`
 - **Mac**: `/Users/YourUsername/.codeium/windsurf/mcp_config.json`
 - **Linux**: `/home/username/.codeium/windsurf/mcp_config.json`
 
 **Tip:** The `.codeium` folder might be hidden. You may need to show hidden files:
+
 - **Windows**: In File Explorer, View menu → Hidden items
 - **Mac**: Cmd + Shift + . (period)
 - **Linux**: In file manager, Ctrl + H
@@ -389,32 +437,39 @@ You need to tell Windsurf where ATLAS-GATE MCP is located.
 ### Part 4: Running ATLAS-GATE MCP
 
 #### Step 1: Start Your Terminal
+
 Open Terminal/Command Prompt (see instructions above)
 
 #### Step 2: Navigate to the Folder
+
 ```bash
 cd ATLAS-GATE-MCP-server
 ```
 
 #### Step 3: Set the Bootstrap Secret
+
 Do this **every time** you open a new Terminal window:
 
 **Windows:**
+
 ```powershell
 $env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-secret-here"
 ```
 
 **Mac/Linux:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 ```
 
 #### Step 4: Run the Verification
+
 ```bash
 npm run verify
 ```
 
 **What you should see:**
+
 ```
 [GOVERNANCE] Starting Self-Audit...
 [GOVERNANCE] Self-Audit Passed.
@@ -431,6 +486,7 @@ All tests passed ✓
 Secrets (like the bootstrap secret) are passwords or codes that you must keep private. If someone else gets your secret, they could use ATLAS-GATE MCP with your authority.
 
 **Rules for secrets:**
+
 1. Never share your secret with anyone
 2. Never paste your secret in a chat or email
 3. Never commit your secret to Git
@@ -441,6 +497,7 @@ Secrets (like the bootstrap secret) are passwords or codes that you must keep pr
 An "environment variable" is a way to store information that your Terminal remembers for that session.
 
 When you run:
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET="my-secret"
 ```
@@ -452,12 +509,14 @@ You're telling the Terminal: "Remember this secret for the next commands I run."
 #### Safe Configuration Practices
 
 **Good practices:**
+
 - Store secrets in a `.env` file (kept local, never in Git)
 - Use environment variables (like we just did)
 - Rotate (change) secrets regularly
 - Use a password manager
 
 **Bad practices:**
+
 - Hardcoding secrets in source code
 - Sharing secrets in messages or email
 - Using the same secret everywhere
@@ -530,11 +589,13 @@ You're telling the Terminal: "Remember this secret for the next commands I run."
 **Cause:** Node.js isn't installed or not found.
 
 **Solution:**
+
 1. Go back to the installation section and install Node.js properly
 2. Restart your Terminal completely (close and reopen)
 3. Try again
 
 **Verify:**
+
 ```bash
 node --version
 ```
@@ -548,6 +609,7 @@ Should show a version like `v18.0.0`
 **Cause:** Git isn't installed.
 
 **Solution:**
+
 1. Install Git (see installation section)
 2. Restart your Terminal
 3. Try again
@@ -559,12 +621,16 @@ Should show a version like `v18.0.0`
 **Cause:** Could be many things. Usually a network issue or Node.js problem.
 
 **Solution:**
+
 1. Make sure you're in the `ATLAS-GATE-MCP-server` folder (run `ls` or `dir` and look for `package.json`)
 2. Try again:
+
 ```bash
 npm install
 ```
+
 3. If it still fails, try:
+
 ```bash
 npm install --no-optional
 ```
@@ -576,14 +642,17 @@ npm install --no-optional
 **Cause:** You haven't set the environment variable yet, or you opened a new Terminal window.
 
 **Solution:**
+
 1. In the **same Terminal window**, run:
 
 **Windows:**
+
 ```powershell
 $env:ATLAS-GATE_BOOTSTRAP_SECRET = "your-secret-here"
 ```
 
 **Mac/Linux:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 ```
@@ -598,11 +667,13 @@ export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
 **Cause:** Your user account doesn't have permission to run scripts.
 
 **Solution (Windows PowerShell):**
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **Solution (Mac/Linux):**
+
 ```bash
 chmod +x scripts/setup-bootstrap.sh
 bash scripts/setup-bootstrap.sh
@@ -615,18 +686,21 @@ bash scripts/setup-bootstrap.sh
 **Cause:** Usually means something in the setup isn't right.
 
 **Steps to fix:**
+
 1. Make sure Node.js and Git are installed correctly
 2. Make sure ATLAS-GATE_BOOTSTRAP_SECRET is set
 3. Make sure you're in the right folder (you should see `package.json` when you run `ls` or `dir`)
 4. Delete the `node_modules` folder and try again:
 
 **Windows:**
+
 ```powershell
 Remove-Item -Recurse node_modules
 npm install
 ```
 
 **Mac/Linux:**
+
 ```bash
 rm -rf node_modules
 npm install
@@ -642,16 +716,19 @@ npm install
 Find your absolute path:
 
 **Windows (PowerShell):**
+
 ```powershell
 Get-Location
 ```
 
 **Mac/Linux:**
+
 ```bash
 pwd
 ```
 
 Copy the result and use it. For example:
+
 - Windows: `C:\Users\John\ATLAS-GATE-MCP-server`
 - Mac: `/Users/john/ATLAS-GATE-MCP-server`
 - Linux: `/home/john/ATLAS-GATE-MCP-server`
@@ -661,6 +738,7 @@ Copy the result and use it. For example:
 ### Problem: I don't know what error message means
 
 **Steps:**
+
 1. Read the error message carefully (it's usually helpful)
 2. Search the [Glossary](#glossary-for-humans) for unfamiliar terms
 3. Check the [Troubleshooting](#troubleshooting) section (you might not be alone)
@@ -673,13 +751,14 @@ Copy the result and use it. For example:
 Now that you have ATLAS-GATE MCP installed and verified:
 
 1. **Read the quick reference**: [MCP Quick Reference](./MCP_QUICK_REFERENCE.md) (1 page)
-2. **Configure your AI client**: See the main [README.md](../README.md#configuration) 
+2. **Configure your AI client**: See the main [README.md](../README.md#configuration)
 3. **Learn the concepts**: [Architecture Overview](./ARCHITECTURE.md)
 4. **Ask questions**: [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
 
 ---
 
 **Still stuck?** Create an issue at [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues) with:
+
 - What you tried
 - What happened
 - Which operating system you're using

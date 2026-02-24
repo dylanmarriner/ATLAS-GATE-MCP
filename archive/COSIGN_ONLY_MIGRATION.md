@@ -6,6 +6,7 @@
 ## Problem Statement
 
 Current architecture mixes two systems:
+
 - SHA256 hashing (for content addressing and verification)
 - Cosign signing (for attestation)
 
@@ -16,6 +17,7 @@ Current architecture mixes two systems:
 ### 1. Audit Log Chain (CRITICAL)
 
 **OLD:** Hash-chained entries using SHA256
+
 ```javascript
 // OLD - SHA256 hash chain
 entry_hash: sha256(canonicalized)
@@ -23,6 +25,7 @@ prev_hash: previousHash
 ```
 
 **NEW:** Signed entries using cosign
+
 ```javascript
 // NEW - Cosign signature chain
 signature: await signWithCosign(canonicalized, keyPair)
@@ -32,12 +35,14 @@ prev_signature: previousSignature
 ### 2. Plan Content Hashing (CRITICAL)
 
 **OLD:** Plans identified by SHA256 hash
+
 ```javascript
 // OLD
 const planHash = sha256(planContent);  // 64-char hex
 ```
 
 **NEW:** Plans identified by cosign signature
+
 ```javascript
 // NEW
 const planSignature = await signWithCosign(planContent, keyPair);  // Base64
@@ -46,6 +51,7 @@ const planSignature = await signWithCosign(planContent, keyPair);  // Base64
 ### 3. Content Integrity Checks
 
 **OLD:** Hash verification
+
 ```javascript
 // OLD
 const currentHash = sha256(fileContent);
@@ -53,6 +59,7 @@ if (currentHash !== expectedHash) { error }
 ```
 
 **NEW:** Signature verification
+
 ```javascript
 // NEW
 const isValid = await verifyWithCosign(fileContent, signature, publicKey);
@@ -62,6 +69,7 @@ if (!isValid) { error }
 ### 4. Data Structures
 
 #### Audit Entry Format
+
 ```javascript
 // OLD (SHA256)
 {
@@ -83,6 +91,7 @@ if (!isValid) { error }
 ```
 
 #### Plan Registry
+
 ```javascript
 // OLD (SHA256 keys)
 plans: {
@@ -96,6 +105,7 @@ plans: {
 ```
 
 #### Attestation Bundle
+
 ```javascript
 // OLD (HMAC-SHA256)
 {
@@ -112,6 +122,7 @@ plans: {
 ## Files Requiring Major Changes
 
 ### Core Infrastructure
+
 1. **audit-system.js** - Remove sha256, use cosign for chain
 2. **attestation-engine.js** - Replace HMAC with cosign
 3. **plan-linter.js** - Replace sha256 with cosign
@@ -126,6 +137,7 @@ plans: {
 12. **intent-schema.js** - Remove intent hashing
 
 ### Tools (6 files)
+
 1. **write_file.js** - Verify signatures, not hashes
 2. **generate-remediation-proposals.js** - Sign evidence, not hash
 3. **verify-audit-log.js** - Verify signatures, not hashes
@@ -136,29 +148,34 @@ plans: {
 ## Implementation Strategy
 
 ### Phase 1: Core Infrastructure (cosign-hash-provider.js)
+
 - ✅ Remove sha256() function
 - ✅ Remove hmacSha256() function
 - ✅ Remove timingSafeEqual() function
 - ✅ Keep only: signWithCosign(), verifyWithCosign(), generateCosignKeyPair(), canonicalizeForSigning()
 
 ### Phase 2: Audit System
+
 - Replace entry_hash with cosign signature
 - Replace prev_hash with prev_signature
 - Update hash chain verification to signature verification
 - Update hash format validation
 
 ### Phase 3: Plan System
+
 - Replace plan hash keys with plan signatures
 - Update plan storage/retrieval
 - Update plan-based lookups
 - Update replay engine filtering
 
 ### Phase 4: Attestation System
+
 - Replace bundle_id hashing with cosign
 - Replace HMAC signing with cosign
 - Update bundle verification
 
 ### Phase 5: Tools & Utilities
+
 - Update all tools to use signatures
 - Update verification utilities
 - Update evidence hashing to signing
@@ -166,7 +183,9 @@ plans: {
 ## Key Architectural Decisions
 
 ### 1. Signature as Content Address
+
 Instead of hashing content to get an address, use the signature itself:
+
 ```javascript
 // Content → Signature (deterministic with fixed key)
 content: "audit entry" → signature: "MEYCIQDx..."
@@ -175,7 +194,9 @@ plansBySignature.set(signature, planData)
 ```
 
 ### 2. Async All the Way
+
 Cosign operations are async:
+
 ```javascript
 // All functions using cosign must be async
 async function appendAuditEntry(entry, keyPair) {
@@ -185,7 +206,9 @@ async function appendAuditEntry(entry, keyPair) {
 ```
 
 ### 3. Key Management
+
 Need consistent key pair for content addressing:
+
 ```javascript
 // Load workspace key pair once
 const keyPair = await loadOrGenerateWorkspaceKeyPair(workspaceRoot);
@@ -193,7 +216,9 @@ const keyPair = await loadOrGenerateWorkspaceKeyPair(workspaceRoot);
 ```
 
 ### 4. Signature Length
+
 Cosign signatures are ~88 chars (Base64 encoded ECDSA P-256)
+
 - Plan "hashes" will be longer than SHA256
 - Plan file names will change
 - Database/storage keys will be Base64 instead of hex
@@ -212,7 +237,8 @@ Cosign signatures are ~88 chars (Base64 encoded ECDSA P-256)
 
 ## Backward Compatibility
 
-⚠️ **This is a breaking change.** 
+⚠️ **This is a breaking change.**
+
 - Existing audit logs with SHA256 hashes will need migration
 - Existing plan files with SHA256 keys will need reindexing
 - Existing attestation bundles with HMAC signatures will need re-signing

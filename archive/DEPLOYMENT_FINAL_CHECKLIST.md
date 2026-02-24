@@ -64,6 +64,7 @@ All systems checked and verified for production deployment.
 ## Enforcement ✅
 
 ### Write-Time Policy
+
 - [x] Blocks TODO/FIXME markers
 - [x] Blocks empty functions
 - [x] Blocks mock/fake/dummy patterns
@@ -73,6 +74,7 @@ All systems checked and verified for production deployment.
 - [x] Fail-closed (no exceptions to hard blocks)
 
 ### Plan Validation
+
 - [x] 7-stage linting pipeline
   - [x] Stage 1: Structure validation
   - [x] Stage 2: Phase validation
@@ -83,6 +85,7 @@ All systems checked and verified for production deployment.
   - [x] Stage 7: Signature verification
 
 ### Audit Logging
+
 - [x] Append-only log (no overwrites)
 - [x] Every entry signed with cosign
 - [x] Hash-chained for tamper-evidence
@@ -96,6 +99,7 @@ All systems checked and verified for production deployment.
 ## Deployment Readiness ✅
 
 ### System Requirements
+
 - [x] Node.js 18+ (npm automatically enforces)
 - [x] Memory footprint: ~80 MB base
 - [x] Disk space: 225 MB + workspace
@@ -103,6 +107,7 @@ All systems checked and verified for production deployment.
 - [x] No external dependencies required (all bundled)
 
 ### Raspberry Pi Compatibility
+
 - [x] Pure JavaScript (no native compilations)
 - [x] ARM v7 and ARM v8 compatible
 - [x] Tested on RPi 3B+, 4B configurations
@@ -112,6 +117,7 @@ All systems checked and verified for production deployment.
 - [x] Nginx reverse proxy configuration included
 
 ### Configuration
+
 - [x] Environment-based configuration (.env.production)
 - [x] All secrets via environment variables
 - [x] Default ports configurable (3000, 80, 443)
@@ -120,6 +126,7 @@ All systems checked and verified for production deployment.
 - [x] No magic values or hardcoded paths
 
 ### Monitoring & Logging
+
 - [x] All errors routed to console.error
 - [x] Structured JSON audit log
 - [x] Health check endpoint (/health)
@@ -132,6 +139,7 @@ All systems checked and verified for production deployment.
 ## Security Hardening ✅
 
 ### Workspace Security
+
 - [x] Workspace-level locking (single session per workspace)
 - [x] Plan-based execution authorization
 - [x] Role-based access control (WINDSURF, ANTIGRAVITY)
@@ -140,6 +148,7 @@ All systems checked and verified for production deployment.
 - [x] Path allowlist enforcement
 
 ### Network Security
+
 - [x] No hardcoded credentials
 - [x] TLS/mTLS configurable
 - [x] HTTP only by default (add reverse proxy for HTTPS)
@@ -148,6 +157,7 @@ All systems checked and verified for production deployment.
 - [x] No eval() or dynamic code loading
 
 ### Data Protection
+
 - [x] Audit log signatures (tamper-evident)
 - [x] Sensitive data redaction
 - [x] Cosign key encryption ready
@@ -159,21 +169,25 @@ All systems checked and verified for production deployment.
 ## Remote Access Ready ✅
 
 ### SSH Tunnel (Simplest)
+
 - [x] Documentation provided
 - [x] No additional setup required
 - [x] Works from anywhere
 
 ### ngrok (Fast, No Domain)
+
 - [x] Documentation provided
 - [x] Public URL auto-generated
 - [x] HTTPS included
 
 ### Cloudflare Tunnel (Enterprise)
+
 - [x] Documentation provided
 - [x] DNS routing included
 - [x] DDoS protection included
 
 ### Public IP (Direct)
+
 - [x] Configuration documented
 - [x] Firewall rules provided
 - [x] Not recommended for security
@@ -183,6 +197,7 @@ All systems checked and verified for production deployment.
 ## Operational Readiness ✅
 
 ### Startup & Shutdown
+
 - [x] Graceful startup (fail-closed if issues)
 - [x] Health check endpoint
 - [x] Systemd integration
@@ -191,6 +206,7 @@ All systems checked and verified for production deployment.
 - [x] Recovery procedures documented
 
 ### Backup & Recovery
+
 - [x] Backup strategy documented
 - [x] Audit log encryption ready
 - [x] Cosign key backup procedures
@@ -199,6 +215,7 @@ All systems checked and verified for production deployment.
 - [x] RTO/RPO clearly defined
 
 ### Troubleshooting
+
 - [x] Common issues documented
 - [x] Debug commands provided
 - [x] Log analysis guidance
@@ -206,6 +223,7 @@ All systems checked and verified for production deployment.
 - [x] Emergency procedures
 
 ### Scalability
+
 - [x] Single-workspace-per-instance architecture
 - [x] Multi-instance deployment guide
 - [x] Load balancer configuration
@@ -244,6 +262,7 @@ All systems checked and verified for production deployment.
 ## Deployment Paths
 
 ### Scenario A: Development/Testing (Simplest)
+
 ```bash
 npm install
 node bin/ATLAS-GATE-HTTP.js
@@ -251,12 +270,14 @@ node bin/ATLAS-GATE-HTTP.js
 ```
 
 ### Scenario B: Single Raspberry Pi (Recommended)
+
 ```bash
 bash RPI_QUICK_START.sh
 # Automated setup with systemd service, nginx, cosign packages
 ```
 
 ### Scenario C: Production (Enterprise)
+
 ```bash
 npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 # Plus: TLS, reverse proxy, centralized logging, backups
@@ -264,6 +285,7 @@ npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 ```
 
 ### Scenario D: Multi-Tenant Kubernetes
+
 ```bash
 # See: Kubernetes deployment in PRODUCTION_DEPLOYMENT.md
 # One instance per workspace, shared audit log storage
@@ -274,6 +296,7 @@ npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 ## Critical Configuration Before Deployment
 
 ### Required
+
 - [ ] Set `NODE_ENV=production`
 - [ ] Generate and set `ATLAS-GATE_BOOTSTRAP_SECRET`
 - [ ] Generate and set `ATLAS-GATE_ATTESTATION_SECRET`
@@ -281,6 +304,7 @@ npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 - [ ] Set up persistent storage for `.atlas-gate` directory
 
 ### Recommended
+
 - [ ] Install production crypto: `npm install @sigstore/cosign`
 - [ ] Configure TLS/HTTPS
 - [ ] Set up centralized logging
@@ -288,6 +312,7 @@ npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 - [ ] Set file permissions: `chmod 700 .atlas-gate`
 
 ### Optional
+
 - [ ] Configure ngrok/Cloudflare tunnel for remote access
 - [ ] Set up monitoring/alerting
 - [ ] Configure rate limiting (nginx)
@@ -331,27 +356,32 @@ Before deploying to production, verify:
 ## Post-Deployment Steps
 
 1. **Verify Health**
+
    ```bash
    curl http://your-server/health
    ```
 
 2. **Monitor Logs**
+
    ```bash
    journalctl -u atlas-gate -f
    ```
 
 3. **Create First Plan**
+
    ```bash
    curl -X POST http://your-server/sessions/create \
      -d '{"role": "WINDSURF", "workspaceRoot": "/path"}'
    ```
 
 4. **Test Backup**
+
    ```bash
    bash backup-atlas-gate.sh
    ```
 
 5. **Schedule Backups**
+
    ```bash
    crontab -e  # Add daily backup job
    ```
@@ -366,21 +396,25 @@ Before deploying to production, verify:
 ## Support & Escalation
 
 ### Level 1: Check Health
+
 ```bash
 curl http://localhost/health | jq .
 sudo journalctl -u atlas-gate -n 50
 ```
 
 ### Level 2: Verify Integrity
+
 ```bash
 node -e "import { verifyAuditLogIntegrity } from './core/audit-system.js'; \
   console.log(await verifyAuditLogIntegrity(process.cwd()))"
 ```
 
 ### Level 3: Manual Recovery
+
 See: PRODUCTION_DEPLOYMENT.md - Troubleshooting section
 
 ### Level 4: Engineering Support
+
 - Review RPI_DEPLOYMENT.md
 - Check SECURITY_HARDENING.md
 - Consult PRODUCTION_DEPLOYMENT.md
@@ -400,6 +434,7 @@ See: PRODUCTION_DEPLOYMENT.md - Troubleshooting section
 **Deployment confidence:** **HIGH**
 
 This system is production-ready and can be safely deployed to:
+
 - Raspberry Pi (3B+ or newer)
 - Linux servers (x86_64, ARM)
 - Docker containers

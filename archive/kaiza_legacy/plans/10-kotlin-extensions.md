@@ -10,11 +10,13 @@ scope: "tests/lang/kotlin/**"
 # Kotlin Full-Stack Implementation Plan
 
 ## Overview
+
 Build a complete real-time chat application in Kotlin with extension functions, coroutines, sealed classes, and a sophisticated Android frontend with Compose UI.
 
 ## Extension Functions
 
 ### 1. String Extensions
+
 ```kotlin
 fun String.isValidEmail(): Boolean {
     return this.matches(Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"))
@@ -30,6 +32,7 @@ fun String.toMessagePreview(): String {
 ```
 
 ### 2. Collection Extensions
+
 ```kotlin
 inline fun <T> List<T>.firstOrElse(default: T, predicate: (T) -> Boolean): T {
     return this.firstOrNull(predicate) ?: default
@@ -51,6 +54,7 @@ fun List<Message>.groupByDate(): Map<LocalDate, List<Message>> {
 ```
 
 ### 3. Coroutine Extensions
+
 ```kotlin
 suspend inline fun <T> retryWithExponentialBackoff(
     maxRetries: Int = 3,
@@ -77,6 +81,7 @@ suspend inline fun <T> retryWithExponentialBackoff(
 ## Sealed Classes & Pattern Matching
 
 ### 1. Domain Models
+
 ```kotlin
 sealed class User {
     abstract val id: String
@@ -102,6 +107,7 @@ sealed class ChatEvent {
 ```
 
 ### 2. Pattern Matching with When
+
 ```kotlin
 fun handleChatEvent(event: ChatEvent) {
     when (event) {
@@ -130,6 +136,7 @@ fun getUserInfo(user: User): String = when (user) {
 ## Scope Functions
 
 ### 1. Let, Apply, Run, Also
+
 ```kotlin
 class MessageBuilder {
     fun buildMessage(userId: String, content: String): Message {
@@ -171,6 +178,7 @@ class MessageBuilder {
 ## Ktor Backend
 
 ### 1. Server Setup
+
 ```kotlin
 fun Application.configureServer() {
     install(ContentNegotiation) {
@@ -214,6 +222,7 @@ fun Application.configureRouting() {
 ```
 
 ### 2. WebSocket Handler
+
 ```kotlin
 private suspend fun DefaultWebSocketServerSession.handleChatConnection(
     chatId: String,
@@ -243,6 +252,7 @@ private suspend fun DefaultWebSocketServerSession.handleChatConnection(
 ## Coroutines & Async
 
 ### 1. Repository Pattern
+
 ```kotlin
 class MessageRepository(private val db: Database) {
     suspend fun saveMessage(message: Message): Message = withContext(Dispatchers.IO) {
@@ -266,6 +276,7 @@ class MessageRepository(private val db: Database) {
 ```
 
 ### 2. ViewModel with Coroutines
+
 ```kotlin
 class ChatViewModel(
     private val chatRepository: ChatRepository,
@@ -312,6 +323,7 @@ class ChatViewModel(
 ## Android Compose UI
 
 ### 1. Chat Screen
+
 ```kotlin
 @Composable
 fun ChatScreen(
@@ -371,6 +383,7 @@ fun MessageBubble(message: Message) {
 ## Testing
 
 ### 1. Repository Tests
+
 ```kotlin
 class MessageRepositoryTest {
     private lateinit var repository: MessageRepository

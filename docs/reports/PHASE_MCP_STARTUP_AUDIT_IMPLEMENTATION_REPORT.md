@@ -18,17 +18,20 @@ Implemented a comprehensive startup self-audit system that validates ATLAS-GATE 
 ## Deliverables
 
 ### 1. Core Implementation
+
 | File | Role | Purpose |
 |---|---|---|
 | `core/startup-audit.js` | INFRASTRUCTURE | Audit engine with 8 invariant checks |
 | `server.js` (modified) | EXECUTABLE | Wires audit into boot path at startup |
 
 ### 2. Documentation
+
 | File | Type | Purpose |
 |---|---|---|
 | `docs/reports/MCP_STARTUP_SELF_AUDIT.md` | SPECIFICATION | Full audit spec with scenarios and interpretion guide |
 
 ### 3. Tests
+
 | File | Type | Coverage |
 |---|---|---|
 | `test-startup-audit.js` | VERIFICATION | 10 tests covering all invariants |
@@ -60,12 +63,14 @@ Implemented a comprehensive startup self-audit system that validates ATLAS-GATE 
 **Design**: Single unified entry point `runStartupAudit(serverInstance, role)` that runs 8 deterministic checks.
 
 **Structure**:
+
 - `STARTUP_INVARIANTS` registry - Stable invariant IDs and metadata
 - `StartupAuditResult` class - Tracks checks and failures
 - `runStartupAudit()` function - Main audit orchestrator
 - 8 check functions - One per invariant category
 
 **Refuse-to-Boot Logic**:
+
 ```javascript
 if (!result.passed) {
   // Throw KaizaError with SELF_AUDIT_FAILURE
@@ -79,6 +84,7 @@ if (!result.passed) {
 **Timing**: Audit runs AFTER `runSelfAudit()` (code governance) but BEFORE tool registration.
 
 **Code**:
+
 ```javascript
 export async function startServer(role = "ANTIGRAVITY") {
   // 8️⃣ Code governance checks
@@ -119,6 +125,7 @@ RESULTS: 10 passed, 0 failed
 ```
 
 **Test Coverage**:
+
 - ✓ Invariant registry structure and stability
 - ✓ Result tracking (pass/fail aggregation)
 - ✓ Tool registry detection
@@ -184,6 +191,7 @@ assert(hasRegistry, 'Registry must exist');
 **Check 2.1**: Role-based tool separation is enforced
 
 **Rules**:
+
 - Antigravity CANNOT see: `write_file` (mutation)
 - Windsurf CANNOT see: `bootstrap_create_foundation_plan` (planning)
 - Both CAN see: `begin_session`, `read_file`, `read_audit_log`, `read_prompt`, `list_plans`
@@ -280,6 +288,7 @@ export const ERROR_CODES = {
 **Check 6.1**: All critical modules are loadable
 
 Modules checked:
+
 - `error.js` - Error classification
 - `invariant.js` - Invariant enforcement
 - `path-resolver.js` - Path authority
@@ -328,12 +337,14 @@ process.exit(1)
 
 **Decision**: Any audit failure results in `process.exit(1)`.
 
-**Rationale**: 
+**Rationale**:
+
 - Prevents partially-broken servers from running
 - Avoids silent failures or degraded modes
 - Makes violations visible in logs and monitoring
 
 **Alternative Considered**: Warning-only mode
+
 - **Rejected**: Doesn't prevent broken servers from accepting requests
 
 ### 2. Deterministic Error Codes
@@ -341,6 +352,7 @@ process.exit(1)
 **Decision**: Each invariant has a stable, unique error code.
 
 **Rationale**:
+
 - Makes audit results searchable and traceable
 - Enables monitoring and alerting
 - Prevents ambiguous failures
@@ -352,6 +364,7 @@ process.exit(1)
 **Decision**: Audit validates plan addressing, but doesn't create test plans.
 
 **Rationale**:
+
 - Audit verifies structure, not content
 - Plans should exist before server starts
 - Avoids test data contamination
@@ -361,6 +374,7 @@ process.exit(1)
 **Decision**: Audit verifies that enforcement code is in place, not that it always works.
 
 **Rationale**:
+
 - Functional testing happens in unit tests
 - Startup audit checks invariant enforcement exists
 - Keeps audit fast (no runtime behavior testing)
@@ -391,6 +405,7 @@ process.exit(1)
 ## Commands to Verify
 
 ### Run Audit Tests
+
 ```bash
 node test-startup-audit.js
 ```
@@ -398,11 +413,13 @@ node test-startup-audit.js
 Expected: All 10 tests pass
 
 ### View Audit Specification
+
 ```bash
 cat docs/reports/MCP_STARTUP_SELF_AUDIT.md
 ```
 
 ### Check Boot Integration
+
 ```bash
 bin/atlas-gate-mcp-windsurf.js  # Audit runs at startup
 # [STARTUP_AUDIT] ✓ All checks passed. Server cleared to boot.
@@ -455,4 +472,3 @@ bin/atlas-gate-mcp-windsurf.js  # Audit runs at startup
 **Approved By**: Implied via plan-based authority  
 **Timestamp**: 2026-01-19T00:00:00Z  
 **Session ID**: [captured at runtime]
-

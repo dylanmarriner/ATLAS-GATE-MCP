@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { KaizaError, ERROR_CODES } from "../../core/error.js";
-import { analyzeFileGovernance } from "../../core/static-analyzer.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { analyzeFileGovernance } from "../src/application/static-analyzer.js";
 import { writeFileHandler } from "./tools/write_file.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
-import { lockWorkspaceRoot } from "../../core/path-resolver.js";
+import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
 import { SESSION_STATE } from "./session.js";
 
 const REPO_ROOT = process.cwd();
@@ -21,8 +21,8 @@ function wrapHandler(handler, toolName) {
         try {
             return await handler(args);
         } catch (err) {
-            const kerr = ensureKaizaError(err, {
-                error_code: err.code || ERROR_CODES.INTERNAL_ERROR,
+            const kerr = ensureSystemError(err, {
+                error_code: err.code || SYSTEM_ERROR_CODES.INTERNAL_ERROR,
                 phase: "EXECUTION",
                 component: "TOOL_HANDLER",
                 invariant: "MANDATORY_DIAGNOSTICS"
@@ -35,7 +35,7 @@ function wrapHandler(handler, toolName) {
     };
 }
 
-import { ensureKaizaError } from "../../core/error.js";
+import { ensureSystemError } from "../src/domain/system-error.js";
 
 async function runTest() {
     console.log("🧪 STARTING GOVERNANCE VERIFICATION TEST");
@@ -75,7 +75,7 @@ try {
         console.error("❌ FAIL: Write allowed without intent or metadata.");
         process.exit(1);
     } catch (e) {
-        if (e.error_code === ERROR_CODES.WRITE_REJECTED && e.invariant === "MANDATORY_COMMENTARY") {
+        if (e.error_code === SYSTEM_ERROR_CODES.WRITE_REJECTED && e.invariant === "MANDATORY_COMMENTARY") {
             console.log("✅ PASS: Write rejected due to missing commentary.");
         } else {
             console.error(`❌ FAIL: Write rejected but wrong reason: ${e.message}`);

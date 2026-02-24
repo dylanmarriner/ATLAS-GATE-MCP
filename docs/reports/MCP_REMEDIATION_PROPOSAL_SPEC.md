@@ -202,16 +202,19 @@ Every proposal contains:
 **Tool**: `approve_proposal`
 
 **Inputs**:
+
 - `proposal_id`: string
 - `decision`: "APPROVED" | "REJECTED"
-- `approver_identity`: string (person/service ID, e.g., "alice@company.com")
+- `approver_identity`: string (person/service ID, e.g., "<alice@company.com>")
 - `reason`: string (optional, used for REJECTED)
 
 **Output**:
+
 - Updated proposal JSON
 - Audit entry with timestamp + approver
 
 **Constraints**:
+
 1. **No Automatic Approval**: This tool ONLY transitions status. It does NOT:
    - Apply code changes
    - Execute remediation
@@ -277,6 +280,7 @@ Before approving, verify:
 **Role**: EXECUTABLE (read-only, propose-only)
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path/to/workspace",
@@ -290,6 +294,7 @@ Before approving, verify:
 ```
 
 **Output**:
+
 ```json
 {
   "success": true,
@@ -303,6 +308,7 @@ Before approving, verify:
 ```
 
 **Constraints**:
+
 - No mutations to workspace
 - Writes only to `docs/proposals/` and `.atlas-gate/proposals-index.jsonl`
 - Appends one audit entry: `tool=generate_remediation_proposals`
@@ -313,6 +319,7 @@ Before approving, verify:
 **Role**: EXECUTABLE (read-only)
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path/to/workspace",
@@ -321,6 +328,7 @@ Before approving, verify:
 ```
 
 **Output**:
+
 ```json
 {
   "success": true,
@@ -337,6 +345,7 @@ Before approving, verify:
 **Role**: WINDSURF (human gate)
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path/to/workspace",
@@ -348,6 +357,7 @@ Before approving, verify:
 ```
 
 **Output**:
+
 ```json
 {
   "success": true,
@@ -361,6 +371,7 @@ Before approving, verify:
 ```
 
 **Constraints**:
+
 - Does NOT apply changes
 - Does NOT execute remediation
 - Only transitions proposal status
@@ -375,6 +386,7 @@ Before approving, verify:
 **Location**: `docs/proposals/PROPOSAL_<proposal_id>.md`
 
 **Format**:
+
 ```markdown
 # Remediation Proposal: PROP-abc123
 
@@ -436,6 +448,7 @@ Changes Requested:
 ## Validity
 
 proposal is valid if plan_signature matches abc123def456...
+
 ```
 
 ### Proposal Index
@@ -591,6 +604,7 @@ See `test-remediation-proposals.js` for full test suite.
 ### Scenario: Rust Policy Violation Detected
 
 1. **Forensic Replay Finds Problem**
+
    ```
    Finding: POLICY_VIOLATION_UNSAFE_UNWRAP
    File: src/engine.rs, Line 42
@@ -599,6 +613,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
 
 2. **System Generates Proposal**
+
    ```
    RemediationEngine processes finding:
    - Proposal Type: POLICY_EXCEPTION_REQUEST
@@ -609,6 +624,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
 
 3. **Proposal Written to Disk**
+
    ```
    File: docs/proposals/PROPOSAL_PROP-abc123.md
    Status: PENDING
@@ -617,6 +633,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
 
 4. **Human Reviews Proposal**
+
    ```
    Reviewer reads markdown:
    - Evidence: ✓ Valid forensic finding
@@ -627,6 +644,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
 
 5. **Approve Tool Called**
+
    ```
    Input: proposal_id=PROP-abc123, decision=APPROVED, approver=alice@company.com
    
@@ -640,6 +658,7 @@ See `test-remediation-proposals.js` for full test suite.
    ```
 
 6. **Separate Execution Plan Created**
+
    ```
    (By separate WINDSURF process)
    Plan: EXECUTE_REMEDIATION_PROP_ABC123

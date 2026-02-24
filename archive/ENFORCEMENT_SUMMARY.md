@@ -11,6 +11,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 **File:** `core/mcp-sandbox.js`
 
 **What It Does:**
+
 - Locks `process.env` (read-only, whitelisted vars only)
 - Blocks `process.exit()`, `process.kill()`
 - Blocks all dangerous module imports (fs, child_process, etc.)
@@ -20,11 +21,13 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 - Installs audit hooks for escape attempt tracking
 
 **When Applied:**
+
 - **Before** MCP server starts
 - **Before** any tool registration
 - **Verified** before MCP begins accepting requests
 
 **Files:**
+
 - `bin/ATLAS-GATE-MCP-windsurf.js` - Entrypoint with sandbox
 - `bin/ATLAS-GATE-MCP-antigravity.js` - Entrypoint with sandbox
 
@@ -33,6 +36,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 **File:** `core/tool-enforcement.js`
 
 **What It Does:**
+
 - Validates all tool parameters against strict schemas
 - Rejects wrong types, missing required fields, extra fields
 - Provides clear error messages to IDEs
@@ -40,11 +44,13 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 - Prevents tool misuse at the protocol level
 
 **When Applied:**
+
 - When IDE sends MCP request
 - Before tool handler execution
 - At both `validateToolInput()` override and handler wrapper
 
 **Files:**
+
 - `server.js` - Integration into MCP server startup
 - `core/tool-enforcement.js` - Validation implementation
 
@@ -95,6 +101,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 ## What's Blocked
 
 ### By Sandbox Layer
+
 - ❌ Filesystem access (`fs` module)
 - ❌ Shell execution (`child_process` module)
 - ❌ Process spawning (`cluster`, `worker_threads`)
@@ -105,6 +112,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 - ❌ Global object modification
 
 ### By Tool Enforcement Layer
+
 - ❌ Wrong parameter types
 - ❌ Missing required fields
 - ❌ Unknown/extra fields
@@ -114,6 +122,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 ## What's Allowed
 
 ### Via MCP Tools
+
 - ✅ `read_file` - Read files
 - ✅ `write_file` - Write files (Windsurf only)
 - ✅ `list_plans` - List approved plans
@@ -123,6 +132,7 @@ Windsurf and Antigravity are now **permanently locked into MCP-only mode**. They
 - ✅ And all other registered MCP tools
 
 ### Safe JavaScript
+
 - ✅ Object, Array, String, Number, Boolean
 - ✅ Math, Date, RegExp, JSON
 - ✅ Map, Set, Promise, Error
@@ -276,18 +286,23 @@ POST /tool/call_tool
 ## Key Design Principles
 
 ### 1. **Fail-Closed**
+
 Any ambiguity results in rejection. No "maybe safe" decisions.
 
 ### 2. **Defense in Depth**
+
 Multiple layers: sandbox + tool validation + audit trail
 
 ### 3. **Transparent to Tools**
+
 Tool handlers work normally. Enforcement is invisible to them.
 
 ### 4. **Comprehensive Audit**
+
 Every action logged with full context for forensics.
 
 ### 5. **No Escape Routes**
+
 Globals frozen, process locked, modules blocked, network restricted.
 
 ## Starting the Servers

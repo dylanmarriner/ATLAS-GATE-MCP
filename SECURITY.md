@@ -15,7 +15,7 @@
 
 **Do not open a public issue for security vulnerabilities.**
 
-Instead, please send an email to: **security@ATLAS-GATE-MCP.org**
+Instead, please send an email to: **<security@ATLAS-GATE-MCP.org>**
 
 ### What to Include
 
@@ -37,6 +37,7 @@ Please include the following information in your report:
 ### Security Team
 
 The ATLAS-GATE MCP security team includes:
+
 - Security engineers
 - Core developers
 - External security advisors (when needed)
@@ -129,7 +130,7 @@ ATLAS-GATE MCP offers rewards for security vulnerability reports:
 
 ### Reward Process
 
-1. **Submission**: Send detailed report to security@ATLAS-GATE-MCP.org
+1. **Submission**: Send detailed report to <security@ATLAS-GATE-MCP.org>
 2. **Validation**: Security team validates the vulnerability
 3. **Assessment**: Impact and severity assessed
 4. **Reward**: Reward amount determined and paid
@@ -138,20 +139,24 @@ ATLAS-GATE MCP offers rewards for security vulnerability reports:
 ## Security Contacts
 
 ### Primary Contact
-- **Email**: security@ATLAS-GATE-MCP.org
+
+- **Email**: <security@ATLAS-GATE-MCP.org>
 - **PGP Key**: Available on request
 
 ### Emergency Contact
-- **Email**: emergency@ATLAS-GATE-MCP.org
+
+- **Email**: <emergency@ATLAS-GATE-MCP.org>
 - **Response Time**: Within 24 hours
 
 ### General Inquiries
-- **Email**: info@ATLAS-GATE-MCP.org
+
+- **Email**: <info@ATLAS-GATE-MCP.org>
 - **GitHub Issues**: Non-security issues only
 
 ## Security Resources
 
 ### Documentation
+
 - [MCP Sandbox Enforcement](./MCP_SANDBOX_ENFORCEMENT.md) — Process-level lockdown (v2.0)
 - [Tool Parameter Enforcement](./TOOL_ENFORCEMENT.md) — Parameter validation (v2.0)
 - [Enforcement Summary](./ENFORCEMENT_SUMMARY.md) — Complete enforcement overview
@@ -159,11 +164,13 @@ ATLAS-GATE MCP offers rewards for security vulnerability reports:
 - [Documentation Index](./DOCUMENTATION_INDEX.md) — All documentation
 
 ### Tools
+
 - [Security Scanner](./tools/security-scanner.js)
 - [Audit Log Analyzer](./tools/audit-analyzer.js)
 - [Configuration Validator](./tools/config-validator.js)
 
 ### Community
+
 - [Security Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions/categories/security)
 - [Security Advisory Board](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/wiki/Security-Advisory-Board)
 
@@ -187,6 +194,6 @@ ATLAS-GATE MCP complies with:
 ---
 
 **Last Updated**: 2026-01-31  
-**Security Team**: security@ATLAS-GATE-MCP.org  
+**Security Team**: <security@ATLAS-GATE-MCP.org>  
 **Version**: 2.0.0 (MCP-Only Sandbox Enforcement)  
 **Status**: Production-Ready

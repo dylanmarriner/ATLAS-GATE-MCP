@@ -5,18 +5,21 @@
 ### Resource Requirements
 
 **Minimum (Development/Testing)**
+
 - CPU: 1 core (2 GHz minimum)
 - RAM: 512 MB
 - Disk: 10 GB (for audit logs and plans)
 - Network: Stable internet connection
 
 **Recommended (Production 99.9% Uptime)**
+
 - CPU: 2-4 cores (3+ GHz)
 - RAM: 2-4 GB
 - Disk: 50+ GB SSD (fast I/O for audit logging)
 - Network: Redundant connectivity (failover)
 
 **Enterprise Scale (High Concurrency)**
+
 - CPU: 8+ cores
 - RAM: 8-16 GB
 - Disk: 100+ GB SSD with backup replication
@@ -25,16 +28,19 @@
 ### Recommended Cloud Providers
 
 #### AWS (EC2)
+
 - **t3.small** (~$0.02/hr): 2 vCPU, 2 GB RAM, 50 GB disk — Development
 - **t3.medium** (~$0.04/hr): 2 vCPU, 4 GB RAM, 100 GB disk — Production 99.9%
 - **t3.large** (~$0.08/hr): 2 vCPU, 8 GB RAM, 200 GB disk — Enterprise
 
 #### Azure
+
 - **B1s**: 1 vCPU, 1 GB RAM — Development
 - **B2s**: 2 vCPU, 4 GB RAM — Production 99.9%
 - **D2s_v3**: 2 vCPU, 8 GB RAM, SSD — Enterprise
 
 #### GCP
+
 - **e2-medium**: 2 vCPU, 4 GB RAM — Production 99.9%
 - **e2-standard-2**: 2 vCPU, 8 GB RAM — Enterprise
 - **e2-highmem-2**: 2 vCPU, 16 GB RAM — High volume
@@ -42,6 +48,7 @@
 ### Disk I/O Considerations
 
 ATLAS-GATE-MCP writes **one audit log entry per tool invocation** (JSON Line format). With 2+ clients making 10+ calls/minute:
+
 - **Write throughput**: ~100 KB/min (minimal)
 - **Disk needs**: ~5 MB/day, ~150 MB/month
 - **Recommendation**: SSD for consistent latency (<5ms)
@@ -498,6 +505,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 | Multi-region (3+ regions) | 99.999% (5.3 minutes downtime/year) |
 
 **To achieve 99.9%:**
+
 - 2 MCP servers (load balanced)
 - PostgreSQL with synchronous replication
 - Automated failover (Patroni or RDS Multi-AZ)

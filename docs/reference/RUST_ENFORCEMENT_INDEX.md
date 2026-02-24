@@ -5,14 +5,18 @@
 Choose your starting point based on your role:
 
 ### For Project Managers / Architects
+
 Start here: **`RUST_ENFORCEMENT_IMPLEMENTATION.md`**
+
 - High-level overview of what was implemented
 - Architecture diagrams and flow
 - Compliance matrix
 - Design decisions explained
 
 ### For Developers Using MCP
+
 Start here: **`RUST_QUICK_START.md`**
+
 - Quick reference of forbidden patterns
 - Common error messages and fixes
 - Setup instructions
@@ -20,7 +24,9 @@ Start here: **`RUST_QUICK_START.md`**
 - FAQ
 
 ### For MCP Engineers / Maintainers
+
 Start here: **`RUST_ENFORCEMENT_GATES.md`**
+
 - Complete technical specification
 - All forbidden patterns explained in detail
 - Error handling law details
@@ -31,7 +37,9 @@ Start here: **`RUST_ENFORCEMENT_GATES.md`**
 - Debugging guide
 
 ### For Delivery / Verification
+
 Start here: **`RUST_ENFORCEMENT_DELIVERABLES.md`**
+
 - Complete list of deliverables
 - Test results (all 28 tests passing)
 - Files created/modified
@@ -43,6 +51,7 @@ Start here: **`RUST_ENFORCEMENT_DELIVERABLES.md`**
 ## 🗂️ File Organization
 
 ### Implementation Code
+
 ```
 core/
   └─ rust-policy-engine.js        (330 lines)
@@ -62,6 +71,7 @@ core/
 ```
 
 ### Test Code
+
 ```
 test-rust-policy.js                (260 lines)
   └─ 16 unit tests
@@ -77,6 +87,7 @@ test-rust-integration.js           (240 lines)
 ```
 
 ### Documentation
+
 ```
 RUST_ENFORCEMENT_GATES.md          (400+ lines)
   └─ Complete technical guide
@@ -101,57 +112,68 @@ RUST_ENFORCEMENT_INDEX.md          (this file)
 ### By Topic
 
 **Forbidden Patterns**
+
 - Overview: `RUST_QUICK_START.md` → "✋ Forbidden Patterns"
 - Complete list: `RUST_ENFORCEMENT_GATES.md` → "Forbidden Patterns (BY DEFAULT)"
 - Detection code: `core/rust-policy-engine.js` → `FORBIDDEN_PATTERNS` array
 
 **Error Handling Law**
+
 - Overview: `RUST_QUICK_START.md` → "✅ Correct Patterns"
 - Specification: `RUST_ENFORCEMENT_GATES.md` → "2️⃣ Rust Error-Handling Law"
 - Validation: `core/rust-policy-engine.js` → `validateRustErrorHandling()`
 
 **Verification Gates**
+
 - Overview: `RUST_ENFORCEMENT_IMPLEMENTATION.md` → "Post-Write Rust Verification Gates"
 - Specification: `RUST_ENFORCEMENT_GATES.md` → "3️⃣ Compiler + Clippy Verification Gates"
 - Implementation: `core/rust-policy-engine.js` → `runRustVerificationGates()`
 
 **Plan Allowances**
+
 - Setup: `RUST_QUICK_START.md` → "📝 If You Need an Exception"
 - Details: `RUST_ENFORCEMENT_GATES.md` → "Allowing Patterns in a Plan"
 - Code: `core/rust-policy-engine.js` → `planAllowances` parameter
 
 **Integration**
+
 - Write flow: `RUST_ENFORCEMENT_IMPLEMENTATION.md` → "Architecture"
 - Gate sequence: `RUST_ENFORCEMENT_GATES.md` → "Integration with MCP Write Flow"
 - Code: `tools/write_file.js` GATE 3.5, `core/preflight.js`
 
 **Common Errors**
+
 - Fixes: `RUST_QUICK_START.md` → "🚨 Common Rejection Messages"
 - Debugging: `RUST_ENFORCEMENT_GATES.md` → "Debugging"
 
 ### By Role
 
 **Software Architect**
+
 1. Read: `RUST_ENFORCEMENT_IMPLEMENTATION.md` (overview)
 2. Review: `RUST_ENFORCEMENT_GATES.md` (architecture section)
 3. Check: `RUST_ENFORCEMENT_DELIVERABLES.md` (compliance matrix)
 
 **Rust Developer**
+
 1. Read: `RUST_QUICK_START.md` (intro)
 2. Reference: `RUST_ENFORCEMENT_GATES.md` (forbidden patterns)
 3. Run: `test-rust-policy.js` (see examples)
 
 **MCP Client Integration Engineer**
+
 1. Review: `RUST_ENFORCEMENT_IMPLEMENTATION.md` (integration section)
 2. Check: `RUST_ENFORCEMENT_GATES.md` (gate sequence)
 3. Run: `test-rust-integration.js` (verify integration)
 
 **QA / Test Engineer**
+
 1. Run: `node test-rust-policy.js` (unit tests)
 2. Run: `node test-rust-integration.js` (integration tests)
 3. Review: `RUST_ENFORCEMENT_DELIVERABLES.md` (test coverage)
 
 **DevOps / Release Manager**
+
 1. Review: `RUST_ENFORCEMENT_DELIVERABLES.md` (readiness)
 2. Check: Files modified/created list
 3. Verify: All 28 tests passing
@@ -194,6 +216,7 @@ test-ast-policy.js (existing)
 ### What Tests Verify
 
 **Unit Tests (16)**
+
 - Pattern detection for all 12 forbidden patterns
 - Error handling law enforcement
 - Comment bypass mechanism
@@ -204,6 +227,7 @@ test-ast-policy.js (existing)
 - Clean code validation
 
 **Integration Tests (12)**
+
 - write_file GATE 3.5 integration
 - preflight gate integration
 - File skip logic (non-.rs files)
@@ -216,12 +240,14 @@ test-ast-policy.js (existing)
 ## 🔧 Implementation Details
 
 ### Files Modified
+
 - **`tools/write_file.js`** +12 lines (GATE 3.5)
 - **`core/preflight.js`** +14 lines (Rust verification)
 - **`core/error.js`** +2 lines (error codes)
 - **`AGENTS.md`** +24 lines (Rust documentation)
 
 ### Files Created
+
 - **`core/rust-policy-engine.js`** 330 lines (core implementation)
 - **`test-rust-policy.js`** 260 lines (unit tests)
 - **`test-rust-integration.js`** 240 lines (integration tests)
@@ -234,6 +260,7 @@ test-ast-policy.js (existing)
 ### Code Locations
 
 **Pattern Detection**
+
 ```
 core/rust-policy-engine.js:
   - FORBIDDEN_PATTERNS array (line ~20)
@@ -242,6 +269,7 @@ core/rust-policy-engine.js:
 ```
 
 **Error Handling Validation**
+
 ```
 core/rust-policy-engine.js:
   - validateRustErrorHandling() (line ~126)
@@ -250,6 +278,7 @@ core/rust-policy-engine.js:
 ```
 
 **Verification Gates**
+
 ```
 core/rust-policy-engine.js:
   - runCargoFmtCheck() (line ~160)
@@ -260,6 +289,7 @@ core/rust-policy-engine.js:
 ```
 
 **Integration**
+
 ```
 tools/write_file.js:
   - GATE 3.5: Line ~183 (pre-write policy)
@@ -292,23 +322,27 @@ core/preflight.js:
 ## ✨ Key Features
 
 ✅ **Comprehensive Pattern Detection**
+
 - 12 forbidden patterns detected
 - Regex-based scanning (fast, no dependencies)
 - Comment detection (patterns in comments allowed)
 - Line-level violation reporting
 
 ✅ **Error Handling Law**
+
 - Enforces Result<T, SystemError> pattern
 - Rejects Option<T> for meaningful failures
 - Rejects Result<T, Box<dyn Error>>
 
 ✅ **Verification Gates**
+
 - cargo fmt --check (code style)
 - cargo clippy -- -D warnings (lint)
 - cargo build (compilation)
 - Compiler deny flags (#![deny(...)])
 
 ✅ **Safety Features**
+
 - Hard-fail on any violation
 - Automatic file revert
 - Comment bypasses
@@ -317,6 +351,7 @@ core/preflight.js:
 - Detailed error messages
 
 ✅ **Production Ready**
+
 - Full test coverage (28 tests, all passing)
 - Comprehensive documentation
 - Seamless MCP integration
@@ -341,19 +376,24 @@ core/preflight.js:
 ## 📞 Support Resources
 
 **Quick Start**
+
 - `RUST_QUICK_START.md` (2 min read)
 
 **Deep Dive**
+
 - `RUST_ENFORCEMENT_GATES.md` (10 min read)
 
 **Technical Details**
+
 - `RUST_ENFORCEMENT_IMPLEMENTATION.md` (5 min read)
 
 **Test Examples**
+
 - `test-rust-policy.js` (code examples)
 - `test-rust-integration.js` (integration examples)
 
 **Delivery Info**
+
 - `RUST_ENFORCEMENT_DELIVERABLES.md` (release info)
 
 ---

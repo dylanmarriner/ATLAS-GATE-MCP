@@ -10,7 +10,9 @@ Updated and created comprehensive templates for ATLAS-GATE MCP integration. Thes
 ## New Files Created
 
 ### 1. **PLANNING_PROMPT_UPDATED.md** (472 lines)
+
 The canonical prompt for ANTIGRAVITY agents. Specifies:
+
 - Mandatory session initialization (begin_session + read_prompt)
 - Operator input requirements
 - Pre-planning analysis phase guidance
@@ -28,7 +30,9 @@ The canonical prompt for ANTIGRAVITY agents. Specifies:
 ✅ Better error handling guidance
 
 ### 2. **WINDSURF_EXECUTION_PROMPT_UPDATED.md** (425 lines)
+
 The canonical prompt for WINDSURF agents. Specifies:
+
 - Mandatory session initialization and prompt fetching
 - Operator input validation (Plan Path, Workspace Root, Plan Signature, Execution Mode)
 - 6-step execution sequence with specific HALT conditions
@@ -47,9 +51,11 @@ The canonical prompt for WINDSURF agents. Specifies:
 ✅ Performance and audit metadata requirements
 
 ### 3. **EXAMPLE_PLAN.md** (650 lines)
+
 A concrete, production-ready example plan showing what ANTIGRAVITY output should look like.
 
 Demonstrates:
+
 - Complete YAML frontmatter with all required fields
 - All 9 required sections filled out properly
 - Two realistic feature implementation files (core/audit-system-enhanced.js, tools/audit_summary.js)
@@ -73,7 +79,9 @@ Demonstrates:
 ✅ Template for test file specifications
 
 ### 4. **TEMPLATES_README.md** (300 lines)
+
 Comprehensive guide to template files. Contains:
+
 - Overview of each file in templates directory
 - Quick start guides for ANTIGRAVITY and WINDSURF
 - Key governance rules (REALITY LOCK, binary language, determinism, MCP-only)
@@ -82,9 +90,11 @@ Comprehensive guide to template files. Contains:
 - Version history
 
 ### 5. **MIGRATION_GUIDE.md** (400 lines)
+
 Guide for migrating from old templates to new MCP-integrated templates.
 
 Contents:
+
 - Side-by-side comparison of old vs new approaches
 - Detailed changes for each aspect (session init, file I/O, paths, etc.)
 - Migration checklist
@@ -98,6 +108,7 @@ Contents:
 ### For ANTIGRAVITY Planning
 
 **Old Workflow**:
+
 1. Read requirements
 2. (Optional) Call begin_session
 3. (Maybe) Direct filesystem read
@@ -106,6 +117,7 @@ Contents:
 6. (Maybe) Validate plan
 
 **New Workflow**:
+
 1. Call begin_session(workspace_root) [MANDATORY]
 2. Call read_prompt("ANTIGRAVITY") [MANDATORY]
 3. For each target file: Call read_file(path) [MANDATORY]
@@ -118,6 +130,7 @@ Contents:
 ### For WINDSURF Execution
 
 **Old Workflow**:
+
 1. Read plan
 2. Parse plan informally
 3. Execute files
@@ -126,6 +139,7 @@ Contents:
 6. Report results
 
 **New Workflow**:
+
 1. Call begin_session(workspace_root) [MANDATORY]
 2. Call read_prompt("WINDSURF_CANONICAL") [MANDATORY]
 3. Call read_file(plan_path) [MANDATORY]
@@ -142,22 +156,26 @@ Contents:
 ## Governance Improvements
 
 ### 1. REALITY LOCK
+
 - Every code snippet must be production-ready
 - ZERO tolerance for stubs, TODOs, placeholders
 - Complete error handling required
 - Tests included for all functionality
 
 ### 2. BINARY LANGUAGE ONLY
+
 - Use MUST, MUST NOT, SHALL, SHALL NOT
 - No ambiguous words (may, should, try to, optional)
 - Clear, deterministic requirements
 
 ### 3. MANDATORY SESSION INITIALIZATION
+
 - begin_session locks workspace root
 - read_prompt fetches canonical instructions
 - All file I/O happens via MCP tools
 
 ### 4. MCP TOOL INTEGRATION
+
 - read_file: all file reads (no native filesystem)
 - write_file: all file creation/modification
 - read_audit_log: verify writes immediately after
@@ -165,12 +183,14 @@ Contents:
 - begin_session: lock workspace authority
 
 ### 5. AUDIT TRAIL INTEGRITY
+
 - Every write_file call must be immediately verified via read_audit_log
 - plan_signature must match exactly (64-char hex, case-insensitive)
 - intent and role must match exactly
 - HALT if audit entry is missing or incorrect
 
 ### 6. PLAN HASHING
+
 - Plans are sealed with SHA256 hash in footer
 - WINDSURF must compute hash and validate
 - Exclude [SHA256_HASH: ...] footer from hash computation
@@ -197,24 +217,28 @@ docs/templates/
 ### with atlas-gate-mcp Tools
 
 **begin_session**:
+
 - Locks workspace root
 - Initializes audit log
 - Required before any other operations
 - Called by both ANTIGRAVITY and WINDSURF
 
 **read_prompt**:
+
 - Returns ANTIGRAVITY prompt
 - Returns WINDSURF_CANONICAL prompt
 - Sets SESSION_STATE.hasFetchedPrompt = true
 - Called by both agents at startup
 
 **read_file**:
+
 - Used by ANTIGRAVITY to analyze current state
 - Used by WINDSURF to load plans
 - Workspace-relative paths only
 - No native filesystem access
 
 **write_file**:
+
 - Used by ANTIGRAVITY to save plans
 - Used by WINDSURF to execute plans
 - Requires intent (≥20 chars) and role metadata
@@ -222,18 +246,21 @@ docs/templates/
 - MUST be followed by read_audit_log verification
 
 **read_audit_log**:
+
 - Used by WINDSURF to verify each write
 - Called IMMEDIATELY after each write_file
 - Verifies plan_signature, intent, role, path
 - HALT if verification fails
 
 **lint_plan**:
+
 - Validates plan structure (all 9 sections)
 - Computes SHA256 hash
 - Returns validation result and hash value
 - Called by operator before WINDSURF execution
 
 **verify_workspace_integrity**:
+
 - Confirms files match specification
 - Verifies no files outside allowlist modified
 - Called at end of execution
@@ -270,6 +297,7 @@ Templates are production-ready when:
 ## Template Versions
 
 **Version 2.0** (NEW - 2026-02-21):
+
 - ✅ MCP-integrated
 - ✅ Session initialization mandatory
 - ✅ Audit verification mandatory
@@ -280,6 +308,7 @@ Templates are production-ready when:
 - ✅ All 9 plan sections required
 
 **Version 1.2** (OLD - 2026-02-14):
+
 - Basic template structure
 - Optional MCP integration
 - No audit verification requirement

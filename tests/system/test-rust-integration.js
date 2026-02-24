@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { enforceRustPolicy, runRustVerificationGates, verifyCargoLintFlags } from '../../core/rust-policy-engine.js';
-import { KaizaError } from '../../core/error.js';
+import { SystemError } from "../../core/system-error.js";
 import assert from 'assert';
 
 console.log('🧪 Testing Rust Integration with MCP Write Flow...\n');
@@ -18,7 +18,7 @@ console.log('✓ Test 1: enforceRustPolicy catches unwrap() in .rs file');
     enforceRustPolicy('src/main.rs', code, '/tmp/repo', {});
     assert(false, 'Should have rejected');
   } catch (err) {
-    assert(err instanceof KaizaError, 'Should be KaizaError');
+    assert(err instanceof SystemError, 'Should be SystemError');
     assert(err.error_code === 'POLICY_VIOLATION', `Got: ${err.error_code}`);
     assert(err.human_message.includes('unwrap()'), 'Should mention unwrap()');
     console.log('  ✓ Correctly rejected unwrap()\n');

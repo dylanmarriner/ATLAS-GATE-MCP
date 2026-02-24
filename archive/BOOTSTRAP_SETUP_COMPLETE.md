@@ -5,14 +5,17 @@ The bootstrap tool is now correctly set up to be called in other repositories wi
 ## Changes Made
 
 ### 1. Fixed Hardcoded Path in `core/governance.js`
+
 **File:** `/core/governance.js` (lines 43-72)
 
 **Before:**
+
 ```javascript
 const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.atlas-gate/bootstrap_secret.json";
 ```
 
 **After:**
+
 ```javascript
 const repoRoot = getRepoRoot();
 const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
@@ -21,14 +24,17 @@ const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json")
 **Impact:** Bootstrap now works in ANY repository, using workspace-relative path resolution.
 
 ### 2. Added Stub Detection to Plan Linter
+
 **File:** `/core/plan-linter.js` (lines 59-71, 250-263)
 
 **Added:**
+
 - `STUB_PATTERNS` regex array detecting 11 types of stub markers
 - Stub validation in `validateEnforceability()` function
 - HARD ERROR severity for any stub detection
 
 **Detects:**
+
 - TODO, FIXME, XXX, HACK markers
 - mock, Mock, stub, Fake, fake keywords
 - placeholder, temporary terms
@@ -37,14 +43,17 @@ const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json")
 **Impact:** Plans cannot ship with incomplete code, ensuring production-ready quality.
 
 ### 3. Fixed Hardcoded Path in Verification Script
+
 **File:** `/tools/verification/verify-example-plan.js` (lines 1-13)
 
 **Before:**
+
 ```javascript
 const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
 ```
 
 **After:**
+
 ```javascript
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,6 +67,7 @@ const planPath = path.join(__dirname, "../../docs/examples/EXAMPLE_VALID_PLAN.md
 All tests pass successfully:
 
 ### Test: Stub Detection ✓
+
 **File:** `/tests/test-stub-detection.js`
 
 ```
@@ -71,6 +81,7 @@ Results: 5/5 passed
 ```
 
 ### Test: Bootstrap Portability ✓
+
 **Verified in:** `/tmp/test-atlas-gate-bootstrap` and `/tmp/other-repo`
 
 ```
@@ -84,6 +95,7 @@ Results: 5/5 passed
 ## Implementation Details
 
 ### Path Resolution Strategy
+
 All paths now use the unified path resolver:
 
 ```javascript
@@ -94,12 +106,14 @@ const secretPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
 
 ### Stub Detection Algorithm
+
 1. **Phase 1:** Check HARD_BLOCK patterns (policy bypass, simulated outcomes, TODOs, mocks)
 2. **Phase 2:** Check TEXT_PATTERNS (stubs, placeholders, fake data)
 3. **Phase 2.5:** AST Analysis for JS/TS (empty functions, null returns)
 4. **Phase 3:** Reject if any CRITICAL violations found
 
 ### Error Handling
+
 - **MissingSecret:** "BOOTSTRAP_SECRET_MISSING"
 - **InvalidSignature:** "INVALID_BOOTSTRAP_SIGNATURE"
 - **RequestExpired:** "BOOTSTRAP_REQUEST_EXPIRED" (>5 min)
@@ -122,6 +136,7 @@ All code implements the specification **verbatim with zero deviation**.
 ### For Any New Repository
 
 1. **Set Bootstrap Secret:**
+
    ```bash
    export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"
    # OR
@@ -131,6 +146,7 @@ All code implements the specification **verbatim with zero deviation**.
    ```
 
 2. **Create Foundation Plan** (in `docs/plans/`):
+
    ```markdown
    ---
    FILENAME: FOUNDATION_PLAN.md
@@ -172,6 +188,7 @@ All code implements the specification **verbatim with zero deviation**.
    ```
 
 3. **Call Bootstrap Tool** (via MCP):
+
    ```javascript
    const payload = {
      repoIdentifier: "repo-name",
@@ -215,6 +232,7 @@ node tests/bootstrap-fix-verification.js
 ```
 
 Both tests pass completely, demonstrating:
+
 1. Stub detection works across 5 test cases
 2. Bootstrap works in multiple repositories
 3. Path resolution is workspace-relative

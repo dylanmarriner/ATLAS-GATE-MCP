@@ -14,12 +14,14 @@ The ATLAS-GATE-MCP system uses **ECDSA P-256 (cosign-compatible) cryptography** 
 ## Key Features
 
 ### 1. ECDSA P-256 Cryptography ✅
+
 - **Algorithm**: Elliptic Curve Digital Signature Algorithm (ECDSA)
 - **Curve**: P-256 (also known as prime256v1, secp256r1)
 - **Hashing**: SHA256
 - **Implementation**: Node.js native `crypto` module (no external dependencies)
 
 ### 2. Key Management ✅
+
 - **Storage**: `.atlas-gate/.cosign-keys/` directory
   - Private Key: `private.pem` (PKCS8 format)
   - Public Key: `public.pem` (SPKI format)
@@ -27,6 +29,7 @@ The ATLAS-GATE-MCP system uses **ECDSA P-256 (cosign-compatible) cryptography** 
 - **Caching**: In-memory cache to avoid repeated filesystem reads
 
 ### 3. Session Lifecycle ✅
+
 ```
 begin_session (workspace_root)
     └─> Load or Generate ECDSA P-256 keys
@@ -36,6 +39,7 @@ begin_session (workspace_root)
 ```
 
 ### 4. Signature Format ✅
+
 - **Raw ECDSA Signature**: Binary output from crypto.sign()
 - **Encoding**: URL-safe Base64 (RFC 4648)
   - `+` replaced with `-`
@@ -47,6 +51,7 @@ begin_session (workspace_root)
 ### 5. Usage Patterns ✅
 
 #### Plan Signing (governance.js)
+
 ```javascript
 const keyPair = await loadOrGenerateKeyPair(repoRoot);
 const planSignature = await signWithCosign(canonicalContent, keyPair);
@@ -54,6 +59,7 @@ const planSignature = await signWithCosign(canonicalContent, keyPair);
 ```
 
 #### Audit Entry Signing (audit-log.js)
+
 ```javascript
 const keyPair = await loadOrGenerateKeyPair(repoRoot);
 const entrySignature = await signWithCosign(canonicalEntry, keyPair);
@@ -61,6 +67,7 @@ const entrySignature = await signWithCosign(canonicalEntry, keyPair);
 ```
 
 #### Verification (any component)
+
 ```javascript
 const isValid = await verifyWithCosign(content, signature, publicKey);
 ```
@@ -70,27 +77,32 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ## Changes Made
 
 ### ✅ tools/begin_session.js (NEW)
+
 - Explicit ECDSA P-256 key initialization
 - Idempotent: existing keys not regenerated
 - Synchronous with workspace root locking
 
 ### ✅ core/audit-system.js (UPDATED)
+
 - Exported `loadOrGenerateKeyPair` function
 - Function is idempotent (checks for existing keys)
 - In-memory caching of loaded keys
 
 ### ✅ core/governance.js (FIXED)
+
 - Loads keyPair before signing plans
 - Uses `loadOrGenerateKeyPair()` helper
 - Passes keyPair to `signWithCosign()`
 
 ### ✅ core/audit-log.js (FIXED)
+
 - Loads keyPair before signing entries
 - Removed file path parameter (was wrong)
 - Uses `loadOrGenerateKeyPair()` helper
 - Passes keyPair to `signWithCosign()`
 
 ### ✅ core/cosign-hash-provider.js (NO CHANGES)
+
 - Implementation was already correct
 - ECDSA P-256 key generation
 - SHA256 signing
@@ -102,6 +114,7 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ## Verification Results
 
 ### Syntax Validation ✅
+
 ```
 ✅ core/governance.js - syntax valid
 ✅ core/audit-log.js - syntax valid
@@ -111,6 +124,7 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ```
 
 ### End-to-End Test Results ✅
+
 ```
 ✅ ECDSA P-256 key generation
 ✅ PKCS8 private key format
@@ -125,6 +139,7 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ```
 
 ### Compliance Verification ✅
+
 - ✅ Matches sigstore/cosign specification
 - ✅ Uses required ECDSA P-256 algorithm
 - ✅ Uses required SHA256 hashing
@@ -136,17 +151,20 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ## Security Properties
 
 ### Cryptographic Strength
+
 - **256-bit elliptic curve security**: ~128-bit symmetric equivalent
 - **SHA256 pre-hashing**: Collision resistant
 - **ECDSA**: Provably secure with proper randomness
 
 ### Tamper Detection
+
 - Any modification to signed content breaks verification
 - Plan signatures bind to exact content
 - Audit entry signatures form unbreakable chain
 - Previous signature included in each entry
 
 ### Key Security
+
 - Private keys stored locally in `.atlas-gate/` (git-ignored)
 - Should be backed up securely
 - Should be rotated periodically (future enhancement)
@@ -189,16 +207,20 @@ const isValid = await verifyWithCosign(content, signature, publicKey);
 ## Files Involved
 
 ### Core Cryptography
+
 - `core/cosign-hash-provider.js` - ECDSA P-256 signing/verification
 
 ### Key Management
+
 - `core/audit-system.js` - Key generation and caching
 
 ### Usage in Governance
+
 - `core/governance.js` - Plan signing
 - `core/audit-log.js` - Audit entry signing
 
 ### Session Management
+
 - `tools/begin_session.js` - Session initialization with key setup
 
 ---
@@ -227,6 +249,7 @@ A: Yes, signature verification only requires the public key, which is stored loc
 ✅ **The cosign implementation is complete, correct, and verified.**
 
 All critical issues have been resolved:
+
 - Explicit key generation in begin_session
 - Proper keyPair passing to signing functions
 - Idempotent key generation (no regeneration of existing keys)

@@ -28,7 +28,7 @@ import path from "path";
 import os from "os";
 
 // Import test utilities
-import { FAILURE_TAXONOMY, getFailureDefinition, isCriticalFailure } from "../../core/failure-taxonomy.js";
+import { FAILURE_TAXONOMY, getFailureDefinition, isCriticalFailure } from "../src/application/failure-taxonomy.js";
 import {
   KillSwitchState,
   loadKillSwitchState,
@@ -38,14 +38,14 @@ import {
   isToolAllowedUnderKillSwitch,
   getKillSwitchState,
   clearKillSwitch
-} from "../../core/kill-switch.js";
+} from "../src/application/kill-switch.js";
 import {
   generateHaltReport,
   writeHaltReport,
   executeSafeHalt,
   listHaltReports,
   readHaltReport
-} from "../../core/safe-halt.js";
+} from "../src/application/safe-halt.js";
 import {
   initializeSimulation,
   injectFailure,
@@ -54,7 +54,7 @@ import {
   SIMULATION_MODE,
   SIMULABLE_FAILURES,
   disableSimulation
-} from "../../core/failure-simulation.js";
+} from "../src/application/failure-simulation.js";
 import {
   drillAuditTamper,
   drillPolicyBreach,
@@ -62,13 +62,13 @@ import {
   drillOperatorAbuse,
   drillFilesystemDenial,
   listAvailableDrills
-} from "../../core/drills.js";
+} from "../src/application/drills.js";
 import {
   initiateRecoveryAcknowledgement,
   confirmRecovery,
   unlockKillSwitch,
   getRecoveryStatus
-} from "../../core/recovery-gate.js";
+} from "../src/application/recovery-gate.js";
 
 // Test counters
 let passedTests = 0;

@@ -85,7 +85,8 @@ All 3 tools are **read-only** and registered with both WINDSURF and ANTIGRAVITY 
 ### 4.1 Signing Method
 
 **Algorithm**: HMAC-SHA256  
-**Secret Source**: 
+**Secret Source**:
+
 - Environment: `ATLAS-GATE_ATTESTATION_SECRET`
 - File: `.atlas-gate/attestation_secret.json`
 - Ephemeral: Random 32-byte secret (warning issued)
@@ -95,6 +96,7 @@ All 3 tools are **read-only** and registered with both WINDSURF and ANTIGRAVITY 
 ### 4.2 Determinism
 
 Bundle ID computed via:
+
 1. Recursively sort all object keys
 2. Canonicalize to JSON (no whitespace)
 3. SHA256 hash
@@ -135,6 +137,7 @@ Timing-safe HMAC comparison prevents timing attacks.
 ```
 
 **Coverage**:
+
 - ✅ Bundle generation & structure
 - ✅ HMAC-SHA256 signing & verification
 - ✅ Signature tamper detection
@@ -171,6 +174,7 @@ Timing-safe HMAC comparison prevents timing attacks.
 **Location**: `docs/reports/MCP_EXTERNAL_ATTESTATION_SPEC.md`
 
 **Contents**:
+
 - Bundle schema (all fields documented)
 - Signing algorithm (HMAC-SHA256)
 - Verification steps (6-step protocol)
@@ -266,6 +270,7 @@ npm test
 ### Verification
 
 All core evidence systems verified present:
+
 - ✅ Audit log (`core/audit-log.js`)
 - ✅ Replay engine (`core/replay-engine.js`)
 - ✅ Plan linter (`core/plan-linter.js`)
@@ -371,4 +376,3 @@ All requirements from the WINDSURF prompt have been met. The system integrates c
 **Report Signature**: MD5 hash of this document generated at build time  
 **Verification**: All code reviewed against AGENTS.md standards  
 **Authority**: WINDSURF execution mode, role enforcement enabled
-

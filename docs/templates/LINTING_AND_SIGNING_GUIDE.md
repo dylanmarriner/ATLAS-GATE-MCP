@@ -7,6 +7,7 @@ This document explains the complete 7-stage linting and signing process for ATLA
 ## Overview
 
 All plans go through `lint_plan()` which:
+
 1. Validates plan structure (Stage 1-5)
 2. Runs Spectral linting rules (Stage 6)
 3. Creates cosign signature (Stage 7)
@@ -18,6 +19,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ## Stage 1: Structure Validation
 
 **What it checks**:
+
 - All 7 required sections present
 - Sections in correct order:
   1. Plan Metadata
@@ -31,6 +33,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 **Error code**: `PLAN_MISSING_SECTION`, `PLAN_INVALID_STRUCTURE`
 
 **Example failure**:
+
 ```
 ✗ Required section missing: "Phase Definitions"
 ```
@@ -42,6 +45,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ## Stage 2: Phase Validation
 
 **What it checks**:
+
 - Phase Definitions section exists
 - All phases have required fields:
   - Phase ID (UPPERCASE_WITH_UNDERSCORES format)
@@ -58,12 +62,14 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 **Error code**: `PLAN_MISSING_FIELD`, `PLAN_INVALID_PHASE_ID`
 
 **Example failures**:
+
 ```
 ✗ Phase "SETUP" missing required field: "Allowed operations"
 ✗ Invalid Phase ID format: "Phase-1" (must be uppercase alphanumeric + underscore)
 ```
 
 **Fix**:
+
 - Add all required phase fields
 - Use format: `PHASE_NAME` (all caps, underscores only)
 
@@ -72,6 +78,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ## Stage 3: Path Validation
 
 **What it checks**:
+
 - Path Allowlist contains only workspace-relative paths
 - No absolute paths (no leading `/`)
 - No parent directory escapes (`..`)
@@ -80,6 +87,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 **Error code**: `PLAN_PATH_ESCAPE`, `PLAN_INVALID_PATH`
 
 **Example failures**:
+
 ```
 ✗ Absolute path not allowed: "/etc/passwd"
 ✗ Path escape detected: "../../../src/"
@@ -87,6 +95,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ```
 
 **Fix**:
+
 - Use workspace-relative paths: `src/`, `tests/`, `docs/`
 - No leading `/`
 - No `..` escapes
@@ -97,6 +106,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ## Stage 4: Enforceability Validation
 
 **What it checks**:
+
 - No stub/incomplete code markers:
   - TODO, FIXME, XXX, HACK
   - stub, mock, placeholder
@@ -113,6 +123,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 **Error code**: `PLAN_NON_ENFORCEABLE`
 
 **Example failures**:
+
 ```
 ✗ Stub/incomplete code detected (line ~42)
   Plans must contain complete, production-ready implementations.
@@ -125,6 +136,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ```
 
 **Fix**:
+
 - Remove all stub/incomplete markers
 - Replace ambiguous language with binary: MUST, MUST NOT
 - Replace judgment clauses with specific rules
@@ -134,6 +146,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 ## Stage 5: Auditability Validation
 
 **What it checks**:
+
 - Objectives are plain English (human-readable)
 - No code symbols in objectives:
   - No `${...}` variables
@@ -144,12 +157,14 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 **Error code**: `PLAN_NON_AUDITABLE`
 
 **Example failure**:
+
 ```
 ✗ Objective contains code symbols (must be plain English)
   Line: "Objective: Implement `validate()` function with JWT-RS256 signing"
 ```
 
 **Fix**:
+
 - Write objectives as plain English
 - Example ✓: "Add JWT authentication to REST API with token validation"
 - Example ✗: "Implement `verifyToken()` function"
@@ -160,6 +175,7 @@ Plans MUST pass all stages before they can be executed by WINDSURF.
 
 **What it checks**:
 Custom OpenAPI/Spectral rules for plan format:
+
 - `plan-required-sections`: All 7 sections present
 - `plan-no-stubs`: No stub patterns detected
 - `plan-phase-format`: Phase ID format correct (UPPERCASE_WITH_UNDERSCORES)
@@ -167,13 +183,15 @@ Custom OpenAPI/Spectral rules for plan format:
 **Error code**: `SPECTRAL_LINT_ERROR`
 
 **Example output**:
+
 ```
 ✓ plan-required-sections: PASS
 ✓ plan-no-stubs: PASS
 ✓ plan-phase-format: PASS
 ```
 
-**Fix**: 
+**Fix**:
+
 - Ensure all previous stages pass
 - Spectral validates same rules as Stages 1-5
 
@@ -182,6 +200,7 @@ Custom OpenAPI/Spectral rules for plan format:
 ## Stage 7: Cosign Signing
 
 **What it does**:
+
 1. Strips HTML comment header (lines 1-5)
 2. Strips existing `[COSIGN_SIGNATURE: ...]` footer
 3. Canonicalizes plan content:
@@ -196,6 +215,7 @@ Custom OpenAPI/Spectral rules for plan format:
 **Output**: `COSIGN_SIGNATURE: [url-safe-base64-signature]`
 
 **Example**:
+
 ```
 Before:
 <!--
@@ -216,12 +236,14 @@ docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.md
 ```
 
 **Signature Format**:
+
 - URL-safe base64 (no `/`, `+`, or `=` characters)
 - Safe for use as filename
 - 43 characters long (SHA256 base64)
 - Deterministic - same content always produces same signature
 
 **Requirements**:
+
 - Cosign EC P-256 keys in `.atlas-gate/.cosign-keys/`
 - Private key for signing
 - Public key for verification
@@ -244,6 +266,7 @@ When WINDSURF executes a plan:
    - Normalize line endings
 
 3. **Verify Signature**:
+
    ```javascript
    const verified = await verifyWithCosign(
      canonicalizedContent,
@@ -261,42 +284,54 @@ When WINDSURF executes a plan:
 ## Common Failures
 
 ### "Phase ID is not UPPERCASE_WITH_UNDERSCORES"
+
 ```
 ✗ Invalid Phase ID format: "PhaseImplementation"
 ```
+
 **Fix**: Use `PHASE_IMPLEMENTATION` (all caps, underscores)
 
 ### "TODO/FIXME found in plan"
+
 ```
 ✗ Stub/incomplete code detected
   // TODO: implement validation
 ```
+
 **Fix**: Remove TODO/FIXME, provide complete implementation
 
 ### "Ambiguous language"
+
 ```
 ✗ Non-enforceable language detected
   "should validate tokens"
 ```
+
 **Fix**: Use binary language: "MUST validate tokens"
 
 ### "Objective has code symbols"
+
 ```
 ✗ Objective contains code symbols
   "Implement `authMiddleware()` function"
 ```
+
 **Fix**: Use plain English: "Implement authentication middleware"
 
 ### "Signature verification fails"
+
 ```
 ✗ Signature verification failed: signature does not match content
 ```
+
 **Causes**:
+
 - Plan was modified after signing
 - Using wrong public key (doesn't match signing private key)
 - Signature was corrupted or truncated
 
 **Fix**:
+
 1. Verify public key location: `.atlas-gate/.cosign-keys/public.pem`
 2. Ensure plan file hasn't been modified: Check git history
 3. Re-lint and re-sign the plan if needed
@@ -313,6 +348,7 @@ When WINDSURF executes a plan:
    - Use uppercase Phase IDs
 
 2. **Run Linting**
+
    ```bash
    lint_plan({ path: "PLAN_AUTH_V1.md" })
    ```

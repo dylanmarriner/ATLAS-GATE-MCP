@@ -10,11 +10,13 @@ scope: "tests/lang/html/**"
 # HTML/CSS Full-Stack Implementation Plan
 
 ## Overview
+
 Build a complete e-learning platform using semantic HTML5 and modern CSS3 with responsive design, accessibility (WCAG 2.1), and advanced CSS layout techniques.
 
 ## Semantic HTML Structure
 
 ### 1. Course Page Structure
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -111,6 +113,7 @@ Build a complete e-learning platform using semantic HTML5 and modern CSS3 with r
 ## Responsive CSS Layouts
 
 ### 1. Mobile-First Approach
+
 ```css
 /* Base styles for mobile */
 :root {
@@ -160,6 +163,7 @@ h4 { font-size: 1.1rem; margin: calc(var(--spacing-unit) * 0.8) 0; }
 ```
 
 ### 2. CSS Grid Layout
+
 ```css
 .course-grid {
     display: grid;
@@ -211,6 +215,7 @@ h4 { font-size: 1.1rem; margin: calc(var(--spacing-unit) * 0.8) 0; }
 ```
 
 ### 3. Flexbox for Components
+
 ```css
 /* Navigation bar */
 nav ul {
@@ -264,6 +269,7 @@ nav ul {
 ## Advanced CSS Features
 
 ### 1. Gradients and Animations
+
 ```css
 /* Gradient backgrounds */
 .gradient-text {
@@ -316,6 +322,7 @@ nav ul {
 ```
 
 ### 2. CSS Variables and Theming
+
 ```css
 /* Light theme */
 :root {
@@ -356,6 +363,7 @@ body {
 ## Accessibility (WCAG 2.1)
 
 ### 1. Accessible Forms
+
 ```html
 <form>
     <fieldset>
@@ -403,6 +411,7 @@ body {
 ```
 
 ### 2. Accessible CSS
+
 ```css
 /* Focus visible for keyboard navigation */
 button:focus-visible,

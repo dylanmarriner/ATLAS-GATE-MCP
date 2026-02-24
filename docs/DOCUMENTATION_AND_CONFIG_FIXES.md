@@ -43,6 +43,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 **Issue**: README.md had incorrect MCP configuration that wouldn't work.
 
 **Problems Identified**:
+
 1. ❌ Referenced `server.js` directly instead of role-specific entry points
 2. ❌ Missing `"type": "stdio"` (required for MCP protocol)
 3. ❌ No role distinction (WINDSURF vs ANTIGRAVITY)
@@ -51,6 +52,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 **Status**: ✅ FIXED
 
 **Original Configuration**:
+
 ```json
 {
   "mcpServers": {
@@ -66,6 +68,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 ```
 
 **Fixed Configuration for Windsurf**:
+
 ```json
 {
   "mcpServers": {
@@ -80,6 +83,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 ```
 
 **Fixed Configuration for Antigravity**:
+
 ```json
 {
   "mcpServers": {
@@ -94,6 +98,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 ```
 
 **Why This Matters**:
+
 - ✅ Uses correct role-specific bin entry points
 - ✅ Includes required MCP `"type": "stdio"` for proper protocol communication
 - ✅ Distinguishes between read-only (ANTIGRAVITY) and execution (WINDSURF) roles
@@ -111,6 +116,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 **New File**: `./docs/PROMPT_TEMPLATES.md` (480+ lines)
 
 **Content Includes**:
+
 1. **System Role Definitions**
    - For planning (ANTIGRAVITY role)
    - For execution (WINDSURF role)
@@ -135,6 +141,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
    - Key rules and restrictions
 
 **Purpose**: These templates enable AI agents and LLMs to effectively use ATLAS-GATE MCP by providing clear instructions on:
+
 - What role to play (planning vs execution)
 - Which tools to use and when
 - How to structure code and plans
@@ -151,6 +158,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 **New File**: `./DOCUMENTATION_AUDIT.md` (400+ lines)
 
 **Content**:
+
 1. Summary of all issues found and fixed
 2. Table of broken references and fixes
 3. List of existing documentation (with status)
@@ -184,6 +192,7 @@ This document summarizes all fixes made to ATLAS-GATE MCP documentation and conf
 ### ✅ Configuration Tested
 
 Both MCP configurations verified to:
+
 - Use correct bin entry points
 - Include required `"type": "stdio"`
 - Are properly role-separated
@@ -199,18 +208,21 @@ Both MCP configurations verified to:
 ## User Impact
 
 ### For New Users
+
 - **Better onboarding**: Clear, working documentation links
 - **Correct configuration**: Configuration examples now work
 - **Role clarity**: Clear distinction between WINDSURF and ANTIGRAVITY roles
 - **AI agent guidance**: Proper prompts for Claude, GPT, etc.
 
 ### For AI Agents/LLMs
+
 - **Clear instructions**: System role definitions tell agents what to do
 - **Example workflows**: Real task examples show exactly how to use ATLAS-GATE
 - **Troubleshooting guide**: Common errors documented with solutions
 - **Best practices**: Clear rules about code quality and plan creation
 
 ### For Developers
+
 - **Accurate information**: All links point to existing, verified content
 - **Configuration examples**: Can be copied directly (with path substitution)
 - **Problem solving**: Audit document helps identify documentation gaps
@@ -220,6 +232,7 @@ Both MCP configurations verified to:
 ## Documentation Quality Before vs After
 
 ### Before
+
 | Aspect | Status |
 |--------|--------|
 | Broken links | ❌ 7 broken references |
@@ -229,6 +242,7 @@ Both MCP configurations verified to:
 | Total usable docs | ⚠️ 60% (broken links) |
 
 ### After
+
 | Aspect | Status |
 |--------|--------|
 | Broken links | ✅ 0 broken references |
@@ -283,6 +297,7 @@ Both MCP configurations verified to:
 ✅ **Documentation is now correct, complete, and properly referenced.**
 
 All broken links have been fixed, configuration examples are now correct, and comprehensive AI agent guidance has been added. Users can now:
+
 1. Follow working documentation links
 2. Copy configuration examples that actually work
 3. Properly instruct AI agents to use ATLAS-GATE MCP

@@ -20,6 +20,7 @@ Governance: ATLAS-GATE-v1
 Objective: Add JWT-based authentication to REST API. Implement token generation, validation middleware, and protected routes. Users without valid JWT tokens will receive 401 Unauthorized responses.
 
 Affected Files:
+
 - src/auth.js: JWT token generation and validation functions
 - src/middleware.js: Express middleware for token verification
 - src/server.js: Integrate authentication middleware into server
@@ -28,6 +29,7 @@ Affected Files:
 - docs/AUTHENTICATION.md: User-facing authentication documentation
 
 Out of Scope:
+
 - OAuth2 integration
 - Multi-factor authentication
 - Token refresh logic
@@ -35,6 +37,7 @@ Out of Scope:
 - User service modifications
 
 Constraints:
+
 - MUST use jsonwebtoken library (already in package.json as dependency)
 - MUST sign tokens with HS256 algorithm only
 - MUST reject tokens older than 24 hours (token expiration)
@@ -78,24 +81,28 @@ Failure stop conditions: Test failure, Lint error, File outside allowlist, Synta
 # Verification Gates
 
 ## Gate 1: Unit and Integration Tests
+
 Trigger: After implementation complete
 Check: npm run test
 Required: Exit code 0, all tests pass
 Failure action: REJECT and ROLLBACK
 
 ## Gate 2: Code Quality
+
 Trigger: After tests pass
 Check: npm run lint
 Required: Exit code 0, zero lint errors
 Failure action: REJECT and ROLLBACK
 
 ## Gate 3: Workspace Integrity
+
 Trigger: Before approval
 Check: Verify only Path Allowlist files modified
 Required: No violations, no files outside allowlist changed
 Failure action: REJECT
 
 ## Gate 4: Plan Integrity (Cosign Verification)
+
 Trigger: Before WINDSURF execution
 Check: Verify COSIGN_SIGNATURE with cosign using public key
 Required: Signature valid, plan not tampered
@@ -126,6 +133,7 @@ Actions STRICTLY PROHIBITED during execution:
 # Rollback / Failure Policy
 
 ## Automatic Rollback Triggers
+
 1. Cosign signature verification fails (plan integrity compromised)
 2. npm run test fails
 3. npm run lint fails
@@ -134,6 +142,7 @@ Actions STRICTLY PROHIBITED during execution:
 6. Audit log entry missing after write
 
 ## Rollback Procedure
+
 1. Execute: git checkout src/auth.js src/middleware.js src/server.js tests/auth.test.js tests/integration/auth.test.js docs/AUTHENTICATION.md
 2. Delete any newly created files not in original repo
 3. Run: git status
@@ -142,6 +151,7 @@ Actions STRICTLY PROHIBITED during execution:
 6. Create audit log entry with rollback details
 
 ## Recovery Steps
+
 1. Review failure logs:
    - Signature failure: Plan was tampered with or public key mismatch (security issue)
    - Test/lint failure: Code needs fixing (resubmit to linter)

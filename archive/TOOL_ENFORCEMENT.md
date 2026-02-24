@@ -21,12 +21,14 @@ await runStartupAudit(server, role);    // Audit happens after
 Every tool call passes through two enforcement gates:
 
 #### Gate 1: `validateToolInput()` Override (server.js)
+
 - Runs before Zod schema validation
 - Performs strict parameter checking via `validateToolParameters()`
 - Rejects calls with unknown fields, wrong types, or missing required fields
 - Throws `TOOL_ENFORCEMENT_FAILURE` errors
 
 #### Gate 2: Handler Wrapper (via `installEnforcementLayer()`)
+
 - Wraps each registered tool handler
 - Validates parameters a second time
 - Audits any violations to the audit log
@@ -96,6 +98,7 @@ write_file: {
 ```
 
 **Valid call:**
+
 ```json
 {
   "path": "/src/index.js",
@@ -105,6 +108,7 @@ write_file: {
 ```
 
 **Invalid calls that get blocked:**
+
 ```json
 // ❌ Missing required 'plan'
 { "path": "/src/index.js", "content": "// code" }
@@ -125,51 +129,61 @@ write_file: {
 ### Universal Tools
 
 #### `begin_session`
+
 - **Required:** `workspace_root` (string, absolute path)
 - **Allowed extra fields:** No
 - **Validation:** Must start with `/` or drive letter (Windows)
 
 #### `read_file`
+
 - **Required:** `path` (string)
 - **Optional:** None
 - **Allowed extra fields:** No
 
 #### `read_prompt`
+
 - **Required:** `name` (string)
 - **Optional:** None
 - **Allowed extra fields:** No
 
 #### `read_audit_log`
+
 - **Required:** None
 - **Optional:** None
 - **Allowed extra fields:** No
 
 #### `list_plans`
+
 - **Required:** None
 - **Optional:** `path` (string)
 - **Allowed extra fields:** No
 
 #### `replay_execution`
+
 - **Required:** `plan_hash` (64-char hex string)
 - **Optional:** `phase_id`, `tool`, `seq_start`, `seq_end`
 - **Allowed extra fields:** No
 
 #### `verify_workspace_integrity`
+
 - **Required:** None
 - **Optional:** None
 - **Allowed extra fields:** No
 
 #### `generate_attestation_bundle`
+
 - **Required:** None
 - **Optional:** `workspace_root_label`, `plan_hash_filter`, `time_window` (object)
 - **Allowed extra fields:** No
 
 #### `verify_attestation_bundle`
+
 - **Required:** `bundle` (object)
 - **Optional:** None
 - **Allowed extra fields:** No
 
 #### `export_attestation_bundle`
+
 - **Required:** `bundle` (object)
 - **Optional:** `format` ("json" or "markdown")
 - **Allowed extra fields:** No
@@ -177,6 +191,7 @@ write_file: {
 ### Windsurf-Only Tools
 
 #### `write_file`
+
 - **Required:** `path`, `plan`
 - **Optional:** `content`, `patch`, `previousHash`, `role`, `intent`
 - **Allowed extra fields:** No
@@ -188,6 +203,7 @@ write_file: {
 ### Antigravity-Only Tools
 
 #### `bootstrap_create_foundation_plan`
+
 - **Required:** `description`, `phases`
 - **Optional:** `workspace_label`
 - **Allowed extra fields:** No
@@ -196,6 +212,7 @@ write_file: {
   - `description` must be a string
 
 #### `lint_plan`
+
 - **Required:** None (at least one of `path`, `hash`, or `content` required)
 - **Optional:** `path`, `hash`, `content`
 - **Allowed extra fields:** No
@@ -208,26 +225,31 @@ write_file: {
 When enforcement fails, IDEs receive clear error messages:
 
 ### Wrong Type
+
 ```
 TOOL_ENFORCEMENT_FAILURE: INVALID_FIELD_TYPE: write_file.plan must be string, got number
 ```
 
 ### Missing Required Field
+
 ```
 TOOL_ENFORCEMENT_FAILURE: MISSING_REQUIRED_FIELD: "plan" is required for write_file
 ```
 
 ### Unknown Field
+
 ```
 TOOL_ENFORCEMENT_FAILURE: UNKNOWN_FIELDS: write_file does not accept [workspace_id, role_override]. Allowed: [path, content, patch, previousHash, plan, role, intent]
 ```
 
 ### Invalid Field Value
+
 ```
 TOOL_ENFORCEMENT_FAILURE: INVALID_FIELD_VALUE: write_file.plan must be 64-char hex hash, got "abc123"
 ```
 
 ### Custom Validation
+
 ```
 TOOL_ENFORCEMENT_FAILURE: VALIDATION_ERROR: lint_plan only one of: path, hash, or content allowed
 ```
@@ -253,6 +275,7 @@ Every tool call (successful or blocked) is recorded in the audit log:
 To register a new tool with enforcement:
 
 1. **Add schema to `TOOL_SCHEMAS`** in `core/tool-enforcement.js`:
+
    ```javascript
    my_new_tool: {
      required: ['required_field'],
@@ -271,6 +294,7 @@ To register a new tool with enforcement:
    ```
 
 2. **Register tool normally** in `server.js`:
+
    ```javascript
    server.registerTool('my_new_tool', 
      { 
@@ -286,6 +310,7 @@ To register a new tool with enforcement:
 ## Testing Enforcement
 
 ### Test Invalid Parameters
+
 ```bash
 # Missing required field
 curl http://localhost:8000/tools/write_file \
@@ -310,6 +335,7 @@ curl http://localhost:8000/tools/write_file \
 ```
 
 ### Test Valid Parameters
+
 ```bash
 # Correct call
 curl http://localhost:8000/tools/write_file \
@@ -326,21 +352,25 @@ curl http://localhost:8000/tools/write_file \
 ## Design Principles
 
 ### Fail-Closed
+
 - Any validation failure **blocks execution**
 - Unknown fields trigger rejection (not silent ignoring)
 - Missing required fields block the call
 
 ### Clear Feedback
+
 - Error messages explain exactly what was wrong
 - Include allowed fields and types
 - Suggest valid values for enums
 
 ### Comprehensive Audit Trail
+
 - Every attempt (blocked or successful) is logged
 - Violations include full context
 - Enables forensic analysis of tool misuse
 
 ### IDE Transparency
+
 - No hidden rules or "magical" parameter handling
 - All schemas are explicit in code
 - Error messages are deterministic
@@ -348,6 +378,7 @@ curl http://localhost:8000/tools/write_file \
 ## Implementation Details
 
 ### Validation Order
+
 1. Check input is object
 2. Check all required fields present
 3. Check no extra fields (unless `allowExtraFields: true`)
@@ -356,11 +387,13 @@ curl http://localhost:8000/tools/write_file \
 6. Run tool-level custom validators
 
 ### Performance
+
 - Single-pass validation (no re-parsing)
 - Validation happens before handler execution
 - Audit log append is async but fail-closed
 
 ### Backward Compatibility
+
 - Legacy string inputs are normalized (e.g., `path: "..."` → `{ path: "..." }`)
 - Existing handlers continue to work unchanged
 - Enforcement is transparent to handler code

@@ -31,6 +31,7 @@ if (!lintResult.passed) {
 ```
 
 **Behavior**:
+
 - Plans are linted immediately upon proposal
 - Any lint error blocks plan creation
 - Violations are reported to caller
@@ -59,6 +60,7 @@ const rawHash = lintResult.hash;
 ```
 
 **Behavior**:
+
 - Plans are re-linted at approval time
 - Hash is computed by linter (deterministic)
 - Any lint error blocks approval
@@ -84,6 +86,7 @@ if (!lintResult.passed) {
 ```
 
 **Behavior**:
+
 - Plans are re-linted at execution time
 - Hash is re-computed and compared
 - Detects any post-approval modifications
@@ -97,6 +100,7 @@ if (!lintResult.passed) {
 **Purpose**: Read-only validation tool for ANTIGRAVITY  
 
 **Handler**: `tools/lint_plan.js`
+
 ```javascript
 export async function lintPlanHandler({ path, hash, content }) {
   // Load plan from one of three sources
@@ -106,6 +110,7 @@ export async function lintPlanHandler({ path, hash, content }) {
 ```
 
 **Tool Registration**: `server.js`
+
 ```javascript
 server.registerTool(
   "lint_plan",
@@ -122,6 +127,7 @@ server.registerTool(
 ```
 
 **Behavior**:
+
 - Non-mutating read-only tool
 - No approval or side effects
 - Allows pre-flight validation
@@ -132,25 +138,30 @@ server.registerTool(
 ## Modified Files
 
 ### 1. tools/bootstrap_tool.js
+
 - Added import: `import { lintPlan } from "../core/plan-linter.js";`
 - Added GATE 1 linting before plan creation
 - Reports violations in error
 
 ### 2. core/governance.js
+
 - Added import: `import { lintPlan } from "./plan-linter.js";`
 - Added GATE 3 linting before approval
 - Uses linter's hash for consistency
 
 ### 3. core/plan-enforcer.js
+
 - Added import: `import { lintPlan } from "./plan-linter.js";`
 - Added execution-time linting with hash validation
 - Detects post-approval modifications
 
 ### 4. server.js
+
 - Added import: `import { lintPlanHandler } from "./tools/lint_plan.js";`
 - Added lint_plan tool registration (ANTIGRAVITY only)
 
 ### 5. tools/lint_plan.js (NEW)
+
 - Created new tool handler
 - Read-only validation
 - Supports path, hash, or content input
@@ -196,21 +207,25 @@ server.registerTool(
 Plans are blocked at each gate if linting fails:
 
 **Gate 1 (Proposal)**
+
 - Error Code: `PLAN_LINT_FAILED`
 - Action: REFUSE plan creation
 - Message: Detailed violation list
 
 **Gate 2 (Approval)**
+
 - Error Code: `APPROVAL_BLOCKED`
 - Action: REFUSE approval
 - Message: Lint failures detailed
 
 **Gate 3 (Execution)**
+
 - Error Code: `REFUSE`
 - Action: REFUSE write authorization
 - Message: "Plan may have been modified after approval"
 
 **Pre-Flight (Lint Tool)**
+
 - Returns structured result
 - No side effects
 - Non-blocking reporting
@@ -268,12 +283,14 @@ Plans are blocked at each gate if linting fails:
 ## What Changed
 
 ### Before Integration
+
 ```
 Proposal → Create → Approval → Execution
 (No validation)
 ```
 
 ### After Integration
+
 ```
 Proposal → LINT ✓ → Create → Approval → LINT ✓ → Execution → LINT ✓
 (Deterministic validation at every stage)
@@ -317,6 +334,7 @@ Lint results are structured for audit logging:
 ## Files Summary
 
 **Integrated**: 5 files modified/created
+
 - bootstrap_tool.js (modified)
 - governance.js (modified)
 - plan-enforcer.js (modified)
@@ -324,6 +342,7 @@ Lint results are structured for audit logging:
 - lint_plan.js (created)
 
 **Supporting**: 5 files
+
 - core/plan-linter.js (370 lines)
 - test-plan-linter.js (14 tests, all passing)
 - docs/reports/MCP_PLAN_LINTER_SPEC.md
@@ -335,12 +354,14 @@ Lint results are structured for audit logging:
 ## Verification
 
 Run tests:
+
 ```bash
 node test-plan-linter.js
 # [RESULT] 14 passed, 0 failed ✓
 ```
 
 Check imports:
+
 ```bash
 node test-integration.js
 # ✓ All imports successful

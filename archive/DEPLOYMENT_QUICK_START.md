@@ -12,12 +12,14 @@ cd /path/to/ATLAS-GATE-MCP
 ```
 
 **What happens:**
+
 1. Builds Docker image
 2. Starts HTTP server (port 3000)
 3. Generates API key
 4. Shows credentials file
 
 **Output:**
+
 ```
 Deployment Complete!
 ═══════════════════════════════════════════════════════════════
@@ -37,6 +39,7 @@ cd /path/to/ATLAS-GATE-MCP
 ```
 
 **What happens:**
+
 1. Builds Docker image & pushes to registry
 2. Creates Kubernetes namespace
 3. Deploys 3 replicas with auto-scaling
@@ -44,6 +47,7 @@ cd /path/to/ATLAS-GATE-MCP
 5. Creates secrets
 
 **Output:**
+
 ```
 Kubernetes Deployment Complete!
 ═══════════════════════════════════════════════════════════════
@@ -61,12 +65,14 @@ API Key:     5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c
 ```
 
 **Pros:**
+
 - Single command
 - Works on any Linux server
 - Fast startup
 - Easy to manage
 
 **Cons:**
+
 - Requires Docker/Docker Compose
 - Limited to single server
 - No built-in auto-scaling
@@ -78,12 +84,14 @@ API Key:     5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c
 ```
 
 **Pros:**
+
 - Multi-server
 - Auto-scaling
 - Self-healing
 - Industry standard
 
 **Cons:**
+
 - More complex
 - Requires K8s cluster
 - Higher resource overhead
@@ -149,6 +157,7 @@ curl http://localhost:3000/health
 ```
 
 **Success response:**
+
 ```json
 {
   "status": "healthy",
@@ -163,6 +172,7 @@ curl http://localhost:3000/health
 ### Quick Setup (2 minutes)
 
 1. **Get credentials**
+
    ```bash
    source .atlas-gate-creds
    echo $ATLAS_GATE_API_KEY
@@ -170,9 +180,9 @@ curl http://localhost:3000/health
    ```
 
 2. **Update Windsurf config**
-   
+
    Edit: `~/.windsurf/settings.json`
-   
+
    ```json
    {
      "mcpServers": {
@@ -191,9 +201,9 @@ curl http://localhost:3000/health
    ```
 
 3. **Test in Windsurf**
-   
+
    Command Palette: `MCP: Reload MCP Servers`
-   
+
    Then: `@atlas-gate read_file package.json`
 
 See: [WINDSURF_HTTP_INTEGRATION.md](./WINDSURF_HTTP_INTEGRATION.md)
@@ -203,6 +213,7 @@ See: [WINDSURF_HTTP_INTEGRATION.md](./WINDSURF_HTTP_INTEGRATION.md)
 ### Quick Setup (2 minutes)
 
 1. **Set environment variables**
+
    ```bash
    source .atlas-gate-creds
    
@@ -213,16 +224,19 @@ See: [WINDSURF_HTTP_INTEGRATION.md](./WINDSURF_HTTP_INTEGRATION.md)
    ```
 
 2. **Create session**
+
    ```bash
    antigravity session create --name my-project
    ```
 
 3. **Create plan**
+
    ```bash
    antigravity plan bootstrap --intent "Set up governance"
    ```
 
 4. **Monitor execution**
+
    ```bash
    antigravity audit view
    ```
@@ -361,11 +375,12 @@ docker-compose down             # Docker
 kubectl delete namespace atlas-gate # Kubernetes
 ```
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 Your ATLAS-GATE HTTP server is now running and connected to Windsurf & Antigravity.
 
 **Next:**
+
 1. Create some plans in Antigravity
 2. Use Windsurf to implement them
 3. Monitor with audit logs

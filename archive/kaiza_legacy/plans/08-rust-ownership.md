@@ -10,11 +10,13 @@ scope: "tests/lang/rust/**"
 # Rust Full-Stack Implementation Plan
 
 ## Overview
+
 Build a high-performance multiplayer game server in Rust using Entity-Component-System (ECS) pattern, demonstrating ownership semantics, lifetimes, and zero-copy networking.
 
 ## Architecture
 
 ### Game Engine (Rust)
+
 - Entity-Component-System (ECS) architecture
 - Real-time networking with tokio
 - Physics simulation
@@ -22,6 +24,7 @@ Build a high-performance multiplayer game server in Rust using Entity-Component-
 - Plugin system with trait objects
 
 ### Networking Layer
+
 - Zero-copy protocol buffers
 - WebSocket connections
 - UDP for real-time updates
@@ -29,6 +32,7 @@ Build a high-performance multiplayer game server in Rust using Entity-Component-
 - Backpressure handling
 
 ### Game World
+
 - Spatial partitioning for queries
 - Event bus for decoupled systems
 - Component lifecycle management
@@ -37,6 +41,7 @@ Build a high-performance multiplayer game server in Rust using Entity-Component-
 ## Ownership & Borrowing Model
 
 ### 1. Entity Management
+
 ```rust
 struct Entity {
     id: EntityId,
@@ -71,6 +76,7 @@ impl World {
 ```
 
 ### 2. Lifetimes in Systems
+
 ```rust
 trait System {
     fn update<'a>(&mut self, world: &'a World, delta: f32);
@@ -94,6 +100,7 @@ impl System for PhysicsSystem {
 ```
 
 ### 3. RAII Pattern for Resources
+
 ```rust
 pub struct GameServer {
     listener: TcpListener,
@@ -121,6 +128,7 @@ impl Drop for GameServer {
 ## ECS Architecture
 
 ### 1. Components
+
 ```rust
 #[derive(Clone, Copy, Debug)]
 struct Position {
@@ -149,6 +157,7 @@ impl Component for Player {}
 ```
 
 ### 2. Systems
+
 ```rust
 struct MovementSystem;
 
@@ -196,6 +205,7 @@ impl System for CombatSystem {
 ```
 
 ### 3. World Updates
+
 ```rust
 pub struct GameLoop {
     world: World,
@@ -216,6 +226,7 @@ impl GameLoop {
 ## Networking with Zero-Copy
 
 ### 1. Protocol Definition
+
 ```rust
 #[repr(C)]
 pub struct PlayerUpdate {
@@ -238,6 +249,7 @@ impl PlayerUpdate {
 ```
 
 ### 2. Network Handler with Ownership
+
 ```rust
 pub struct Connection {
     stream: TcpStream,
@@ -274,6 +286,7 @@ impl Connection {
 ## Pattern Matching & Error Handling
 
 ### 1. Result-Based Error Handling
+
 ```rust
 pub enum GameError {
     EntityNotFound(EntityId),
@@ -293,6 +306,7 @@ fn get_player_position(world: &World, entity_id: EntityId) -> GameResult<Positio
 ```
 
 ### 2. Match Expressions for Events
+
 ```rust
 pub enum GameEvent {
     PlayerJoined { id: PlayerId, name: String },
@@ -326,6 +340,7 @@ fn process_event(event: GameEvent, world: &mut World) -> GameResult<()> {
 ## Trait Objects & Polymorphism
 
 ### 1. Plugin System
+
 ```rust
 pub trait GamePlugin: Send + Sync {
     fn on_startup(&mut self, world: &mut World);
@@ -353,6 +368,7 @@ impl PluginRegistry {
 ## Concurrency with tokio
 
 ### 1. Async Connection Handler
+
 ```rust
 pub struct GameServer {
     listener: TcpListener,
@@ -394,6 +410,7 @@ async fn handle_connection(
 ## Testing Strategy
 
 ### 1. Unit Tests with Owned Data
+
 ```rust
 #[cfg(test)]
 mod tests {

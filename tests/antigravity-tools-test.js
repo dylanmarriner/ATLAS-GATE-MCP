@@ -26,11 +26,11 @@ import { readPromptHandler } from "../tools/read_prompt.js";
 import { readFileHandler } from "../tools/read_file.js";
 import { listPlansHandler } from "../tools/list_plans.js";
 import { lintPlanHandler } from "../tools/lint_plan.js";
-import { lintPlan } from "../core/plan-linter.js";
+import { lintPlan } from "../src/application/plan-linter.js";
 
 // Session setup
 import { SESSION_STATE } from "../session.js";
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../core/path-resolver.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../src/infrastructure/path-resolver.js";
 
 console.log("\n╔════════════════════════════════════════════════════════════╗");
 console.log("║  ANTIGRAVITY TOOLS COMPREHENSIVE TEST                     ║");

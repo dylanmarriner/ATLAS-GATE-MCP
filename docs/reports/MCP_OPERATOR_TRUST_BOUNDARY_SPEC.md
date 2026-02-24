@@ -20,26 +20,32 @@ The implementation uses fail-closed semantics: ambiguous or risky actions are re
 The system defends against:
 
 ### 1. Authority Confusion
+
 **Threat**: Operator approves one action but system executes another  
 **Defense**: Explicit action_id binding, consequence re-presentation, verbatim matching
 
 ### 2. Urgency Pressure
+
 **Threat**: "Prod is down, just approve it" manipulation  
 **Defense**: Language sanitization strips urgency keywords, mandatory delay before confirmation
 
 ### 3. Social Engineering
+
 **Threat**: "Trust me, I know what I'm doing" or manipulation phrases  
 **Defense**: Pattern detection, blocked approval phrases, required structured acknowledgement
 
 ### 4. Fatigue Errors
+
 **Threat**: Late-night approvals without proper review  
 **Defense**: Approval rate limiting, mandatory pauses, fatigue guard triggers
 
 ### 5. Overconfidence
+
 **Threat**: Operator skips risk analysis  
 **Defense**: Machine-generated consequences (not free-text), blast radius analysis, reversibility checks
 
 ### 6. Approval Sprawl
+
 **Threat**: Repeated approvals without re-evaluation  
 **Defense**: Session limits, hourly limits, fatigue tracking per operator
 
@@ -97,17 +103,20 @@ core/operator-inspection.js
 ### Requirement 1: Operator Identity Binding (HARD)
 
 **Specification**:
+
 - Every human action includes: `operator_id`, `operator_role`, `authentication_context`
 - Identity bound at session start, immutable for session
 - No anonymous approvals
 - Cannot change mid-session
 
 **Implementation**:
+
 - `operator-identity.js` module manages binding
 - `SESSION_STATE` holds bound operator record
 - Attempt to rebind throws `OPERATOR_IDENTITY_ALREADY_BOUND`
 
 **Code**:
+
 ```javascript
 const identity = bindOperatorIdentity("alice@company.com", "OWNER", "github-oauth");
 // Returns: {status: "OPERATOR_IDENTITY_BOUND", operator_id, operator_role, bound_at}
@@ -118,6 +127,7 @@ bindOperatorIdentity("bob@company.com", "REVIEWER", "github-oauth");
 ```
 
 **Audit Trail**:
+
 ```json
 {
   "type": "OPERATOR_IDENTITY_BOUND",
@@ -133,17 +143,20 @@ bindOperatorIdentity("bob@company.com", "REVIEWER", "github-oauth");
 ### Requirement 2: Explicit Risk Acknowledgement (CRITICAL)
 
 **Specification**:
+
 - Structured risk acknowledgement, NOT free text
 - Machine-generated consequences (not human-written)
 - Operator must confirm: `operator_confirmation = true`
 - Blast radius, reversibility, risk level recorded
 
 **Implementation**:
+
 - `risk-acknowledgement.js` creates templates
 - `generateConsequences()` creates deterministic consequences
 - Validation rejects incomplete acknowledgements
 
 **Code**:
+
 ```javascript
 const ack = createRiskAcknowledgement(
   "action-123",      // action_id
@@ -161,12 +174,14 @@ enforceRiskAcknowledgement(ack, RISK_LEVELS.HIGH);
 ```
 
 **Risk Levels**:
+
 - `LOW` (0): File modifications, non-critical
 - `MEDIUM` (1): Config changes, audit log impact
 - `HIGH` (2): Infrastructure changes, multiple files
 - `IRREVERSIBLE` (3): Cannot be undone, permanent impact
 
 **Consequences (Machine-Generated)**:
+
 ```
 - "File modification: 2 file(s) will be changed"
 - "Audit log entry will be created"
@@ -180,18 +195,21 @@ enforceRiskAcknowledgement(ack, RISK_LEVELS.HIGH);
 ### Requirement 3: Two-Step Confirmation (CRITICAL)
 
 **Specification**:
+
 - Step 1: Intent declaration ("I intend to approve X")
 - Step 2: Delayed confirmation (>= 30s minimum)
 - Re-present consequences verbatim, no copy-paste
 - Mismatch → refuse
 
 **Implementation**:
+
 - `two-step-confirmation.js` manages state
 - `initiateConfirmation()` starts step 1
 - `checkConfirmationDelay()` verifies delay elapsed
 - `completeConfirmation()` validates step 2 with exact string matching
 
 **Code**:
+
 ```javascript
 // Step 1: Initiate
 const init = initiateConfirmation(
@@ -215,6 +233,7 @@ const result = completeConfirmation(init.confirmation_token, [
 ```
 
 **Flow Diagram**:
+
 ```
 Step 1: Initiate Confirmation
   ├─ Check token doesn't exist
@@ -236,18 +255,21 @@ Step 2b: Complete Confirmation
 ### Requirement 4: Language Sanitization (ANTI-SOCIAL-ENGINEERING)
 
 **Specification**:
+
 - Strip urgency keywords: urgent, immediately, emergency, asap, etc.
 - Highlight irreversible actions, policy exceptions, scope expansion
 - Detect manipulation phrases: "trust me", "I know what I'm doing", "just approve"
 - Enforce on proposals, approval prompts, remediation summaries
 
 **Implementation**:
+
 - `language-sanitization.js` provides detection and sanitization
 - `detectSocialEngineeringPatterns()` flags dangerous text
 - `enforceLanguageSanitization()` blocks action if patterns found
 - Sanitization applies to all human-facing text
 
 **Urgency Keywords** (stripped):
+
 ```
 urgent, immediately, emergency, asap, right now, just approve,
 just do it, system requires, system demands, critical issue,
@@ -255,12 +277,14 @@ production down, prod is down, we need this now
 ```
 
 **Manipulation Phrases** (detected):
+
 ```
 trust me, i understand the risk, i know what i'm doing,
 just this once, make an exception, this time only
 ```
 
 **High-Risk Terms** (highlighted):
+
 ```
 irreversible, cannot be undone, cannot be reverted, permanent,
 policy exception, bypass, override, disable security,
@@ -268,6 +292,7 @@ allow unsupervised, scope expansion, expand permissions
 ```
 
 **Code**:
+
 ```javascript
 // Detect patterns
 const analysis = detectSocialEngineeringPatterns(
@@ -297,18 +322,21 @@ enforceLanguageSanitization(userText, false);
 ### Requirement 5: Fatigue Guards (APPROVAL RATE LIMITING)
 
 **Specification**:
+
 - Max 10 approvals per session
 - Max 20 approvals per hour
 - Mandatory 1-minute pause after 5 consecutive approvals
 - Triggers `OPERATOR_FATIGUE_GUARD_TRIGGERED` on violation
 
 **Implementation**:
+
 - `fatigue-guards.js` tracks approval counts and timestamps
 - `enforceFatigueGuards()` checks all limits before approval
 - `recordApproval()` increments counters
 - `recordMandatoryPause()` resets consecutive counter
 
 **Code**:
+
 ```javascript
 // Before approval, check fatigue
 enforceFatigueGuards();
@@ -328,6 +356,7 @@ const status = checkOperatorFatigue();
 ```
 
 **Limits** (configurable):
+
 - `MAX_APPROVALS_PER_SESSION`: 10
 - `MAX_APPROVALS_PER_HOUR`: 20
 - `APPROVALS_BEFORE_MANDATORY_PAUSE`: 5
@@ -338,17 +367,20 @@ const status = checkOperatorFatigue();
 ### Requirement 6: Human-Factor Audit Trail
 
 **Specification**:
+
 - Audit entries include: `operator_id`, `operator_role`, `action_type`, `risk_level`
 - Confirmation timestamps and delay durations recorded
 - Refusal reasons documented
 - Integrated with existing audit-log.js
 
 **Implementation**:
+
 - `human-factor-audit.js` logs decisions with operator context
 - Appends to audit-log.jsonl with human-factor metadata
 - Queryable by forensic replay and attestation
 
 **Audit Entry Types**:
+
 - `HUMAN_FACTOR_DECISION`: Approval/refusal with risk metadata
 - `OPERATOR_IDENTITY_BOUND`: Session operator binding
 - `FATIGUE_GUARD_TRIGGERED`: Rate limit violation
@@ -359,6 +391,7 @@ const status = checkOperatorFatigue();
 - `MANDATORY_PAUSE_RECORDED`: Pause taken
 
 **Example Entry**:
+
 ```json
 {
   "type": "HUMAN_FACTOR_DECISION",
@@ -381,17 +414,20 @@ const status = checkOperatorFatigue();
 ### Requirement 7: Read-Only Inspection Tools
 
 **Specification**:
+
 - `inspect_operator_actions()`: List operator actions with filters
 - `inspect_high_risk_approvals()`: Show HIGH/IRREVERSIBLE actions only
 - Non-coder readable summaries
 - Read-only, no mutation
 
 **Implementation**:
+
 - `operator-inspection.js` parses audit-log.jsonl
 - No state changes, purely analytical
 - Returns structured data + human-readable summaries
 
 **Code**:
+
 ```javascript
 // All actions by operator in time window
 const actions = inspectOperatorActions({
@@ -414,6 +450,7 @@ const stats = getOperatorStatistics({operator_id: "alice@company.com"});
 ```
 
 **Non-Coder Summary Example**:
+
 ```
 High-Risk Approval Summary
 ==================================================
@@ -438,6 +475,7 @@ Total: 4 high-risk approval(s)
 ### Requirement 8: Fail-Closed Semantics
 
 **Error Codes**:
+
 ```
 OPERATOR_IDENTITY_MISSING
 OPERATOR_IDENTITY_ALREADY_BOUND
@@ -455,6 +493,7 @@ OPERATOR_FATIGUE_GUARD_TRIGGERED
 ```
 
 **Policy**:
+
 - Missing operator identity → REFUSE
 - Incomplete acknowledgement → REFUSE
 - Delay bypass attempted → REFUSE
@@ -520,6 +559,7 @@ This is a set of safeguards to prevent mistakes when approving important changes
 16. ✓ Error handling: refusal is deterministic and logged
 
 **Run Tests**:
+
 ```bash
 npm test test-operator-trust-boundary.js
 # OR

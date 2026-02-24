@@ -18,6 +18,7 @@ All deliverables completed and verified:
 ### 2.1 Core Implementation Files
 
 ✅ **core/intent-schema.js**
+
 - Canonical schema definition
 - Section validators (title, purpose, authority, inputs, outputs, invariants, failure modes, debug signals, out-of-scope)
 - Forbidden pattern detection
@@ -25,6 +26,7 @@ All deliverables completed and verified:
 - Determinism guarantees (identical content → identical hash)
 
 ✅ **core/intent-validator.js**
+
 - Full schema validation implementation
 - Path consistency checking
 - Authority binding verification
@@ -35,6 +37,7 @@ All deliverables completed and verified:
 ### 2.2 Tools
 
 ✅ **tools/validate-intents.js**
+
 - Read-only validation tool
 - Workspace-wide intent scanning
 - Deterministic summary reporting
@@ -43,6 +46,7 @@ All deliverables completed and verified:
 ### 2.3 Integration
 
 ✅ **core/write-time-policy-engine.js** (MODIFIED)
+
 - Integrated validateIntentArtifact call
 - Import of intent-validator module
 - Failure handling with audit logging
@@ -50,6 +54,7 @@ All deliverables completed and verified:
 ### 2.4 Tests
 
 ✅ **test-intent-artifact.js**
+
 - 16 comprehensive tests (exceeds 12+ requirement)
 - All tests passing (16/16 PASS)
 - Coverage:
@@ -73,6 +78,7 @@ All deliverables completed and verified:
 ### 2.5 Documentation
 
 ✅ **docs/reports/MCP_INTENT_ARTIFACT_SPEC.md**
+
 - 13 sections covering:
   - Canonical schema (9 required sections)
   - File naming conventions
@@ -143,6 +149,7 @@ Status: PASS (16/16)
 ### 5.3 Linting
 
 ✅ No diagnostic errors on new files:
+
 - core/intent-schema.js: No issues
 - core/intent-validator.js: No issues
 - tools/validate-intents.js: No issues
@@ -150,6 +157,7 @@ Status: PASS (16/16)
 ### 5.4 Code Style
 
 All files follow existing codebase conventions:
+
 - JSDoc comments with ROLE/PURPOSE/AUTHORITY headers
 - ES module imports
 - Error handling with SystemError
@@ -260,6 +268,7 @@ None. Implementation is feature-complete per specification.
 ### 12.1 Write-Time Policy Engine
 
 Intent validation is invoked in write-time-policy-engine.js:
+
 ```javascript
 await validateIntentArtifact(absPath, workspace_root, isFailureReport);
 ```
@@ -269,6 +278,7 @@ await validateIntentArtifact(absPath, workspace_root, isFailureReport);
 ### 12.2 Audit System
 
 Intent validation appends audit entries:
+
 ```javascript
 await appendAuditEntry({
   session_id, role, workspace_root, tool,
@@ -313,6 +323,7 @@ All paths resolved through path-resolver.js (no path traversal).
 **Execution Mode**: WINDSURF (execution-only, zero autonomy)
 
 **Workflow**:
+
 1. ✅ Discovered write policy engine (write-time-policy-engine.js)
 2. ✅ Defined canonical schema (intent-schema.js)
 3. ✅ Implemented validator (intent-validator.js)

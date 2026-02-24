@@ -37,18 +37,21 @@ ATLAS-GATE MCP is an enterprise governance gateway that transforms AI agents int
 ## Operational Confidence Signals
 
 ### Security Posture
+
 - **Zero-Trust Architecture**: Every operation requires explicit authorization; no implicit trust assumptions
 - **Cryptographic Audit Trail**: Tamper-proof operation history using SHA256 content hashing and sequential signatures
 - **Role-Based Access Control**: Granular RBAC (currently: Antigravity = planning, Windsurf = execution)
 - **Status**: A-grade security score; passing internal penetration testing
 
 ### Reliability
+
 - **Production Deployed**: Running in enterprise environments since Q4 2025
 - **Test Coverage**: Comprehensive test suite including governance enforcement, audit trail integrity, plan-based authorization
 - **Monitoring**: Built-in health checks, audit log validation, workspace integrity verification
 - **Status**: ✅ Production-ready with 24-month support window
 
 ### Governance
+
 - **Explicit Authorization**: All changes tied to approved plans (hash-addressed contracts)
 - **Mandatory Session Initialization**: Workspace authority locked at startup; prevents scope creep
 - **Audit Completeness**: Every operation logged with deterministic sequencing and hash chain integrity
@@ -62,6 +65,7 @@ ATLAS-GATE MCP is an enterprise governance gateway that transforms AI agents int
 **Interface:** Works with Claude Desktop, Windsurf, and any MCP-compatible client  
 
 **Three-Layer Model:**
+
 1. **Planning Layer (Antigravity)**: Create governance plans; approve architectural changes; read-only access
 2. **Execution Layer (Windsurf)**: Execute approved plans; perform authorized changes; comprehensive audit trail
 3. **Audit Layer**: Forensic replay, attestation bundles, integrity verification; accessible to both roles
@@ -87,6 +91,7 @@ ATLAS-GATE MCP is an enterprise governance gateway that transforms AI agents int
 ### Adoption & Change Management
 
 **Adoption is incremental:**
+
 1. **Phase 1 (Month 1):** Set up for experimental/non-critical projects; learn workflows
 2. **Phase 2 (Month 2-3):** Adopt for development branches; measure overhead and value
 3. **Phase 3 (Month 4+):** Gradually expand to critical systems; integrate with CI/CD pipelines
@@ -151,17 +156,20 @@ After 3 months, successful teams report:
 ## Next Steps
 
 **For Executives:**
+
 1. Review [Maturity Model](./MATURITY_MODEL.md) to see governance roadmap
 2. Discuss risk/compliance with security/legal teams
 3. Approve pilot project (1-2 teams, 30 days)
 
 **For Technical Teams:**
+
 1. Read [Absolute Beginner Guide](./guides/ABSOLUTE_BEGINNER_GUIDE.md)
 2. Set up locally (15 minutes)
 3. Run a test plan (30 minutes)
 4. Integration planning (1 week)
 
 **For Operations/Compliance:**
+
 1. Review [Security Policy](../SECURITY.md)
 2. Schedule attestation bundle walkthrough (audit trails demo)
 3. Plan for SOC 2/regulatory documentation

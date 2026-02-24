@@ -11,6 +11,7 @@ Get ATLAS-GATE-MCP running in minutes.
 ## Steps
 
 ### 1. Clone & Install
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -18,11 +19,13 @@ npm install
 ```
 
 ### 2. Start Server
+
 ```bash
 npm run start:windsurf
 ```
 
 You should see:
+
 ```
 ATLAS-GATE-MCP server started
 Listening on stdio
@@ -30,7 +33,9 @@ Ready for connections
 ```
 
 ### 3. Create a Plan
+
 Save as `my-plan.md`:
+
 ```markdown
 # My First Plan
 
@@ -39,7 +44,9 @@ Description: Test ATLAS-GATE-MCP
 ```
 
 ### 4. Set Environment
+
 Create `.env`:
+
 ```env
 WORKSPACE_DIR=.
 CURRENT_PLAN=my-plan
@@ -47,7 +54,9 @@ AUDIT_LOG_FILE=./audit-log.jsonl
 ```
 
 ### 5. Use It
+
 Tell an AI tool (Claude, ChatGPT, Windsurf):
+
 ```
 Use ATLAS-GATE-MCP to:
 - Read my-plan.md
@@ -57,6 +66,7 @@ Use ATLAS-GATE-MCP to:
 ```
 
 ### 6. Check Results
+
 ```bash
 cat audit-log.jsonl
 ```

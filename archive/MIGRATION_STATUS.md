@@ -3,6 +3,7 @@
 ## ✅ Completed
 
 ### 1. Core Modules Updated
+
 - **`core/plan-linter.js`** - Complete rewrite using cosign + spectral
   - Removed: `computePlanHash()` (crypto-based)
   - Added: `signPlan()` - ECDSA P-256 signing via cosign
@@ -17,11 +18,13 @@
   - Signature chain maintains same atomic integrity guarantees
 
 ### 2. Package Dependencies Updated
+
 - Added `@sigstore/cosign` ^2.3.0
 - Added `@stoplight/spectral-cli` ^6.12.0
 - Added `@stoplight/spectral-core` ^1.13.0
 
 ### 3. Test Files Updated
+
 - **`tests/system/test-plan-linter.js`**
   - Replaced `computePlanHash()` with `generateTestSignature()` helper
   - Updated TEST 9: Hash consistency → Signature consistency
@@ -43,6 +46,7 @@
   - Updated output reference from `lintResult.hash` to `lintResult.violations.length`
 
 ### 4. Documentation Created
+
 - **`COSIGN_SPECTRAL_MIGRATION.md`** - Complete migration guide including:
   - Overview of changes
   - Breaking changes list
@@ -53,6 +57,7 @@
 ## ⚠️ Still Need to Update (Optional - not breaking)
 
 These files use crypto for non-plan purposes and can continue using it:
+
 - `tests/lang/01_javascript_auth.js` - Password hashing (not plan-related)
 - `tests/system/test-write-time-policy.js` - Generic data hashing
 - `tests/system/test-debug2.js` - Bundle ID generation
@@ -65,6 +70,7 @@ These files use crypto for non-plan purposes and can continue using it:
 ## 🔧 Required Manual Steps
 
 ### 1. Generate Cosign Keys (if not using cloud KMS)
+
 ```bash
 # Private key for signing
 cosign generate-key-pair
@@ -74,6 +80,7 @@ cosign generate-key-pair
 ```
 
 ### 2. Update Environment Configuration
+
 ```bash
 # Add to .env or deployment config
 export COSIGN_PRIVATE_KEY=/path/to/cosign.key
@@ -81,13 +88,16 @@ export COSIGN_PUBLIC_KEY=/path/to/cosign.pub
 ```
 
 ### 3. Database Migration (if applicable)
+
 - Old: `plan_hash VARCHAR(64)` storing SHA256 hex
 - New: `plan_signature VARCHAR(128+)` storing base64-encoded ECDSA signature
 - Old audit logs: `hash` field storing SHA256
 - New audit logs: `signature` field storing base64
 
 ### 4. API Client Updates
+
 Any clients expecting:
+
 - SHA256 hashes (64 hex chars) → Now receive base64 signatures
 - Hash validation logic → Now use cosign verification
 - Hash comparison → Now use signature comparison
@@ -114,6 +124,7 @@ Any clients expecting:
 ## Rollback
 
 If needed, can revert to old implementation:
+
 1. Restore original `core/plan-linter.js` and `core/audit-log.js`
 2. Remove cosign/spectral from package.json
 3. Update imports in tests

@@ -10,6 +10,7 @@ All atlas-gate tools have been verified to correctly use the centralized `cosign
 ## Verification Results
 
 ### ✅ Core Infrastructure (Production Code)
+
 - **audit-system.js** - Uses `sha256()` from provider
 - **attestation-engine.js** - Uses `sha256()`, `canonicalizeForHash()`, `timingSafeEqual()`, `hmacSha256()`
 - **replay-engine.js** - Uses `sha256()`, `canonicalizeForHash()`
@@ -24,6 +25,7 @@ All atlas-gate tools have been verified to correctly use the centralized `cosign
 - **plan-linter.js** - Uses `sha256()`
 
 ### ✅ Tools (All Fixed)
+
 - **write_file.js** - Uses `sha256()` for content hashing ✅ Fixed
 - **generate-remediation-proposals.js** - Uses `sha256()` for evidence hashing ✅ Fixed
 - **verification/verify-audit-log.js** - Uses `sha256()` for chain verification ✅ Fixed
@@ -31,6 +33,7 @@ All atlas-gate tools have been verified to correctly use the centralized `cosign
 - **session.js** - Uses `crypto.randomUUID()` (not hashing) - OK
 
 ### Acceptable Exceptions
+
 - **Test files** (`tests/`) - Can use direct crypto for backward compatibility
 - **Documentation** (markdown, guides) - Only references, not code
 - **cosign-hash-provider.js** - Intentionally uses crypto (only module allowed)
@@ -38,6 +41,7 @@ All atlas-gate tools have been verified to correctly use the centralized `cosign
 ## Detailed Code Changes
 
 ### Files Modified
+
 ```
 core/
 ├─ audit-system.js              [Import sha256, remove local function]
@@ -98,12 +102,14 @@ tools/
 ## Compliance Verification
 
 ### Search Results Summary
+
 ```bash
 grep -r "crypto.createHash\|crypto.createHmac" core/ tools/
 # Result: 0 matches (except provider itself)
 ```
 
 ### Direct Crypto Usage
+
 - **Allowed in:** `core/cosign-hash-provider.js` only
 - **Forbidden in:** All other active code
 - **Acceptable in:** Test files, documentation

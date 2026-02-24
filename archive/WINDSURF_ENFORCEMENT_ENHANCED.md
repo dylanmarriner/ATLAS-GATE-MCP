@@ -14,7 +14,9 @@ Together with existing hooks, windsurf-hooker now provides **defense-in-depth en
 ## Hook 1: `pre_write_completeness.py`
 
 ### Purpose
+
 Block any code that indicates incomplete work:
+
 - TODO, FIXME, XXX, HACK comments (any case variant)
 - Stub functions (pass, NotImplementedError, unimplemented!())
 - Placeholder returns (return None, return {}, etc.)
@@ -88,7 +90,9 @@ def validate_email(email: str) -> bool:
 ## Hook 2: `pre_write_comprehensive_comments.py`
 
 ### Purpose
+
 Enforce that all code has meaningful, complete documentation:
+
 - Every function/class must have a docstring
 - Docstrings must explain purpose, parameters, return value
 - Complex code must have inline comments explaining WHY
@@ -349,12 +353,14 @@ Both hooks are controlled by execution profile in `/windsurf-hooker/windsurf/pol
 ## Future Enhancements (Phase 2)
 
 ### `pre_write_code_quality.py`
+
 - Function length validation (> 100 lines = warning)
 - Cyclomatic complexity checks
 - Type annotation validation (Python/TypeScript)
 - Hard-coded value detection
 
 ### `pre_write_debuggability.py`
+
 - Error message quality checks
 - Exception handling completeness
 - Magic number detection
@@ -398,6 +404,7 @@ echo '{"tool_info": {"edits": [{"path": "test.py", "new_string": "def foo():\n  
 ### Windsurf-Hooker Role
 
 Pre-execution enforcement at the IDE level:
+
 - **Left-shift** enforcement (earlier feedback)
 - **Developer-centric** (fast iteration)
 - **Policy-driven** (configurable standards)
@@ -406,6 +413,7 @@ Pre-execution enforcement at the IDE level:
 ### ATLAS-GATE Role
 
 Post-transmission enforcement at the server level:
+
 - **Authoritative** (source of truth)
 - **Workspace-centric** (final validation)
 - **Audit-focused** (forensic recording)
@@ -420,14 +428,17 @@ Windsurf-Hooker + ATLAS-GATE = **comprehensive code quality ecosystem**
 ## Status
 
 ✅ **Phase 1 Complete:**
+
 - pre_write_completeness.py
 - pre_write_comprehensive_comments.py
 
 ⏳ **Phase 2 Planned:**
+
 - pre_write_code_quality.py
 - pre_write_debuggability.py
 
 📊 **Coverage:**
+
 - Before: ~60% of code quality standards
 - After: ~85% of code quality standards  
 - With Phase 2: ~95% of code quality standards

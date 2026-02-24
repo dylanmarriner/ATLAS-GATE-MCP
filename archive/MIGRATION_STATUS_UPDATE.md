@@ -5,6 +5,7 @@
 ## Session Summary
 
 This session continued the SHA256-to-cosign signature migration from 60% to 85% completion. Key achievements:
+
 - Updated plan creation and storage to use cosign signatures
 - Migrated intent artifact validation schema to parse Plan Signature instead of Plan Hash
 - Implemented functional mock cosign provider (SHA256-based) for testing environments
@@ -18,6 +19,7 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 ## Latest Session Updates (Core Infrastructure)
 
 ### ✅ Completed
+
 1. **tools/list_plans.js** - Updated filename discovery to use cosign signatures instead of SHA256 hashes
 2. **core/governance.js** - Integrated `signWithCosign` for plan signing, removed hash-based plan naming
 3. **tools/bootstrap_tool.js** - Updated schema documentation to reflect cosign approach
@@ -28,6 +30,7 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 8. **core/cosign-hash-provider.js** - Implemented mock cosign provider with SHA256 fallback, added sha256/hmacSha256/timingSafeEqual exports for backward compatibility
 
 ### ✅ Test Files Updated (2nd Pass)
+
 9. **tests/system/test-replay-forensics.js** - All plan_hash → plan_signature, fixed imports, added mockCosignSign
 10. **tests/system/test-attestation.js** - Fixed imports, variable naming, environment variable syntax
 11. **tests/system/test-quick.js** - Fixed variable naming and syntax
@@ -37,6 +40,7 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 15. **All core files** - Documentation and comment updates to use Plan Signature
 
 ### ✅ Ready for Testing
+
 - Intent artifact validation now uses cosign signature format
 - Plan storage and discovery aligned with signature-based filenames
 - Audit entries use `plan_signature` field throughout
@@ -46,6 +50,7 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 ### 📋 Remaining Work
 
 #### Core Files Still Referencing Hash (Documentation/Non-Critical)
+
 - `core/drills.js` - References in comments only
 - `core/failure-simulation.js` - References in comments  
 - `core/forensic-report-generator.js` - References in comments/doc
@@ -61,10 +66,12 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 - `tools/generate_attestation_bundle.js` - References in comments
 
 #### Remaining Test Fixes (Minor)
+
 - Some test files may still have import path issues with relative paths
 - Integration tests may need execution verification
 
 #### Integration Points
+
 - Server schema definitions already updated
 - Cosign hash provider exports correctly
 - Plan linter no longer returns `.hash`, only violations
@@ -88,10 +95,12 @@ This session continued the SHA256-to-cosign signature migration from 60% to 85% 
 ## Files Modified This Session
 
 ### Phase 1: Core Infrastructure
+
 - 2 files in tools/ (list_plans.js, bootstrap_tool.js)
 - 6 files in core/ (governance.js, audit-storage-file.js, intent-validator.js, intent-schema.js, cosign-hash-provider.js)
 
 ### Phase 2: Test Suite & Documentation
+
 - 15+ test files across tests/system/ and tests/ directories
 - All files in docs/ and docs/templates/ updated
 - Comment/doc updates throughout core/ files

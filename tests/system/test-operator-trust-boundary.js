@@ -4,25 +4,25 @@ import {
   getBoundOperatorIdentity,
   verifyOperatorBound,
   resetOperatorIdentity
-} from "../../core/operator-identity.js";
+} from "../src/application/operator-identity.js";
 import {
   RISK_LEVELS,
   createRiskAcknowledgement,
   validateRiskAcknowledgement,
   enforceRiskAcknowledgement
-} from "../../core/risk-acknowledgement.js";
+} from "../src/application/risk-acknowledgement.js";
 import {
   initiateConfirmation,
   checkConfirmationDelay,
   completeConfirmation,
   resetPendingConfirmations
-} from "../../core/two-step-confirmation.js";
+} from "../src/application/two-step-confirmation.js";
 import {
   detectSocialEngineeringPatterns,
   sanitizeUrgencyLanguage,
   highlightHighRiskTerms,
   enforceLanguageSanitization
-} from "../../core/language-sanitization.js";
+} from "../src/application/language-sanitization.js";
 import {
   checkOperatorFatigue,
   enforceFatigueGuards,
@@ -30,14 +30,14 @@ import {
   recordMandatoryPause,
   resetFatigueGuards,
   configureFatigueLimits
-} from "../../core/fatigue-guards.js";
+} from "../src/application/fatigue-guards.js";
 import {
   inspectOperatorActions,
   inspectHighRiskApprovals,
   getOperatorStatistics
-} from "../../core/operator-inspection.js";
+} from "../src/application/operator-inspection.js";
 import { SESSION_STATE } from "../../session.js";
-import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../../core/path-resolver.js";
+import { lockWorkspaceRoot, resetWorkspaceRootForTesting } from "../src/infrastructure/path-resolver.js";
 
 let testsPassed = 0;
 let testsFailed = 0;

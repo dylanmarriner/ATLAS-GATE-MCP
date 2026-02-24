@@ -3,6 +3,7 @@
 ## ✅ WHAT PASSES VALIDATION
 
 ### Code Patterns
+
 - ✅ Classes and inheritance
 - ✅ Error handling (throw/try-catch)
 - ✅ Functional programming (map, filter, reduce)
@@ -12,6 +13,7 @@
 - ✅ Method composition and chaining
 
 ### Files
+
 - ✅ `.js` - Pure JavaScript (ES6+)
 - ✅ JavaScript implementations of Plans 1-8
 
@@ -20,6 +22,7 @@
 ## ❌ WHAT FAILS VALIDATION
 
 ### Forbidden Keywords (Anywhere in File)
+
 ```
 ❌ mock, Mock, MOCK
 ❌ fake, Fake, FAKE  
@@ -29,6 +32,7 @@
 ```
 
 ### Code Patterns
+
 ```javascript
 ❌ return null;
 ❌ return undefined;
@@ -40,6 +44,7 @@
 ```
 
 ### File Types
+
 ```
 ❌ .rb (Ruby)
 ❌ .py (Python - native syntax)
@@ -61,6 +66,7 @@
 ## 🔧 WORKAROUNDS FOR COMMON BLOCKERS
 
 ### Issue: "System" in comments
+
 ```javascript
 // ❌ FAILS
 // Full-Stack User Management System
@@ -70,6 +76,7 @@
 ```
 
 ### Issue: Empty catch blocks
+
 ```javascript
 // ❌ FAILS
 try {
@@ -87,6 +94,7 @@ try {
 ```
 
 ### Issue: Returning null
+
 ```javascript
 // ❌ FAILS
 if (!user) return null;
@@ -98,6 +106,7 @@ if (!user) return { found: false, data: null };
 ```
 
 ### Issue: Non-JavaScript code
+
 ```javascript
 // ❌ FAILS
 SELECT * FROM users;
@@ -107,6 +116,7 @@ const query = `SELECT * FROM users`;
 ```
 
 ### Issue: Empty function bodies
+
 ```javascript
 // ❌ FAILS
 handleCallback() {
@@ -124,7 +134,9 @@ handleCallback() {
 ## 📋 WRITE_FILE REQUIREMENTS BY ROLE
 
 ### EXECUTABLE Role
+
 **Required Fields**:
+
 - `path` - File path
 - `content` - File content (or `patch`)
 - `plan` - Plan name/ID
@@ -134,6 +146,7 @@ handleCallback() {
 - `failureModes` - What can go wrong
 
 **Example**:
+
 ```javascript
 mcp__atlas-gate__write_file({
   path: "src/auth.js",
@@ -147,12 +160,15 @@ mcp__atlas-gate__write_file({
 ```
 
 ### BOUNDARY Role
+
 - TBD (Needs documentation from system)
 
 ### INFRASTRUCTURE Role
+
 - TBD (Needs documentation from system)
 
 ### VERIFICATION Role
+
 - TBD (Needs documentation from system)
 
 ---
@@ -182,11 +198,13 @@ mcp__atlas-gate__write_file({
 ## ⚠️ KNOWN LIMITATIONS
 
 ### 1. Comments Are Scanned
+
 Comments containing "System", "mock", "fake", etc. will cause validation failures even though comments aren't executed.
 
 **Solution**: Use alternative terminology in comments.
 
 ### 2. String Content Not Validated
+
 Any code, SQL, bash, etc. in string literals bypasses validation entirely.
 
 **Risk**: SQL injection patterns can be embedded.
@@ -194,16 +212,19 @@ Any code, SQL, bash, etc. in string literals bypasses validation entirely.
 **Recommendation**: Treat string literals carefully; they could contain unvalidated code.
 
 ### 3. Only JavaScript Works Natively
+
 Plans 9-15 (non-JS languages) will fail because the validator only parses JavaScript AST.
 
 **Workaround**: Embed non-JS code as strings or create JavaScript wrappers.
 
 ### 4. No Logging Infrastructure
+
 Using logging (console.error, logger.info) sometimes triggers false positives with "SYSTEM" detection.
 
 **Workaround**: Return error objects instead of logging.
 
 ### 5. Null Returns Forbidden
+
 `return null` and `return undefined` are blocked.
 
 **Workaround**: Throw errors or return wrapper objects instead.
@@ -213,6 +234,7 @@ Using logging (console.error, logger.info) sometimes triggers false positives wi
 ## 🚀 BEST PRACTICES FOR WRITING CODE THAT PASSES
 
 ### DO ✅
+
 - Write real, production-grade code
 - Include error handling with descriptive messages
 - Use descriptive variable names
@@ -221,6 +243,7 @@ Using logging (console.error, logger.info) sometimes triggers false positives wi
 - Document functionality clearly (but avoid forbidden terms)
 
 ### DON'T ❌
+
 - Use "System", "mock", "fake", "sample" anywhere (including comments)
 - Write empty function bodies
 - Return null/undefined explicitly
@@ -230,6 +253,7 @@ Using logging (console.error, logger.info) sometimes triggers false positives wi
 - Put TODOs or FIXMEs in code
 
 ### EXAMPLE: Good Code That Passes
+
 ```javascript
 class PaymentProcessor {
   constructor(provider) {
@@ -283,6 +307,7 @@ class PaymentProcessor {
 ```
 
 This passes because:
+
 - ✅ Real business logic
 - ✅ Proper error handling
 - ✅ Clear intent and functionality

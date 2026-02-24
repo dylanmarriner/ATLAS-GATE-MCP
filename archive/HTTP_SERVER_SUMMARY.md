@@ -83,6 +83,7 @@ const files = await client.listPlans();
 ```
 
 Enables:
+
 - Single session for multiple repos
 - Runtime directory switching
 - CI/CD across multiple projects
@@ -107,6 +108,7 @@ All authenticated via `X-API-Key` header (except `/health` and `/tenants/create`
 ### ✓ Audit Trail
 
 Every operation logged:
+
 ```json
 {
   "sessionId": "session_abc123",
@@ -120,6 +122,7 @@ Every operation logged:
 ```
 
 Queryable by:
+
 - `?sessionId=...`
 - `?tool=...`
 - `?role=...`
@@ -174,6 +177,7 @@ docker run -p 3000:3000 atlas-gate:latest
 ```
 
 Compose:
+
 ```bash
 docker-compose up -d
 ```
@@ -196,11 +200,13 @@ node bin/ATLAS-GATE-HTTP.js --port 3000 --host 0.0.0.0
 ### 1. In-Memory Storage (Initially)
 
 **Pro:**
+
 - Fast, no DB setup needed
 - Simple for prototyping
 - Good for < 1000 concurrent sessions
 
 **Con:**
+
 - Data lost on restart
 - Not scalable to many instances
 
@@ -209,12 +215,14 @@ node bin/ATLAS-GATE-HTTP.js --port 3000 --host 0.0.0.0
 ### 2. REST over WebSocket
 
 **Pro:**
+
 - Simpler to implement
 - Works with any HTTP client
 - Standard HTTP tools (curl, Postman)
 - Stateless (easy to scale)
 
 **Con:**
+
 - Polling instead of push notifications
 - More bandwidth for frequent checks
 
@@ -231,11 +239,13 @@ async handler(args, context) {
 ```
 
 **Pro:**
+
 - Maintains existing tool interface
 - Enforces isolation at every level
 - Easy to audit tool execution
 
 **Con:**
+
 - Must pass context everywhere
 - Tools must be updated to use context
 
@@ -244,6 +254,7 @@ async handler(args, context) {
 ### Works Alongside Existing MCP
 
 The HTTP server doesn't replace stdio MCP - it complements it:
+
 - Stdio MCP still available: `npm run start:windsurf`
 - HTTP server is new: `npm run start:http`
 - Can run both simultaneously
@@ -269,6 +280,7 @@ No tool modifications needed (though context should be used).
 ### Preserves Audit Trail
 
 Audit entries flow through both:
+
 1. HTTP router logs each call
 2. Tool handler logs via `appendAuditEntry`
 3. MCP's audit system unchanged
@@ -420,6 +432,7 @@ Total New Docs: ~900 LOC
 ## Support & Questions
 
 See documentation:
+
 1. **Quick start?** → HTTP_QUICK_START.md
 2. **Full deployment?** → MULTI_TENANT_DEPLOYMENT.md
 3. **Production ready?** → DEPLOYMENT_CHECKLIST_HTTP.md
@@ -429,6 +442,7 @@ See documentation:
 ## Success Metrics
 
 After deployment, measure:
+
 - ✓ Server uptime > 99%
 - ✓ p95 latency < 200ms
 - ✓ Error rate < 0.1%

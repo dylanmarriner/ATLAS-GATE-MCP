@@ -53,6 +53,7 @@ npm run quality:check
 ### Build Steps
 
 1. **Diagram Rendering**
+
    ```bash
    # Convert Mermaid diagrams to SVG
    find docs/diagrams/source -name '*.mmd' -exec npx mmdc -i {} -o docs/diagrams/rendered/{}.svg \;
@@ -89,6 +90,7 @@ The CI pipeline enforces documentation quality:
 ### Tracked Files
 
 **Always tracked in Git:**
+
 - All `.md` files in `/docs/`
 - Diagram source files (`.mmd`, `.puml`) in `/docs/diagrams/source/`
 - Build scripts in `/scripts/`
@@ -97,6 +99,7 @@ The CI pipeline enforces documentation quality:
 ### Ignored Files
 
 **Never tracked in Git:**
+
 - Rendered diagrams (`.svg`, `.png`, `.pdf`) in `/docs/diagrams/rendered/`
 - Static site builds in `/docs/build/`, `/docs/dist/`, `/docs/site/`
 - Cache files (`.cache/`, `_site/`, `_build/`)
@@ -184,12 +187,14 @@ CI pipeline enforces:
 ### Common Issues
 
 **Missing rendered diagrams:**
+
 ```bash
 # Rebuild documentation
 npm run docs:build
 ```
 
 **Validation failures:**
+
 ```bash
 # Check validation output
 npm run docs:validate
@@ -199,6 +204,7 @@ ls -la docs/diagrams/source docs/diagrams/rendered
 ```
 
 **Build artifacts in repository:**
+
 ```bash
 # Remove build artifacts
 git clean -fd docs/build docs/dist docs/site docs/diagrams/rendered

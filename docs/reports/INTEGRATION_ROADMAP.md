@@ -15,11 +15,13 @@ The Plan Linter foundation is complete and tested. This document specifies exact
 ## Integration Point 1: Plan Proposal (tools/bootstrap_tool.js)
 
 ### Location
+
 **File**: `tools/bootstrap_tool.js`  
 **Function**: `bootstrapPlanHandler(args)`  
 **When**: Immediately after receiving plan content, before any plan creation
 
 ### Current Code Flow
+
 ```javascript
 export async function bootstrapPlanHandler(args) {
     const { path: targetPath, planContent, payload, signature } = args;
@@ -34,6 +36,7 @@ export async function bootstrapPlanHandler(args) {
 ```
 
 ### Required Change
+
 Add linting check before calling `bootstrapCreateFoundationPlan`:
 
 ```javascript
@@ -76,6 +79,7 @@ const result = bootstrapCreateFoundationPlan(repoRoot, planContent, payload, sig
 ```
 
 ### Test Case
+
 - Proposal with missing section → reject with PLAN_MISSING_SECTION
 - Proposal with ambiguous language → reject with PLAN_NOT_ENFORCEABLE
 - Proposal with valid structure → accept and proceed
@@ -85,11 +89,13 @@ const result = bootstrapCreateFoundationPlan(repoRoot, planContent, payload, sig
 ## Integration Point 2: Plan Approval (core/governance.js)
 
 ### Location
+
 **File**: `core/governance.js`  
 **Function**: `bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature)`  
 **When**: Immediately after verifying signature, before writing approved plan file
 
 ### Current Code Flow
+
 ```javascript
 export function bootstrapCreateFoundationPlan(repoRoot, planContent, payload, signature) {
     if (!isBootstrapEnabled(getRepoRoot())) {
@@ -110,6 +116,7 @@ export function bootstrapCreateFoundationPlan(repoRoot, planContent, payload, si
 ```
 
 ### Required Change
+
 Add linting with hash validation before approval:
 
 ```javascript
@@ -153,6 +160,7 @@ const rawHash = computedHash; // Use linted hash
 ```
 
 ### Test Case
+
 - Approval with hash mismatch → reject with PLAN_HASH_MISMATCH
 - Approval with failing lint → reject with APPROVAL_BLOCKED
 - Approval with valid plan → accept and write APPROVED status
@@ -162,11 +170,13 @@ const rawHash = computedHash; // Use linted hash
 ## Integration Point 3: Plan Execution (tools/write_file.js)
 
 ### Location
+
 **File**: `tools/write_file.js`  
 **Function**: `enforcePlan(planSignature, targetPath)` in `core/plan-enforcer.js`  
 **When**: When WINDSURF calls write_file with a plan hash
 
 ### Current Code Flow
+
 ```javascript
 export function enforcePlan(planSignature, targetPath) {
     invariantNotNull(planSignature, "INV_PLAN_HASH_REQUIRED", "Plan hash is required for authorization");
@@ -193,6 +203,7 @@ export function enforcePlan(planSignature, targetPath) {
 ```
 
 ### Required Change
+
 Add linting re-validation during execution:
 
 ```javascript
@@ -234,6 +245,7 @@ await appendAuditEntry({
 ```
 
 ### Test Case
+
 - Execution with valid plan → allow
 - Execution with modified plan → reject (hash mismatch)
 - Execution with corrupted plan → reject (lint fails)
@@ -243,11 +255,13 @@ await appendAuditEntry({
 ## Integration Point 4: Lint Plan Tool (server.js)
 
 ### Location
+
 **File**: `server.js`  
 **Function**: `startServer(role)` in tool registration section  
 **When**: Register new read-only tool for ANTIGRAVITY
 
 ### Implementation
+
 Add after read_audit_log tool registration:
 
 ```javascript
@@ -267,6 +281,7 @@ server.registerTool(
 ```
 
 ### Handler Implementation (new file: tools/lint_plan.js)
+
 ```javascript
 import { lintPlan } from "../core/plan-linter.js";
 import fs from "fs";
@@ -314,6 +329,7 @@ export async function lintPlanHandler({ path: filePath, hash, content }) {
 ```
 
 ### Test Case
+
 - Lint existing plan → returns pass/fail with violations
 - Lint with wrong hash → shows PLAN_HASH_MISMATCH
 - Lint invalid plan → lists all violations
@@ -324,6 +340,7 @@ export async function lintPlanHandler({ path: filePath, hash, content }) {
 ## Audit Trail Integration
 
 ### Audit Entry Schema
+
 Every lint operation MUST append to audit log:
 
 ```jsonl
@@ -351,6 +368,7 @@ Every lint operation MUST append to audit log:
 ```
 
 ### Integration Points for Audit Logging
+
 1. **bootstrap_tool.js**: Log proposal linting result
 2. **governance.js**: Log approval linting result
 3. **plan-enforcer.js**: Log execution linting result
@@ -373,14 +391,17 @@ Ensure these are mapped to appropriate HTTP status codes (400 for validation fai
 ## Testing Strategy
 
 ### Unit Tests
+
 - Each integration point: Test with valid plan, invalid plan, malformed input
 
 ### Integration Tests
+
 - End-to-end: Create → Approve → Execute
 - Hash mutation: Approve plan, modify file, attempt execution (should fail)
 - Audit trail: Verify lint events are logged for each operation
 
 ### Examples to Create
+
 - `docs/examples/INVALID_PLAN_MISSING_PHASES.md` - Should fail at proposal
 - `docs/examples/INVALID_PLAN_AMBIGUOUS.md` - Should fail at approval
 - `docs/examples/VALID_PLAN_FOR_LINTER_TESTING.md` - Should pass all gates
@@ -415,6 +436,7 @@ Ensure these are mapped to appropriate HTTP status codes (400 for validation fai
 ## Rollback Plan
 
 If integration causes issues:
+
 1. Comment out lint checks in bootstrap_tool.js
 2. Comment out lint checks in governance.js
 3. Comment out lint checks in plan-enforcer.js
@@ -427,15 +449,18 @@ If integration causes issues:
 ## API Reference for Integration
 
 ### computePlanHash(planContent: string) → string
+
 - Returns: 64-character SHA256 hash
 - Note: Strips HTML comment header before hashing
 
 ### lintPlan(planContent: string, expectedHash?: string) → LintResult
+
 - Returns structured lint result with errors, warnings, violations
 - Error-only: no side effects
 - Idempotent: same input → same result
 
 ### LintResult Object
+
 ```javascript
 {
   passed: boolean,              // true if all errors are zero
@@ -447,6 +472,7 @@ If integration causes issues:
 ```
 
 ### ViolationObject
+
 ```javascript
 {
   code: string,        // e.g., "PLAN_MISSING_SECTION"
@@ -470,6 +496,7 @@ If integration causes issues:
 ## Questions & Support
 
 For questions about integration, refer to:
+
 1. MCP_PLAN_LINTER_SPEC.md for linting rules
 2. PHASE_MCP_PLAN_LINTER_IMPLEMENTATION_REPORT.md for architecture
 3. test-plan-linter.js for usage examples

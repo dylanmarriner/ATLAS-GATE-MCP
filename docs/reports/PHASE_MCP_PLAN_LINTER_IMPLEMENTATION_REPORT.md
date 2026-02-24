@@ -10,12 +10,14 @@
 ## Deliverables
 
 ### 1. Files Created
+
 - `core/plan-linter.js` - Plan linter core module
 - `test-plan-linter.js` - Test suite (14 comprehensive tests)
 - `docs/reports/MCP_PLAN_LINTER_SPEC.md` - Specification documentation
 - `docs/reports/PHASE_MCP_PLAN_LINTER_IMPLEMENTATION_REPORT.md` - This report
 
 ### 2. Files Modified (Queued for Next Phase)
+
 - `tools/bootstrap_tool.js` - Will integrate linter into plan proposal
 - `core/governance.js` - Will integrate linter into plan approval
 - `tools/write_file.js` - Will integrate linter into plan execution
@@ -26,25 +28,30 @@
 ## Lint Rules Enforced
 
 ### Structure Validation
+
 - ✓ `PLAN_SCOPE_LAW` - Mandatory 7 sections in order
 - ✓ `PLAN_SCOPE_LAW` - All phase fields required
 - ✓ `PLAN_SCOPE_LAW` - Phase IDs unique and valid format
 
 ### Enforceability
+
 - ✓ `MECHANICAL_LAW_ONLY` - Detects ambiguous language (may, should, if possible, etc.)
 - ✓ `MECHANICAL_LAW_ONLY` - Rejects human judgment clauses
 - ✓ `MECHANICAL_LAW_ONLY` - Requires binary (MUST/MUST NOT) language
 
 ### Path Validation
+
 - ✓ `PLAN_SCOPE_LAW` - Detects parent directory escape (`..`)
 - ✓ `PLAN_SCOPE_LAW` - Rejects absolute paths
 - ✓ `PLAN_SCOPE_LAW` - Detects unresolved variables
 
 ### Auditability
+
 - ✓ `PUBLIC_LAW_READABLE` - Rejects code symbols in objectives
 - ✓ `PUBLIC_LAW_READABLE` - Detects undefined jargon
 
 ### Hash Binding
+
 - ✓ `PLAN_IMMUTABILITY` - Deterministic SHA256 hash computation
 - ✓ `PLAN_IMMUTABILITY` - Hash mismatch detection on validation
 
@@ -76,6 +83,7 @@
 ## Commands Execution & Verification
 
 ### Test Run
+
 ```bash
 $ node test-plan-linter.js
 [TEST] Running 14 plan linter tests...
@@ -107,13 +115,16 @@ $ node test-plan-linter.js
 ### Core Functions
 
 #### `computePlanHash(planContent: string) → string`
+
 - **Purpose**: Deterministically compute SHA256 hash of plan
 - **Returns**: 64-character hex string
 - **Idempotent**: Yes (same input → same hash)
 
 #### `lintPlan(planContent: string, expectedHash?: string) → LintResult`
+
 - **Purpose**: Validate plan structure, enforceability, auditability
 - **Returns**:
+
   ```javascript
   {
     passed: boolean,
@@ -123,9 +134,11 @@ $ node test-plan-linter.js
     violations: ViolationObject[]
   }
   ```
+
 - **Invariant**: All errors must be fixed for approval
 
 ### Violation Structure
+
 ```javascript
 {
   code: string,              // e.g., "PLAN_MISSING_SECTION"
@@ -140,6 +153,7 @@ $ node test-plan-linter.js
 ## Integration Points (Pending)
 
 ### Bootstrap Plan Handler (tools/bootstrap_tool.js)
+
 ```javascript
 // Add before plan creation
 const lintResult = lintPlan(planContent);
@@ -152,6 +166,7 @@ if (!lintResult.passed) {
 ```
 
 ### Approval Gate (core/governance.js)
+
 ```javascript
 // Add before writing approved plan
 const expectedHash = payload.plan_signature;
@@ -162,6 +177,7 @@ if (!lintResult.passed) {
 ```
 
 ### Execution Gate (tools/write_file.js)
+
 ```javascript
 // Add in enforcePlan
 const planContent = fs.readFileSync(planFile, "utf8");
@@ -174,6 +190,7 @@ if (!lintResult.passed) {
 ```
 
 ### Lint Plan Tool (server.js)
+
 ```javascript
 server.registerTool(
   "lint_plan",

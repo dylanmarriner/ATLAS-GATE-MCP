@@ -5,8 +5,8 @@ import { fileURLToPath } from "url";
 import crypto from "crypto";
 
 // Relative imports work because we are in tests/
-import { appendAuditLog } from "../core/audit-log.js";
-import { autoInitializePathResolver, getRepoRoot, getAuditLogPath } from "../core/path-resolver.js";
+import { appendAuditLog } from "../src/application/audit-log.js";
+import { autoInitializePathResolver, getRepoRoot, getAuditLogPath } from "../src/infrastructure/path-resolver.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -161,7 +161,7 @@ if (isMainThread) {
         // Need to import dynamic to set up environment? 
         // core/path-resolver.js relies on finding root.
         // We pass repoRoot.
-        const { initializePathResolver } = await import("../core/path-resolver.js");
+        const { initializePathResolver } = await import("../src/domain/path-resolver.js");
         initializePathResolver(repoRoot);
 
         for (let i = 0; i < count; i++) {

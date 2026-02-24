@@ -22,30 +22,35 @@
 ATLAS-GATE-MCP governance is based on these principles:
 
 ### **1. Transparency**
+
 - Decisions are made openly
 - Rationale is documented
 - Community input is welcomed
 - Process is public (GitHub Issues/Discussions)
 
 ### **2. Meritocracy**
+
 - Decisions based on technical merit, not status
 - Community members earn authority through contributions
 - Expertise and effort are valued
 - New contributors get fair consideration
 
 ### **3. Consensus When Possible**
+
 - Major decisions seek community consensus
 - Disagreements are handled constructively
 - Compromise is preferred when reasonable
 - Escalation to governance body as last resort
 
 ### **4. Accountability**
+
 - Authority comes with responsibility
 - Leaders explain their decisions
 - Mistakes are acknowledged and corrected
 - Term limits prevent power concentration
 
 ### **5. Inclusivity**
+
 - Community members from diverse backgrounds welcome
 - Different expertise valued (code, docs, community)
 - New contributors actively encouraged
@@ -60,6 +65,7 @@ ATLAS-GATE-MCP governance is based on these principles:
 Decisions fall into four categories:
 
 #### **Type 1: Consensus Decisions**
+
 **Examples**: Minor bug fixes, documentation improvements, dependency updates
 
 **Authority**: Any contributor  
@@ -68,6 +74,7 @@ Decisions fall into four categories:
 **Timeline**: Immediate
 
 **Process**:
+
 1. Create pull request
 2. Propose change in description
 3. Core team reviews
@@ -75,6 +82,7 @@ Decisions fall into four categories:
 5. Merge
 
 #### **Type 2: Majority Decisions**
+
 **Examples**: New features, API changes, major refactors
 
 **Authority**: Contributors with merge rights  
@@ -83,6 +91,7 @@ Decisions fall into four categories:
 **Timeline**: 5-10 business days
 
 **Process**:
+
 1. Open GitHub Discussion (design proposal)
 2. Community provides feedback
 3. Proposal refined based on input
@@ -90,6 +99,7 @@ Decisions fall into four categories:
 5. Implementation approved
 
 #### **Type 3: RFC Decisions (Request for Comments)**
+
 **Examples**: Major architectural changes, breaking changes, roadmap shifts
 
 **Authority**: Core team + community consensus  
@@ -98,6 +108,7 @@ Decisions fall into four categories:
 **Timeline**: 2-4 weeks minimum
 
 **Process**:
+
 1. Author submits RFC (document in `/docs/rfcs/`)
 2. Community discussion (GitHub Discussions)
 3. Core team reviews and debates
@@ -106,6 +117,7 @@ Decisions fall into four categories:
 6. Implementation begins
 
 #### **Type 4: Governance Decisions**
+
 **Examples**: Code of Conduct changes, governance structure changes, authority delegation
 
 **Authority**: Maintainer Council  
@@ -114,6 +126,7 @@ Decisions fall into four categories:
 **Timeline**: 2-4 weeks
 
 **Process**:
+
 1. Proposal submitted to governance discussion
 2. Public comment period (14+ days)
 3. Council deliberation (closed session if needed)
@@ -154,10 +167,12 @@ Decisions fall into four categories:
 **Purpose**: Final decision authority for governance matters
 
 **Members**:
+
 - **Dylan Marriner** (Founder, Executive Decision)
 - 3-5 core maintainers (elected by core team annually)
 
 **Responsibilities**:
+
 - Approve major architectural changes (RFCs)
 - Resolve governance disputes
 - Amend project governance
@@ -165,11 +180,13 @@ Decisions fall into four categories:
 - Handle Code of Conduct violations
 
 **Authority**:
+
 - Veto power (used sparingly)
 - Unilateral decision on critical security issues
 - Final say on governance disputes
 
 **Meeting Cadence**:
+
 - Monthly (or as needed for urgent matters)
 - Minutes published (with confidential items redacted)
 
@@ -180,12 +197,14 @@ Decisions fall into four categories:
 **Purpose**: Day-to-day project leadership
 
 **Members** (8-12 contributors):
+
 - Active contributors with merge rights
 - Demonstrated judgment and expertise
 - Community respect
 - 6+ months of sustained contributions
 
 **Responsibilities**:
+
 - Review and merge pull requests
 - Triage issues and assign priority
 - Guide new contributors
@@ -193,11 +212,13 @@ Decisions fall into four categories:
 - Plan releases
 
 **Authority**:
+
 - Approve/reject Type 1 & 2 decisions
 - Veto individual changes (with explanation)
 - Nominate new core team members
 
 **Selection Process**:
+
 - Nominated by existing core team
 - 2+ core team approvals
 - No objections from maintainer council
@@ -214,10 +235,12 @@ Decisions fall into four categories:
 **When Created**: When needed (e.g., "Release Manager for v3.0")
 
 **Authority**:
+
 - None (advisory only)
 - Recommendations go through normal approval process
 
 **Example Groups**:
+
 - **Documentation Working Group**: Docs improvements
 - **Performance Task Force**: Speed optimization
 - **Security Audit Working Group**: Security assessment
@@ -230,6 +253,7 @@ Decisions fall into four categories:
 **Purpose**: Everyone else
 
 **How to Contribute**:
+
 - Report bugs
 - Suggest features
 - Submit pull requests
@@ -237,6 +261,7 @@ Decisions fall into four categories:
 - Participate in discussions
 
 **Authority**:
+
 - None (direct)
 - Influence through participation and quality contributions
 - Can advance to core team
@@ -314,6 +339,7 @@ Decisions fall into four categories:
 **Who can release**: Core team members with release rights (3+ people)
 
 **Process**:
+
 1. Create release candidate branch
 2. Test thoroughly (manual + automated)
 3. Update CHANGELOG.md
@@ -328,9 +354,11 @@ Decisions fall into four categories:
 ## Dispute Resolution
 
 ### **Level 1: Discussion**
+
 **When**: Disagreement about design, priority, or approach
 
 **Process**:
+
 1. Discuss in GitHub issue/PR comments
 2. Try to understand different perspectives
 3. Seek compromise
@@ -341,9 +369,11 @@ Decisions fall into four categories:
 ---
 
 ### **Level 2: Escalation to Core Team**
+
 **When**: Level 1 discussion doesn't resolve
 
 **Process**:
+
 1. Present both positions to core team
 2. Core team discusses (in meeting or Discussions)
 3. Vote if necessary (majority wins)
@@ -354,9 +384,11 @@ Decisions fall into four categories:
 ---
 
 ### **Level 3: Maintainer Council**
+
 **When**: Core team divided or fundamental disagreement
 
 **Process**:
+
 1. Escalate to Maintainer Council
 2. Council deliberates (closed session)
 3. Council votes (unanimity preferred, supermajority if needed)
@@ -369,6 +401,7 @@ Decisions fall into four categories:
 ### **Special Cases: Code of Conduct**
 
 **If dispute involves Code of Conduct violation**:
+
 1. Follow Code of Conduct investigation process
 2. Not a governance dispute (separate authority)
 3. See [CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md) for procedures
@@ -382,6 +415,7 @@ Decisions fall into four categories:
 This governance document can be amended through Type 4 (Governance) decisions.
 
 **Process**:
+
 1. **Propose change**: Create GitHub Discussion with "Governance Change" tag
 2. **Gather feedback**: Community input (14+ days)
 3. **Refine proposal**: Incorporate feedback
@@ -412,6 +446,7 @@ This governance document can be amended through Type 4 (Governance) decisions.
 ### **Transparency Report**
 
 Quarterly transparency report published:
+
 - Decisions made (summary)
 - Disputes resolved
 - New contributors
@@ -442,6 +477,7 @@ Quarterly transparency report published:
 ## Summary
 
 **ATLAS-GATE-MCP governance is:**
+
 - Transparent (decisions open, rationale explained)
 - Meritocratic (based on contributions, expertise)
 - Consensus-driven (seek agreement when possible)
@@ -453,4 +489,4 @@ Quarterly transparency report published:
 **Version**: 2.0.0  
 **Last Updated**: February 2026  
 **Status**: Active  
-**Questions?**: governance@atlas-gate-mcp.org
+**Questions?**: <governance@atlas-gate-mcp.org>

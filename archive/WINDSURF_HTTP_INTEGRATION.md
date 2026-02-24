@@ -36,6 +36,7 @@ kubectl logs -n atlas-gate deployment/atlas-gate | grep "API Key"
 ```
 
 Save:
+
 - **API Key**: `5f6e7d8c9b0a1f2e3d4c5b6a7f8e9d0c`
 - **Server URL**: `http://100.93.214.100:3000` or `https://atlas-gate.example.com`
 
@@ -376,6 +377,7 @@ Error: connect ECONNREFUSED 100.93.214.100:3000
 ```
 
 **Solutions:**
+
 1. Verify server is running: `curl http://100.93.214.100:3000/health`
 2. Check firewall rules: `sudo ufw allow 3000`
 3. Verify IP/port in configuration
@@ -387,6 +389,7 @@ Error: Invalid API key
 ```
 
 **Solutions:**
+
 1. Verify key from server logs
 2. Regenerate new tenant: `POST /tenants/create`
 3. Check for typos in configuration
@@ -398,6 +401,7 @@ Error: Session not found
 ```
 
 **Solutions:**
+
 1. Create new session first: `begin_session` with workspace_root
 2. Check sessionId is correct
 3. Verify session hasn't expired
@@ -409,6 +413,7 @@ Error: timeout after 30s
 ```
 
 **Solutions:**
+
 1. Increase timeout in adapter config
 2. Check network connectivity: `ping 100.93.214.100`
 3. Verify server is responding: `curl -v http://100.93.214.100:3000/health`
@@ -422,6 +427,7 @@ ssh -N -L 3000:localhost:3000 root@100.93.214.100 &
 ```
 
 Then configure Windsurf with:
+
 ```json
 "--server-url", "http://localhost:3000"
 ```

@@ -119,6 +119,7 @@ process.env.SECRET_API_KEY    // ❌ Blocked
 ## Test Enforcement
 
 ### Valid Call (Should Work)
+
 ```bash
 curl -X POST http://localhost:8000 \
   -H "Content-Type: application/json" \
@@ -130,6 +131,7 @@ curl -X POST http://localhost:8000 \
 ```
 
 ### Invalid Call (Should Fail)
+
 ```bash
 curl -X POST http://localhost:8000 \
   -H "Content-Type: application/json" \
@@ -141,6 +143,7 @@ curl -X POST http://localhost:8000 \
 ```
 
 ### Escape Attempt (Should Fail)
+
 ```bash
 curl -X POST http://localhost:8000 \
   -H "Content-Type: application/json" \
@@ -177,6 +180,7 @@ Every action logged to `audit-log.jsonl`:
 ```
 
 Failed attempt:
+
 ```json
 {
   "timestamp": "2024-01-31T12:00:05.000Z",

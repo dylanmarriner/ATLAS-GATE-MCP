@@ -10,11 +10,13 @@ scope: "tests/lang/bash/**"
 # Bash Full-Stack Implementation Plan
 
 ## Overview
+
 Build comprehensive system administration utilities using Bash with advanced piping, process substitution, stream manipulation, and infrastructure automation for monitoring, logging, and deployment.
 
 ## Pipe-Based Data Processing
 
 ### 1. Stream Processing Pipelines
+
 ```bash
 #!/bin/bash
 
@@ -61,6 +63,7 @@ function analyze_traffic() {
 ```
 
 ### 2. Process Substitution
+
 ```bash
 #!/bin/bash
 
@@ -87,6 +90,7 @@ function process_in_parallel() {
 ## System Monitoring Scripts
 
 ### 1. Resource Monitoring
+
 ```bash
 #!/bin/bash
 
@@ -136,6 +140,7 @@ function process_health_check() {
 ## String and Variable Manipulation
 
 ### 1. Advanced String Operations
+
 ```bash
 #!/bin/bash
 
@@ -196,6 +201,7 @@ function pattern_matching() {
 ## Infrastructure Automation
 
 ### 1. Deployment Pipeline
+
 ```bash
 #!/bin/bash
 
@@ -291,6 +297,7 @@ main "$@"
 ```
 
 ### 2. System Configuration
+
 ```bash
 #!/bin/bash
 
@@ -336,6 +343,7 @@ function ensure_service_running() {
 ## Log Processing
 
 ### 1. Log Aggregation
+
 ```bash
 #!/bin/bash
 
@@ -379,6 +387,7 @@ function generate_hourly_report() {
 ## Cronjob Automation
 
 ### 1. Scheduled Tasks
+
 ```bash
 #!/bin/bash
 

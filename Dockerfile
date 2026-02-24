@@ -1,40 +1,19 @@
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
-
-# Install curl for health checks
-RUN apk add --no-cache curl
-
-# Copy package files
 COPY package*.json ./
-
-# Install production dependencies
 RUN npm ci --only=production
 
-# Copy application code
-COPY . .
+COPY src/ src/
+COPY bin/ bin/
 
-# Create data and log directories
-RUN mkdir -p /data /data/tenants /data/audits /var/log/atlas-gate && \
-    chmod 755 /data /var/log/atlas-gate
+FROM gcr.io/distroless/nodejs18-debian11
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/bin ./bin
+COPY package.json ./
 
-# Set ownership
-RUN chown -R nodejs:nodejs /app /data /var/log/atlas-gate
-
-# Switch to non-root user
-USER nodejs
-
-# Expose port
-EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=10s --timeout=5s --retries=3 --start-period=10s \
-  CMD curl -f http://localhost:3000/health || exit 1
-
-# Start application
-CMD ["node", "bin/ATLAS-GATE-HTTP.js"]
+ENV NODE_ENV=production
+CMD ["bin/ATLAS-GATE-HTTP.js"]

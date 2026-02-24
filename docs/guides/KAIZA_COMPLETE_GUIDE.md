@@ -1,7 +1,7 @@
 # ATLAS-GATE-MCP Complete Guide
 
-
 ## Table of Contents
+
 1. [System Overview](#system-overview)
 2. [Planning Phase (AMP/Antigravity)](#planning-phase)
 3. [Execution Phase (Windsurf)](#execution-phase)
@@ -36,11 +36,13 @@ Production Code
 ### Step 1: Plan Creation Authority
 
 **Who can create plans?**
+
 - ✅ AMP (strategic planner)
 - ✅ Antigravity (implementation planner)
 - ❌ Windsurf (executor - BLOCKED)
 
 **What tool do they use?**
+
 - `bootstrap_create_foundation_plan` via ATLAS-GATE-MCP
 
 ---
@@ -109,6 +111,7 @@ Date: 2026-01-07
 **File location**: `docs/plans/YOUR_PLAN_NAME.md`
 
 **File naming**:
+
 - Use UPPERCASE with underscores
 - Examples: `FEATURE_AUTHENTICATION.md`, `IMPLEMENT_CACHE.md`
 - Avoid generic names like `PLAN_1.md`
@@ -195,16 +198,19 @@ console.log('Plan created:', result);
 After calling `bootstrap_create_foundation_plan`:
 
 1. **Check the file exists**:
+
    ```bash
    ls -la /media/ubuntux/DEVELOPMENT/gemini_universe/docs/plans/ | grep YOUR_PLAN_NAME
    ```
 
 2. **Verify status is APPROVED**:
+
    ```bash
    grep "status: APPROVED" /media/ubuntux/DEVELOPMENT/gemini_universe/docs/plans/YOUR_PLAN_NAME.md
    ```
 
 3. **List plans via MCP**:
+
    ```
    Call: list_plans with path '.'
    Output: Should show YOUR_PLAN_NAME in the list
@@ -219,12 +225,14 @@ After calling `bootstrap_create_foundation_plan`:
 **Windsurf is an EXECUTOR, NOT a planner.**
 
 ✅ You can:
+
 - Read plans from `docs/plans/`
 - Understand requirements exactly
 - Implement code per plan specifications
 - Ask for clarification if unclear
 
 ❌ You cannot:
+
 - Create plans
 - Modify plans
 - Make architectural decisions
@@ -300,6 +308,7 @@ Response: File written successfully (or error)
 ```
 
 **Important**: Each call to `write_file` includes:
+
 - The complete, production-ready code
 - Metadata linking back to the plan
 - Role information (EXECUTABLE, BOUNDARY, INFRASTRUCTURE, VERIFICATION)
@@ -330,6 +339,7 @@ git commit -m "Implement PLAN_AUTHENTICATION per ATLAS-GATE-MCP"
 ```
 
 **Important**: The pre-commit hook will verify:
+
 - ✅ All files were written via ATLAS-GATE-MCP (in audit log)
 - ✅ No bypass of governance
 
@@ -368,6 +378,7 @@ Implement a production-grade Redis caching layer that reduces database queries b
 The caching system sits between the application and database:
 
 ```
+
 Application
     ↓
 Cache Layer (new)
@@ -375,6 +386,7 @@ Cache Layer (new)
 Redis
     ↓ (if miss)
 Database
+
 ```
 
 ## Implementation Specifications
@@ -472,6 +484,7 @@ Date: 2026-01-07
 ### Error: BOOTSTRAP_FAILED
 
 **Message**:
+
 ```
 BOOTSTRAP_FAILED: Invalid signature
 ```
@@ -479,6 +492,7 @@ BOOTSTRAP_FAILED: Invalid signature
 **Cause**: HMAC signature doesn't match.
 
 **Solution**:
+
 ```
 Step 1: Verify ATLAS-GATE_BOOTSTRAP_SECRET is set correctly
 Step 2: Verify payload JSON stringification is exact
@@ -494,6 +508,7 @@ Step 4: Ensure NO extra whitespace in payload
 ### Error: PLAN_NOT_FOUND
 
 **Message**:
+
 ```
 PLAN_NOT_FOUND: Plan PLAN_AUTHENTICATION not found
 ```
@@ -501,6 +516,7 @@ PLAN_NOT_FOUND: Plan PLAN_AUTHENTICATION not found
 **Cause**: Plan doesn't exist or name is wrong.
 
 **Solution**:
+
 ```
 Step 1: Call list_plans to see available plans
 Step 2: Use exact plan name from list (case-sensitive)
@@ -513,6 +529,7 @@ Step 4: Check docs/plans/ directory exists
 ### Error: PREFLIGHT_FAILED
 
 **Message**:
+
 ```
 PREFLIGHT_FAILED: Code rejected because it breaks the build.
 PREFLIGHT_FAILURE: Command 'npm run test' failed.
@@ -521,6 +538,7 @@ PREFLIGHT_FAILURE: Command 'npm run test' failed.
 **Cause**: Code doesn't pass tests.
 
 **Solution**:
+
 ```
 Step 1: Run npm run test locally
 Step 2: Read the test failure
@@ -534,6 +552,7 @@ Step 5: Try write_file again
 ### Error: ROLE_HEADER_MISSING
 
 **Message**:
+
 ```
 ROLE_HEADER_MISSING: file must start with /** */ block
 ROLE_CONTRACT_VIOLATION: EXECUTABLE missing required field "PURPOSE"
@@ -542,6 +561,7 @@ ROLE_CONTRACT_VIOLATION: EXECUTABLE missing required field "PURPOSE"
 **Cause**: Missing role metadata in write_file call.
 
 **Solution**:
+
 ```
 Include in write_file:
 - ✅ role: "EXECUTABLE"
@@ -558,6 +578,7 @@ Include in write_file:
 ### Error: COMMIT REJECTED
 
 **Message**:
+
 ```
 ❌ COMMIT REJECTED - Files not written through ATLAS-GATE-MCP:
    ❌ src/file.js (NOT IN AUDIT LOG - rejected)
@@ -566,6 +587,7 @@ Include in write_file:
 **Cause**: File was written without ATLAS-GATE-MCP.
 
 **Solution**:
+
 ```
 Step 1: git reset HEAD
 Step 2: Use write_file to write the file
@@ -742,12 +764,14 @@ Step 3: Try commit again
 ## Summary
 
 **For Planners (AMP/Antigravity)**:
+
 1. Create plan document with clear requirements
 2. Call `bootstrap_create_foundation_plan` with proper auth
 3. Plan goes to `docs/plans/` with status APPROVED
 4. Wait for Windsurf to execute
 
 **For Executors (Windsurf)**:
+
 1. Call `read_prompt` to unlock
 2. Call `list_plans` to see plans
 3. Read plan document
@@ -756,6 +780,7 @@ Step 3: Try commit again
 6. When done: `git commit` (must pass pre-commit hook)
 
 **The Golden Rules**:
+
 - Plans are made by AMP/Antigravity
 - Code is written by Windsurf
 - All code is production-ready (no mocks, TODOs, type bypasses)

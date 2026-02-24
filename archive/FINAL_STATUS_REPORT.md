@@ -11,6 +11,7 @@
 The ATLAS-GATE MCP system has been comprehensively tested and fixed. Both **WINDSURF** (executor/mutation agent) and **ANTIGRAVITY** (planner/governance agent) roles work perfectly with all critical tools operational. All implementations use real, working code with zero mock data or stubs.
 
 ### Test Results
+
 - ✅ **19/19** Master Integration Tests PASSED
 - ✅ **16/16** ANTIGRAVITY Role Tests PASSED  
 - ✅ **13/13** WINDSURF Role Tests PASSED
@@ -22,17 +23,21 @@ The ATLAS-GATE MCP system has been comprehensively tested and fixed. Both **WIND
 ## What Was Fixed
 
 ### 1. Bootstrap Tool Path Portability
+
 **File:** `core/governance.js`  
 **Issue:** Hardcoded absolute path prevented bootstrap from working in other repositories  
 **Status:** ✅ FIXED - Now uses workspace-relative path resolution
 
 ### 2. Plan Linter Stub Detection  
+
 **File:** `core/plan-linter.js`  
 **Issue:** Plans with TODO, FIXME, mock, and stub markers weren't being rejected  
 **Status:** ✅ FIXED - Added comprehensive stub pattern detection with hard ERROR rejection
 
 ### 3. MCP Tool Response Formats
+
 **Files Fixed:**
+
 - `tools/list_plans.js` - Now returns MCP-formatted response with plan metadata
 - `tools/read_audit_log.js` - Now returns MCP-formatted response  
 - `tools/replay_execution.js` - Now returns MCP-formatted response
@@ -40,6 +45,7 @@ The ATLAS-GATE MCP system has been comprehensively tested and fixed. Both **WIND
 **Status:** ✅ FIXED - All tools now comply with MCP protocol
 
 ### 4. Verification Script Portability
+
 **File:** `tools/verification/verify-example-plan.js`  
 **Issue:** Hardcoded absolute path to example plan  
 **Status:** ✅ FIXED - Now uses dynamic path resolution
@@ -49,7 +55,9 @@ The ATLAS-GATE MCP system has been comprehensively tested and fixed. Both **WIND
 ## Test Coverage
 
 ### Master Integration Test Suite (19 tests)
+
 Covers complete system functionality:
+
 - Session initialization
 - WINDSURF role validation (6 tests)
 - ANTIGRAVITY role validation (6 tests)
@@ -59,7 +67,9 @@ Covers complete system functionality:
 **Result:** ✅ **19/19 PASSED**
 
 ### ANTIGRAVITY Role Tests (16 tests)
+
 Covers planning and governance:
+
 - Prompt fetching and role isolation
 - File reading and plan listing
 - Plan linting with stub detection (TODO, FIXME, mock rejection)
@@ -72,7 +82,9 @@ Covers planning and governance:
 **Result:** ✅ **16/16 PASSED**
 
 ### WINDSURF Role Tests (13 tests)
+
 Covers execution and mutation:
+
 - Prompt fetching and role isolation
 - File reading with path traversal protection
 - Plan listing
@@ -131,6 +143,7 @@ Covers execution and mutation:
 ## Security Validation
 
 ### Path Traversal Protection ✅
+
 ```
 ✓ Attempts to access /../../../etc/passwd blocked
 ✓ Only workspace-relative paths allowed
@@ -138,6 +151,7 @@ Covers execution and mutation:
 ```
 
 ### Role Isolation ✅
+
 ```
 ✓ WINDSURF cannot fetch ANTIGRAVITY_CANONICAL prompt
 ✓ ANTIGRAVITY cannot fetch WINDSURF_CANONICAL prompt
@@ -146,6 +160,7 @@ Covers execution and mutation:
 ```
 
 ### Stub Detection ✅
+
 ```
 ✓ Plans with TODO markers rejected
 ✓ Plans with FIXME markers rejected
@@ -155,6 +170,7 @@ Covers execution and mutation:
 ```
 
 ### Governance Enforcement ✅
+
 ```
 ✓ Bootstrap succeeds exactly once
 ✓ bootstrap_enabled flag set to false after first plan
@@ -163,6 +179,7 @@ Covers execution and mutation:
 ```
 
 ### Audit Trail ✅
+
 ```
 ✓ 585+ entries recorded
 ✓ Both roles can read audit log
@@ -174,21 +191,25 @@ Covers execution and mutation:
 ## Code Quality
 
 ### No Hardcoded Paths ✅
+
 - All filesystem operations use `getRepoRoot()`
 - All paths are workspace-relative
 - Works on any machine, any directory structure
 
 ### No Mock Data ✅
+
 - All implementations are real, working code
 - No test doubles in production paths
 - No simulation or dry-run flags
 
 ### No Stubs ✅
+
 - No TODO, FIXME, or XXX markers in code paths
 - No placeholder implementations
 - All functions are complete
 
 ### Error Handling ✅
+
 - Input validation on all parameters
 - Meaningful error messages
 - Consistent error reporting (SystemError, KaizaError)
@@ -264,6 +285,7 @@ Covers execution and mutation:
 ## What Each Role Can Do
 
 ### WINDSURF (Executor)
+
 ✅ Execute file writes under plan authority  
 ✅ Read workspace files (with security)  
 ✅ List approved plans  
@@ -274,6 +296,7 @@ Covers execution and mutation:
 ❌ Cannot access ANTIGRAVITY prompts  
 
 ### ANTIGRAVITY (Planner)
+
 ✅ Create foundation plans (one-time bootstrap)  
 ✅ Lint plans before approval  
 ✅ Read workspace files  
@@ -289,6 +312,7 @@ Covers execution and mutation:
 ## System Behavior
 
 **Bootstrap Phase**
+
 1. Fresh workspace triggers `bootstrap_enabled: true`
 2. ANTIGRAVITY calls bootstrap with HMAC-signed payload
 3. Plan is validated (no stubs), hashed, and stored
@@ -296,6 +320,7 @@ Covers execution and mutation:
 5. Further bootstrap attempts are rejected
 
 **Execution Phase**
+
 1. WINDSURF calls `read_prompt()` to get WINDSURF_CANONICAL
 2. WINDSURF reads approved plans via `list_plans`
 3. WINDSURF calls `write_file` with plan citation
@@ -303,6 +328,7 @@ Covers execution and mutation:
 5. All operations logged to audit trail (JSONL)
 
 **Forensics Phase**
+
 1. Either role can call `replay_execution` with plan hash
 2. System replays execution to detect divergence, tampering
 3. Audit chain verified via hash integrity

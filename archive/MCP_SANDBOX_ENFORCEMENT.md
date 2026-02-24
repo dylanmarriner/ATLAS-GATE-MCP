@@ -15,6 +15,7 @@ Windsurf and Antigravity are **permanently locked into an MCP-only sandbox**. Th
 - ❌ Modify or escape the sandbox
 
 They can ONLY:
+
 - ✅ Call registered MCP tools
 - ✅ Receive tool results
 - ✅ Use basic JavaScript builtins (Object, Array, String, Math, JSON, etc.)
@@ -84,6 +85,7 @@ startServer("WINDSURF");
 ### Filesystem Access
 
 **Blocked:**
+
 ```javascript
 // These throw errors:
 fs.readFile('/path/to/file')       // ❌
@@ -96,6 +98,7 @@ process.cwd()                       // ❌ Blocked
 ```
 
 **Allowed via MCP:**
+
 ```javascript
 // These work (through MCP tools):
 read_file({ path: '/path/to/file' })
@@ -106,6 +109,7 @@ list_plans()
 ### Shell Execution
 
 **Blocked:**
+
 ```javascript
 // These throw errors:
 child_process.exec('ls -la')                    // ❌
@@ -116,6 +120,7 @@ import cp from 'child_process'                  // ❌
 ```
 
 **Allowed via MCP:**
+
 ```javascript
 // There is no shell tool - MCP is the interface
 // Use read_file, write_file, and other tools instead
@@ -124,6 +129,7 @@ import cp from 'child_process'                  // ❌
 ### Module Imports
 
 **Blocked modules:**
+
 ```javascript
 'fs'              // Filesystem
 'fs/promises'     // Async filesystem
@@ -153,6 +159,7 @@ import cp from 'child_process'                  // ❌
 ### Global Objects
 
 **Blocked globals:**
+
 ```javascript
 // These throw errors:
 __dirname           // ❌
@@ -173,6 +180,7 @@ XMLHttpRequest      // ❌
 ```
 
 **Safe globals:**
+
 ```javascript
 // These work:
 Object              // ✅
@@ -193,6 +201,7 @@ Error               // ✅
 ### Environment Variables
 
 **Blocked:**
+
 ```javascript
 // These throw errors:
 process.env.HOME          // ❌
@@ -203,6 +212,7 @@ Object.keys(process.env)  // ❌
 ```
 
 **Allowed (whitelisted only):**
+
 ```javascript
 // These return safe values:
 process.env.NODE_ENV         // ✅ 'production' or 'development'
@@ -228,6 +238,7 @@ Every attempt to use blocked functionality is logged:
 ```
 
 Attempts are logged to:
+
 - Audit trail file
 - Process stderr (for monitoring)
 - Security logs
@@ -237,6 +248,7 @@ Attempts are logged to:
 ### Filesystem Access
 
 Instead of `fs.readFile()`:
+
 ```javascript
 // ❌ Blocked:
 const fs = require('fs');
@@ -249,6 +261,7 @@ const result = await mcp_tool('read_file', {
 ```
 
 Instead of `fs.writeFile()`:
+
 ```javascript
 // ❌ Blocked:
 const fs = require('fs');
@@ -266,6 +279,7 @@ const result = await mcp_tool('write_file', {
 ### Listing Files
 
 Instead of `fs.readdirSync()`:
+
 ```javascript
 // ❌ Blocked:
 const fs = require('fs');
@@ -280,6 +294,7 @@ const result = await mcp_tool('read_file', {
 ### Checking File Existence
 
 Instead of `fs.existsSync()`:
+
 ```javascript
 // ❌ Blocked:
 const fs = require('fs');
@@ -388,27 +403,32 @@ console.log('Sandbox working: Object builtins available');
 ## Design Principles
 
 ### 1. **Fail-Closed**
+
 - Any ambiguous case is blocked
 - Unknown modules are blocked
 - No "maybe it's safe" heuristics
 
 ### 2. **Defense in Depth**
+
 - Multiple lockdown layers
 - Process-level enforcement
 - Module-level interception
 - Integrity verification
 
 ### 3. **Transparent to Tools**
+
 - MCP tools work normally
 - Tool handlers unchanged
 - Enforcement is transparent
 
 ### 4. **Comprehensive Audit**
+
 - All attempts logged (successful or blocked)
 - Full context and stack traces
 - Enables forensic analysis
 
 ### 5. **No Escape Routes**
+
 - Globals frozen
 - process object locked
 - Module system intercepted

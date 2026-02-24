@@ -20,22 +20,26 @@ echo $ATLAS-GATE_BOOTSTRAP_SECRET
 ### For macOS/Linux Users
 
 **Step 1: Run the setup script**
+
 ```bash
 cd /path/to/ATLAS-GATE-MCP-server
 bash scripts/setup-bootstrap.sh
 ```
 
 **What it does:**
+
 - ✅ Generates a random 32-byte cryptographic secret
 - ✅ Asks how you want to store it (environment variable, .env file, or JSON file)
 - ✅ Sets up the secret automatically
 - ✅ Verifies it's working
 
 **Step 2: Follow the prompts**
+
 - Choose option 1 (shell environment) for easiest setup
 - Or choose option 2 (.env file) to store per-project
 
 **Step 3: Verify**
+
 ```bash
 echo $ATLAS-GATE_BOOTSTRAP_SECRET
 # Output: A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6...
@@ -50,16 +54,19 @@ echo $ATLAS-GATE_BOOTSTRAP_SECRET
 Right-click PowerShell → "Run as Administrator"
 
 **Step 2: Run the setup script**
+
 ```powershell
 cd C:\path\to\ATLAS-GATE-MCP-server
 powershell -ExecutionPolicy Bypass -File scripts/setup-bootstrap.ps1
 ```
 
 **Step 3: Follow the prompts**
+
 - Choose option 1 (User environment variable) for easiest setup
 - Open a new PowerShell window for changes to take effect
 
 **Step 4: Verify**
+
 ```powershell
 echo $env:ATLAS-GATE_BOOTSTRAP_SECRET
 # Output: A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6...
@@ -144,11 +151,13 @@ If verification passes, your bootstrap secret is ready!
 ### "Command not found: openssl"
 
 **On macOS:** Install Xcode Command Line Tools
+
 ```bash
 xcode-select --install
 ```
 
 **On Linux:** Install openssl
+
 ```bash
 sudo apt-get install openssl  # Debian/Ubuntu
 sudo yum install openssl      # RedHat/CentOS
@@ -172,6 +181,7 @@ bash scripts/setup-bootstrap.sh
 **Problem:** You set the secret in current terminal, but it's gone when you open a new one.
 
 **Solution:** Make it permanent:
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 echo 'export ATLAS-GATE_BOOTSTRAP_SECRET="your-secret-here"' >> ~/.bashrc

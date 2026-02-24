@@ -18,6 +18,7 @@ It solves a critical enterprise problem: **How do you safely empower AI assistan
 ### The Problem
 
 Modern AI tools (Claude, ChatGPT, Windsurf) are powerful but risky in enterprise contexts:
+
 - ❌ No way to enforce approval workflows
 - ❌ No audit trail of what they changed
 - ❌ No compliance evidence for auditors
@@ -26,6 +27,7 @@ Modern AI tools (Claude, ChatGPT, Windsurf) are powerful but risky in enterprise
 ### The Solution
 
 ATLAS-GATE-MCP is a security layer that:
+
 - ✅ **Controls**: Only approved operations execute
 - ✅ **Audits**: Every action logged with cryptographic proof
 - ✅ **Complies**: Built for SOC 2, ISO 27001, GDPR
@@ -37,6 +39,7 @@ ATLAS-GATE-MCP is a security layer that:
 ## Quick Start (3 Minutes)
 
 ### **1. Install**
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -44,11 +47,13 @@ npm install
 ```
 
 ### **2. Start**
+
 ```bash
 npm run start:windsurf
 ```
 
 ### **3. Try It**
+
 - Use Claude, ChatGPT, or Windsurf IDE
 - It will use ATLAS-GATE-MCP to safely execute tasks
 - Check `audit-log.jsonl` to see what happened
@@ -60,23 +65,27 @@ npm run start:windsurf
 ## Key Features
 
 ### **Authorization & Governance**
+
 - **Plan-Based Approval**: AI operations require explicit authorization
 - **Role-Based Access**: Windsurf (read/write) vs Antigravity (read-only)
 - **Workspace Isolation**: Operations scoped to approved directories
 
 ### **Audit & Compliance**
+
 - **Immutable Audit Trails**: Cryptographically signed operation logs
 - **Non-Repudiation**: Proof of who did what, when
 - **SOC 2 Ready**: Controls for audit certification
 - **ISO 27001 Aligned**: Information security management
 
 ### **Security & Isolation**
+
 - **Process Sandbox**: MCP-only, no direct system access
 - **Content Validation**: Static analysis prevents malicious patterns
 - **Input Validation**: Schema-based request validation
 - **Session Isolation**: Independent permission contexts
 
 ### **Enterprise Features**
+
 - **Multi-Tenant Support**: Multiple workspaces with separate controls
 - **Compliance Frameworks**: GDPR, HIPAA, FedRAMP ready
 - **Disaster Recovery**: Audit logs enable forensics
@@ -89,18 +98,23 @@ npm run start:windsurf
 **Choose your path:**
 
 ### **New to this project?**
+
 → [START_HERE.md](./START_HERE.md) — 5-minute overview in plain English
 
 ### **Want to use it?**
+
 → [User Guide](./docs/README.md#for-end-users) — Installation, configuration, usage
 
 ### **Want to contribute?**
+
 → [Contributor Guide](./docs/contributor-guide/CONTRIBUTING.md) — Development setup, standards
 
 ### **Deploying to production?**
+
 → [Enterprise Guide](./docs/enterprise-guide/DEPLOYMENT.md) — Deployment, compliance, audit
 
 ### **Understanding the architecture?**
+
 → [Architecture Docs](./docs/architecture/ARCHITECTURE.md) — System design, security model
 
 ---
@@ -110,6 +124,7 @@ npm run start:windsurf
 ### **Scenario: Code Review with AI**
 
 **Before ATLAS-GATE-MCP:**
+
 ```
 Developer: "Claude, review this code and make improvements"
 Claude: *Reviews and modifies files directly*
@@ -118,6 +133,7 @@ Claude: "I made changes but there's no record..."
 ```
 
 **With ATLAS-GATE-MCP:**
+
 ```
 1. Developer creates PLAN: "Review and improve app.js"
 2. Manager approves the plan
@@ -134,6 +150,7 @@ Result: **Full control, complete audit, zero surprises.**
 ## Who Should Use This
 
 ### **Yes, if you:**
+
 - Use AI tools to help with development or operations
 - Need to pass security audits (SOC 2, ISO 27001)
 - Handle regulated data (HIPAA, GDPR)
@@ -141,11 +158,13 @@ Result: **Full control, complete audit, zero surprises.**
 - Are risk-averse and want controls
 
 ### **Maybe, if you:**
+
 - Are a startup with limited compliance needs
 - Prioritize speed over governance
 - Have a small trusted team
 
 ### **No, if you:**
+
 - Are building a hobby project alone
 - Don't use AI for critical work
 - Have no compliance requirements
@@ -204,19 +223,24 @@ Result: **Full control, complete audit, zero surprises.**
 ## Getting Help
 
 ### **Questions About Features?**
+
 → [FAQ](./docs/user-guide/FAQ.md)
 
 ### **Something Not Working?**
+
 → [Troubleshooting](./docs/user-guide/TROUBLESHOOTING.md)
 
 ### **Technical Details?**
+
 → [Architecture](./docs/architecture/ARCHITECTURE.md)
 
 ### **Want to Contribute?**
+
 → [Contributing Guide](./docs/contributor-guide/CONTRIBUTING.md)
 
 ### **Security Issue?**
-→ Email: security@atlas-gate-mcp.org
+
+→ Email: <security@atlas-gate-mcp.org>
 
 ---
 
@@ -236,6 +260,7 @@ Result: **Full control, complete audit, zero surprises.**
 ## How It Works (High-Level)
 
 ### **1. Authorization Phase**
+
 ```
 AI: "I want to write file.js"
 ATLAS-GATE-MCP: "Show me the plan"
@@ -244,6 +269,7 @@ ATLAS-GATE-MCP: "✓ Plan is approved, proceed"
 ```
 
 ### **2. Validation Phase**
+
 ```
 ATLAS-GATE-MCP: "Let me scan the content"
 ATLAS-GATE-MCP: "✓ No malicious patterns found"
@@ -251,6 +277,7 @@ ATLAS-GATE-MCP: "✓ Schema is valid"
 ```
 
 ### **3. Execution Phase**
+
 ```
 ATLAS-GATE-MCP: "✓ Operation allowed"
 File System: <file modified>
@@ -258,6 +285,7 @@ ATLAS-GATE-MCP: "Logging operation..."
 ```
 
 ### **4. Audit Phase**
+
 ```
 Audit Log: {
   "timestamp": "2026-02-04T14:30:45Z",
@@ -294,6 +322,7 @@ AI Clients → MCP Protocol Layer → Security & Governance Layer
 We welcome contributions from the community!
 
 ### **Ways to Contribute**
+
 - Report bugs
 - Suggest features
 - Improve documentation
@@ -301,6 +330,7 @@ We welcome contributions from the community!
 - Help with testing
 
 ### **Getting Started**
+
 1. [Read CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 2. [Follow Contributing Guide](./docs/contributor-guide/CONTRIBUTING.md)
 3. [Check out issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP/issues)
@@ -312,6 +342,7 @@ We welcome contributions from the community!
 ATLAS-GATE-MCP is licensed under the **ISC License** (permissive, similar to MIT).
 
 This means you can:
+
 - ✅ Use it commercially
 - ✅ Modify it
 - ✅ Distribute it
@@ -327,8 +358,8 @@ Just include the license in distributions.
 
 - **GitHub Issues**: [Report bugs](https://github.com/dylanmarriner/ATLAS-GATE-MCP/issues)
 - **GitHub Discussions**: [Ask questions, discuss ideas](https://github.com/dylanmarriner/ATLAS-GATE-MCP/discussions)
-- **Email**: info@atlas-gate-mcp.org
-- **Security**: security@atlas-gate-mcp.org
+- **Email**: <info@atlas-gate-mcp.org>
+- **Security**: <security@atlas-gate-mcp.org>
 
 ---
 
@@ -345,6 +376,7 @@ Just include the license in distributions.
 ## Acknowledgments
 
 ATLAS-GATE-MCP was built with inspiration from:
+
 - CNCF projects (Kubernetes, Prometheus, etc.)
 - Modern security frameworks (NIST, SOC 2)
 - Enterprise governance best practices
@@ -357,11 +389,13 @@ Special thanks to all contributors and the community.
 ## Roadmap
 
 ### **2026 (Current)**
+
 - ✅ v2.0: MCP-Only Sandbox Enforcement
 - 🟡 SOC 2 Type II certification
 - 🟡 ISO 27001 alignment
 
 ### **2027**
+
 - Database integration for enterprise deployments
 - Advanced policy engine
 - Multi-server deployment support

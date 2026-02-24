@@ -12,6 +12,7 @@
 ## Root Cause Analysis
 
 ### Problem
+
 When MCP clients (like Windsurf or Antigravity) made tool calls, they were sending the `arguments` parameter as a JSON-encoded string:
 
 ```json
@@ -37,6 +38,7 @@ Instead of the correct object format:
 ```
 
 ### Validation Flow
+
 1. JSON-RPC message arrives as JSON string on stdin
 2. Message is parsed: `JSON.parse(line)` at `/shared/stdio.js:26`
 3. Request is validated against `CallToolRequestSchema`
@@ -45,7 +47,9 @@ Instead of the correct object format:
 6. Error: "Invalid input: expected object, received string"
 
 ### Why This Happened
+
 The client was double-encoding the arguments: serializing them to JSON, then placing that JSON string inside another JSON object field. This is a common mistake when:
+
 - Client doesn't properly serialize the entire request
 - Intermediate libraries are stringifying nested objects
 - Protocol mismatch between client and server implementations
@@ -59,6 +63,7 @@ The client was double-encoding the arguments: serializing them to JSON, then pla
 **Change Type:** Monkey-patch of `McpServer.validateToolInput()` method
 
 ### Before
+
 ```javascript
 const server = new McpServer({
   name: "atlas-gate-mcp",
@@ -69,6 +74,7 @@ const server = new McpServer({
 ```
 
 ### After
+
 ```javascript
 const server = new McpServer({
   name: "atlas-gate-mcp",
@@ -103,12 +109,14 @@ server.validateToolInput = async function(tool, args, toolName) {
 ## Verification
 
 ### Test 1: Normal Object Arguments (Existing Behavior)
+
 ```javascript
 await validateToolInput(tool, { path: "/test/path", content: "test" }, "test_tool")
 // ✓ PASS - Works as before
 ```
 
 ### Test 2: Stringified Arguments (New Capability)
+
 ```javascript
 await validateToolInput(
   tool,
@@ -119,6 +127,7 @@ await validateToolInput(
 ```
 
 ### Test 3: Invalid Stringified Data (Error Handling)
+
 ```javascript
 await validateToolInput(
   tool,
@@ -129,6 +138,7 @@ await validateToolInput(
 ```
 
 ### Test 4: Malformed JSON (Error Handling)
+
 ```javascript
 await validateToolInput(
   tool,
@@ -139,7 +149,9 @@ await validateToolInput(
 ```
 
 ### Existing Tool Tests
+
 All existing tool handlers continue to work:
+
 - ✓ `write_file` - writes files with role headers and audit logging
 - ✓ `read_file` - reads repository files  
 - ✓ `list_plans` - lists approved plans from docs/plans directory
@@ -150,40 +162,50 @@ All existing tool handlers continue to work:
 ## Acceptance Criteria Verification
 
 ✓ **Criterion 1:** `atlas-gate-mcp.read` succeeds with `{ "path": "some/file.md" }`  
-   - Direct object arguments work (existing behavior maintained)
+
+- Direct object arguments work (existing behavior maintained)
 
 ✓ **Criterion 2:** `atlas-gate-mcp.read` succeeds with stringified `"{\"path\": \"some/file.md\"}"`  
-   - Stringified arguments now automatically parsed and accepted
+
+- Stringified arguments now automatically parsed and accepted
 
 ✓ **Criterion 3:** No "expected object, received string" errors  
-   - Root cause fixed at source; malformed input still rejected properly
+
+- Root cause fixed at source; malformed input still rejected properly
 
 ✓ **Criterion 4:** No regressions in other MCP tools  
-   - All four tools (`write_file`, `read_file`, `list_plans`, `read_audit_log`) work correctly
-   - No SDK modifications; pure application-level fix
+
+- All four tools (`write_file`, `read_file`, `list_plans`, `read_audit_log`) work correctly
+- No SDK modifications; pure application-level fix
 
 ✓ **Criterion 5:** No changes required on client  
-   - Fix is server-side only
-   - Windsurf/Antigravity can continue sending stringified arguments
+
+- Fix is server-side only
+- Windsurf/Antigravity can continue sending stringified arguments
 
 ---
 
 ## Technical Details
 
 ### Files Modified
+
 - `server.js` - Lines 21-34 added (13 lines total)
 
 ### Files NOT Modified
+
 - No SDK files modified
 - No tool handler files modified
 - No schema definitions modified
 - No public API changes
 
 ### Breaking Changes
+
 None. The fix is fully backward compatible.
 
 ### Performance Impact
+
 Negligible. JSON parsing only occurs if:
+
 1. Arguments are present AND
 2. Arguments are detected as a string (typeof check)
 3. Only one JSON.parse() call per tool invocation

@@ -43,6 +43,7 @@ Use this checklist before committing code or sharing work:
 ### What Is a Secret?
 
 **Secrets** are credentials you need to hide:
+
 - Database passwords
 - API keys
 - OAuth tokens
@@ -63,11 +64,13 @@ const dbPassword = process.env.DB_PASSWORD;
 #### Create a `.env` File
 
 1. Create `.env` in your project root:
+
    ```bash
    touch .env
    ```
 
 2. Add secrets:
+
    ```
    STRIPE_API_KEY=sk_live_1234567890abcdef
    DATABASE_PASSWORD=MySecurePassword123!
@@ -75,11 +78,13 @@ const dbPassword = process.env.DB_PASSWORD;
    ```
 
 3. Add to `.gitignore` to prevent uploading:
+
    ```bash
    echo ".env" >> .gitignore
    ```
 
 4. Load in your code (Node.js):
+
    ```javascript
    import dotenv from 'dotenv';
    dotenv.config();
@@ -112,9 +117,11 @@ const apiKey = "sk_live_1234567890abcdef";
 3. **Update your `.env` file** with the new secret
 4. **Redeploy** your application
 5. **Check git history** to verify the old secret isn't in any commits
+
    ```bash
    git log --all -p | grep -i "sk_live"
    ```
+
 6. **If found in git history:**
    - Use a tool like BFG Repo Cleaner or git-filter-branch to remove it
    - Force-push to repository
@@ -184,6 +191,7 @@ Create API keys with minimal necessary permissions:
 **Example: Stripe keys**
 
 Instead of one "all-powerful" key, create:
+
 - `STRIPE_TEST_KEY` (for development)
 - `STRIPE_LIVE_KEY_CHARGES` (can only create charges, not refunds)
 - `STRIPE_LIVE_KEY_WEBHOOKS` (restricted webhook signing)
@@ -191,6 +199,7 @@ Instead of one "all-powerful" key, create:
 **Example: GitHub tokens**
 
 Instead of a full-access PAT, create:
+
 - Token with `repo` scope only (not admin)
 - Token with `read:packages` only (not write)
 - Separate token per integration (database client, CI/CD, etc.)
@@ -241,6 +250,7 @@ const dbUrl = process.env.DATABASE_URL;
 ```
 
 **Never:**
+
 - Commit database URLs to git
 - Share database passwords in chat/email
 - Use the same password for dev and production
@@ -266,6 +276,7 @@ app.get('/auth/google', (req, res) => {
 ```
 
 **Never:**
+
 - Hardcode Client IDs or Secrets
 - Use personal OAuth tokens for apps (create app-specific ones)
 - Share OAuth credentials across teams (create separate apps per environment)
@@ -277,6 +288,7 @@ app.get('/auth/google', (req, res) => {
 ### Data ATLAS-GATE Logs
 
 ✅ **Audit Trail** (Safe to store):
+
 - Timestamp of each operation
 - Tool called (write_file, read_file, etc.)
 - File paths modified
@@ -287,6 +299,7 @@ app.get('/auth/google', (req, res) => {
 ### Data ATLAS-GATE DOES NOT Log (Safe)
 
 ❌ **ATLAS-GATE doesn't capture:**
+
 - Your `.env` file contents (environment variables)
 - API keys (unless you put them in a file ATLAS-GATE modifies)
 - Private thoughts in your prompts (only what Claude sends to ATLAS-GATE tools)
@@ -296,16 +309,19 @@ app.get('/auth/google', (req, res) => {
 ### Audit Log Privacy
 
 **ATLAS-GATE audit logs are:**
+
 - Stored locally (not sent to external services)
 - Append-only (cannot be retroactively deleted)
 - Accessible only to whoever has access to the folder
 
 **ATLAS-GATE audit logs contain:**
+
 - File operations (which files were changed)
 - Metadata (timestamps, roles, session info)
 - Plan hashes (not secret, just identifiers)
 
 **Example audit entry:**
+
 ```json
 {
   "timestamp": "2026-01-20T15:30:00Z",
@@ -322,6 +338,7 @@ This is fine—it doesn't expose secrets.
 ### What NOT to Store in ATLAS-GATE
 
 Don't use ATLAS-GATE to manage:
+
 - ❌ SSH private keys (use ssh-keygen, store in `~/.ssh/`)
 - ❌ Database passwords (use `.env` + password manager)
 - ❌ OAuth tokens (use environment variables)
@@ -355,6 +372,7 @@ grep -i "windsurf" audit-log.jsonl | grep "success"
 ### Suspicious Activity
 
 Watch for:
+
 - ⚠️ Changes to `.env` or config files
 - ⚠️ Large number of file deletions
 - ⚠️ Changes outside your planned scope
@@ -411,11 +429,13 @@ If you see suspicious activity:
 ### Data Residency
 
 **ATLAS-GATE stores data:**
+
 - Locally in your workspace folder
 - Not sent to external servers (unless you configure it)
 - Accessible only to users with access to the folder
 
 **If you deploy ATLAS-GATE to a server:**
+
 - Audit logs remain on that server
 - Server security is your responsibility
 - Consider encryption at rest
@@ -424,6 +444,7 @@ If you see suspicious activity:
 ### Compliance Requirements
 
 **If you handle:**
+
 - **GDPR data** (EU residents): Audit logs might contain user identifiers—ensure you can delete them upon request
 - **HIPAA data** (healthcare): Audit logs must be encrypted, access-controlled, and retained per regulations
 - **PCI-DSS data** (credit cards): Don't store card data in ATLAS-GATE; use tokenized payment processor
@@ -434,6 +455,7 @@ If you see suspicious activity:
 ### User Privacy
 
 **If using ATLAS-GATE in a team:**
+
 - Inform team members that changes are logged and auditable
 - Be transparent about who has access to audit logs
 - Don't use ATLAS-GATE logs to spy on developers (use for security, not surveillance)
@@ -447,6 +469,7 @@ If you see suspicious activity:
 
 1. **Immediately revoke the secret** (GitHub → Settings → Developer → Regenerate Token)
 2. **Remove from git history** (if it's in git):
+
    ```bash
    # Option 1: Remove from last commit
    git reset HEAD~1
@@ -457,6 +480,7 @@ If you see suspicious activity:
    # Option 2: Full history cleanup (more complex)
    # See https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
    ```
+
 3. **Update `.env`** with new secret
 4. **Notify your team** (someone may have cloned the repo with the exposed secret)
 5. **Monitor for misuse** (check if the exposed key was used elsewhere)
@@ -473,7 +497,8 @@ If you see suspicious activity:
 ### "I'm Worried About Security"
 
 Report security concerns:
-- 📧 **Email:** security@atlas-gate-mcp.org
+
+- 📧 **Email:** <security@atlas-gate-mcp.org>
 - 🐛 **GitHub Issue:** [Security report](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/security/advisories)
 - 💬 **Discussion:** [GitHub Discussions - Security](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions/categories/security)
 

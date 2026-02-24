@@ -17,6 +17,7 @@ export ATLAS_GATE_MCP_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 ```
 
 Verify it's set:
+
 ```bash
 echo $ATLAS_GATE_MCP_BOOTSTRAP_SECRET
 ```
@@ -30,11 +31,13 @@ cp .env.example .env
 ```
 
 Edit `.env` and set:
+
 ```
 ATLAS-GATE_BOOTSTRAP_SECRET=<your-generated-secret-from-step-1>
 ```
 
 Restrict permissions:
+
 ```bash
 chmod 600 .env
 ```
@@ -58,6 +61,7 @@ npm run verify
 ```
 
 This checks:
+
 - Bootstrap secret is accessible
 - Enforcement policies are correct
 - Plan validation works
@@ -141,12 +145,14 @@ Plans are stored in `.atlas-gate/plans/`:
 ## Security Notes
 
 ✅ **Best Practices:**
+
 - Store bootstrap secret in environment variable (not in code)
 - Restrict `.env` file permissions to owner only (`chmod 600`)
 - Rotate secret after successful bootstrap (optional but recommended)
 - Keep audit logs for compliance
 
 ⚠️ **Important:**
+
 - Bootstrap secret enables plan creation—protect it carefully
 - Only needed for the first plan; after that, plans require standard approval
 - Never commit `.env` or bootstrap secrets to git (already in `.gitignore`)
@@ -154,9 +160,11 @@ Plans are stored in `.atlas-gate/plans/`:
 ## Troubleshooting
 
 ### "BOOTSTRAP_SECRET_MISSING"
+
 The environment variable or fallback file is not accessible.
 
 **Fix:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 # Or source your .env file
@@ -164,18 +172,23 @@ source .env
 ```
 
 ### "INVALID_BOOTSTRAP_SIGNATURE"
+
 The signature verification failed. This usually means:
+
 - Secret changed between payload creation and verification
 - Payload was modified
 
 **Fix:**
+
 - Ensure the same secret is used
 - Check that the environment variable is correct: `echo $ATLAS-GATE_BOOTSTRAP_SECRET`
 
 ### Tests fail with "bootstrap secret not set"
+
 The verification suite needs the secret in the environment.
 
 **Fix:**
+
 ```bash
 source .env
 npm run verify
@@ -198,4 +211,4 @@ npm run verify
 ---
 
 **Last Updated:** 2026-01-21
-**Repository:** https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+**Repository:** <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>

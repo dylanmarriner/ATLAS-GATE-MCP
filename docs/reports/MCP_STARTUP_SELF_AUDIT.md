@@ -30,6 +30,7 @@ The **MCP Startup Self-Audit** is a mandatory hardening gate that executes durin
 | `INV_STARTUP_TOOL_SCHEMAS_DEFINED` | All registered tools must have input schemas | Every tool has a non-null `inputSchema` | Any tool lacks schema definition |
 
 **Examples of FAIL**:
+
 ```javascript
 // FAIL: Tool registered without schema
 server.registerTool("missing_schema", {}, handler);
@@ -59,6 +60,7 @@ const server = {}; // No _registeredTools property
 | `write_file` | ✗ | ✓ | Mutation (Windsurf only) |
 
 **Examples of FAIL**:
+
 ```javascript
 // FAIL: Windsurf can access planning tool
 if (role === 'WINDSURF') {
@@ -82,6 +84,7 @@ if (role === 'ANTIGRAVITY') {
 | `INV_STARTUP_SESSION_NO_REINIT` | `begin_session` refuses if called twice | Session state checks for `SESSION_WORKSPACE_ROOT !== null` | Can call `begin_session` twice in same session |
 
 **Examples of FAIL**:
+
 ```javascript
 // FAIL: Tool called before begin_session
 SESSION_STATE.workspaceRoot = null;
@@ -104,6 +107,7 @@ await server.tool.call('begin_session', { workspace_root: '/repo2' }); // Should
 **Hash format**: SHA256 (64 hexadecimal characters)
 
 **Examples of FAIL**:
+
 ```javascript
 // FAIL: Plan addressed by name instead of hash
 resolvePlanPath('my-plan-v1'); // REJECT - must be hash
@@ -122,6 +126,7 @@ const plansDir = process.env.PLANS_DIR || './plans'; // REJECT - must be docs/pl
 | `INV_STARTUP_ERROR_CODES_COMPLETE` | All required error codes defined | All 10 required codes exist in `ERROR_CODES` object | Missing codes: UNAUTHORIZED_ACTION, INVARIANT_VIOLATION, SESSION_LOCKED, BOOTSTRAP_FAILURE, WRITE_REJECTED, PREFLIGHT_FAILED, POLICY_VIOLATION, INTERNAL_ERROR, SELF_AUDIT_FAILURE, BYPASS_ATTEMPT |
 
 **Examples of FAIL**:
+
 ```javascript
 // FAIL: Missing error code
 export const ERROR_CODES = {

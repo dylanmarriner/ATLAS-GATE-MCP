@@ -39,6 +39,7 @@
 | Backward Compat | All | ✅ | Object input still works; string input now wrapped |
 
 **Test Cases**:
+
 - ✅ `readFile({ path: "/docs/test.md" })` — object input
 - ✅ `readFile("/docs/test.md")` — string input
 - ✅ `readFile('{"path":"/docs/test.md"}')` — JSON string input
@@ -91,6 +92,7 @@
 Location: `core/stub-detector.js:70-106`
 
 Format:
+
 ```
 ENTERPRISE_CODE_VIOLATION: Code generation blocked
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -202,24 +204,28 @@ All TODOs, stubs, mocks, placeholders, and hardcoded values must be removed.
 ## Integration Test Scenarios
 
 ### Scenario 1: Plan Discovery
+
 **Setup**: Repo with `/docs/plans/feature-xyz.md`  
 **Action**: `readFile({ path: "/docs/plans/feature-xyz.md" })`  
 **Expected**: File content returned  
 **Status**: ✅ Implemented
 
 ### Scenario 2: String Input
+
 **Setup**: Standard MCP call  
 **Action**: `readFile("/docs/test.md")`  
 **Expected**: Path wrapped to `{ path: "/docs/test.md" }`, file returned  
 **Status**: ✅ Implemented
 
 ### Scenario 3: Enterprise Enforcement
+
 **Setup**: Standard write_file call  
 **Action**: Try to write code containing "TODO"  
 **Expected**: ENTERPRISE_CODE_VIOLATION error, write blocked  
 **Status**: ✅ Implemented
 
 ### Scenario 4: Backward Compatibility
+
 **Setup**: Existing code  
 **Action**: Object input for read_file/write_file  
 **Expected**: Still works (unchanged)  
@@ -286,6 +292,7 @@ All three hardening objectives have been successfully implemented in the MCP ser
 3. **Enterprise Code Enforcement**: ✅ Blocks all non-enterprise code patterns
 
 All changes are:
+
 - ✅ Production-grade and audit-ready
 - ✅ Explicitly documented
 - ✅ Backward compatible
@@ -305,4 +312,3 @@ All changes are:
 | Verification Date | 2026-01-04 |
 | Project Scope | MCP Server (Global) |
 | Status | COMPLETE AND VERIFIED |
-

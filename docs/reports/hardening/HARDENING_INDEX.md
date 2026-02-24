@@ -75,7 +75,7 @@
 **File**: `core/path-resolver.js`
 
 6. ❌ **Symlinks not resolved**: Multiple paths to same repo
-   - ✅ FIXED: Added `fs.realpathSync()` 
+   - ✅ FIXED: Added `fs.realpathSync()`
    - Impact: Deterministic across symlinked repos
 
 7. ❌ **Audit log race condition**: Concurrent writes could fork hash chain
@@ -98,9 +98,10 @@
 **Passing**: 22 (100%)  
 **Failing**: 0
 
-#### By Category:
+#### By Category
 
 **Stub Detector Tests** (10)
+
 - ✅ Allows `return true`
 - ✅ Allows arrow function returns
 - ✅ Blocks empty functions
@@ -113,6 +114,7 @@
 - ✅ Detects unparseable code
 
 **Path Resolver Tests** (7)
+
 - ✅ getRepoRoot works
 - ✅ getPlansDir works
 - ✅ Rejects path traversal
@@ -122,14 +124,17 @@
 - ✅ Handles symlinks
 
 **Plan Discovery Tests** (2)
+
 - ✅ List structure valid
 - ✅ Only APPROVED plans returned
 
 **Audit Log Tests** (2)
+
 - ✅ Entries created correctly
 - ✅ Hash chain maintained
 
 **Plan Enforcement Tests** (1)
+
 - ✅ Rejects non-existent plans
 
 ---
@@ -137,24 +142,28 @@
 ## Code Quality Metrics
 
 ### Determinism ✅
+
 - Single repo root per session
 - Symlinks resolved to canonical form
 - Paths normalized consistently
 - Behavior identical across structures
 
 ### Security ✅
+
 - Path traversal blocked
 - Plan approval enforced
 - Stub code detection comprehensive
 - Policy violations clearly distinct
 
 ### Reliability ✅
+
 - Atomic plan lifecycle
 - Integrity-protected audit log
 - Early validation and error messages
 - No silent failures
 
 ### Coverage ✅
+
 - 22 comprehensive tests
 - All critical paths tested
 - Edge cases covered
@@ -186,6 +195,7 @@ HARDENING_INDEX.md           📄 NEW - This document
 ## How to Verify
 
 ### Run Tests
+
 ```bash
 # Original test suite (stub detector)
 npm test
@@ -195,12 +205,14 @@ node test-comprehensive.js
 ```
 
 ### Expected Output
+
 ```
 AST Policy Verified.       # First test passes
 ✓ All tests passed!        # Comprehensive test passes
 ```
 
 ### Verify in Different Environments
+
 1. Different working directory: Tests should pass
 2. Symlinked repo path: Tests should pass
 3. Nested folder: Tests should pass
@@ -241,6 +253,7 @@ AST Policy Verified.       # First test passes
 The ATLAS-GATE MCP Server consists of:
 
 ### Core Components
+
 1. **Path Resolver** (`core/path-resolver.js`)
    - Canonical, centralized path resolution
    - Symlink resolution for determinism
@@ -262,13 +275,16 @@ The ATLAS-GATE MCP Server consists of:
    - Atomic operations for concurrent safety
 
 ### Tool Handlers
+
 - `write_file.js` - Enforced writes with validation
 - `read_file.js` - Safe read operations
 - `list_plans.js` - Plan discovery
 - `bootstrap_tool.js` - Initial plan creation
 
 ### Invariants
+
 10 global invariants enforced throughout:
+
 - Single repo root per session
 - All paths absolute and normalized
 - Plans must be approved
@@ -281,9 +297,11 @@ The ATLAS-GATE MCP Server consists of:
 ## Technical Details
 
 ### Global Invariants (INV_*)
+
 See `HARDENING_EXECUTION_DETAILED.md` for complete list and verification
 
 ### Error Categories
+
 - `HARD_BLOCK_VIOLATION` - Absolute blocks (no overrides)
 - `CRITICAL_VIOLATION` - Code quality issues
 - `INVALID_*` - Input validation failures
@@ -291,6 +309,7 @@ See `HARDENING_EXECUTION_DETAILED.md` for complete list and verification
 - `POLICY_VIOLATION` - Policy enforcement failures
 
 ### Testing Approach
+
 - Unit tests for individual components
 - Integration tests for workflows
 - Edge case coverage for robustness
@@ -335,12 +354,14 @@ A: Set `ATLAS-GATE_BOOTSTRAP_SECRET` environment variable and create initial pla
 ## Support & Questions
 
 For questions about the hardening:
+
 1. Check HARDENING_SUMMARY.md for overview
 2. Check AUDIT_FINDINGS.md for specific issues
 3. Check HARDENING_EXECUTION_DETAILED.md for implementation details
 4. Run tests: `npm test` and `node test-comprehensive.js`
 
 For deployment questions:
+
 - See deployment preparation section above
 - Review `.atlas-gate/governance.json` structure
 - Review plan file format requirements
@@ -354,4 +375,3 @@ The ATLAS-GATE MCP Server has undergone principal-level audit and hardening. All
 **Quality Assurance**: COMPLETE ✅  
 **Status**: PRODUCTION READY ✅  
 **Confidence**: VERY HIGH ✅
-

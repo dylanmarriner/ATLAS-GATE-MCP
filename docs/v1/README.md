@@ -55,6 +55,7 @@ ATLAS-GATE MCP v1.0 represents the stable, production-ready release of the enter
 ## Migration Notes
 
 Upgrading from pre-1.0 releases:
+
 - Review [Migration Guide](./reference/migration.md)
 - Backup existing configurations
 - Test in non-production environment first

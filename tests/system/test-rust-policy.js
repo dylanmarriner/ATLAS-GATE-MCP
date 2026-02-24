@@ -4,7 +4,7 @@ import {
   enforceRustPolicy,
   verifyCargoLintFlags
 } from '../../core/rust-policy-engine.js';
-import { KaizaError } from '../../core/error.js';
+import { SystemError } from "../../core/system-error.js";
 import assert from 'assert';
 
 console.log('🧪 Testing Rust Static Enforcement Gate...\n');
@@ -202,7 +202,7 @@ console.log('✓ Test 12: Clean code passes validation');
 }
 
 // Test 13: enforceRustPolicy throws on violation
-console.log('✓ Test 13: enforceRustPolicy throws KaizaError on violation');
+console.log('✓ Test 13: enforceRustPolicy throws SystemError on violation');
 {
   const code = `
     fn bad() {
@@ -213,11 +213,11 @@ console.log('✓ Test 13: enforceRustPolicy throws KaizaError on violation');
     enforceRustPolicy('src/main.rs', code, '/tmp/repo', {});
     assert(false, 'Should have thrown');
   } catch (err) {
-    assert(err instanceof KaizaError, 'Should throw KaizaError');
+    assert(err instanceof SystemError, 'Should throw SystemError');
     // Access the error object correctly
     const errorCode = err.error_code || (err.error && err.error.error_code);
     assert(errorCode === 'POLICY_VIOLATION', `Should have correct error code, got: ${errorCode}`);
-    console.log('  ✓ KaizaError thrown correctly\n');
+    console.log('  ✓ SystemError thrown correctly\n');
   }
 }
 

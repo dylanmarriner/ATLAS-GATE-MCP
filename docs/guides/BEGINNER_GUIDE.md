@@ -27,19 +27,25 @@ This guide teaches you how to use ATLAS-GATE MCP starting from absolute zero com
 ## Learning Paths
 
 ### 🚀 Fast Path (30 minutes)
+
 If you're comfortable with computers, follow the highlighted sections:
+
 - **Section 1**: Quick Setup
 - **Section 3**: Install ATLAS-GATE MCP
 - **Section 5**: First Use
 
 ### 📚 Step-by-Step with Explanations (2 hours)
+
 Complete beginner? Follow every section in order:
+
 - All sections with detailed explanations
 - Every command explained
 - Troubleshooting included
 
 ### 🔧 Troubleshooting as You Go (3 hours)
+
 New to computers? Follow this path:
+
 - All sections plus troubleshooting tips
 - Extra help for common problems
 - Detailed error explanations
@@ -52,12 +58,14 @@ New to computers? Follow this path:
 
 **A computer** is an electronic device that runs programs and stores information.
 
-#### For Desktop Computers:
+#### For Desktop Computers
+
 1. Find the power button (usually on the computer case or monitor)
 2. Press the power button once
 3. Wait for the computer to start up (this may take 1-3 minutes)
 
-#### For Laptop Computers:
+#### For Laptop Computers
+
 1. Open the laptop lid
 2. Press the power button (usually above the keyboard)
 3. Wait for the computer to start up
@@ -68,6 +76,7 @@ New to computers? Follow this path:
 **A trackpad** is a touch-sensitive area on a laptop that works like a mouse.
 
 **Basic actions:**
+
 - **Click**: Press and release the left mouse button once
 - **Double-click**: Press and release the left button twice quickly
 - **Right-click**: Press and release the right mouse button once
@@ -89,14 +98,16 @@ New to computers? Follow this path:
 
 **Internet**: A global network that connects computers worldwide.
 
-#### Wi-Fi Connection (Wireless):
+#### Wi-Fi Connection (Wireless)
+
 1. Look for Wi-Fi icon (looks like radio waves)
 2. Click on the Wi-Fi icon
 3. Select your network name from the list
 4. Enter your password if required
 5. Wait for "Connected" status
 
-#### Ethernet Connection (Wired):
+#### Ethernet Connection (Wired)
+
 1. Find the Ethernet port (looks like a phone jack but wider)
 2. Plug in the Ethernet cable
 3. Connection should work automatically
@@ -105,13 +116,15 @@ New to computers? Follow this path:
 
 **Web browser**: A program to access websites (like Chrome, Firefox, or Safari).
 
-#### Checking if You Have a Browser:
+#### Checking if You Have a Browser
+
 1. Look for icons named "Chrome", "Firefox", "Safari", or "Edge"
 2. If you see one, you already have a browser
 3. If not, follow the installation steps below
 
-#### Installing Google Chrome (Recommended):
-1. **If you have a browser**: Go to https://www.google.com/chrome
+#### Installing Google Chrome (Recommended)
+
+1. **If you have a browser**: Go to <https://www.google.com/chrome>
 2. **If you have no browser**: Use the computer's built-in browser or ask for help
 3. Click "Download Chrome"
 4. Click "Accept and Install"
@@ -123,6 +136,7 @@ New to computers? Follow this path:
 ### 2.3 Using a Web Browser
 
 **Basic browser actions:**
+
 - **Address bar**: White bar at top where you type website addresses
 - **Link**: Text or picture you can click to go to another page
 - **Tab**: Multiple pages open in same window
@@ -138,23 +152,27 @@ New to computers? Follow this path:
 **Terminal**: A text-based interface where you type commands to the computer.
 **Command**: An instruction you type to tell the computer what to do.
 
-#### Why We Need Terminal:
+#### Why We Need Terminal
+
 ATLAS-GATE MCP installation requires typing commands. This is normal for developer tools.
 
 ### 3.2 Opening Terminal
 
-#### On Windows:
+#### On Windows
+
 1. Press **Windows key + R**
 2. Type `cmd` and press Enter
 3. A black window opens - this is the Command Prompt
 4. Alternatively, search for "PowerShell" in Start Menu
 
-#### On macOS:
+#### On macOS
+
 1. Click the magnifying glass icon (Spotlight search)
 2. Type `terminal` and press Enter
 3. A white window opens - this is the Terminal
 
-#### On Linux:
+#### On Linux
+
 1. Press **Ctrl + Alt + T**
 2. Or search for "Terminal" in applications
 
@@ -163,6 +181,7 @@ ATLAS-GATE MCP installation requires typing commands. This is normal for develop
 **Node.js**: A program that runs JavaScript code on computers. ATLAS-GATE MCP needs this to work.
 
 #### Step 1: Check if Node.js is Already Installed
+
 Type this command in terminal and press Enter:
 
 ```bash
@@ -170,18 +189,21 @@ node --version
 ```
 
 **What you might see:**
+
 - If you see `v18.x.x` or higher: Node.js is already installed. Skip to Section 4.
 - If you see "command not found": Node.js is not installed. Continue below.
 
 #### Step 2: Download Node.js
+
 1. Open your web browser
-2. Go to https://nodejs.org
+2. Go to <https://nodejs.org>
 3. Click the green "LTS" button (LTS means Long-Term Support - most stable version)
 4. Wait for download to complete
 
 #### Step 3: Install Node.js
 
 **On Windows:**
+
 1. Double-click the downloaded `.msi` file
 2. Click "Next" through all options
 3. Click "Install"
@@ -189,12 +211,14 @@ node --version
 5. Click "Finish"
 
 **On macOS:**
+
 1. Double-click the downloaded `.pkg` file
 2. Follow the installation instructions
 3. Enter your password if asked
 4. Wait for installation to complete
 
 #### Step 4: Verify Installation
+
 Close and reopen terminal, then type:
 
 ```bash
@@ -209,6 +233,7 @@ You should see version numbers like `v18.x.x` and `9.x.x`. If so, installation w
 **Git**: A tool for downloading and managing code from websites like GitHub.
 
 #### Step 1: Check if Git is Already Installed
+
 Type this command:
 
 ```bash
@@ -216,30 +241,35 @@ git --version
 ```
 
 **What you might see:**
+
 - If you see version number: Git is installed. Skip to Section 4.
 - If you see "command not found": Git is not installed. Continue below.
 
 #### Step 2: Download Git
+
 1. Open web browser
-2. Go to https://git-scm.com
+2. Go to <https://git-scm.com>
 3. Click "Downloads"
 4. Download the version for your operating system
 
 #### Step 3: Install Git
 
 **On Windows:**
+
 1. Double-click the downloaded `.exe` file
 2. Click "Next" through all options (use defaults)
 3. Click "Install"
 4. Click "Finish"
 
 **On macOS:**
+
 1. Double-click the downloaded `.dmg` file
 2. Double-click the installer package
 3. Follow installation instructions
 4. Enter password if asked
 
 #### Step 4: Verify Installation
+
 Close and reopen terminal, then type:
 
 ```bash
@@ -261,7 +291,9 @@ You should see a version number. If so, installation was successful.
 **Folder**: A container for organizing files on your computer.
 
 #### Step 1: Create Project Folder
+
 **On Windows:**
+
 1. Open File Explorer (folder icon in taskbar)
 2. Click "This PC" or "Documents"
 3. Right-click in empty space
@@ -269,6 +301,7 @@ You should see a version number. If so, installation was successful.
 5. Type `atlas-gate-project` and press Enter
 
 **On macOS/Linux:**
+
 1. Open Finder (file cabinet icon)
 2. Go to Documents folder
 3. Right-click in empty space
@@ -276,19 +309,23 @@ You should see a version number. If so, installation was successful.
 5. Type `atlas-gate-project` and press Enter
 
 #### Step 2: Navigate to Folder in Terminal
+
 Type this command and press Enter:
 
 **On Windows:**
+
 ```bash
 cd Documents\atlas-gate-project
 ```
 
 **On macOS/Linux:**
+
 ```bash
 cd Documents/atlas-gate-project
 ```
 
 **What this does:**
+
 - `cd` means "change directory" (move to a folder)
 - The path tells it which folder to go to
 - You should now be in your project folder
@@ -296,6 +333,7 @@ cd Documents/atlas-gate-project
 ### 4.3 Downloading ATLAS-GATE MCP
 
 #### Method 1: Using Git (Recommended)
+
 Type this command exactly as shown:
 
 ```bash
@@ -303,13 +341,15 @@ git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 ```
 
 **What this does:**
+
 - `git clone` downloads code from GitHub
 - The long web address is where the code is stored
 - This creates a folder called `ATLAS-GATE-MCP-server`
 
 #### Method 2: Using ZIP File (If Git Doesn't Work)
+
 1. Open web browser
-2. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+2. Go to <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
 3. Click green "Code" button
 4. Click "Download ZIP"
 5. Wait for download to complete
@@ -318,14 +358,17 @@ git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 8. Move the extracted folder to your atlas-gate-project folder
 
 ### 4.4 Navigating to ATLAS-GATE MCP Folder
+
 Type this command:
 
 **On Windows:**
+
 ```bash
 cd ATLAS-GATE-MCP-server
 ```
 
 **On macOS/Linux:**
+
 ```bash
 cd ATLAS-GATE-MCP-server
 ```
@@ -337,6 +380,7 @@ ls
 ```
 
 **On Windows, use:**
+
 ```bash
 dir
 ```
@@ -362,16 +406,19 @@ npm install
 ```
 
 **What this does:**
+
 - `npm install` reads the `package.json` file
 - Downloads all required programs
 - May take 1-5 minutes depending on internet speed
 
 **What you'll see:**
+
 - Lots of text scrolling by
 - Progress bars or percentage indicators
 - Eventually it will stop and show a command prompt
 
 **If you see errors:**
+
 - Make sure you're in the correct folder (Section 4.4)
 - Make sure Node.js is installed (Section 3.3)
 - Try running the command again
@@ -385,6 +432,7 @@ npm run verify
 ```
 
 **What this does:**
+
 - Runs a series of tests to make sure everything works
 - Checks all components are working correctly
 - Should show "All tests passed" or similar message
@@ -403,6 +451,7 @@ ATLAS-GATE MCP works with AI assistants like Claude Desktop or Windsurf. It acts
 ### 6.2 Basic Configuration
 
 #### Step 1: Create Configuration File
+
 ATLAS-GATE MCP needs a configuration file to work with your AI assistant.
 
 Type this command to create a basic configuration:
@@ -412,11 +461,13 @@ echo '{"mcpServers": {"atlas-gate": {"command": "node", "args": ["'"$(pwd)"'/ser
 ```
 
 **What this does:**
+
 - Creates a file called `config.json`
 - Tells AI assistants how to find ATLAS-GATE MCP
 - Uses the current folder path automatically
 
 #### Step 2: Test Configuration
+
 Type this command to test:
 
 ```bash
@@ -424,6 +475,7 @@ node server.js
 ```
 
 **What you should see:**
+
 - Some startup messages
 - No error messages
 - The program should start and wait for connections
@@ -435,11 +487,13 @@ node server.js
 ATLAS-GATE MCP has two roles:
 
 **ANTIGRAVITY (Planning Role):**
+
 - For planning and designing changes
 - Can read files but cannot modify them
 - Creates plans for what to do
 
 **WINDSURF (Execution Role):**
+
 - For making actual changes to files
 - Can only execute approved plans
 - Logs all changes for security
@@ -447,25 +501,31 @@ ATLAS-GATE MCP has two roles:
 ### 6.4 Your First Session
 
 #### Step 1: Start a Session
+
 In your AI assistant (Claude Desktop/Windsurf), configure it to use ATLAS-GATE MCP using the `config.json` file you created.
 
 #### Step 2: Begin Session
+
 Type this to your AI assistant:
+
 ```
 "Please use ATLAS-GATE MCP to begin a session in this folder. Use the begin_session tool to lock the workspace."
 ```
 
 #### Step 3: Plan Something (ANTIGRAVITY Role)
+
 ```
 "Switch to ANTIGRAVITY role and create a plan to add a hello.txt file with the text 'Hello World'."
 ```
 
 #### Step 4: Execute the Plan (WINDSURF Role)
+
 ```
 "Switch to WINDSURF role and execute the plan to create hello.txt."
 ```
 
 #### Step 5: Check Results
+
 You should now have a file called `hello.txt` in your folder with "Hello World" inside.
 
 ---
@@ -477,6 +537,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 **Problem**: Terminal says "command not found" when you type commands.
 
 **Solution**:
+
 1. Make sure you're in the correct folder (Section 4.4)
 2. Verify software is installed (Sections 3.3 and 3.4)
 3. Restart terminal and try again
@@ -487,6 +548,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 **Problem**: "Permission denied" or "access denied" errors.
 
 **Solution**:
+
 1. Make sure you're using a user account with admin rights
 2. On Windows: Right-click terminal and "Run as administrator"
 3. On macOS/Linux: Try `sudo` before the command (if you know the password)
@@ -496,6 +558,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 **Problem**: "Network unreachable" or "connection failed" errors.
 
 **Solution**:
+
 1. Check internet connection (Section 2.1)
 2. Try a different network
 3. Check if firewall is blocking the connection
@@ -506,6 +569,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 **Problem**: npm install fails with errors.
 
 **Solution**:
+
 1. Make sure Node.js is properly installed (Section 3.3)
 2. Try `npm cache clean --force` then `npm install` again
 3. Check if you're in the correct folder
@@ -516,6 +580,7 @@ You should now have a file called `hello.txt` in your folder with "Hello World" 
 **Problem**: `npm run verify` shows test failures.
 
 **Solution**:
+
 1. Make sure all dependencies installed (Section 5.2)
 2. Check if you have the correct Node.js version (18 or higher)
 3. Try updating Node.js to the latest version
@@ -537,11 +602,13 @@ Now that you have ATLAS-GATE MCP working, you can:
 ### 8.2 Using ATLAS-GATE MCP in Projects
 
 **For personal projects:**
+
 - Use it to control AI assistants in your coding projects
 - Keep your code safe and organized
 - Track all changes automatically
 
 **For team projects:**
+
 - Share the configuration with your team
 - Use it to review AI-generated code
 - Maintain security and compliance
@@ -592,11 +659,13 @@ If you need help:
 ### 10.1 Protecting Your Information
 
 **Never share these files with others:**
+
 - Configuration files with personal information
 - Files containing passwords or API keys
 - Private project files
 
 **Keep these safe:**
+
 - Your computer password
 - Any API keys or tokens
 - Personal information in configuration files
@@ -606,6 +675,7 @@ If you need help:
 **API Key**: Special password that lets programs talk to each other.
 
 **Rules for API keys:**
+
 - Never put API keys in code you share
 - Never tell anyone your API keys
 - Store API keys in environment variables, not in files
@@ -614,6 +684,7 @@ If you need help:
 ### 10.3 Safe Defaults
 
 ATLAS-GATE MCP is designed to be safe by default:
+
 - It requires explicit approval for all changes
 - It logs everything that happens
 - It prevents dangerous operations automatically
@@ -622,12 +693,14 @@ ATLAS-GATE MCP is designed to be safe by default:
 ### 10.4 What to Do If Something Goes Wrong
 
 **If you see unexpected changes:**
+
 1. Check the audit log to see what happened
 2. Revert changes using Git if needed
 3. Review your configuration
 4. Ask for help in the community
 
 **If you think someone accessed your system:**
+
 1. Change all your passwords
 2. Revoke any API keys
 3. Check your audit logs
@@ -652,6 +725,7 @@ You're ready to use ATLAS-GATE MCP to safely control AI assistants in your proje
 ---
 
 **Need Help?**
+
 - **Documentation**: Check the `/docs/` folder for detailed guides
 - **Community**: Join discussions on GitHub
 - **Issues**: Report problems on GitHub Issues

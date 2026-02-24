@@ -27,6 +27,7 @@ Enhance the audit system to provide real-time summary reports and improved log q
 ## Current State Analysis
 
 The current audit system (`core/audit-system.js`) provides basic append-only logging of all tool invocations. It records:
+
 - Session ID
 - Timestamp
 - Tool name
@@ -35,6 +36,7 @@ The current audit system (`core/audit-system.js`) provides basic append-only log
 - Plan signature (for plan-related operations)
 
 However, it lacks:
+
 - Query capabilities (no way to find operations by time range or criteria)
 - Summary reporting (no way to generate high-level activity summaries)
 - Session analytics (no metrics about session health)
@@ -78,16 +80,19 @@ The audit log is stored as JSONL (one JSON object per line), making sequential r
 ### File Dependencies
 
 **core/audit-system-enhanced.js will be used by**:
+
 - `tools/audit_summary.js` (query functions)
 - Any future tool that needs to analyze audit logs
 - Server startup (optional: precompute statistics)
 
 **tools/audit_summary.js will import**:
+
 - `core/audit-system-enhanced.js` (query interface)
 - `core/path-resolver.js` (get locked workspace root)
 - `session.js` (SESSION_STATE)
 
 **tests/audit-system.test.js will test**:
+
 - All query functions
 - Summary generation
 - Performance characteristics
@@ -877,6 +882,7 @@ runAllTests();
 ## Path Allowlist
 
 Paths where files MAY be created or modified:
+
 - core/audit-system-enhanced.js
 - tools/audit_summary.js
 - tests/audit-system.test.js
@@ -901,6 +907,7 @@ Actions STRICTLY PROHIBITED during execution:
 ## Rollback Procedure
 
 Automatic Rollback Triggers:
+
 1. Any verification gate fails
 2. Syntax error in created files
 3. Test failure occurs
@@ -908,6 +915,7 @@ Automatic Rollback Triggers:
 5. File outside allowlist modified
 
 Rollback Steps:
+
 1. Delete core/audit-system-enhanced.js
 2. Delete tools/audit_summary.js
 3. Delete tests/audit-system.test.js
@@ -916,6 +924,7 @@ Rollback Steps:
 6. Generate rollback audit log entry
 
 Recovery:
+
 1. Review test output and error messages
 2. Identify root cause of failure
 3. Update implementation to address issue
@@ -924,21 +933,25 @@ Recovery:
 
 ## Dependencies and Integration Points
 
-### core/audit-system-enhanced.js imports:
+### core/audit-system-enhanced.js imports
+
 - fs (Node.js built-in)
 - path (Node.js built-in)
 
-### tools/audit_summary.js imports:
+### tools/audit_summary.js imports
+
 - core/audit-system-enhanced.js
 - core/path-resolver.js (getRepoRoot)
 - session.js (SESSION_STATE)
 - path (Node.js built-in)
 
-### No files are modified except:
+### No files are modified except
+
 - The three new files listed above
 - No changes to existing server.js, core modules, or tools
 
-### Integration points:
+### Integration points
+
 - audit_summary tool needs to be registered in server.js (already handles dynamic tool loading)
 - No changes needed to existing audit system behavior
 - Fully backward compatible with current audit log format
@@ -961,6 +974,7 @@ The plan execution is successful when:
 This plan extends the audit system without modifying its core append-only behavior. All functions are read-only queries that respect the immutability of the audit log. The implementation uses streaming to minimize memory footprint, making it suitable for large audit logs.
 
 Performance is optimized through:
+
 - Streaming reads instead of loading entire log into memory
 - Early termination of queries when filters are applied
 - Minimal object allocation in hot loops

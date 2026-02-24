@@ -5,6 +5,7 @@ Thank you for considering contributing to ATLAS-GATE-MCP. This document provides
 ## Code of Conduct
 
 This project is committed to providing a welcoming, inclusive environment. By participating, you agree to:
+
 - Be respectful and constructive
 - Welcome diverse perspectives
 - Focus on the work, not the person
@@ -13,30 +14,35 @@ This project is committed to providing a welcoming, inclusive environment. By pa
 ## Ways to Contribute
 
 ### 1. Report Bugs
+
 - Use [Bug Report template](./.github/ISSUE_TEMPLATE/bug_report.md)
 - Include reproduction steps
 - Provide environment details (OS, Node.js version)
 - Check for duplicates first
 
 ### 2. Suggest Features
+
 - Use [Feature Request template](./.github/ISSUE_TEMPLATE/feature_request.md)
 - Explain the use case
 - Propose how it should work
 - Discuss with maintainers before implementing
 
 ### 3. Improve Documentation
+
 - Fix typos or broken links
 - Clarify confusing sections
 - Add missing examples
 - Improve diagrams
 
 ### 4. Contribute Code
+
 - Bug fixes
 - New features
 - Performance improvements
 - Test coverage
 
 ### 5. Review Code
+
 - Comment on pull requests
 - Suggest improvements
 - Test changes locally
@@ -45,6 +51,7 @@ This project is committed to providing a welcoming, inclusive environment. By pa
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - Git
 - GitHub account
@@ -82,6 +89,7 @@ git checkout -b docs/your-doc-improvement
 ```
 
 **Branch naming conventions:**
+
 - `feature/` — New features
 - `fix/` — Bug fixes
 - `docs/` — Documentation changes
@@ -92,6 +100,7 @@ git checkout -b docs/your-doc-improvement
 ### 2. Make Your Changes
 
 **For code:**
+
 ```bash
 # Edit source files in src/
 # Add tests in tests/
@@ -101,6 +110,7 @@ npm run verify
 ```
 
 **For documentation:**
+
 ```bash
 # Edit files in docs/
 # Build and validate
@@ -110,6 +120,7 @@ node scripts/validate-docs.js
 ```
 
 **For diagrams:**
+
 ```bash
 # Edit source in docs/diagrams/source/
 # Regenerate
@@ -119,6 +130,7 @@ npm run docs:render
 ### 3. Commit with Clear Messages
 
 **Format:**
+
 ```
 type(scope): subject
 
@@ -128,6 +140,7 @@ footer (optional)
 ```
 
 **Types:**
+
 - `feat` — New feature
 - `fix` — Bug fix
 - `docs` — Documentation
@@ -137,6 +150,7 @@ footer (optional)
 - `chore` — Maintenance
 
 **Examples:**
+
 ```bash
 git commit -m "feat(audit): add plan hash verification"
 git commit -m "fix(bootstrap): handle missing env variable gracefully"
@@ -164,6 +178,7 @@ git push origin your-branch-name
 ```
 
 Then on GitHub:
+
 1. Click "Create Pull Request"
 2. Fill out [PR template](./.github/pull_request_template.md)
 3. Link related issue: "Closes #123"
@@ -174,18 +189,21 @@ Then on GitHub:
 ### JavaScript/Node.js
 
 **Style:**
+
 - Use ES modules (`import`/`export`)
 - Use `async`/`await` (not `.then()`)
 - Use const/let (not var)
 - 2-space indentation
 
 **Naming:**
+
 - `camelCase` for variables and functions
 - `PascalCase` for classes and constructors
 - `UPPER_SNAKE_CASE` for constants
 - Descriptive names (avoid `x`, `temp`, `data`)
 
 **Error Handling:**
+
 ```javascript
 // Good: Always handle errors
 try {
@@ -204,6 +222,7 @@ try {
 ```
 
 **Comments:**
+
 ```javascript
 // Good: Explain WHY
 // We use SHA256 for audit hashes because it's FIPS-compliant
@@ -217,6 +236,7 @@ const hash = crypto.createHash('sha256');
 ### Testing
 
 **Expectations:**
+
 - Test critical paths (authentication, audit, file operations)
 - Cover error cases
 - Run tests before submitting PR
@@ -230,12 +250,14 @@ npm run verify        # Full verification suite
 ### Documentation
 
 **For code changes:**
+
 - Update relevant docs in `docs/`
 - Add entry to `DOCUMENTATION_CHANGELOG.md`
 - Update diagrams if architecture changes
 - Link to related ADRs
 
 **For new features:**
+
 - Write usage guide or example
 - Update architecture docs if needed
 - Add to glossary if introducing new terms
@@ -258,12 +280,14 @@ npm run docs:build
 ### Test Coverage
 
 We aim for high coverage on:
+
 - Authentication and authorization
 - Audit logging
 - File operations
 - Error handling
 
 Low coverage acceptable for:
+
 - CLI argument parsing
 - Display formatting
 - Tool integrations
@@ -271,6 +295,7 @@ Low coverage acceptable for:
 ### Manual Testing
 
 For PRs that change behavior:
+
 1. Test with both WINDSURF and ANTIGRAVITY roles
 2. Test error paths
 3. Verify audit logs are created
@@ -281,6 +306,7 @@ For PRs that change behavior:
 ### When to Update Docs
 
 Every change that affects users requires documentation:
+
 - New features → New guide or update existing
 - Configuration changes → Update setup docs
 - API changes → Update reference
@@ -299,6 +325,7 @@ Every change that affects users requires documentation:
 ### Writing Guidelines
 
 See [DOCUMENTATION_LIFECYCLE.md](./docs/DOCUMENTATION_LIFECYCLE.md) for:
+
 - Tone and style
 - File naming
 - Front matter format
@@ -354,6 +381,7 @@ npm run release:prepare
 ```
 
 This:
+
 1. Runs all tests
 2. Validates documentation
 3. Generates diagrams
@@ -378,6 +406,7 @@ See [adr/TEMPLATE.md](./adr/TEMPLATE.md) for format.
 Major features are tracked on [Maturity Model](./docs/MATURITY_MODEL.md).
 
 Prioritization factors:
+
 - Community requests
 - Security implications
 - Breaking change impact
@@ -396,7 +425,7 @@ Prioritization factors:
 
 - **Issues**: Technical discussions, bug reports
 - **Discussions**: Design proposals, questions
-- **Email**: For security issues (security@atlas-gate-mcp.org)
+- **Email**: For security issues (<security@atlas-gate-mcp.org>)
 
 ### Asking Questions
 

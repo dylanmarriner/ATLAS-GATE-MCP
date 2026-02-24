@@ -16,6 +16,7 @@ npm run start:http
 ```
 
 **Expected output:**
+
 ```
 [BOOTSTRAP] Starting ATLAS-GATE HTTP Server...
 [BOOTSTRAP] Default tenant created:
@@ -39,6 +40,7 @@ curl -X POST http://localhost:3000/sessions/create \
 ```
 
 **Copy the `sessionId` from response:**
+
 ```json
 {
   "sessionId": "session_abc123xyz789",
@@ -99,6 +101,7 @@ console.log('Plans:', plans);
 ```
 
 Or run the example:
+
 ```bash
 npm run example:client
 ```
@@ -147,6 +150,7 @@ Client → HTTP API (port 3000)
 ## Support
 
 See [MULTI_TENANT_DEPLOYMENT.md](./MULTI_TENANT_DEPLOYMENT.md) for:
+
 - Complete API reference
 - Docker & Kubernetes deployment
 - Security best practices

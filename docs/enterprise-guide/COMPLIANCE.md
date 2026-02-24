@@ -37,6 +37,7 @@
 **Purpose**: Demonstrates that a service has adequate security controls.
 
 **ATLAS-GATE-MCP Supports**:
+
 - ✅ CC6.1: Logical and physical access controls
 - ✅ CC7.2: System monitoring and change management
 - ✅ CC7.4: Abuse and unauthorized activities detection
@@ -44,18 +45,21 @@
 - ✅ POO2.1: Process efficiency and effectiveness
 
 **Implementation Requirements**:
+
 1. Enable audit logging (enabled by default)
 2. Configure access controls (role-based: Windsurf/Antigravity)
 3. Regular log review (monthly recommended)
 4. Incident response procedures (documented in SECURITY_RESPONSE.md)
 
 **Evidence Artifacts**:
+
 - Audit log (immutable, cryptographically signed)
 - Configuration documentation
 - Incident response records
 - Access control matrix
 
 **Compliance Timeline**:
+
 - Week 1-2: Configure ATLAS-GATE-MCP
 - Week 3-8: Operational period (collect evidence)
 - Week 9-12: Audit by qualified firm
@@ -67,6 +71,7 @@
 **Purpose**: Comprehensive information security management system certification.
 
 **ATLAS-GATE-MCP Provides**:
+
 - A.5.1: Management direction for information security (plans + governance)
 - A.5.2: Information security policies (documented in CODE_OF_CONDUCT.md)
 - A.6.1: Organization of roles and responsibilities (clear RBAC model)
@@ -76,6 +81,7 @@
 - A.18.1: Incident management (documented procedures)
 
 **Implementation Requirements**:
+
 1. Document information security policy (use SECURITY.md as foundation)
 2. Establish roles and responsibilities (map to Windsurf/Antigravity roles)
 3. Create access control procedures (documented)
@@ -83,6 +89,7 @@
 5. Define incident response (follow SECURITY_RESPONSE.md)
 
 **Certification Process**:
+
 1. Gap analysis (identify what's needed)
 2. Implementation (configure and document)
 3. Internal audit (3-6 months of operation)
@@ -99,13 +106,17 @@
 **Key Compliance Areas**:
 
 #### **Lawful Processing (Article 6)**
+
 ATLAS-GATE-MCP provides:
+
 - Clear audit trails (proof of lawful processing)
 - Consent documentation support
 - Purpose limitation (plan-based authorization)
 
 #### **Data Subject Rights (Articles 15-22)**
+
 Supported mechanisms:
+
 - **Access**: Audit logs provide complete activity history
 - **Rectification**: Change control through plans
 - **Erasure**: Document deletion capabilities with audit
@@ -114,14 +125,18 @@ Supported mechanisms:
 - **Objection**: Policy override procedures
 
 #### **Data Protection by Design (Article 25)**
+
 ATLAS-GATE-MCP implements:
+
 - Principle of least privilege (role-based access)
 - Data minimization (only necessary audit details)
 - Purpose limitation (plan-based authorization)
 - Integrity and confidentiality controls
 
 #### **Data Processing Agreements (DPA)**
+
 Requirements:
+
 - Processor must sign Data Processing Agreement
 - Document data flows (see DATA_FLOWS.md)
 - Define sub-processor relationships
@@ -129,6 +144,7 @@ Requirements:
 - Define deletion procedures
 
 **Implementation Checklist**:
+
 - [ ] Privacy policy references ATLAS-GATE-MCP
 - [ ] Data flow diagram documents where data flows
 - [ ] DPA signed with processor
@@ -144,6 +160,7 @@ Requirements:
 **Purpose**: Protect health information privacy in USA.
 
 **ATLAS-GATE-MCP Supports**:
+
 - 45 CFR 164.306: Security standards (technical controls in place)
 - 45 CFR 164.308: Administrative safeguards (policies provided)
 - 45 CFR 164.310: Physical safeguards (sandbox isolation)
@@ -152,7 +169,7 @@ Requirements:
 
 **Requirements for Compliance**:
 
-1. **Business Associate Agreement (BAA)**: 
+1. **Business Associate Agreement (BAA)**:
    - Must be signed with ATLAS-GATE-MCP provider
    - Defines responsibilities for health data handling
 
@@ -174,6 +191,7 @@ Requirements:
    - Workstation security (secure development machines)
 
 **Compliance Steps**:
+
 1. Sign Business Associate Agreement
 2. Conduct risk analysis
 3. Implement required safeguards
@@ -190,32 +208,38 @@ Requirements:
 **ATLAS-GATE-MCP Alignment**:
 
 #### **Identify**
+
 - Asset management (audit trail identifies all operations)
 - Business environment documentation (provided)
 - Risk assessment (security model in docs)
 
 #### **Protect**
+
 - Access control (RBAC, plan-based authorization)
 - Data protection (encryption support)
 - Information protection (audit trail integrity)
 - Protective technology (sandbox isolation)
 
 #### **Detect**
+
 - Anomaly detection (monitor audit logs)
 - Detection processes (audit review procedures)
 - Security monitoring (log analysis recommended)
 
 #### **Respond**
+
 - Response planning (documented procedures)
 - Communications (incident notification)
 - Analysis (audit logs support forensics)
 - Mitigation (documented response steps)
 
 #### **Recover**
+
 - Recovery planning (disaster recovery guide)
 - Improvement (post-incident lessons learned)
 
 **Using ATLAS-GATE-MCP for NIST CSF**:
+
 1. Reference NIST CSF in security policy
 2. Map ATLAS-GATE-MCP controls to CSF functions
 3. Document how each framework category is addressed
@@ -341,6 +365,7 @@ Recommended defaults (configure per organization):
 ### **Data Deletion Procedures**
 
 To delete data:
+
 1. Initiate deletion with plan
 2. Log deletion in audit trail
 3. Securely delete from storage
@@ -354,16 +379,19 @@ To delete data:
 ### **Current Status (Feb 2026)**
 
 **Completed**:
+
 - ✅ GDPR readiness (documentation complete)
 - ✅ NIST CSF alignment (documented)
 - ✅ CIS Controls alignment (most v8.0 controls)
 
 **In Progress**:
+
 - 🟡 SOC 2 Type II (operational evidence collection)
 - 🟡 ISO 27001 (configuration validation)
 - 🟡 FedRAMP (security assessment phase)
 
 **Planned (2026-2027)**:
+
 - HIPAA BAA (business associate agreement)
 - PCI-DSS (if handling payment data)
 - NIST SP 800-171 (if federal contracts)
@@ -385,7 +413,7 @@ To certify your organization:
 
 ## Support & Questions
 
-- **General questions**: compliance@atlas-gate-mcp.org
+- **General questions**: <compliance@atlas-gate-mcp.org>
 - **Certification questions**: Contact a compliance professional
 - **Technical support**: See [Support SLA](./SUPPORT_SLA.md)
 

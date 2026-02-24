@@ -49,22 +49,27 @@ Implemented a complete propose-only remediation engine for the ATLAS-GATE MCP se
 ## Proposal Types Supported (Enum: 5)
 
 ### 1. PLAN_CORRECTION
+
 Ambiguous or incomplete plan discovered during execution.  
 Example: Invariant violation reveals missing phase ordering.
 
 ### 2. POLICY_EXCEPTION_REQUEST
+
 Code violates policy but is justified (e.g., Rust unsafe code).  
 Example: `unwrap()` is safe; needs plan exception.
 
 ### 3. INTENT_CORRECTION
+
 Intent artifact violates schema or is incomplete.  
 Example: Tool input missing required "authority" field.
 
 ### 4. EXECUTION_RETRY
+
 Execution diverged (non-deterministic behavior).  
 Example: Same args → different results on re-run.
 
 ### 5. INVESTIGATION_REQUIRED
+
 Evidence insufficient or issue too complex.  
 Example: Broken audit hash chain (potential tampering).
 
@@ -75,6 +80,7 @@ Example: Broken audit hash chain (potential tampering).
 ### Tool: generate_remediation_proposals
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path",
@@ -87,6 +93,7 @@ Example: Broken audit hash chain (potential tampering).
 ```
 
 **Outputs**:
+
 ```json
 {
   "success": true,
@@ -103,6 +110,7 @@ Example: Broken audit hash chain (potential tampering).
 ### Tool: list_proposals
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path",
@@ -111,6 +119,7 @@ Example: Broken audit hash chain (potential tampering).
 ```
 
 **Outputs**:
+
 ```json
 {
   "success": true,
@@ -124,6 +133,7 @@ Example: Broken audit hash chain (potential tampering).
 ### Tool: approve_proposal
 
 **Inputs**:
+
 ```json
 {
   "workspace_root": "/path",
@@ -135,6 +145,7 @@ Example: Broken audit hash chain (potential tampering).
 ```
 
 **Outputs**:
+
 ```json
 {
   "success": true,
@@ -155,6 +166,7 @@ Example: Broken audit hash chain (potential tampering).
 **INVARIANT**: Every proposed change maps directly to cited evidence.
 
 Example of **valid** proposal:
+
 ```json
 {
   "evidence_refs": ["sha256-finding-12345"],
@@ -168,6 +180,7 @@ Example of **valid** proposal:
 ```
 
 Example of **invalid** (rejected):
+
 ```json
 {
   "evidence_refs": ["sha256-finding-12345"],
@@ -183,6 +196,7 @@ Error: `REMEDIATION_NOT_EVIDENCE_BOUND`
 ## Proposal Persistence
 
 ### Proposal Markdown File
+
 **Location**: `docs/proposals/PROPOSAL_<proposal_id>.md`
 
 Human-readable, structured for manual review + parsing.
@@ -210,15 +224,19 @@ Changes Requested:
 ```
 
 ## Risk Assessment
+
 **Level**: HIGH
 ...
 
 ## Verification Steps (Post-Apply)
+
 - [ ] Run cargo build
 - [ ] Verify no new warnings
 
 ## Validity
+
 proposal is valid if plan_signature matches abc123...
+
 ```
 
 ### Proposal Index
@@ -230,6 +248,7 @@ One JSON object per line:
 ```
 
 ### Approval Audit Log
+
 **Location**: `.atlas-gate/proposal-approvals.jsonl` (append-only)
 
 ```json
@@ -280,6 +299,7 @@ System rejects (throws) if:
 Every proposal action is audited:
 
 **On Generation**:
+
 ```json
 {
   "tool": "generate_remediation_proposals",
@@ -291,6 +311,7 @@ Every proposal action is audited:
 ```
 
 **On Approval/Rejection**:
+
 ```json
 {
   "timestamp": "2026-01-19T10:15:00.000Z",
@@ -369,6 +390,7 @@ Complete specification published at:
 **File**: `docs/reports/MCP_REMEDIATION_PROPOSAL_SPEC.md`
 
 Includes:
+
 - Proposal lifecycle diagram
 - All 5 proposal types detailed
 - Complete schema (JSON format)
@@ -383,16 +405,19 @@ Includes:
 ## Verification Commands
 
 **Run full test suite**:
+
 ```bash
 npm test  # Runs all test-*.js files including this one
 ```
 
 **Run only remediation tests**:
+
 ```bash
 node test-remediation-proposals.js
 ```
 
 **Type checking** (if TypeScript available):
+
 ```bash
 npx tsc --noEmit (optional, not currently required)
 ```

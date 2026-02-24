@@ -224,26 +224,31 @@ All enforcement gates passed.
 ## Key Design Properties
 
 ### 1. Defense-in-Depth
+
 - **Client-side** (Windsurf): Fast feedback, developer-centric
 - **Server-side** (ATLAS-GATE): Authoritative, forensic
 - **Both required** to pass (AND logic, not OR)
 
 ### 2. Shift-Left Enforcement
+
 - 80% of gates run at IDE (Windsurf hooks)
 - 20% at server (ATLAS-GATE gates)
 - Fail fast, iterate quickly
 
 ### 3. No Fallback Paths
+
 - If any gate blocks, code is rejected
 - No "warning and proceed"
 - No privilege escalation
 
 ### 4. Complementary Coverage
+
 - Windsurf hooks: Broad patterns, configurable
 - ATLAS-GATE gates: Deep validation, authoritative
 - Together: Comprehensive coverage
 
 ### 5. Audit Trail
+
 - Every attempt logged (Windsurf-side)
 - Every write recorded (ATLAS-GATE-side)
 - Full forensic history
@@ -253,6 +258,7 @@ All enforcement gates passed.
 ## Configuration Points
 
 ### Windsurf-Hooker Policy
+
 **File:** `/windsurf-hooker/windsurf/policy/policy.json`
 
 ```json
@@ -269,9 +275,11 @@ All enforcement gates passed.
 ```
 
 ### ATLAS-GATE MCP Policy
+
 **File:** `(kernel level, not configurable per-repo)`
 
 Enforced in:
+
 - `core/write-time-policy-engine.js`
 - `core/stub-detector.js`
 - `core/preflight.js`
@@ -299,6 +307,7 @@ Enforced in:
 ## What Gets Blocked?
 
 ### At Windsurf Hooks (Fast Feedback)
+
 - Missing intent/commentary
 - TODOs, FIXMEs, stubs
 - Escape primitives (subprocess, etc.)
@@ -308,6 +317,7 @@ Enforced in:
 - Shell commands (if execution_only)
 
 ### At ATLAS-GATE Server (Final Authority)
+
 - Plan hash mismatch
 - Role metadata incorrect
 - Language-specific violations
@@ -315,6 +325,7 @@ Enforced in:
 - Suspicious file writes
 
 ### Never Allowed (Both Layers)
+
 - Code without explanation
 - Stub implementations
 - Execution primitives (in execution_only)

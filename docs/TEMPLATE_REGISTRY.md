@@ -13,6 +13,7 @@
 This registry documents all Atlas-Gate templates, their purposes, and alignment with the ATLAS-GATE MCP.
 
 All templates are designed for use with:
+
 - `atlas-gate-antigravity` (Planning)
 - `atlas-gate-windsurf` (Execution)
 
@@ -53,6 +54,7 @@ All templates are designed for use with:
 Templates are verified by ensuring they accurately describe the current MCP tool parameters and enforcement logic.
 
 ### Commands
+
 ```bash
 # Verify a plan scaffold
 node tools/lint_plan.js --path docs/templates/plan_scaffold.md

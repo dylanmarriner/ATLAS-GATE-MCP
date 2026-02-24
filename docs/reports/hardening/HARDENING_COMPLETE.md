@@ -16,6 +16,7 @@ The MCP server has been successfully hardened to enforce **three critical global
 3. ✅ **OBJECTIVE 3 — Enterprise Code Enforcement**: HARD BLOCK on stubs, mocks, TODOs, hardcoded values
 
 **All changes**:
+
 - ✅ Production-grade, explicit, enterprise-ready
 - ✅ Backward compatible (no breaking changes)
 - ✅ MCP server only (no downstream repos modified)
@@ -38,7 +39,9 @@ The MCP server has been successfully hardened to enforce **three critical global
 ## Detailed Documentation
 
 ### Primary Report
+
 📄 **[EXECUTION_REPORT.txt](EXECUTION_REPORT.txt)**
+
 - Comprehensive overview of all three objectives
 - Implementation details and evidence
 - Acceptance criteria status
@@ -47,7 +50,9 @@ The MCP server has been successfully hardened to enforce **three critical global
 - **Read this for authoritative status**
 
 ### Implementation Details
+
 📄 **[HARDENING_REPORT.md](HARDENING_REPORT.md)**
+
 - Detailed implementation of each objective
 - Code locations and line numbers
 - Safety analysis for each component
@@ -55,7 +60,9 @@ The MCP server has been successfully hardened to enforce **three critical global
 - Operational notes and deployment guidance
 
 ### Verification & Testing
+
 📄 **[HARDENING_VERIFICATION.md](HARDENING_VERIFICATION.md)**
+
 - Complete verification matrix for each objective
 - Code quality verification
 - Security verification
@@ -63,7 +70,9 @@ The MCP server has been successfully hardened to enforce **three critical global
 - Deployment readiness assessment
 
 ### Executive Summary
+
 📄 **[HARDENING_EXECUTION_SUMMARY.txt](HARDENING_EXECUTION_SUMMARY.txt)**
+
 - Quick reference checklist
 - Files modified with line counts
 - Scope enforcement confirmation
@@ -77,18 +86,21 @@ The MCP server has been successfully hardened to enforce **three critical global
 **Requirement**: MCP must read from `/docs/**` paths in ANY governed repo.
 
 **Implementation**: `tools/read_file.js`
+
 - Pattern definitions (lines 9-14)
 - Pattern matcher: `isAllowedDiscoveryPath()` (lines 16-22)
 - Auto-resolution via `resolveRepoRoot()` (lines 42-50)
 - Safe path normalization (cross-platform)
 
 **Supported Paths**:
+
 - `/docs/**` (recursive)
 - `/docs/plans/**`
 - `/docs/planning/**`
 - `/docs/antigravity/**`
 
 **Safety**:
+
 - ✅ Path traversal protected (`..` blocked)
 - ✅ Absolute and relative paths normalized
 - ✅ Explicit error messages
@@ -105,6 +117,7 @@ The MCP server has been successfully hardened to enforce **three critical global
 **Implementation**:
 
 **Server-level** (`server.js:22-52`):
+
 1. Intercept `validateToolInput()`
 2. If string: try JSON.parse()
 3. If parse fails: wrap in `{ path: string }`
@@ -112,11 +125,13 @@ The MCP server has been successfully hardened to enforce **three critical global
 5. Pass to tool
 
 **Tool-level** (`read_file.js`, `write_file.js`):
+
 - Defensive type checking
 - Explicit error messages
 - Path normalization
 
 **Format Support**:
+
 - String: `"path/file.md"`
 - JSON: `'{"path":"file.md"}'`
 - Object: `{ path: "file.md" }`
@@ -129,15 +144,17 @@ The MCP server has been successfully hardened to enforce **three critical global
 
 **Requirement**: HARD BLOCK on all non-enterprise code patterns.
 
-**Implementation**: 
+**Implementation**:
 
 **Core Logic** (`core/stub-detector.js`):
+
 - 13 text patterns (case-insensitive)
 - 11 regex patterns (no-op/dummy returns)
 - Structured violation tracking
 - Explicit blocking report
 
 **Enforcement Gate** (`tools/write_file.js:84-85`):
+
 - Applied universally to ALL write operations
 - Zero exceptions (HARD BLOCK)
 - Called before filesystem write
@@ -154,6 +171,7 @@ The MCP server has been successfully hardened to enforce **three critical global
 | **Empty Functions** | Empty `function` or `async function` |
 
 **Blocking Report**:
+
 ```
 ENTERPRISE_CODE_VIOLATION: Code generation blocked
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -176,6 +194,7 @@ Code must be production-grade and enterprise-ready.
 ## Verification Results
 
 ### Code Quality
+
 - ✅ All modified files pass syntax validation
 - ✅ No breaking API changes
 - ✅ Type validation explicit throughout
@@ -184,6 +203,7 @@ Code must be production-grade and enterprise-ready.
 - ✅ No stubs, mocks, or TODOs in new code
 
 ### Security
+
 - ✅ Path traversal protected
 - ✅ Type checking explicit
 - ✅ Input validation comprehensive
@@ -192,12 +212,14 @@ Code must be production-grade and enterprise-ready.
 - ✅ No sensitive info leakage
 
 ### Scope
+
 - ✅ Only MCP server modified
 - ✅ No downstream repos touched
 - ✅ Within authorized scope
 - ✅ All forbidden modifications avoided
 
 ### Functionality
+
 - ✅ Plan discovery works
 - ✅ Input normalization works
 - ✅ Enterprise enforcement works
@@ -224,12 +246,14 @@ Code must be production-grade and enterprise-ready.
 ## Scope Compliance
 
 ### ✅ Permitted Modifications
+
 - [x] MCP request parsing / normalization layer (`server.js`)
 - [x] MCP read tool path resolution logic (`tools/read_file.js`)
 - [x] MCP write tool pre-commit validation hooks (`tools/write_file.js`)
 - [x] MCP execution gate / policy enforcement code (`core/stub-detector.js`)
 
 ### ✅ No Forbidden Modifications
+
 - [x] NO downstream project code modified
 - [x] NO LLM behavior or prompts modified
 - [x] NO repo-specific assumptions added
@@ -241,17 +265,20 @@ Code must be production-grade and enterprise-ready.
 ## Deployment Guide
 
 ### Pre-Deployment
+
 1. Read `EXECUTION_REPORT.txt` (authoritative status)
 2. Review modified files
 3. Run syntax checks (done: all pass)
 4. Backup current MCP server
 
 ### Deployment
+
 1. Deploy 4 modified files (~186 lines)
 2. Start MCP: `node server.js`
 3. Verify: `[MCP] atlas-gate-mcp running | session=...` in logs
 
 ### Post-Deployment Testing
+
 1. Plan discovery: `readFile({ path: "/docs/plans/test.md" })`
 2. String input: `readFile("/docs/test.md")`
 3. Object input: `readFile({ path: "/docs/test.md" })`
@@ -280,18 +307,21 @@ Code must be production-grade and enterprise-ready.
 ## Key Features
 
 ### Plan Discovery
+
 - Auto-discovers repo root via `docs/plans/`
 - Works for any `/docs/**` path
 - Transparent to callers
 - Zero configuration required
 
 ### Input Normalization
+
 - Server-side normalization (not client-dependent)
 - Handles string, JSON, and object input
 - All formats produce identical behavior
 - Explicit error messages
 
 ### Enterprise Enforcement
+
 - Zero tolerance (no exceptions)
 - 24 pattern categories detected
 - Explicit violation reports

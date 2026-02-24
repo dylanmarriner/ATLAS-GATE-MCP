@@ -7,12 +7,14 @@
 ## The Three Tools
 
 ### 1. read_prompt (Always First)
+
 ```javascript
 await readPrompt({ name: "ANTIGRAVITY_CANONICAL" })
 // Unlocks write gates | Call before your first write
 ```
 
 ### 2. read_file (Understand Code)
+
 ```javascript
 await readFile({ path: "src/auth.js" })
 await readFile({ path: ".atlas-gate/approved_plans/PLAN_NAME.md" })
@@ -20,6 +22,7 @@ await readFile({ path: ".atlas-gate/approved_plans/PLAN_NAME.md" })
 ```
 
 ### 3. write_file (Make Changes)
+
 ```javascript
 await writeFile({
   path: "src/auth.js",
@@ -41,6 +44,7 @@ await writeFile({
 ```
 
 **Example**:
+
 ```javascript
 // Step 1: Verify plan exists
 const plan = await readFile({ path: ".atlas-gate/approved_plans/PLAN_JWT.md" });
@@ -92,6 +96,7 @@ How to measure.
 ## Code Rules: All Real, All Production
 
 ✅ **Real implementations**
+
 ```javascript
 const user = await database.users.findById(userId);
 const token = jwt.verify(token, publicKey);
@@ -99,6 +104,7 @@ const data = await externalAPI.fetchData();
 ```
 
 ❌ **Blocked (non-real constructs)**
+
 ```javascript
 const user = { id: "123", name: "DEMO" };      // C1: Stub
 // TODO: implement validation                   // C3: TODO
@@ -221,4 +227,3 @@ console.log("Write successful:", result);
 ---
 
 **Key Principle**: Real, production-ready code only. All changes planned and audited.
-

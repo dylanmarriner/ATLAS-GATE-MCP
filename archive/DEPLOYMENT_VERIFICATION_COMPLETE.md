@@ -104,26 +104,31 @@ TOTAL:                              46/46  ✅
 ### windsurf-hooker Enforcement Layer
 
 ✅ **Completeness Checking**
+
 - Detects TODOs, FIXMEs, placeholders
 - Blocks incomplete code at IDE level
 - ~100ms execution time
 
 ✅ **Documentation Enforcement**
+
 - Requires docstrings for all functions
 - Enforces inline comments for complex code
 - Validates code readability
 
 ✅ **Escape Detection**
+
 - Blocks subprocess, os.system, socket
 - Prevents direct file access (open())
-- Blocks eval(), exec(), __import__()
+- Blocks eval(), exec(), **import**()
 
 ✅ **MCP Tool Gating**
+
 - Routes all operations through ATLAS-GATE tools
 - Whitelist-based tool allowlist
 - Prevents tool bypass attempts
 
 ✅ **Filesystem Enforcement**
+
 - Enforces ATLAS-GATE boundary
 - Blocks forbidden paths (/etc, /root, .ssh, etc.)
 - Blocks binary blobs (.exe, .dll, .so, .pyc)
@@ -131,22 +136,26 @@ TOTAL:                              46/46  ✅
 ### ATLAS-GATE Server Layer
 
 ✅ **Plan Authorization**
+
 - Verifies plan exists before write
 - Hash-chain verification
 - Audit trail recording
 
 ✅ **Sandbox Enforcement**
+
 - MCP-only mode for Windsurf
 - No filesystem direct access
 - No shell execution
 - No module imports
 
 ✅ **Audit Trail**
+
 - JSONL format for easy parsing
 - Continuous logging from IDE to server
 - Hash chain prevents tampering
 
 ✅ **Tool Registration**
+
 - 11 tools available to Windsurf
 - write_file, read_file, list_plans, etc.
 - All schemas valid
@@ -237,17 +246,20 @@ Based on test execution:
 ### Immediate (Now)
 
 1. **Test with actual Windsurf IDE:**
+
    ```bash
    # Open Windsurf and attempt to write code
    # Should see hooks execute locally
    ```
 
 2. **Monitor audit logs:**
+
    ```bash
    tail -f /media/linnyux/development/developing/ATLAS-GATE-MCP/audit-log.jsonl
    ```
 
 3. **Verify policy is active:**
+
    ```bash
    sudo cat /etc/windsurf/policy/policy.json | grep atlas_gate_enabled
    # Should show: "atlas_gate_enabled": true
@@ -292,42 +304,48 @@ Based on test execution:
 
 ## Troubleshooting
 
-### If hooks don't execute:
+### If hooks don't execute
 
 **Check permissions:**
+
 ```bash
 ls -lh /usr/local/share/windsurf-hooks/*.py
 # Should show -rwxr-xr-x (755)
 ```
 
 **Check policy:**
+
 ```bash
 sudo cat /etc/windsurf/policy/policy.json | python3 -m json.tool
 # Should have valid JSON and atlas_gate_enabled: true
 ```
 
-### If integration tests fail:
+### If integration tests fail
 
 **Re-run validation:**
+
 ```bash
 cd /media/linnyux/development/developing/ATLAS-GATE-MCP
 node validate-windsurf-hooker-integration.js
 ```
 
 **Check ATLAS-GATE status:**
+
 ```bash
 node -e "console.log(process.version)"
 # Should be v18+
 ```
 
-### If policy JSON is invalid:
+### If policy JSON is invalid
 
 **Validate:**
+
 ```bash
 python3 -m json.tool /etc/windsurf/policy/policy.json
 ```
 
 **Fix and redeploy:**
+
 ```bash
 sudo cp /media/linnyux/development/developing/windsurf-hooker/windsurf/policy/policy.json /etc/windsurf/policy/
 ```
@@ -393,12 +411,14 @@ Production Workspace Updated
 ## Support & Monitoring
 
 **For issues**, check:
+
 1. `/usr/local/share/windsurf-hooks/` - Hook files present?
 2. `/etc/windsurf/policy/policy.json` - Policy valid?
 3. ATLAS-GATE logs - Server running?
 4. Audit log - Entries being recorded?
 
 **For monitoring:**
+
 ```bash
 # Watch hooks executing
 tail -f /media/linnyux/development/developing/ATLAS-GATE-MCP/audit-log.jsonl | grep hook

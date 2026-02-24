@@ -70,9 +70,9 @@ curl http://localhost:3000/audit/export?limit=10
 
 ### Access Dashboards
 
-- **Grafana**: http://localhost:3001 (admin/atlas_admin_password)
-- **Prometheus**: http://localhost:9090
-- **Direct API**: http://localhost:3000
+- **Grafana**: <http://localhost:3001> (admin/atlas_admin_password)
+- **Prometheus**: <http://localhost:9090>
+- **Direct API**: <http://localhost:3000>
 
 ### Database Access
 

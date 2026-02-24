@@ -5,11 +5,13 @@
 ## Quick Start
 
 ### View Diagrams
+
 - Architecture: [diagrams/rendered/architecture.svg](./rendered/architecture.svg)
 - Audit Flow: [diagrams/rendered/audit-flow.svg](./rendered/audit-flow.svg)
 - Governance Model: [diagrams/rendered/governance-model.svg](./rendered/governance-model.svg)
 
 ### Edit Diagrams
+
 1. Open source file in `diagrams/source/`
 2. Use tool specified below (Mermaid or PlantUML)
 3. Save changes
@@ -25,11 +27,13 @@
 **Best for**: Flowcharts, sequence diagrams, architecture diagrams
 
 **Tools**:
+
 - VS Code extension: "Markdown Preview Mermaid Support"
-- Online editor: https://mermaid.live
+- Online editor: <https://mermaid.live>
 - CLI: `npm run docs:render`
 
 **Example**:
+
 ```mermaid
 graph TD
     A[User] -->|creates plan| B[ANTIGRAVITY]
@@ -39,6 +43,7 @@ graph TD
 ```
 
 **Regenerate**:
+
 ```bash
 npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/architecture.svg
 ```
@@ -48,11 +53,13 @@ npx mmdc -i docs/diagrams/source/architecture.mmd -o docs/diagrams/rendered/arch
 **Best for**: Entity diagrams, complex class hierarchies
 
 **Tools**:
+
 - VS Code extension: "PlantUML"
-- Online editor: http://www.plantuml.com/plantuml/uml
+- Online editor: <http://www.plantuml.com/plantuml/uml>
 - Local: `plantuml` command (requires Java)
 
 **Example**:
+
 ```plantuml
 @startuml
 class Plan {
@@ -70,6 +77,7 @@ Plan --> Execution
 ```
 
 **Regenerate**:
+
 ```bash
 java -jar plantuml.jar docs/diagrams/source/*.puml -svg -o ../rendered/
 ```
@@ -113,13 +121,15 @@ docs/diagrams/source/my-diagram.puml
 ### Step 2: Edit & Preview
 
 **VS Code (recommended)**:
+
 1. Install "Markdown Preview Mermaid Support" extension
 2. Right-click `.mmd` file → "Open Preview"
 3. Edit and watch live preview
 
 **Online editor**:
-- Mermaid: https://mermaid.live
-- PlantUML: http://www.plantuml.com/plantuml/uml
+
+- Mermaid: <https://mermaid.live>
+- PlantUML: <http://www.plantuml.com/plantuml/uml>
 - Edit, copy back to file
 
 ### Step 3: Regenerate Output
@@ -155,6 +165,7 @@ git commit -m "docs: add my-diagram (source + rendered)"
 ### Automatic (CI/CD)
 
 On every commit, GitHub Actions runs:
+
 ```bash
 npm run docs:build
 # Includes: render + validate
@@ -191,11 +202,13 @@ npm run docs:validate
 ## Diagram Best Practices
 
 ### Naming
+
 - **Mermaid**: `kebab-case.mmd`
 - **PlantUML**: `kebab-case.puml`
 - Example: `audit-flow.mmd`, `data-model.puml`
 
 ### Documentation
+
 ```markdown
 # In the diagram source file, add a comment:
 
@@ -229,7 +242,8 @@ Keep diagrams focused on one concept. If too complex, split into multiple diagra
 
 **Bad**: One diagram showing entire system with 20+ nodes
 
-**Good**: 
+**Good**:
+
 - High-level architecture (5-7 nodes)
 - Detailed flow per component (separate diagram)
 - Entity relationships (separate ERD)
@@ -247,6 +261,7 @@ npm install --save-dev @mermaid-js/mermaid-cli
 ### Install PlantUML
 
 **Option 1: Local installation**
+
 ```bash
 # macOS
 brew install plantuml
@@ -259,6 +274,7 @@ choco install plantuml
 ```
 
 **Option 2: Java-based (universal)**
+
 ```bash
 # Download JAR from http://plantuml.com/download
 # Place in project root or add to PATH
@@ -268,10 +284,10 @@ choco install plantuml
 ### VS Code Extensions
 
 1. **Mermaid**: "Markdown Preview Mermaid Support"
-   - https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid
+   - <https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid>
 
 2. **PlantUML**: "PlantUML"
-   - https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml
+   - <https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml>
 
 ---
 
@@ -318,6 +334,7 @@ For highly customized diagrams:
 ### Problem: Mermaid renders but output SVG is wrong
 
 **Solution**: Update mermaid-cli
+
 ```bash
 npm update @mermaid-js/mermaid-cli
 ```
@@ -325,13 +342,15 @@ npm update @mermaid-js/mermaid-cli
 ### Problem: PlantUML requires Java but I don't have it
 
 **Solution**: Install Java
-- Download from https://www.java.com/en/download/
+
+- Download from <https://www.java.com/en/download/>
 
 Or use online editor and export manually.
 
 ### Problem: Links in diagrams don't work
 
 **Solution**: Use absolute URLs
+
 ```mermaid
 # ❌ Bad (won't work):
 [See docs](./docs/ARCHITECTURE.md)
@@ -342,7 +361,8 @@ Or use online editor and export manually.
 
 ### Problem: Diagram is too large/unreadable
 
-**Solution**: 
+**Solution**:
+
 - Reduce node count
 - Split into multiple diagrams
 - Use smaller font (`fontsize=10` in PlantUML)
@@ -439,11 +459,11 @@ When a diagram becomes obsolete:
 
 ## References
 
-- **Mermaid Documentation**: https://mermaid.js.org/
-- **PlantUML Documentation**: http://plantuml.com/
-- **Mermaid Live Editor**: https://mermaid.live
-- **PlantUML Online**: http://www.plantuml.com/plantuml/uml
-- **Diagrams.net (Draw.io)**: https://app.diagrams.net
+- **Mermaid Documentation**: <https://mermaid.js.org/>
+- **PlantUML Documentation**: <http://plantuml.com/>
+- **Mermaid Live Editor**: <https://mermaid.live>
+- **PlantUML Online**: <http://www.plantuml.com/plantuml/uml>
+- **Diagrams.net (Draw.io)**: <https://app.diagrams.net>
 
 ---
 

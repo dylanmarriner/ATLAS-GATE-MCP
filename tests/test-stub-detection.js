@@ -9,7 +9,7 @@
  * Run: node tests/test-stub-detection.js
  */
 
-import { lintPlan } from "../core/plan-linter.js";
+import { lintPlan } from "../src/application/plan-linter.js";
 
 console.log("\n=== STUB DETECTION VERIFICATION TEST ===\n");
 

@@ -48,6 +48,7 @@ This guide covers deploying ATLAS-GATE as a multi-tenant HTTP/REST API server in
 ### Multi-Tenancy Model
 
 Each tenant:
+
 - Has a unique **API Key** for authentication
 - Maintains separate **sessions** (multiple workspaces per tenant)
 - Gets isolated **audit logs**
@@ -69,6 +70,7 @@ ATLAS_GATE_PORT=3000 ATLAS_GATE_HOST=0.0.0.0 node bin/ATLAS-GATE-HTTP.js
 ```
 
 **Output:**
+
 ```
 [BOOTSTRAP] Starting ATLAS-GATE HTTP Server...
 [BOOTSTRAP] Default tenant created:
@@ -89,6 +91,7 @@ curl -X POST http://localhost:3000/tenants/create \
 ```
 
 **Response:**
+
 ```json
 {
   "tenantId": "tenant_abc123",
@@ -110,6 +113,7 @@ curl -X POST http://localhost:3000/sessions/create \
 ```
 
 **Response:**
+
 ```json
 {
   "sessionId": "session_xyz789",
@@ -239,6 +243,7 @@ for (const repo of repos) {
 ### Authentication
 
 All endpoints except `/health` and `/tenants/create` require:
+
 ```
 X-API-Key: your-api-key-here
 ```
@@ -444,6 +449,7 @@ curl -X GET "http://localhost:3000/audit/log?role=WINDSURF" \
 ### Metrics (Future)
 
 The server can be extended to expose Prometheus metrics:
+
 - Tenant count
 - Active sessions
 - Tool call counts

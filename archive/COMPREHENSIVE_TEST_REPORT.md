@@ -11,6 +11,7 @@
 The ATLAS-GATE MCP system has been comprehensively tested and fixed to ensure both **WINDSURF** (executor) and **ANTIGRAVITY** (planner) roles work correctly without errors or mock data.
 
 **Test Results:**
+
 - ✅ **19/19 master integration tests passed**
 - ✅ **16/16 ANTIGRAVITY role tests passed**
 - ✅ **12/13 WINDSURF role tests passed** (1 replay test skipped - no plans in governance)
@@ -28,12 +29,14 @@ The ATLAS-GATE MCP system has been comprehensively tested and fixed to ensure bo
 
 **Problem:**  
 The `tools/list_plans.js` handler returned a plain object instead of MCP-formatted response:
+
 ```javascript
 return { count: plans.length, plans };
 ```
 
 **Fix:**  
 Changed to return MCP-compliant response with content array and plan metadata:
+
 ```javascript
 return {
   content: [
@@ -46,6 +49,7 @@ return {
 ```
 
 **Impact:**  
+
 - ✅ list_plans now returns properly formatted responses
 - ✅ Plan metadata (status, scope, version) now visible
 - ✅ Both WINDSURF and ANTIGRAVITY can properly list plans
@@ -58,12 +62,14 @@ return {
 
 **Problem:**  
 The `tools/read_audit_log.js` handler returned a plain object:
+
 ```javascript
 return { count: entries.length, entries };
 ```
 
 **Fix:**  
 Changed to return MCP-compliant response with entry count and formatted content:
+
 ```javascript
 return {
   content: [
@@ -76,6 +82,7 @@ return {
 ```
 
 **Impact:**  
+
 - ✅ Audit log is now properly readable by both roles
 - ✅ Entry count is visible in response
 - ✅ Full audit trail is accessible for forensics
@@ -88,12 +95,14 @@ return {
 
 **Problem:**  
 The `tools/replay_execution.js` handler returned a formatted object directly:
+
 ```javascript
 return formatReplayResult(replayResult);
 ```
 
 **Fix:**  
 Wrapped the result in MCP response format:
+
 ```javascript
 return {
   content: [
@@ -106,6 +115,7 @@ return {
 ```
 
 **Impact:**  
+
 - ✅ Forensic replay tool now returns properly formatted responses
 - ✅ Findings, timeline, and verdict are accessible
 - ✅ Non-coder friendly explanations are available
@@ -131,6 +141,7 @@ return {
 | `export_attestation_bundle` | ✅ READY | Format export ready |
 
 **WINDSURF Capabilities:**
+
 - ✅ Execute changes under plan authority
 - ✅ Read workspace files with path traversal protection
 - ✅ Access audit trail for forensics
@@ -158,6 +169,7 @@ return {
 | `generate_attestation_bundle` | ✅ READY | Signing framework ready |
 
 **ANTIGRAVITY Capabilities:**
+
 - ✅ Create first approved plans (bootstrap-gated)
 - ✅ Lint plans before approval
 - ✅ Reject plans with stubs, TODOs, mocks
@@ -172,10 +184,12 @@ return {
 ## Comprehensive Test Coverage
 
 ### Test Suite 1: Master Integration Test
+
 **File:** `/tests/master-integration-test.js`  
 **Status:** ✅ 19/19 PASSED
 
 Tests:
+
 1. ✅ Session initialization
 2. ✅ WINDSURF: read_prompt (WINDSURF_CANONICAL) - 5601 chars
 3. ✅ WINDSURF: Role isolation (reject ANTIGRAVITY prompt)
@@ -197,10 +211,12 @@ Tests:
 19. ✅ SECURITY: Reject invalid lint input
 
 ### Test Suite 2: ANTIGRAVITY Tools Test
+
 **File:** `/tests/antigravity-tools-test.js`  
 **Status:** ✅ 16/16 PASSED
 
 Tests:
+
 1. ✅ lockWorkspaceRoot
 2. ✅ read_prompt - Fetched 5117 chars
 3. ✅ session state update - Prompt gate enabled
@@ -219,10 +235,12 @@ Tests:
 16. ✅ bootstrap disabled - Bootstrap one-time enforcement active
 
 ### Test Suite 3: Comprehensive Tool Test
+
 **File:** `/tests/comprehensive-tool-test.js`  
 **Status:** ✅ 16/17 PASSED (1 skipped)
 
 Key Tests:
+
 - ✅ Core module imports (governance, audit-system, plan-enforcer, role-parser)
 - ✅ WINDSURF tools available
 - ✅ ANTIGRAVITY tools available
@@ -235,10 +253,12 @@ Key Tests:
 - ✅ Error handling (path traversal protection)
 
 ### Test Suite 4: WINDSURF Tools Test
+
 **File:** `/tests/windsurf-tools-test.js`  
 **Status:** ✅ 12/13 PASSED (1 skipped)
 
 Key Tests:
+
 - ✅ read_prompt (WINDSURF_CANONICAL)
 - ✅ session state update
 - ✅ role isolation (negative)
@@ -254,25 +274,30 @@ Key Tests:
 ## Security Validation
 
 ### Path Traversal Protection
+
 ✅ **PASS** - Attempts to access `/../../../etc/passwd` are blocked  
 Verification: `resolveWriteTarget()` enforces workspace-relative paths
 
 ### Role Isolation
+
 ✅ **PASS** - WINDSURF cannot access ANTIGRAVITY_CANONICAL prompt  
 ✅ **PASS** - ANTIGRAVITY cannot access WINDSURF_CANONICAL prompt
 
 ### Stub/Mock Detection
+
 ✅ **PASS** - Plans with TODO markers are rejected  
 ✅ **PASS** - Plans with mock data are rejected  
 ✅ **PASS** - Plans with placeholder text are rejected  
 ✅ **PASS** - Plans with FIXME markers are rejected
 
 ### Governance Enforcement
+
 ✅ **PASS** - Bootstrap can only complete once  
 ✅ **PASS** - bootstrap_enabled flag correctly set to false after first plan  
 ✅ **PASS** - Plan immutability enforced
 
 ### Audit Trail Integrity
+
 ✅ **PASS** - Audit log is append-only (JSONL format)  
 ✅ **PASS** - 585 entries recorded and accessible  
 ✅ **PASS** - Both roles can read audit log
@@ -295,7 +320,9 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 ## Code Quality Assessment
 
 ### Real Working Code (No Stubs/Mocks)
+
 ✅ **CONFIRMED** - All tools use real implementations:
+
 - No `TODO:` comments in executable code paths
 - No mock data generators
 - No placeholder implementations
@@ -305,14 +332,18 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 - Plan linting uses real YAML/markdown parsing
 
 ### Error Handling
+
 ✅ **COMPREHENSIVE** - All tools have proper error handling:
+
 - Input validation on all parameters
 - Try-catch blocks with meaningful messages
 - SystemError and KaizaError for consistent error reporting
 - No swallowed exceptions
 
 ### Governance Enforcement
+
 ✅ **STRICT** - Multi-gate enforcement:
+
 1. Session must be initialized (begin_session)
 2. Prompts must be fetched first (read_prompt)
 3. Plans must be approved (bootstrap confirms)
@@ -337,21 +368,27 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 ## Deployment Readiness
 
 ### WINDSURF Executor
+
 **Status:** ✅ READY FOR PRODUCTION
+
 - All execution tools working
 - Security gates enforced
 - Audit trail operational
 - Can execute under plan authority
 
 ### ANTIGRAVITY Planner
+
 **Status:** ✅ READY FOR PRODUCTION
+
 - All planning tools working
 - Plan validation comprehensive
 - Bootstrap one-time enforcement active
 - Can create approved plans
 
 ### System-Wide
+
 **Status:** ✅ READY FOR PRODUCTION
+
 - No hardcoded paths (workspace-relative)
 - No mock data (all real code)
 - No stub implementations (complete)
@@ -364,6 +401,7 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 ## Recommendations for Use
 
 ### WINDSURF (Executor) Workflow
+
 1. Call `begin_session` with workspace root
 2. Call `read_prompt("WINDSURF_CANONICAL")` to understand role
 3. Call `list_plans` to see approved plans
@@ -371,6 +409,7 @@ Verification: `resolveWriteTarget()` enforces workspace-relative paths
 5. Call `read_audit_log` to verify execution
 
 ### ANTIGRAVITY (Planner) Workflow
+
 1. Call `begin_session` with workspace root
 2. Call `read_prompt("ANTIGRAVITY_CANONICAL")` to understand role
 3. Call `lint_plan` to validate plans before approval

@@ -11,6 +11,7 @@ This prompt can be applied to ANY GitHub repository to systematically upgrade it
 ### **Context & Authority**
 
 Assume the role of a world-leading GitHub authority and enterprise software repository architect with deep expertise in:
+
 - Open-source governance and community management
 - Fortune-100 engineering standards and best practices
 - Enterprise compliance frameworks (SOC 2, ISO 27001, GDPR, HIPAA)
@@ -19,6 +20,7 @@ Assume the role of a world-leading GitHub authority and enterprise software repo
 - Long-term software maintainability
 
 You are operating with the assumption that this repository will be:
+
 - Audited by enterprise security and compliance teams
 - Adopted by organizations with zero institutional knowledge
 - Read by non-technical stakeholders (legal, executives, board members)
@@ -36,6 +38,7 @@ Your task is to deliver a **complete, executable transformation plan** that upgr
 Examine the repository and provide:
 
 **Structural Assessment**:
+
 - Existing directory structure and organization
 - Root-level file clutter or confusion
 - Documentation file count and location
@@ -43,6 +46,7 @@ Examine the repository and provide:
 - CI/CD pipeline presence and quality
 
 **Documentation Assessment**:
+
 - README quality and audience assumptions
 - User/contributor documentation completeness
 - Architecture documentation presence
@@ -50,6 +54,7 @@ Examine the repository and provide:
 - Glossary or terminology explanations
 
 **Governance Assessment**:
+
 - Contribution guidelines clarity
 - Code of Conduct presence
 - Issue/PR template sophistication
@@ -57,6 +62,7 @@ Examine the repository and provide:
 - Decision-making process documentation
 
 **Compliance Assessment**:
+
 - Security policy documentation
 - License clarity and compliance
 - Dependency management practices
@@ -64,6 +70,7 @@ Examine the repository and provide:
 - Vulnerability disclosure process
 
 **Community Assessment**:
+
 - Community guidelines friendliness
 - Support infrastructure (email, discussions, etc.)
 - Response time SLAs
@@ -73,12 +80,14 @@ Examine the repository and provide:
 ### **1.2 Gap Identification**
 
 For each of the eight dimensions below, identify:
+
 - Current capability level (0-100%)
 - Target capability level (always 95%+)
 - Specific gaps to address
 - Priority for remediation
 
 **Eight Dimensions**:
+
 1. **Discovery & Onboarding**: Can non-technical stakeholders understand the project in 5 minutes?
 2. **Documentation Architecture**: Is documentation organized by audience with clear routing?
 3. **Security & Compliance Posture**: Is the project audit-ready and compliance-aligned?
@@ -91,6 +100,7 @@ For each of the eight dimensions below, identify:
 ### **1.3 Benchmark Against Elite Standards**
 
 Define what "elite/world-class" means for this specific repository:
+
 - Comparable projects to benchmark against (Kubernetes, Terraform, Docker, Flask, Django)
 - Specific quality metrics for each dimension
 - Success criteria for each improvement area
@@ -102,6 +112,7 @@ Define what "elite/world-class" means for this specific repository:
 ### **2.1 Define Optimal Directory Layout**
 
 Create a complete directory structure design that:
+
 - Organizes documentation by clear audience (users, contributors, maintainers, enterprises)
 - Separates concerns (source code, tests, docs, tooling, configuration)
 - Enables discovery and navigation
@@ -209,6 +220,7 @@ Create a complete directory structure design that:
 ### **2.2 Rationale for Each Section**
 
 Explain the purpose of every directory and key file:
+
 - Why it exists
 - What goes in it
 - How it serves users/contributors
@@ -223,12 +235,14 @@ Explain the purpose of every directory and key file:
 Produce a new, comprehensive README that:
 
 **Assumes Zero Prior Knowledge**:
+
 - No jargon without explanation
 - Real-world analogies for complex concepts
 - Graduated complexity (beginner → advanced)
 - Every command explained before use
 
 **Includes Progressive Learning Path**:
+
 1. **What is this?** (1 paragraph, plain English)
 2. **Why does it exist?** (Problem statement with real example)
 3. **Who should use it?** (Decision matrix for different personas)
@@ -248,6 +262,7 @@ Produce a new, comprehensive README that:
 17. **Support** (How to get help)
 
 **Quality Standards**:
+
 - Meets or exceeds documentation of: Kubernetes, Terraform, Docker, Flask, Django
 - Every command has example output shown
 - Every concept has working example
@@ -258,6 +273,7 @@ Produce a new, comprehensive README that:
 ### **3.2 Visual Diagram Descriptions**
 
 Provide Markdown-compatible diagram descriptions (Mermaid-style) for:
+
 1. **System architecture** (high-level component diagram)
 2. **Data flow** (how information moves through system)
 3. **Deployment model** (how to run it)
@@ -266,6 +282,7 @@ Provide Markdown-compatible diagram descriptions (Mermaid-style) for:
 6. **Decision tree** (how to choose features/options)
 
 Each diagram includes:
+
 - Plain-English explanation for non-technical readers
 - Technical interpretation for engineers
 - Clear labels and directional flow
@@ -316,6 +333,7 @@ Define a full documentation system with:
 ### **4.2 Documentation Maintenance Strategy**
 
 Define:
+
 - Update frequency (per release)
 - Ownership (who maintains each section)
 - Review process (before merging code)
@@ -332,6 +350,7 @@ Define:
 Provide explicit guidance and examples for three documentation tones:
 
 **Educational Tone** (Patient, Explanatory, Beginner-Friendly):
+
 - Use analogies and metaphors
 - Explain the "why" not just "what"
 - Assume no prior knowledge
@@ -340,6 +359,7 @@ Provide explicit guidance and examples for three documentation tones:
 - Provide context before details
 
 **Example**:
+
 ```markdown
 ## Understanding Authorization
 
@@ -352,6 +372,7 @@ ATLAS-GATE-MCP uses "plans" like those keys...
 ```
 
 **Corporate/Enterprise Tone** (Formal, Precise, Compliance-Aware):
+
 - Technical accuracy paramount
 - Emphasize compliance and audit trails
 - Executive-friendly language
@@ -360,6 +381,7 @@ ATLAS-GATE-MCP uses "plans" like those keys...
 - Regulatory framework alignment
 
 **Example**:
+
 ```markdown
 ## Access Control Framework
 
@@ -370,6 +392,7 @@ cryptographic signatures providing non-repudiation...
 ```
 
 **Open-Source Community Tone** (Welcoming, Collaborative, Energetic):
+
 - Emphasize community and contribution
 - Celebrate diversity
 - Encourage participation
@@ -378,6 +401,7 @@ cryptographic signatures providing non-repudiation...
 - Recognition of contributors
 
 **Example**:
+
 ```markdown
 ## Welcome to Contributors!
 
@@ -389,6 +413,7 @@ features—every contribution is valued. Here's how to get started...
 ### **5.2 When to Use Each Tone**
 
 Create a matrix showing:
+
 - Where each tone applies (README, user docs, enterprise docs, etc.)
 - How to recognize which audience needs which tone
 - How to transition between tones appropriately
@@ -403,18 +428,21 @@ Create a matrix showing:
 Create a comprehensive contribution guide with:
 
 **Simple Language**:
+
 - What contributing means (code, docs, reporting issues, etc.)
 - How to start (setup, first steps)
 - Communication norms
 - Expected behavior
 
 **Precise Technical Terms**:
+
 - Formal processes
 - Authority structure
 - Decision workflows
 - Requirements
 
 **Sections**:
+
 - Code of Conduct (be kind, be respectful)
 - Getting started (5 steps to be ready)
 - Development workflow (branches, commits, tests)
@@ -430,6 +458,7 @@ Create a comprehensive contribution guide with:
 Create a comprehensive code of conduct with:
 
 **Core Values**:
+
 - Respect for all community members
 - Inclusivity and welcoming environment
 - Collaborative problem-solving
@@ -437,24 +466,28 @@ Create a comprehensive code of conduct with:
 - Integrity in all interactions
 
 **Expected Behavior**:
+
 - How to contribute positively
 - Communication norms
 - Conflict resolution approach
 - Inclusion practices
 
 **Unacceptable Behavior**:
+
 - Harassment (explicit, detailed examples)
 - Discrimination (based on protected characteristics)
 - Hostile conduct (intimidation, threats)
 - Misconduct (plagiarism, fraud, trolling)
 
 **Reporting & Enforcement**:
+
 - How to report violations (private email, not public)
 - Investigation process (fair, impartial, confidential)
 - Consequences (proportional to violation severity)
 - Appeals process (fair hearing available)
 
 **Attribution**:
+
 - Based on Contributor Covenant v2.1
 - Inspired by Django, Python, CNCF codes of conduct
 
@@ -463,6 +496,7 @@ Create a comprehensive code of conduct with:
 Create explicit governance documentation with:
 
 **Decision-Making Framework**:
+
 - Four levels of decisions (simple → complex)
 - Who decides at each level
 - Discussion periods required
@@ -470,24 +504,28 @@ Create explicit governance documentation with:
 - Authority limits
 
 **Roles & Responsibilities**:
+
 - Founder/Lead Maintainer (final authority)
 - Core Team (merge rights, daily leadership)
 - Contributors (can advance to core team)
 - Working Groups (ad-hoc task forces)
 
 **Approval Authority Matrix**:
+
 - Small changes: 1 reviewer
 - Medium changes: 2 reviewers + discussion
 - Major changes: RFC (Request for Comments)
 - Breaking changes: RFC + supermajority vote
 
 **Dispute Resolution**:
+
 - Level 1: Discussion (try to reach consensus)
 - Level 2: Core team vote
 - Level 3: Maintainer escalation
 - Level 4: Community appeal process
 
 **Transparency**:
+
 - All decisions public (except security/conduct)
 - Rationale documented
 - Monthly transparency reports
@@ -502,6 +540,7 @@ Create explicit governance documentation with:
 Create standardized templates for:
 
 **Bug Report**:
+
 - Clear bug description
 - Reproduction steps
 - Expected vs actual behavior
@@ -510,6 +549,7 @@ Create standardized templates for:
 - Checklist before submitting
 
 **Feature Request**:
+
 - What problem it solves
 - Proposed solution
 - Examples and use cases
@@ -518,12 +558,14 @@ Create standardized templates for:
 - Checklist
 
 **Security Report**:
+
 - Warning: Don't use public issues for vulnerabilities
 - Pointer to private disclosure process
 - Link to SECURITY.md
 - For security questions, provide different template
 
 **Discussion Starter**:
+
 - Open-ended question/discussion format
 - No requirements, just conversation
 
@@ -532,25 +574,30 @@ Create standardized templates for:
 Create comprehensive PR template with:
 
 **Description**:
+
 - What changed and why
 - Problem it solves
 - How it was tested
 
 **Type of Change**:
+
 - Bug fix, feature, breaking change, docs, perf, etc.
 
 **Testing**:
+
 - How was it tested
 - Test coverage added
 - Manual testing performed
 
 **Documentation**:
+
 - README updated?
 - Docs updated?
 - Changelog entry?
 - Code comments?
 
 **Quality Checklist**:
+
 - Follows code standards
 - No console.log or debug code
 - Error handling included
@@ -558,11 +605,13 @@ Create comprehensive PR template with:
 - Tests passing
 
 **Breaking Changes**:
+
 - Does this break anything?
 - Deprecation needed?
 - Migration guide?
 
 **Author Checklist**:
+
 - Code reviewed by self
 - Tests added/passing
 - Documentation updated
@@ -577,6 +626,7 @@ Create comprehensive PR template with:
 Design comprehensive GitHub Actions workflows for:
 
 **Continuous Integration** (.github/workflows/ci.yml):
+
 - Test matrix (multiple Node/Python/Go versions)
 - Run tests on every push and PR
 - Build verification
@@ -585,6 +635,7 @@ Design comprehensive GitHub Actions workflows for:
 - Documentation validation
 
 **Security Scanning** (.github/workflows/security.yml):
+
 - Dependency vulnerability scanning
 - CodeQL static analysis
 - Secret scanning (no passwords in code)
@@ -592,12 +643,14 @@ Design comprehensive GitHub Actions workflows for:
 - Custom security validations
 
 **Documentation** (.github/workflows/docs.yml):
+
 - Markdown linting
 - Link validation (no broken links)
 - Spell checking
 - Build verification
 
 **Release** (.github/workflows/release.yml):
+
 - Automated version bumping
 - Changelog generation
 - Build artifacts
@@ -605,6 +658,7 @@ Design comprehensive GitHub Actions workflows for:
 - GitHub release creation
 
 **Performance** (.github/workflows/performance.yml):
+
 - Performance benchmarking
 - Regression detection
 - Results reporting
@@ -612,6 +666,7 @@ Design comprehensive GitHub Actions workflows for:
 ### **8.2 Status Badges**
 
 Add badges to README for:
+
 - Build status (passing/failing)
 - Test coverage
 - Dependencies (up-to-date/outdated)
@@ -627,6 +682,7 @@ Add badges to README for:
 ### **9.1 SOC 2 Type II Readiness**
 
 Document:
+
 - Security controls implemented (CC6, CC7, A1, POO, etc.)
 - Evidence artifacts (audit logs, configs, procedures)
 - Timeline to certification (pre-assessment, 6-month operational period, audit)
@@ -636,6 +692,7 @@ Document:
 ### **9.2 ISO 27001 Alignment**
 
 Document:
+
 - Information security policy requirements
 - Asset management procedures
 - Access control implementation
@@ -647,6 +704,7 @@ Document:
 ### **9.3 GDPR Compliance**
 
 Document:
+
 - Lawful basis for processing data
 - Data subject rights (access, erasure, portability, etc.)
 - Data Protection Impact Assessment (DPIA)
@@ -659,6 +717,7 @@ Document:
 ### **9.4 HIPAA Support** (if handling health data)
 
 Document:
+
 - Technical safeguards (encryption, audit)
 - Administrative safeguards (training, policies)
 - Physical safeguards (facility access)
@@ -669,6 +728,7 @@ Document:
 ### **9.5 Control Mapping Matrix**
 
 Create table showing:
+
 - Control ID (from standard)
 - Control description
 - How implemented in project
@@ -678,6 +738,7 @@ Create table showing:
 ### **9.6 Security Policy**
 
 Document:
+
 - Vulnerability disclosure process
 - Response timeline (48h initial, 14d patch for critical)
 - Security team composition
@@ -691,15 +752,17 @@ Document:
 ### **10.1 Multiple Communication Channels**
 
 Establish:
+
 - **GitHub Issues**: Bug reports and features
 - **GitHub Discussions**: General questions, ideas, requests
-- **Email**: General inquiries (info@project.org)
-- **Security Email**: Vulnerability reports (security@project.org)
+- **Email**: General inquiries (<info@project.org>)
+- **Security Email**: Vulnerability reports (<security@project.org>)
 - **Office Hours** (optional): Weekly community calls
 
 ### **10.2 Support SLA** (if applicable)
 
 Define:
+
 - **Critical issues**: 24-hour response
 - **High priority**: 3-day response
 - **Medium priority**: 2-week response
@@ -708,6 +771,7 @@ Define:
 ### **10.3 Community Recognition**
 
 Establish:
+
 - Contributors list (CONTRIBUTORS.md)
 - Acknowledgments (project credits)
 - Highlight program (feature community members)
@@ -883,6 +947,7 @@ When this prompt is fully executed, the repository will be:
 ✅ **Scalable** — Governance model supports growth  
 
 **Suitable for**:
+
 - Fortune-100 adoption
 - Government and healthcare deployment
 - Regulated environments
@@ -894,6 +959,7 @@ When this prompt is fully executed, the repository will be:
 ## EXECUTION NOTES
 
 **This prompt is**:
+
 - ✅ Tool-agnostic (works with any repository)
 - ✅ Language-agnostic (JavaScript, Python, Go, Rust, etc.)
 - ✅ Framework-agnostic (works for any project type)
@@ -912,11 +978,13 @@ When this prompt is fully executed, the repository will be:
 7. **Announce transformation to community**
 
 **Estimated effort**:
+
 - Small project (< 1000 LOC): 40-80 hours
 - Medium project (1k-10k LOC): 80-160 hours
 - Large project (10k+ LOC): 160-240 hours
 
 **Success metrics**:
+
 - All 50+ checklist items completed
 - External review by enterprise team
 - Community feedback positive
@@ -928,6 +996,7 @@ When this prompt is fully executed, the repository will be:
 ## FINAL NOTES
 
 This prompt produces **world-class repositories** suitable for:
+
 - Public open-source projects
 - Enterprise internal repositories
 - Government deployment

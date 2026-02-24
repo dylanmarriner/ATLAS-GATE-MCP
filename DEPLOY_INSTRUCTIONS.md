@@ -111,10 +111,10 @@ ATLAS-GATE-MCP/
 
 | Service | URL | Type |
 |---------|-----|------|
-| MCP API | http://49.12.230.179:30000/mcp | HTTP POST |
-| Health | http://49.12.230.179:30000/health | HTTP GET |
-| Metrics | http://49.12.230.179:30000/metrics | Prometheus |
-| Audit | http://49.12.230.179:30000/audit/export | HTTP GET |
+| MCP API | <http://49.12.230.179:30000/mcp> | HTTP POST |
+| Health | <http://49.12.230.179:30000/health> | HTTP GET |
+| Metrics | <http://49.12.230.179:30000/metrics> | Prometheus |
+| Audit | <http://49.12.230.179:30000/audit/export> | HTTP GET |
 
 ---
 

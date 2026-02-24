@@ -13,6 +13,7 @@
 ## 📦 Implementation Files
 
 ### Core Implementation (330 lines)
+
 - **`core/rust-policy-engine.js`**
   - `scanRustForForbiddenPatterns()` - Detects 12 forbidden patterns
   - `validateRustErrorHandling()` - Enforces Result error handling
@@ -24,6 +25,7 @@
   - `runRustVerificationGates()` - Master verification gate
 
 ### Integration Points
+
 - **`tools/write_file.js`** - GATE 3.5 (pre-write Rust policy enforcement)
 - **`core/preflight.js`** - Rust verification gates runner (runs first in preflight)
 - **`core/error.js`** - Added POLICY_VIOLATION and PREFLIGHT_FAILED error codes
@@ -33,6 +35,7 @@
 ## 📋 Documentation Files
 
 ### Comprehensive Guides
+
 1. **`RUST_ENFORCEMENT_GATES.md`** (1200+ lines)
    - Complete architecture and design
    - All forbidden patterns explained
@@ -60,6 +63,7 @@
    - FAQ
 
 ### Reference Updates
+
 - **`AGENTS.md`** - Added Rust enforcement section with test instructions
 
 ---
@@ -67,6 +71,7 @@
 ## 🧪 Test Files
 
 ### Unit Tests (`test-rust-policy.js` - 16 tests)
+
 ```
 ✓ Test 1: Detect unwrap()
 ✓ Test 2: Detect expect()
@@ -87,6 +92,7 @@
 ```
 
 ### Integration Tests (`test-rust-integration.js` - 12 tests)
+
 ```
 ✓ Test 1: enforceRustPolicy catches unwrap()
 ✓ Test 2: Clean code passes
@@ -161,6 +167,7 @@
 ## 📊 Test Results
 
 ### Unit Tests
+
 ```bash
 $ node test-rust-policy.js
 🧪 Testing Rust Static Enforcement Gate...
@@ -169,6 +176,7 @@ $ node test-rust-policy.js
 ```
 
 ### Integration Tests
+
 ```bash
 $ node test-rust-integration.js
 🧪 Testing Rust Integration with MCP Write Flow...
@@ -177,6 +185,7 @@ $ node test-rust-integration.js
 ```
 
 ### Existing Tests
+
 ```bash
 $ npm test
 Testing AST Policy...
@@ -198,6 +207,7 @@ AST Policy Verified.
 ### For MCP Clients (WINDSURF)
 
 When writing Rust via MCP:
+
 1. Write file request includes Rust code
 2. GATE 3.5 checks for forbidden patterns (static analysis)
 3. File is written if no violations
@@ -208,6 +218,7 @@ When writing Rust via MCP:
 ### To Allow Specific Patterns
 
 Include in plan with justification:
+
 ```yaml
 rust-allowed-patterns:
   - unwrap()      # Justification here
@@ -249,6 +260,7 @@ rust-allowed-patterns:
 ## 📚 File Manifest
 
 ### New Files Created
+
 1. `core/rust-policy-engine.js` - Core implementation (330 lines)
 2. `test-rust-policy.js` - Unit tests (260 lines)
 3. `test-rust-integration.js` - Integration tests (240 lines)
@@ -258,6 +270,7 @@ rust-allowed-patterns:
 7. `RUST_ENFORCEMENT_DELIVERABLES.md` - This file
 
 ### Modified Files
+
 1. `tools/write_file.js` - Added GATE 3.5 (12 lines)
 2. `core/preflight.js` - Added Rust verification gates (14 lines)
 3. `core/error.js` - Added error codes (2 lines)
@@ -312,10 +325,10 @@ preflight()
 
 ## 🎓 Learning Resources
 
-- Rust error handling: https://doc.rust-lang.org/book/ch09-00-error-handling.html
-- Clippy lints: https://doc.rust-lang.org/clippy/
-- Deny attributes: https://doc.rust-lang.org/rustc/lints/levels.html
-- Rust patterns: https://rust-lang.github.io/api-guidelines/
+- Rust error handling: <https://doc.rust-lang.org/book/ch09-00-error-handling.html>
+- Clippy lints: <https://doc.rust-lang.org/clippy/>
+- Deny attributes: <https://doc.rust-lang.org/rustc/lints/levels.html>
+- Rust patterns: <https://rust-lang.github.io/api-guidelines/>
 
 ---
 

@@ -457,16 +457,19 @@ Plus: 480 lines specification, 250+ lines documentation updates
 ### For Developers
 
 1. **To test failures:**
+
    ```bash
    node test-catastrophic-failure.js
    ```
 
 2. **To run a drill:**
+
    ```javascript
    const result = await drillAuditTamper(workspace, sessionId, role);
    ```
 
 3. **To engage kill-switch:**
+
    ```javascript
    engageKillSwitch(workspace, {
      failure_ids: ["F-AUDIT"],
@@ -475,6 +478,7 @@ Plus: 480 lines specification, 250+ lines documentation updates
    ```
 
 4. **To check status:**
+
    ```javascript
    const status = getRecoveryStatus(workspace);
    ```

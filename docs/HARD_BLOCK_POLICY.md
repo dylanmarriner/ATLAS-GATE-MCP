@@ -9,6 +9,7 @@
 ### ❌ C2: Mock/Fake (Test Doubles in Production)
 
 **Forbidden patterns**:
+
 ```javascript
 class FakePay { ... }          // ❌ HARD BLOCK
 class MockDatabase { ... }     // ❌ HARD BLOCK
@@ -18,6 +19,7 @@ dummyData, dummy_data          // ❌ HARD BLOCK
 ```
 
 **Why**: Test doubles in production lead to:
+
 - Data loss (fake charging without collecting payment)
 - Financial fraud (orders marked as paid when not)
 - Compliance violations (audit trails are fake)
@@ -29,6 +31,7 @@ dummyData, dummy_data          // ❌ HARD BLOCK
 ### ❌ C3: TODO/FIXME (Incomplete Work)
 
 **Forbidden patterns**:
+
 ```javascript
 // TODO: implement auth          // ❌ HARD BLOCK
 // FIXME: add validation         // ❌ HARD BLOCK
@@ -36,6 +39,7 @@ dummyData, dummy_data          // ❌ HARD BLOCK
 ```
 
 **Why**: Incomplete code must never ship:
+
 - Indicates unfinished logic
 - Developer intent to return and fix later
 - Security gaps when "temporary" becomes permanent
@@ -47,6 +51,7 @@ dummyData, dummy_data          // ❌ HARD BLOCK
 ### ❌ C5: Policy Bypass (Always-Allow)
 
 **Forbidden patterns**:
+
 ```javascript
 return true;                   // ❌ HARD BLOCK
 => true                        // ❌ HARD BLOCK
@@ -56,6 +61,7 @@ BYPASS                         // ❌ HARD BLOCK
 ```
 
 **Why**: Policy bypasses remove all security:
+
 - Access control disabled
 - Privilege escalation
 - Data exposure to unauthorized users
@@ -68,6 +74,7 @@ BYPASS                         // ❌ HARD BLOCK
 ### ❌ C8: Simulated Outcome (Dry-Run, Simulate)
 
 **Forbidden patterns**:
+
 ```javascript
 if (process.env.SIMULATE)      // ❌ HARD BLOCK
 if (DRY_RUN)                   // ❌ HARD BLOCK
@@ -76,6 +83,7 @@ dryrun, dry-run, dry_run       // ❌ HARD BLOCK
 ```
 
 **Why**: Simulated outcomes without real work lead to:
+
 - Orders marked paid that weren't charged
 - Shipments marked sent that never shipped
 - Transactions recorded in audit but never executed
@@ -88,6 +96,7 @@ dryrun, dry-run, dry_run       // ❌ HARD BLOCK
 ## ALSO HARD BLOCKED: Null/Undefined Returns
 
 **Forbidden patterns**:
+
 ```javascript
 return null;                   // ❌ HARD BLOCK
 return undefined;              // ❌ HARD BLOCK
@@ -95,6 +104,7 @@ return "";                     // ❌ HARD BLOCK (empty string)
 ```
 
 **Why**: Null/undefined returns bypass error handling:
+
 - Caller can't distinguish success from failure
 - Silent failures propagate
 - No audit trail of what went wrong
@@ -170,7 +180,7 @@ Reference: docs/CONSTRUCT_TAXONOMY.md
 
 ---
 
-## No Exceptions. Ever.
+## No Exceptions. Ever
 
 ### ❌ "But I'll remove it later"
 
@@ -178,7 +188,7 @@ No. Code ships with what it has. If TODO is there now, it ships now.
 
 ### ❌ "But it's just a stub for testing"
 
-No. Test code goes in separate directories (tests/, spec/, __tests__). Production code must be real.
+No. Test code goes in separate directories (tests/, spec/, **tests**). Production code must be real.
 
 ### ❌ "But I have a plan that authorizes this"
 
@@ -199,6 +209,7 @@ No. Temporary code has a way of becoming permanent. Either complete it or don't 
 ### Instead of Mock/Fake (C2)
 
 ❌ Wrong:
+
 ```javascript
 class FakeDatabaseClient {
   async query() { return { id: "FAKE" }; }
@@ -206,6 +217,7 @@ class FakeDatabaseClient {
 ```
 
 ✅ Right:
+
 ```javascript
 // Use real database
 const client = new PostgresClient(process.env.DB_URL);
@@ -217,12 +229,14 @@ const user = await client.query('SELECT * FROM users WHERE id = $1', [id]);
 ### Instead of TODO/FIXME (C3)
 
 ❌ Wrong:
+
 ```javascript
 // TODO: add real validation
 if (email) return user;
 ```
 
 ✅ Right:
+
 ```javascript
 // Real validation
 if (!email || !email.includes('@')) {
@@ -236,6 +250,7 @@ return user;
 ### Instead of Policy Bypass (C5)
 
 ❌ Wrong:
+
 ```javascript
 function canAccessResource(user, resource) {
   return true; // Always allow
@@ -243,6 +258,7 @@ function canAccessResource(user, resource) {
 ```
 
 ✅ Right:
+
 ```javascript
 function canAccessResource(user, resource) {
   // Real policy check
@@ -258,6 +274,7 @@ function canAccessResource(user, resource) {
 ### Instead of Simulated Outcome (C8)
 
 ❌ Wrong:
+
 ```javascript
 async function processPayment(amount) {
   if (process.env.SIMULATE) {
@@ -268,6 +285,7 @@ async function processPayment(amount) {
 ```
 
 ✅ Right:
+
 ```javascript
 async function processPayment(amount) {
   const charge = await chargeCard(amount);
@@ -283,6 +301,7 @@ async function processPayment(amount) {
 ### Instead of Null Returns
 
 ❌ Wrong:
+
 ```javascript
 function getUser(id) {
   const user = database.find(id);
@@ -292,6 +311,7 @@ function getUser(id) {
 ```
 
 ✅ Right:
+
 ```javascript
 function getUser(id) {
   const user = database.find(id);
@@ -340,6 +360,7 @@ A: No. These rules exist because they prevent critical failures (data loss, secu
 - No null/undefined (errors are explicit)
 
 Every line of code in production must be:
+
 - ✅ Real (actual implementations, not placeholders)
 - ✅ Complete (no TODOs or FIXMEs)
 - ✅ Production-ready (no temporary hacks)
@@ -353,4 +374,3 @@ Every line of code in production must be:
 - **Usage Guide**: `docs/MCP_USAGE_GUIDE.md`
 - **Quick Reference**: `docs/MCP_QUICK_REFERENCE.md`
 - **Enforcement**: `core/stub-detector.js`
-

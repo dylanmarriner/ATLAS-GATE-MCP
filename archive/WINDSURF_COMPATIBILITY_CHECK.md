@@ -9,6 +9,7 @@ The windsurf-hooker hooks and ATLAS-GATE MCP are **NOT currently compatible for 
 ## Issue 1: Tool Name Mismatch
 
 ### Windsurf Hook Policy (windsurf-hooker/windsurf/policy/policy.json)
+
 ```json
 "mcp_tool_allowlist": [
   "mcp_atlas-gate-mcp_begin_session",
@@ -19,6 +20,7 @@ The windsurf-hooker hooks and ATLAS-GATE MCP are **NOT currently compatible for 
 ```
 
 ### Actual ATLAS-GATE MCP Tool Names (bin/ATLAS-GATE-MCP-windsurf.js → server.js)
+
 ```javascript
 server.registerTool("begin_session", ...)
 server.registerTool("write_file", ...)
@@ -29,12 +31,15 @@ server.registerTool("replay_execution", ...)
 ```
 
 ### Problem
+
 The policy expects tools named:
+
 - `mcp_atlas-gate-mcp_begin_session`
 - `mcp_atlas-gate-mcp_write_file`
 - `mcp_atlas-gate-mcp_read_file`
 
 But ATLAS-GATE MCP registers them as:
+
 - `begin_session`
 - `write_file`
 - `read_file`
@@ -46,6 +51,7 @@ But ATLAS-GATE MCP registers them as:
 ## Issue 2: Blocking Hook Conflict
 
 ### Windsurf Hook Code (pre_mcp_tool_use_atlas_gate.py, line 35-85)
+
 ```python
 ATLAS_GATE_PREFIX = "mcp_atlas-gate-mcp_"
 
@@ -57,7 +63,9 @@ if not tool_name.startswith(ATLAS_GATE_PREFIX):
 ```
 
 ### What Happens
+
 When Windsurf calls `begin_session` (actual tool name):
+
 1. Hook receives: `{"tool_info": {"tool_name": "begin_session"}}`
 2. Checks: `"begin_session".startswith("mcp_atlas-gate-mcp_")`
 3. Result: **False** → **BLOCKED** with message: "Only ATLAS-GATE tools allowed"
@@ -67,6 +75,7 @@ When Windsurf calls `begin_session` (actual tool name):
 ## Issue 3: Policy Profile Mismatch
 
 ### Windsurf Hook Configuration
+
 ```json
 {
   "profile": "atlas_windsurf_exec_mutation",
@@ -79,6 +88,7 @@ When Windsurf calls `begin_session` (actual tool name):
 ```
 
 ### ATLAS-GATE MCP Configuration
+
 None of the ATLAS-GATE tools reference `execution_profile` or `atlas_gate` sections in policy.
 
 **Result:** Windsurf hook assumes policy exists and validates against it, but ATLAS-GATE MCP doesn't enforce/consume those same policy sections.
@@ -88,6 +98,7 @@ None of the ATLAS-GATE tools reference `execution_profile` or `atlas_gate` secti
 ## Issue 4: Kill Switch Conflict
 
 ### Windsurf Hook: pre_run_command_kill_switch.py
+
 ```python
 execution_profile = policy.get("execution_profile", "standard")
 if execution_profile == "locked":
@@ -95,9 +106,11 @@ if execution_profile == "locked":
 ```
 
 ### ATLAS-GATE MCP
+
 The `bin/ATLAS-GATE-MCP-windsurf.js` enforces a sandbox at the **process level** (via `mcp-sandbox.js`), not through hook policies.
 
 **Result:** Two enforcement systems that don't talk to each other:
+
 - Windsurf hooks: Policy-driven kill switch
 - ATLAS-GATE MCP: Process-level sandbox lockdown
 
@@ -106,6 +119,7 @@ The `bin/ATLAS-GATE-MCP-windsurf.js` enforces a sandbox at the **process level**
 ## Current Tool Registration in ATLAS-GATE
 
 From `server.js` line 250-413:
+
 ```
 ✓ begin_session
 ✓ write_file (WINDSURF only)
@@ -128,6 +142,7 @@ From `server.js` line 250-413:
 ## What Would Break
 
 ### Scenario: Run Windsurf with windsurf-hooker
+
 1. Windsurf IDE loads windsurf-hooker hooks
 2. Hook sees policy: `mcp_tool_allowlist: ["mcp_atlas-gate-mcp_begin_session", ...]`
 3. Windsurf calls ATLAS-GATE MCP: `tool_name: "begin_session"`
@@ -142,7 +157,9 @@ Everything stops here.
 ## Recommendations to Fix
 
 ### Option A: Update Windsurf Hook Policy (Recommended)
+
 Change `/windsurf-hooker/windsurf/policy/policy.json`:
+
 ```diff
   "mcp_tool_allowlist": [
 -   "mcp_atlas-gate-mcp_begin_session",
@@ -156,7 +173,9 @@ Change `/windsurf-hooker/windsurf/policy/policy.json`:
 ```
 
 ### Option B: Update ATLAS-GATE MCP Tool Names
+
 Change `/server.js` to prefix all tool registrations:
+
 ```javascript
 // Instead of:
 server.registerTool("begin_session", ...)
@@ -168,7 +187,9 @@ server.registerTool("mcp_atlas-gate-mcp_begin_session", ...)
 ⚠️ **Not recommended**: Breaks existing integrations with Windsurf IDE that expect bare names.
 
 ### Option C: Modify Windsurf Hook
+
 Update `pre_mcp_tool_use_atlas_gate.py` to accept both:
+
 ```python
 ATLAS_GATE_PREFIX = "mcp_atlas-gate-mcp_"
 ALLOWED_TOOLS = ["begin_session", "write_file", "read_file", ...]
@@ -240,4 +261,3 @@ Windsurf and ATLAS-GATE MCP can now run simultaneously:
 4. **Hook validates**: checks against ATLAS-GATE tool registry
 5. **Tool executes** through ATLAS-GATE MCP server
 6. **Both enforce** independent security boundaries (defense-in-depth)
-

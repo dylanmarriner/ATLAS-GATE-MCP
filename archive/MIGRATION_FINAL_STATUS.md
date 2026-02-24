@@ -12,6 +12,7 @@
 The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **functionally operational**. The system has been successfully transitioned from hash-based plan identification to signature-based plan identification across all core infrastructure, test suites, and documentation.
 
 ### Key Achievements
+
 ✅ **Core Migration Complete**: All critical modules updated for cosign signatures  
 ✅ **Test Suite Aligned**: 46+ tests passing, 92% success rate  
 ✅ **Mock Cosign Working**: Functional mock implementation for testing  
@@ -23,7 +24,9 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 ## Work Completed
 
 ### Phase 1: Core Infrastructure (Complete)
+
 **8 core files updated:**
+
 1. ✅ core/cosign-hash-provider.js - Mock cosign provider implemented
 2. ✅ core/governance.js - Plan signing with cosign
 3. ✅ core/audit-storage-file.js - plan_signature fields
@@ -34,7 +37,9 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 8. ✅ core/audit-system.js - Auto key generation
 
 ### Phase 2: Test Suite Alignment (Complete)
+
 **15+ test files updated:**
+
 - ✅ All import paths corrected (./core/ → ../../core/)
 - ✅ All plan_hash → plan_signature migrations
 - ✅ All environment variable syntax fixed
@@ -42,6 +47,7 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 - ✅ Mock cosign signing added where needed
 
 **Test Success Metrics:**
+
 - test-system-error.js: 12/12 ✅
 - test-intent-artifact.js: 16/16 ✅
 - test-startup-audit.js: 10/10 ✅
@@ -52,12 +58,14 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 - test-debug.js, test-debug2.js: ✅
 
 ### Phase 3: Documentation & Comments (Complete)
+
 - ✅ 70+ documentation files updated
 - ✅ All code comments reflect Plan Signature terminology
 - ✅ Template files updated for signature-based plans
 - ✅ API documentation aligned
 
 ### Phase 4: Runtime Fixes (Complete)
+
 - ✅ Auto cosign key generation implemented
 - ✅ EC P-256 key pairs generated automatically
 - ✅ Keys stored in .atlas-gate/.cosign-keys/
@@ -86,11 +94,13 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 ### Remaining Tasks
 
 **Final Validation (5%)**
+
 1. Execute remaining test suites
 2. Fix crypto scoping in test helpers
 3. Validate plan creation end-to-end
 
 **Production Readiness (3%)**
+
 1. Performance testing
 2. Security audit of mock cosign
 3. Documentation for production deployment
@@ -101,6 +111,7 @@ The SHA256-to-cosign ECDSA P-256 signature migration is **92% complete** and **f
 ## Architecture Changes Summary
 
 ### Before (SHA256-based)
+
 ```
 Plan Identification:
   Filename: core/plans/<64-char-hex-hash>.md
@@ -115,6 +126,7 @@ Cryptography:
 ```
 
 ### After (Cosign-based)
+
 ```
 Plan Identification:
   Filename: core/plans/<base64-cosign-signature>.md
@@ -134,6 +146,7 @@ Cryptography:
 ## Technical Details
 
 ### Cosign Provider Implementation
+
 ```javascript
 // signWithCosign: Uses mock SHA256 for testing, real cosign when installed
 export async function signWithCosign(content, keyPair) {
@@ -150,6 +163,7 @@ const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
 ```
 
 ### Test Results Summary
+
 | Category | Status | Notes |
 |----------|--------|-------|
 | Core Modules | ✅ | All import and function correctly |
@@ -163,12 +177,14 @@ const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
 ## How to Use Current System
 
 ### Start the System
+
 ```bash
 npm test  # Runs AST policy check (always passes)
 node tests/system/test-startup-audit.js  # Validates startup
 ```
 
 ### Create Plans with Cosign Signatures
+
 ```javascript
 import { signWithCosign } from './core/cosign-hash-provider.js';
 const signature = await signWithCosign('plan content');
@@ -176,12 +192,14 @@ const signature = await signWithCosign('plan content');
 ```
 
 ### Key Generation (Automatic)
+
 - Keys are auto-generated on first audit entry append
 - Stored in `.atlas-gate/.cosign-keys/`
 - Uses EC P-256 (prime256v1 curve)
 - Cached in memory for performance
 
 ### Switch to Production Cosign
+
 ```bash
 npm install @sigstore/cosign
 # Mock will automatically be replaced with real implementation
@@ -200,6 +218,7 @@ npm install @sigstore/cosign
 | **Total** | **120+** | **✅ Complete** |
 
 **Lines of Code:**
+
 - Added: 1,700+
 - Deleted: 1,400+
 - Net Change: +300 lines
@@ -218,6 +237,7 @@ npm install @sigstore/cosign
 ## Next Steps for Production
 
 1. **Install Real Cosign**
+
    ```bash
    npm install @sigstore/cosign
    ```

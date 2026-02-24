@@ -34,11 +34,13 @@ audience: ["beginner", "non-technical", "learner"]
 Imagine you have a very smart assistant (an AI agent like Claude) who can write code and modify your project files. ATLAS-GATE MCP is like a **permission slip system** for that assistant.
 
 **Without ATLAS-GATE MCP:**
+
 - The assistant can change any file it wants
 - You have no record of what changed or why
 - If something breaks, you don't know what happened
 
 **With ATLAS-GATE MCP:**
+
 - The assistant must ask for permission (create a "plan") before making changes
 - You approve or reject the plan
 - Every change is recorded in a tamper-proof logbook
@@ -58,6 +60,7 @@ Imagine you have a very smart assistant (an AI agent like Claude) who can write 
 ### 1. A Computer
 
 Any of these will work:
+
 - **Windows** (Windows 10 or newer)
 - **macOS** (Macs from 2015 or newer)
 - **Linux** (Ubuntu, Fedora, Debian, etc.)
@@ -69,6 +72,7 @@ You need to download software. A stable WiFi or wired connection is best.
 ### 3. A Text Editor
 
 You need to edit configuration files. Options:
+
 - **Windows**: Notepad (built-in) or [VS Code (free)](https://code.visualstudio.com/)
 - **macOS**: TextEdit (built-in) or [VS Code (free)](https://code.visualstudio.com/)
 - **Linux**: nano, gedit, or [VS Code (free)](https://code.visualstudio.com/)
@@ -78,6 +82,7 @@ You need to edit configuration files. Options:
 ### 4. Your MCP Client
 
 ATLAS-GATE MCP works with tools like:
+
 - [Claude Desktop](https://claude.ai/desktop) (Most common)
 - [Windsurf IDE](https://www.codeium.com/windsurf) (Code editor + AI)
 - [Antigravity](https://antigrav.ai/) (AI coding assistant)
@@ -114,6 +119,7 @@ ATLAS-GATE MCP works with tools like:
 **Goal:** Have answers ready if something breaks.
 
 Throughout this guide, you'll see:
+
 - ⚠️ **"If this happens, do this"** boxes
 - 🔧 **"How to fix it"** sections
 - 📞 **"When to get help"** guidance
@@ -129,6 +135,7 @@ Jump to [Troubleshooting](#troubleshooting) anytime you get stuck.
 Installation means: downloading software and setting it up so it works on your computer.
 
 Think of it like buying a lamp:
+
 1. You buy the lamp (download)
 2. You unpack it (extract)
 3. You plug it in and turn it on (configure & run)
@@ -148,7 +155,7 @@ Think of it like buying a lamp:
 <summary><b>Windows</b></summary>
 
 1. Open your web browser (Chrome, Safari, Edge, Firefox)
-2. Go to https://nodejs.org
+2. Go to <https://nodejs.org>
 3. Look for the large green button labeled **"Download for Windows"**
 4. Click it (this downloads a file to your computer, usually to "Downloads")
 5. Open your **File Explorer** (the folder icon on your taskbar)
@@ -169,7 +176,7 @@ Think of it like buying a lamp:
 <summary><b>macOS</b></summary>
 
 1. Open your web browser (Safari, Chrome, Firefox)
-2. Go to https://nodejs.org
+2. Go to <https://nodejs.org>
 3. Look for the large green button labeled **"Download for macOS"**
 4. Click it (this downloads a file, usually to your Downloads folder)
 5. Open **Finder** (click the Finder icon in your dock)
@@ -194,9 +201,11 @@ Think of it like buying a lamp:
 
 1. Open a **Terminal** (usually Ctrl + Alt + T)
 2. Copy and paste this command:
+
    ```bash
    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs
    ```
+
 3. Press Enter
 4. Enter your password (if prompted)
 5. Wait for it to finish
@@ -213,8 +222,8 @@ Think of it like buying a lamp:
 <summary><b>Option A: Using Git (Recommended for developers)</b></summary>
 
 1. **Install Git:**
-   - **Windows:** Download from https://git-scm.com/ and follow prompts
-   - **macOS:** Download from https://git-scm.com/ (or run: `xcode-select --install`)
+   - **Windows:** Download from <https://git-scm.com/> and follow prompts
+   - **macOS:** Download from <https://git-scm.com/> (or run: `xcode-select --install`)
    - **Linux:** Run: `sudo apt-get install -y git`
 
 2. Open your command line:
@@ -223,12 +232,14 @@ Think of it like buying a lamp:
    - **Linux:** Press Ctrl + Alt + T
 
 3. Copy and paste this command:
+
    ```bash
    git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
    cd ATLAS-GATE-MCP-server
    ```
 
 4. Press Enter. **Success** looks like:
+
    ```
    Cloning into 'ATLAS-GATE-MCP-server'...
    remote: Enumerating objects: ... done
@@ -241,7 +252,7 @@ Think of it like buying a lamp:
 <summary><b>Option B: Download as ZIP (No Git required)</b></summary>
 
 1. Open your web browser
-2. Go to https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
+2. Go to <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
 3. Click the green **"Code"** button (top right)
 4. Click **"Download ZIP"**
 5. Your browser downloads a file to your Downloads folder
@@ -250,6 +261,7 @@ Think of it like buying a lamp:
    - **macOS:** Double-click the ZIP file (it auto-extracts)
    - **Linux:** Right-click, select "Extract Here" (or use `unzip` command)
 7. Open your command line and navigate to the extracted folder:
+
    ```bash
    cd ATLAS-GATE-MCP-server
    ```
@@ -261,6 +273,7 @@ Think of it like buying a lamp:
 **What are "dependencies"?** Other software that ATLAS-GATE MCP needs to run.
 
 1. In your command line (still in the ATLAS-GATE-MCP-server folder), type:
+
    ```bash
    npm install
    ```
@@ -268,6 +281,7 @@ Think of it like buying a lamp:
 2. Press Enter
 
 3. **Success** looks like:
+
    ```
    added 187 packages in 23s
    ```
@@ -277,6 +291,7 @@ Think of it like buying a lamp:
 #### Step 4: Verify Installation
 
 1. Type:
+
    ```bash
    npm run verify
    ```
@@ -284,6 +299,7 @@ Think of it like buying a lamp:
 2. Press Enter
 
 3. **Success** looks like:
+
    ```
    [GOVERNANCE] Self-Audit Passed.
    ✅ All checks passed!
@@ -311,7 +327,7 @@ cd ATLAS-GATE-MCP-server
 
 - **What it does:** Opens the ATLAS-GATE-MCP-server folder
 - **Success looks like:** Your prompt changes to show you're inside the folder
-- **Example prompt:** `user@computer ATLAS-GATE-MCP-server % `
+- **Example prompt:** `user@computer ATLAS-GATE-MCP-server %`
 
 **List Files**
 
@@ -336,10 +352,12 @@ pwd
 ### Copy/Paste in Terminal
 
 **MacOS/Linux:**
+
 - Copy: `Cmd ⌘ + C` (or `Ctrl + C`)
 - Paste: `Cmd ⌘ + V` (or `Ctrl + V`)
 
 **Windows (Command Prompt):**
+
 - Right-click to paste
 - `Ctrl + C` to copy
 
@@ -350,6 +368,7 @@ pwd
 ### What Is an MCP Client?
 
 Your **MCP client** is the software that talks to ATLAS-GATE MCP. Examples:
+
 - Claude Desktop
 - Windsurf
 - Antigravity
@@ -361,11 +380,13 @@ We'll use **Claude Desktop** as our example.
 You need the **full path** to your ATLAS-GATE-MCP-server folder.
 
 In your command line, type:
+
 ```bash
 pwd
 ```
 
 Press Enter. You'll see something like:
+
 - **macOS:** `/Users/yourname/ATLAS-GATE-MCP-server`
 - **Windows:** `C:\Users\yourname\ATLAS-GATE-MCP-server`
 - **Linux:** `/home/yourname/ATLAS-GATE-MCP-server`
@@ -382,12 +403,15 @@ Press Enter. You'll see something like:
 4. Press Enter
 5. Right-click the file, select "Open With", choose a text editor (VS Code or TextEdit)
 6. You should see a file like:
+
    ```json
    {
      "mcpServers": {}
    }
    ```
+
 7. Edit it to add ATLAS-GATE:
+
    ```json
    {
      "mcpServers": {
@@ -400,6 +424,7 @@ Press Enter. You'll see something like:
      }
    }
    ```
+
 8. **Replace** `/absolute/path/to/ATLAS-GATE-MCP-server` with the path you copied in Step 1
 9. Save the file (Command ⌘ + S)
 10. Restart Claude Desktop
@@ -417,6 +442,7 @@ Press Enter. You'll see something like:
 1. Open File Explorer / Finder
 2. Locate `~/.codeium/windsurf/mcp_config.json`
 3. Edit the same way as above, but use this path:
+
    ```json
    "args": ["/absolute/path/to/ATLAS-GATE-MCP-server/bin/ATLAS-GATE-MCP-windsurf.js"]
    ```
@@ -430,6 +456,7 @@ Press Enter. You'll see something like:
 A **plan** is your written instruction to the AI: "Here's what I want you to change in my project."
 
 For example:
+
 - "Add a README.md file with project overview"
 - "Change the color of the button from blue to red"
 - "Update the version number from 1.0.0 to 1.0.1"
@@ -441,6 +468,7 @@ For example:
 **Step 2: Start a conversation with the beginning_session command**
 
 In Claude, type:
+
 ```
 Call the begin_session tool with workspace_root set to: /absolute/path/to/ATLAS-GATE-MCP-server
 ```
@@ -448,6 +476,7 @@ Call the begin_session tool with workspace_root set to: /absolute/path/to/ATLAS-
 (Replace `/absolute/path/to/ATLAS-GATE-MCP-server` with the actual path from earlier.)
 
 **Claude will respond:**
+
 ```
 Session initialized. Workspace locked to /absolute/path/to/ATLAS-GATE-MCP-server
 ```
@@ -457,6 +486,7 @@ Session initialized. Workspace locked to /absolute/path/to/ATLAS-GATE-MCP-server
 **Step 3: Create a Simple Plan**
 
 Ask Claude:
+
 ```
 Create a plan that adds a file called TEST.md to the docs/ folder with content:
 ---
@@ -465,11 +495,13 @@ This is a test file created with ATLAS-GATE MCP.
 ```
 
 Claude will:
+
 1. Create a plan file
 2. Hash it
 3. Return the plan hash
 
 📝 **Example response:**
+
 ```
 Plan created:
 Hash: a1b2c3d4e5f6...
@@ -480,17 +512,20 @@ Status: Ready for execution
 **Step 4: Execute the Plan**
 
 Ask Claude:
+
 ```
 Execute the plan with hash: a1b2c3d4e5f6...
 Role: WINDSURF
 ```
 
 Claude will:
+
 1. Execute the plan
 2. Create the TEST.md file
 3. Log everything in the audit trail
 
 📝 **Example response:**
+
 ```
 ✅ Plan executed successfully
 Files created: docs/TEST.md
@@ -519,11 +554,13 @@ Audit entry: [seq_123] user=windsurf, tool=write_file
 The **audit log** is a record of everything that happened.
 
 In Claude, ask:
+
 ```
 Show me the audit log
 ```
 
 You'll see:
+
 ```json
 {
   "session_id": "...",
@@ -553,7 +590,8 @@ You'll see:
 **Cause:** Node.js isn't installed or not in your PATH.
 
 **Fix:**
-1. Reinstall Node.js from https://nodejs.org (follow Fast Path above)
+
+1. Reinstall Node.js from <https://nodejs.org> (follow Fast Path above)
 2. Restart your command line / terminal
 3. Type `node --version` to verify
 
@@ -568,15 +606,20 @@ You'll see:
 **Cause:** `npm install` didn't complete successfully.
 
 **Fix:**
+
 1. Delete the `node_modules/` folder:
+
    ```bash
    rm -rf node_modules
    ```
+
    (Windows: delete the folder manually via File Explorer)
 2. Reinstall:
+
    ```bash
    npm install
    ```
+
 3. Wait for it to complete (2–5 minutes)
 
 ### Problem: "Permission denied" error
@@ -584,10 +627,13 @@ You'll see:
 **Cause:** You don't have permission to write to this folder.
 
 **Fix:**
+
 1. **macOS/Linux:** Add `sudo` (admin) permission:
+
    ```bash
    sudo npm install
    ```
+
 2. **Windows:** Run Command Prompt as Administrator (right-click Command Prompt, "Run as administrator")
 
 ### Problem: npm install is very slow
@@ -595,6 +641,7 @@ You'll see:
 **Cause:** Network issue or many dependencies.
 
 **Fix:**
+
 - Check your internet connection
 - Try again (sometimes this helps)
 - If still slow, contact your IT support if on a corporate network
@@ -604,6 +651,7 @@ You'll see:
 **Cause:** Configuration not saved or Claude needs restart.
 
 **Fix:**
+
 1. Make sure your `mcp_config.json` file is saved
 2. Completely quit Claude Desktop (Command ⌘ + Q on Mac, Alt + F4 on Windows)
 3. Wait 10 seconds
@@ -615,6 +663,7 @@ You'll see:
 **Cause:** You forgot to call `begin_session` first.
 
 **Fix:** In Claude, call:
+
 ```
 begin_session with workspace_root: /path/to/ATLAS-GATE-MCP-server
 ```
@@ -624,11 +673,13 @@ begin_session with workspace_root: /path/to/ATLAS-GATE-MCP-server
 **Cause:** Something went wrong during execution.
 
 **Example error:**
+
 ```
 [error] write_file failed: EACCES: permission denied
 ```
 
 **Fix:**
+
 1. Check file permissions (do you own the file?)
 2. Make sure the path is correct
 3. Verify you're in the right session (run `begin_session` again)
@@ -722,6 +773,7 @@ Data hasn't been tampered with. "Verify integrity" = "Make sure nothing changed.
 
 **JSON** (JavaScript Object Notation)
 Human-readable format for storing data. Looks like:
+
 ```json
 {
   "name": "John",
@@ -858,13 +910,16 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 
 1. Create a file called `.env` (in your ATLAS-GATE-MCP-server folder)
 2. Put secrets there:
+
    ```
    API_KEY=sk-1234567890abcdefg
    SECRET_TOKEN=abc123xyz789
    DATABASE_PASSWORD=MyP@ssw0rd!
    ```
+
 3. Add `.env` to `.gitignore` (so it never gets uploaded)
 4. In your code, read from environment:
+
    ```javascript
    const apiKey = process.env.API_KEY;
    ```
@@ -881,11 +936,13 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 ### Data Privacy
 
 **ATLAS-GATE MCP stores:**
+
 - Audit logs (file changes, who made them, when)
 - Plan files (descriptions of intended changes)
 - Workspace configuration
 
 **ATLAS-GATE MCP does NOT:**
+
 - Send your code anywhere
 - Share your secrets
 - Upload to external services (unless you configure it)
@@ -903,6 +960,7 @@ DATABASE_PASSWORD=MyP@ssw0rd!
 **File permissions** control who can read/write/execute files.
 
 **Safe defaults:**
+
 - Your own files: `644` (you read/write, others read only)
 - Executables: `755` (you can do anything, others can run)
 - Secrets: `600` (only you can read/write)
@@ -914,6 +972,7 @@ ls -la
 ```
 
 You'll see something like:
+
 ```
 -rw-r--r--  1 user  group   1234  Jan 20 10:30 README.md
 ```

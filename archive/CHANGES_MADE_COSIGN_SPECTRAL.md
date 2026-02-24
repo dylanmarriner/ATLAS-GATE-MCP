@@ -11,10 +11,12 @@ Complete integration of cosign (ECDSA P-256 signatures) and spectral (rule-based
 ### 1. core/plan-linter.js
 
 **Added Imports:**
+
 - `import { generateKeyPair } from "@sigstore/cosign"`
 - `import { mkdir } from "fs/promises"`
 
 **New Functions:**
+
 - `generateCosignKeys(keyDir = "./.cosign-keys")` - ✅ ASYNC
   - Generates ECDSA P-256 key pairs
   - Creates `.cosign-keys/` directory
@@ -26,6 +28,7 @@ Complete integration of cosign (ECDSA P-256 signatures) and spectral (rule-based
   - Returns: hex digest string
 
 **Modified Functions:**
+
 - `signPlan(planContent, privateKeyPath)` - ✅ ALREADY ASYNC (no changes)
 - `verifyPlanSignature(planContent, signature, publicKeyPath)` - ✅ ALREADY ASYNC (no changes)
 
@@ -43,6 +46,7 @@ Complete integration of cosign (ECDSA P-256 signatures) and spectral (rule-based
   - Returns: `{ passed, errors, warnings, violations, hash, signature, generatedKeys }`
 
 **Exports:**
+
 - `generateCosignKeys`
 - `signPlan`
 - `verifyPlanSignature`
@@ -57,6 +61,7 @@ Complete integration of cosign (ECDSA P-256 signatures) and spectral (rule-based
 ### 2. core/plan-enforcer.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 export function enforcePlan(planHash, targetPath) {
@@ -78,6 +83,7 @@ export async function enforcePlan(planHash, targetPath) {
 ### 3. core/governance.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 export function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
@@ -98,6 +104,7 @@ export async function bootstrapCreateFoundationPlan(repoRoot = null, planContent
 ### 4. core/attestation-engine.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 function gatherEvidence(workspaceRoot, options = {}) {
@@ -146,6 +153,7 @@ export async function generateAttestationBundle(workspaceRoot, options = {}) {
 ### 5. tools/lint_plan.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 export async function lintPlanHandler({ path: filePath, hash, content }) {
@@ -189,6 +197,7 @@ export async function lintPlanHandler({ path: filePath, hash, content }) {
 ### 6. tools/bootstrap_tool.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 try {
@@ -211,6 +220,7 @@ try {
 ### 7. tools/write_file.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 const { repoRoot } = enforcePlan(plan, abs);
@@ -226,6 +236,7 @@ const { repoRoot } = await enforcePlan(plan, abs);
 ### 8. tools/verification/verify-example-plan.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 import { lintPlan, computePlanHash } from "../../core/plan-linter.js";
@@ -287,7 +298,9 @@ import { lintPlan } from "../../core/plan-linter.js";
 ### 9. tests/system/test-plan-linter.js
 
 **Changes:**
+
 - Updated test runner to support async tests:
+
   ```javascript
   function test(name, fn) {
     tests.push({ name, fn, isAsync: fn.constructor.name === 'AsyncFunction' });
@@ -330,6 +343,7 @@ import { lintPlan } from "../../core/plan-linter.js";
 ### 10. tests/comprehensive-tool-test.js
 
 **Changes:**
+
 ```javascript
 // BEFORE
 try {
@@ -366,29 +380,34 @@ try {
 ## Documentation Created
 
 ### 11. COSIGN_SPECTRAL_ALIGNMENT_REPORT.md
+
 - Initial analysis of misalignments
 - Call site mapping
 - Integration review
 
 ### 12. COSIGN_SPECTRAL_IMPLEMENTATION_SUMMARY.md
+
 - Complete implementation details
 - Architecture diagrams
 - Flow documentation
 - Testing checklist
 
 ### 13. FINAL_ALIGNMENT_VERIFICATION.md
+
 - Executive checklist
 - File-by-file status
 - Integration point verification
 - Regression testing
 
 ### 14. COSIGN_SPECTRAL_QUICK_START.md
+
 - Quick reference guide
 - Common tasks
 - Error codes
 - Integration points
 
 ### 15. CHANGES_MADE_COSIGN_SPECTRAL.md
+
 - This file - complete change log
 
 ---

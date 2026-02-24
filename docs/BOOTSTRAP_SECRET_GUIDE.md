@@ -17,6 +17,7 @@ The **bootstrap secret** (`ATLAS-GATE_BOOTSTRAP_SECRET`) is a cryptographic key 
 The bootstrap secret enables **secure plan creation without requiring a pre-existing approved plan** (the classic bootstrap problem: how do you approve the first plan if plans require approval?).
 
 **The flow:**
+
 1. Fresh ATLAS-GATE workspace (no approved plans yet) → bootstrap mode enabled
 2. Only the holder of the bootstrap secret can create the first foundation plan
 3. That plan is cryptographically signed with the bootstrap secret
@@ -91,6 +92,7 @@ If environment variable not set, ATLAS-GATE looks for:
 ```
 
 File contents:
+
 ```json
 {
   "bootstrap_secret": "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8S9t0U1v2W3x4Y5z6..."
@@ -98,6 +100,7 @@ File contents:
 ```
 
 **Setup:**
+
 ```bash
 mkdir -p .atlas-gate
 echo '{"bootstrap_secret": "'"$(openssl rand -base64 32)"'"}' > .atlas-gate/bootstrap_secret.json
@@ -107,11 +110,13 @@ chmod 600 .atlas-gate/bootstrap_secret.json  # Restrict to owner only
 ### Option 3: Platform-Specific
 
 **macOS/Linux:**
+
 ```bash
 export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 $secret = [Convert]::ToBase64String([System.Security.Cryptography.RNGCryptoServiceProvider]::new().GetBytes(24))
 $env:ATLAS-GATE_BOOTSTRAP_SECRET = $secret
@@ -172,6 +177,7 @@ Call bootstrap_create_foundation_plan with:
 ```
 
 **Success response:**
+
 ```json
 {
   "status": "PLAN_CREATED",
@@ -215,21 +221,25 @@ Call bootstrap_create_foundation_plan with:
 ### ✅ DO
 
 - **Generate with cryptographic randomness:**
+
   ```bash
   openssl rand -base64 32  # 32 bytes = 256 bits
   ```
 
 - **Store in environment variable (not code):**
+
   ```bash
   export ATLAS-GATE_BOOTSTRAP_SECRET="..."  # Good
   ```
 
 - **Restrict file permissions if using file fallback:**
+
   ```bash
   chmod 600 .atlas-gate/bootstrap_secret.json
   ```
 
 - **Rotate after successful bootstrap:**
+
   ```bash
   # Change the secret, delete old plans if needed, recreate
   unset ATLAS-GATE_BOOTSTRAP_SECRET
@@ -237,6 +247,7 @@ Call bootstrap_create_foundation_plan with:
   ```
 
 - **Use different secrets per environment:**
+
   ```
   Dev:   ATLAS-GATE_BOOTSTRAP_SECRET_DEV
   Staging: ATLAS-GATE_BOOTSTRAP_SECRET_STAGING
@@ -246,12 +257,14 @@ Call bootstrap_create_foundation_plan with:
 ### ❌ DON'T
 
 - **Hardcode secret in code:**
+
   ```javascript
   // WRONG
   const secret = "A1b2C3d4...";  // Never do this
   ```
 
 - **Commit to git:**
+
   ```bash
   # Add to .gitignore
   echo ".atlas-gate/bootstrap_secret.json" >> .gitignore
@@ -259,18 +272,21 @@ Call bootstrap_create_foundation_plan with:
   ```
 
 - **Share via email/chat:**
+
   ```
   ❌ "Here's the secret: A1b2C3..."
   ✅ "Set it locally; I'll send via secure channel"
   ```
 
 - **Use weak/predictable secrets:**
+
   ```
   ❌ "password123"
   ✅ "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8S9t0U1v2..."
   ```
 
 - **Log the secret:**
+
   ```javascript
   // WRONG
   console.log("Secret: " + process.env.ATLAS-GATE_BOOTSTRAP_SECRET);
@@ -285,6 +301,7 @@ Call bootstrap_create_foundation_plan with:
 **Cause:** Environment variable not set and no fallback file exists.
 
 **Fix:**
+
 ```bash
 # Set it explicitly
 export ATLAS-GATE_BOOTSTRAP_SECRET=$(openssl rand -base64 32)
@@ -302,7 +319,9 @@ source ~/.bashrc
 **Cause:** Signature doesn't match (wrong secret, corrupted payload, or timing issue).
 
 **Fix:**
+
 1. Verify secret is consistent:
+
    ```bash
    echo $ATLAS-GATE_BOOTSTRAP_SECRET
    # Should output the same value
@@ -311,6 +330,7 @@ source ~/.bashrc
 2. Check payload hasn't been modified (whitespace, order, etc.)
 
 3. Verify timestamp is within 5-minute window:
+
    ```bash
    date +%s  # Current Unix timestamp
    # Compare to payload.timestamp (should be within 300 seconds)
@@ -321,6 +341,7 @@ source ~/.bashrc
 **Cause:** Signature is older than 5 minutes.
 
 **Fix:**
+
 ```bash
 # Create new payload with current timestamp
 const newPayload = {
@@ -336,6 +357,7 @@ const newPayload = {
 **Cause:** Workspace already has approved plans; bootstrap mode is off.
 
 **Fix:**
+
 - This is expected behavior (bootstrap only works on first plan)
 - To create more plans, use standard plan approval workflow
 - Secret is no longer needed after bootstrap
@@ -345,21 +367,25 @@ const newPayload = {
 ## Lifecycle: From Bootstrap to Production
 
 ### Phase 1: Bootstrap (First Plan)
+
 ```
 Secret required → First plan created → Approved → Bootstrap disabled
 ```
 
 **During this phase:**
+
 - Only holder of secret can create plans
 - Timestamp window enforced (5 min)
 - HMAC signature verified
 
 ### Phase 2: Normal Operations (Subsequent Plans)
+
 ```
 Plans created → Approval required → Execution → Audit trail
 ```
 
 **During this phase:**
+
 - Secret not needed (bootstrap disabled)
 - Standard plan approval workflow
 - No time constraints
@@ -429,6 +455,7 @@ cat .atlas-gate/governance.json
 ## Secret Rotation
 
 **When to rotate:**
+
 - After successful bootstrap
 - Suspected exposure/compromise
 - Periodic rotation policy (e.g., quarterly)
@@ -437,27 +464,32 @@ cat .atlas-gate/governance.json
 **How to rotate:**
 
 1. **Generate new secret:**
+
    ```bash
    NEW_SECRET=$(openssl rand -base64 32)
    ```
 
 2. **Update environment:**
+
    ```bash
    export ATLAS-GATE_BOOTSTRAP_SECRET=$NEW_SECRET
    ```
 
 3. **Verify new secret works (test in staging):**
+
    ```bash
    # Create a test plan with new secret
    ```
 
 4. **Remove old secret:**
+
    ```bash
    unset ATLAS-GATE_BOOTSTRAP_SECRET  # or update .bashrc
    rm .atlas-gate/bootstrap_secret.json
    ```
 
 5. **Audit trail:**
+
    ```bash
    # Log the rotation
    echo "Bootstrap secret rotated: $(date)" >> .atlas-gate/audit.log
@@ -470,6 +502,7 @@ cat .atlas-gate/governance.json
 **Q: Can I use the same secret for multiple workspaces?**
 
 A: Yes, but not recommended. Use different secrets per environment:
+
 ```
 Dev workspace: SECRET_A
 Staging workspace: SECRET_B

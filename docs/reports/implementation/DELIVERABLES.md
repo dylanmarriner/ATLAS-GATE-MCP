@@ -9,6 +9,7 @@
 ### Core Implementation (1 file)
 
 **core/plan-linter.js** (370+ lines)
+
 - Main linter module with all validation logic
 - Exports: `computePlanHash()`, `lintPlan()`, `PLAN_LINT_ERROR_CODES`, `REQUIRED_SECTIONS`, `REQUIRED_PHASE_FIELDS`
 - 5 validation stages: structure, phases, paths, enforceability, auditability
@@ -18,6 +19,7 @@
 ### Test Suite (1 file)
 
 **test-plan-linter.js** (450+ lines)
+
 - 14 comprehensive tests
 - Covers all lint rules, edge cases, error codes
 - Test results: 14 PASSED, 0 FAILED
@@ -26,6 +28,7 @@
 ### Documentation (4 files)
 
 **docs/reports/MCP_PLAN_LINTER_SPEC.md** (6000+ words)
+
 - Complete specification document
 - Required plan structure (7 sections)
 - Phase definition requirements (8 fields)
@@ -37,6 +40,7 @@
 - Implementation files reference
 
 **docs/reports/PHASE_MCP_PLAN_LINTER_IMPLEMENTATION_REPORT.md**
+
 - Implementation report with deliverables checklist
 - Lint rules enforced summary
 - Tests added with results
@@ -47,6 +51,7 @@
 - Known limitations and future improvements
 
 **docs/reports/PLAN_LINTER_IMPLEMENTATION_SUMMARY.md**
+
 - Executive summary
 - What was implemented
 - Test suite overview
@@ -60,6 +65,7 @@
 - Next steps and roadmap
 
 **docs/reports/INTEGRATION_ROADMAP.md**
+
 - Exact integration points with code snippets
 - Integration Point 1: Plan Proposal (bootstrap_tool.js)
 - Integration Point 2: Plan Approval (core/governance.js)
@@ -74,6 +80,7 @@
 ### Examples (1 file)
 
 **docs/examples/EXAMPLE_VALID_PLAN.md**
+
 - Valid example plan that passes all linting checks
 - Demonstrates all 7 required sections
 - Shows proper phase definition format
@@ -83,6 +90,7 @@
 ## Summary of Deliverables
 
 Total Files Created: 7
+
 - Implementation Code: 2 files (linter + tests)
 - Documentation: 4 files (spec + reports + examples)
 - Example Plans: 1 file
@@ -90,6 +98,7 @@ Total Files Created: 7
 ## Validation Status
 
 ### Tests (14/14 PASSING)
+
 - ✓ Missing section → lint fail
 - ✓ Missing phase field → fail
 - ✓ Invalid phase ID format → fail
@@ -106,6 +115,7 @@ Total Files Created: 7
 - ✓ Human judgment clause → fail
 
 ### Lint Rules Enforced (8 error codes)
+
 - PLAN_MISSING_SECTION (PLAN_SCOPE_LAW)
 - PLAN_MISSING_FIELD (PLAN_SCOPE_LAW)
 - PLAN_INVALID_PHASE_ID (PLAN_SCOPE_LAW)
@@ -131,6 +141,7 @@ Total Files Created: 7
 ## Next Phase
 
 Integration into:
+
 - bootstrap_tool.js (plan proposal)
 - governance.js (plan approval)
 - plan-enforcer.js (plan execution)
@@ -141,11 +152,13 @@ See INTEGRATION_ROADMAP.md for detailed implementation guide with code snippets.
 ## How to Use
 
 ### Run Tests
+
 ```bash
 node test-plan-linter.js
 ```
 
 ### Lint a Plan
+
 ```javascript
 import { lintPlan, computePlanHash } from './core/plan-linter.js';
 
@@ -159,6 +172,7 @@ if (result.passed) {
 ```
 
 ### Compute Plan Signature
+
 ```javascript
 import { computePlanHash } from './core/plan-linter.js';
 

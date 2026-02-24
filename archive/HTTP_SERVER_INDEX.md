@@ -277,6 +277,7 @@ Content-Type: application/json      (For POST/PUT requests)
 ### Response Format
 
 Success:
+
 ```json
 {
   "sessionId": "session_...",
@@ -285,6 +286,7 @@ Success:
 ```
 
 Error:
+
 ```json
 {
   "error_code": "INVALID_PATH",

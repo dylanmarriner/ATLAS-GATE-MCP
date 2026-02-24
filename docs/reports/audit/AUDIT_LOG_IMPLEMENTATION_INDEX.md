@@ -32,11 +32,13 @@
 ### For Operators
 
 1. **Audit Log Access**
+
    ```bash
    cat [workspace_root]/.atlas-gate/audit.log | jq -R 'fromjson'
    ```
 
 2. **Verify Integrity**
+
    ```bash
    node -e "
      const { verifyAuditLogIntegrity } = require('./core/audit-system.js');
@@ -215,6 +217,7 @@ npm run verify
 ### Hash Chain Integrity
 
 Each entry contains:
+
 - `seq`: Monotonic sequence number (1, 2, 3, ...)
 - `prev_hash`: Hash of previous entry (or "GENESIS" for first)
 - `entry_hash`: SHA256 hash of this entry's content
@@ -224,6 +227,7 @@ If any entry is modified, its hash changes, breaking the chain for all subsequen
 ### Redaction
 
 Before logging arguments:
+
 1. Scan for sensitive keys (token, apiKey, password, secret, etc.)
 2. Scan for sensitive patterns (.*secret.*, .*token.*, etc.)
 3. Scan for sensitive values (base64 > 64 chars, JWT patterns)
@@ -235,6 +239,7 @@ Raw sensitive data never appears in audit log.
 ### Fail-Closed
 
 If the audit log cannot be written:
+
 1. The tool invocation fails with `AUDIT_APPEND_FAILED` error
 2. Client receives the error (no silent loss)
 3. Operation is not executed (if possible) or recorded as failed
@@ -243,6 +248,7 @@ If the audit log cannot be written:
 ### Pre-Session Buffering
 
 Tool calls may arrive before `begin_session`:
+
 1. Events are buffered in memory
 2. On `begin_session`, buffered events are flushed to audit log
 3. Buffered events marked with `buffered: true`
@@ -285,14 +291,17 @@ Tool calls may arrive before `begin_session`:
 ### Redaction Patterns
 
 **Sensitive Keys** (auto-redacted):
+
 - token, apiKey, password, secret, authorization, cookie, session, jwt, Bearer
 - api_key, api_secret, refresh_token, private_key, access_token, id_token
 - client_secret, signing_key, webhook_secret, passphrase
 
 **Pattern Matching** (case-insensitive):
+
 - `.*secret.*`, `.*token.*`, `.*key.*`, `.*password.*`, `.*auth.*`, `.*credential.*`
 
 **Value-Based**:
+
 - Base64-like strings > 64 characters
 - JWT patterns (three base64 parts separated by dots)
 
@@ -305,6 +314,7 @@ Tool calls may arrive before `begin_session`:
 **Issue**: `.atlas-gate/audit.log` doesn't exist
 
 **Solution**:
+
 1. Ensure `begin_session` has been called
 2. Check that workspace_root is valid
 3. Verify filesystem permissions on workspace_root
@@ -315,6 +325,7 @@ Tool calls may arrive before `begin_session`:
 **Issue**: `verifyAuditLogIntegrity()` returns failures
 
 **Solution**:
+
 1. Preserve the log for forensic analysis
 2. Check filesystem corruption
 3. Review failure details (which seq numbers failed)
@@ -325,6 +336,7 @@ Tool calls may arrive before `begin_session`:
 **Issue**: Tools fail with `AUDIT_APPEND_FAILED`
 
 **Solution**:
+
 1. Check disk space (`df [workspace_root]`)
 2. Check permissions (`ls -ld [workspace_root]/.atlas-gate`)
 3. Check file handles limit (`ulimit -n`)
@@ -336,6 +348,7 @@ Tool calls may arrive before `begin_session`:
 **Issue**: Tool calls timing out
 
 **Solution**:
+
 1. Check lock contention (too many concurrent calls?)
 2. Increase lock timeout in `audit-system.js` (line 57)
 3. Implement call rate limiting

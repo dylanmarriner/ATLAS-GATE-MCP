@@ -177,6 +177,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 
 **Endpoint**: `generate_attestation_bundle`  
 **Input**:
+
 ```json
 {
   "workspace_root_label": "string (optional)",
@@ -188,12 +189,14 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 **Output**: Signed attestation bundle (JSON)
 
 **Semantics**:
+
 - Read-only: Does not mutate workspace state
 - Fail-closed: Returns error if evidence incomplete
 - Deterministic: Same inputs produce same bundle_id
 - Logged: Appends audit entry for generation
 
 **Failure Cases**:
+
 - Audit log missing → ATTESTATION_EVIDENCE_INVALID
 - Audit log empty → ATTESTATION_EVIDENCE_INVALID
 - Workspace root invalid → ATTESTATION_INVALID_INPUT
@@ -202,6 +205,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 
 **Endpoint**: `verify_attestation_bundle`  
 **Input**:
+
 ```json
 {
   "bundle": { /* attestation bundle object */ }
@@ -209,6 +213,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 ```
 
 **Output**:
+
 ```json
 {
   "verdict": "PASS|FAIL",
@@ -233,6 +238,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 4. **MATURITY_HASH_MISMATCH**: Maturity scores hash matches checksum
 
 **Semantics**:
+
 - Read-only: No state mutations
 - Deterministic: Same bundle + secret → same verdict
 - Fail-closed: First failing check halts verification
@@ -242,6 +248,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
 
 **Endpoint**: `export_attestation_bundle`  
 **Input**:
+
 ```json
 {
   "bundle": { /* attestation bundle object */ },
@@ -261,6 +268,7 @@ The `generated_timestamp` is added AFTER signing to allow multiple bundles for t
   - Verifier protocol instructions
 
 **Semantics**:
+
 - Read-only: No state mutations
 - Non-coder friendly: Markdown includes plain English explanations
 - Logged: Appends audit entry for export operation
@@ -407,6 +415,7 @@ Bundles use **HMAC-SHA256** signing with workspace-specific secrets. Verificatio
 ### For Compliance
 
 Bundles provide **evidence** that your MCP server:
+
 - Executed code according to approved plans
 - Passed policy checks on all file writes
 - Has documented intent for all changes
@@ -419,6 +428,7 @@ Bundles provide **evidence** that your MCP server:
 ### 10.1 Bundle Storage
 
 Bundles are typically stored in `docs/reports/` with names like:
+
 ```
 attestation-{bundle_id}.json
 attestation-{bundle_id}.md

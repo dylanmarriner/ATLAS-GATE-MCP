@@ -11,6 +11,7 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 **Purpose**: The canonical prompt for ANTIGRAVITY agents during planning phases.
 
 **Key features**:
+
 - Mandatory session initialization requirements
 - Operator input validation checklist
 - Pre-planning analysis phase guidance
@@ -20,11 +21,13 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 - Path resolution rules (workspace-relative only)
 - Completeness checklist before plan submission
 
-**When to use**: 
+**When to use**:
+
 - When ANTIGRAVITY is called via `read_prompt("ANTIGRAVITY")`
 - Provides all instructions needed to generate sealed, executable plans
 
 **Key differences from old template**:
+
 - ✅ Explicit MCP tool integration (begin_session, read_prompt, read_file, write_file)
 - ✅ Clearer path resolution rules (workspace-relative, no absolute paths)
 - ✅ Better session initialization requirements
@@ -38,6 +41,7 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 **Purpose**: The canonical prompt for WINDSURF agents during execution phases.
 
 **Key features**:
+
 - Mandatory session initialization and prompt fetching
 - Operator input validation (Plan Path, Workspace Root, Plan Signature, Execution Mode)
 - 6-step execution sequence (Session Ignition → Plan Verification → Implementation → Verification → Integrity Check)
@@ -48,10 +52,12 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 - Complete success criteria checklist
 
 **When to use**:
+
 - When WINDSURF is called via `read_prompt("WINDSURF_CANONICAL")`
 - Provides all instructions needed to execute plans with full governance
 
 **Key differences from old template**:
+
 - ✅ MCP-first tool usage (read_file, write_file, read_audit_log only)
 - ✅ Post-write audit verification (IMMEDIATE after each write_file call)
 - ✅ Plan hash validation with clear SHA256 rules
@@ -65,6 +71,7 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 **Purpose**: A concrete, production-ready example plan showing what ANTIGRAVITY output should look like.
 
 **Demonstrates**:
+
 - Complete YAML frontmatter with all required fields
 - All 9 required sections filled out properly
 - Two realistic feature implementation files
@@ -81,6 +88,7 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 - Success criteria checklist
 
 **Use this as**:
+
 - Template for structuring your own plans
 - Reference for code quality expectations
 - Example of proper intent and role definitions
@@ -94,6 +102,7 @@ This directory contains the updated templates for working with atlas-gate-mcp. T
 **Purpose**: Comprehensive guide to how templates work with atlas-gate-mcp (work in progress).
 
 Will document:
+
 - System architecture diagram
 - Workflow phases
 - MCP tool integration details
@@ -192,6 +201,7 @@ Will document:
 ### REALITY LOCK (Most Important)
 
 Every code snippet in every plan MUST be:
+
 - ✅ Production-ready
 - ✅ Complete (no stubs, no TODOs, no FIXMEs)
 - ✅ Error-handled (all error paths covered)
@@ -203,12 +213,14 @@ NO exceptions. NO placeholders. NO incomplete code.
 ### BINARY LANGUAGE ONLY
 
 Use ONLY these words:
+
 - MUST (required)
 - MUST NOT (forbidden)
 - SHALL (required)
 - SHALL NOT (forbidden)
 
 DO NOT use:
+
 - "may", "might", "could"
 - "should", "ought to"
 - "try to", "attempt"
@@ -218,6 +230,7 @@ DO NOT use:
 ### DETERMINISTIC COMPLETENESS
 
 Every plan MUST be:
+
 - ✅ Fully specifiable (no guessing, no interpretation needed)
 - ✅ Reproducible (same plan + same workspace = identical results)
 - ✅ Verifiable (success criteria are measurable)
@@ -226,6 +239,7 @@ Every plan MUST be:
 ### MCP TOOL USAGE ONLY
 
 Both agents MUST:
+
 - ✅ Use ONLY atlas-gate-mcp tools for all file I/O
 - ✅ Use read_file for all file reads
 - ✅ Use write_file for all file creation/modification
@@ -236,6 +250,7 @@ Both agents MUST:
 ### AUDIT TRAIL INTEGRITY
 
 WINDSURF MUST:
+
 - ✅ Call read_audit_log IMMEDIATELY after each write_file
 - ✅ Verify the audit entry has correct metadata
 - ✅ Check plan_signature matches exactly (case-insensitive, 64-char hex)
@@ -250,6 +265,7 @@ WINDSURF MUST:
 **Symptom**: `lint_plan` reports errors
 
 **Check**:
+
 - [ ] All 9 required sections present?
 - [ ] YAML frontmatter valid (no syntax errors)?
 - [ ] All paths workspace-relative (not absolute)?
@@ -265,12 +281,14 @@ WINDSURF MUST:
 
 **Symptom**: "Hash mismatch: computed X, provided Y"
 
-**Cause**: 
+**Cause**:
+
 - Footer was modified
 - Whitespace changed
 - Content edited after sealing
 
 **Fix**:
+
 1. ANTIGRAVITY re-generates plan with new timestamp
 2. Operator calls `lint_plan` to compute new hash
 3. Operator provides new Plan Signature to WINDSURF
@@ -283,11 +301,13 @@ WINDSURF MUST:
 **Symptom**: "Audit entry has incorrect plan_signature"
 
 **Cause**:
+
 - Wrong planSignature parameter to write_file
 - Wrong plan ID used
 - Audit system failure
 
 **Fix**:
+
 1. Verify Plan Signature value (compare with original)
 2. Verify plan file hash (run `lint_plan`)
 3. If planSignature was wrong, WINDSURF corrects it
@@ -300,11 +320,13 @@ WINDSURF MUST:
 **Symptom**: "npm run test failed with exit code 1"
 
 **Cause**:
+
 - Plan implementation has bug
 - Plan missed a dependency
 - Tests incomplete
 
 **Fix**:
+
 1. WINDSURF halts and generates failure report
 2. ANTIGRAVITY re-analyzes and fixes implementation
 3. ANTIGRAVITY generates new plan with updated code

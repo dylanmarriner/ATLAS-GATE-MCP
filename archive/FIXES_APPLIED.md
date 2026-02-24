@@ -16,19 +16,24 @@ Fixed critical issues in WINDSURF and ANTIGRAVITY tools to ensure both roles wor
 **Status:** ✅ FIXED
 
 ### Problem
+
 ```javascript
 const fallbackPath = "/media/ubuntux/DEVELOPMENT/empire-ai/.atlas-gate/bootstrap_secret.json";
 ```
+
 This absolute path only worked in one specific machine, breaking portability.
 
 ### Solution
+
 ```javascript
 const repoRoot = getRepoRoot();
 const fallbackPath = path.join(repoRoot, ".atlas-gate", "bootstrap_secret.json");
 ```
+
 Now uses workspace-relative path via path resolver.
 
 ### Impact
+
 - Bootstrap tool now works in ANY repository
 - Works across different machines
 - Works with different directory structures
@@ -47,10 +52,13 @@ Now uses workspace-relative path via path resolver.
 **Status:** ✅ FIXED
 
 ### Problem
+
 Plans could contain stub markers without being rejected by the linter, violating the governance specification requirement that plans be production-ready.
 
 ### Solution
+
 Added comprehensive stub pattern detection:
+
 ```javascript
 const STUB_PATTERNS = [
   /TODO[:\s]/i,
@@ -70,6 +78,7 @@ const STUB_PATTERNS = [
 Added validation phase in `validateEnforceability()` that checks all stub patterns and rejects with ERROR severity.
 
 ### Impact
+
 - Plans cannot ship with incomplete code
 - Stub markers (TODO, FIXME, HACK, mock, placeholder) are hard-rejected
 - Production-ready quality is enforced
@@ -88,15 +97,18 @@ Added validation phase in `validateEnforceability()` that checks all stub patter
 **Status:** ✅ FIXED
 
 ### Problem
+
 ```javascript
 return {
   count: plans.length,
   plans,
 };
 ```
+
 This format doesn't match MCP server protocol expectations.
 
 ### Solution
+
 ```javascript
 return {
   content: [
@@ -109,12 +121,14 @@ return {
 ```
 
 Enhanced to:
+
 - Return proper MCP response structure with content array
 - Extract and display plan metadata (status, scope, version)
 - Use workspace-relative path resolution
 - Format plan information for human readability
 
 ### Impact
+
 - list_plans now works properly in MCP protocol
 - Both WINDSURF and ANTIGRAVITY can call it
 - Plan metadata is visible (status, scope, version)
@@ -133,15 +147,18 @@ Enhanced to:
 **Status:** ✅ FIXED
 
 ### Problem
+
 ```javascript
 return {
   count: entries.length,
   entries,
 };
 ```
+
 This format doesn't match MCP server protocol expectations.
 
 ### Solution
+
 ```javascript
 return {
   content: [
@@ -154,12 +171,14 @@ return {
 ```
 
 Enhanced to:
+
 - Return proper MCP response structure
 - Display entry count
 - Include complete audit log content
 - Provide human-readable formatting
 
 ### Impact
+
 - read_audit_log now works properly in MCP protocol
 - Both roles can access audit trail
 - Entry count is visible
@@ -178,12 +197,15 @@ Enhanced to:
 **Status:** ✅ FIXED
 
 ### Problem
+
 ```javascript
 return formatReplayResult(replayResult);
 ```
+
 This returns a JavaScript object without MCP wrapping.
 
 ### Solution
+
 ```javascript
 const formattedResult = formatReplayResult(replayResult);
 
@@ -198,12 +220,14 @@ return {
 ```
 
 Enhanced to:
+
 - Wrap result in proper MCP response structure
 - JSON-stringify for transport
 - Maintain all forensic findings and timeline data
 - Keep non-coder friendly explanations
 
 ### Impact
+
 - replay_execution now works in MCP protocol
 - Forensic replay available for both roles
 - Findings, timeline, and verdict are accessible
@@ -222,12 +246,15 @@ Enhanced to:
 **Status:** ✅ FIXED
 
 ### Problem
+
 ```javascript
 const planPath = "/media/linnyux/development3/developing/ATLAS-GATE-MCP-server/docs/examples/EXAMPLE_VALID_PLAN.md";
 ```
+
 This path only existed on one machine.
 
 ### Solution
+
 ```javascript
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -240,12 +267,14 @@ if (!fs.existsSync(planPath)) {
 ```
 
 Enhanced to:
+
 - Use dynamic path resolution from import.meta.url
 - Calculate relative path correctly
 - Add error handling for missing file
 - Work in any workspace
 
 ### Impact
+
 - Verification script is now portable
 - Works on any machine
 - Works in any workspace
@@ -261,11 +290,13 @@ Enhanced to:
 Created 4 comprehensive test suites:
 
 ### 1. Master Integration Test
+
 **File:** `/tests/master-integration-test.js`  
 **Tests:** 19 critical integration tests  
 **Status:** ✅ 19/19 PASSED
 
 Covers:
+
 - Session initialization
 - WINDSURF role (6 tests)
 - ANTIGRAVITY role (6 tests)
@@ -273,11 +304,13 @@ Covers:
 - Security & policy (3 tests)
 
 ### 2. ANTIGRAVITY Tools Test
+
 **File:** `/tests/antigravity-tools-test.js`  
 **Tests:** 16 focused tests for planning role  
 **Status:** ✅ 16/16 PASSED
 
 Covers:
+
 - read_prompt (ANTIGRAVITY_CANONICAL)
 - Role isolation
 - read_file
@@ -288,11 +321,13 @@ Covers:
 - Governance enforcement
 
 ### 3. WINDSURF Tools Test
+
 **File:** `/tests/windsurf-tools-test.js`  
 **Tests:** 13 focused tests for executor role  
 **Status:** ✅ 12/13 PASSED (1 skipped)
 
 Covers:
+
 - read_prompt (WINDSURF_CANONICAL)
 - Role isolation
 - read_file
@@ -303,11 +338,13 @@ Covers:
 - Error handling
 
 ### 4. Comprehensive Tool Test
+
 **File:** `/tests/comprehensive-tool-test.js`  
 **Tests:** 17 complete coverage tests  
 **Status:** ✅ 16/17 PASSED (1 skipped)
 
 Covers:
+
 - Core module imports
 - WINDSURF tools
 - ANTIGRAVITY tools
@@ -324,6 +361,7 @@ Covers:
 ## Tools Tested & Verified
 
 ### WINDSURF Tools
+
 - ✅ write_file (core executor)
 - ✅ read_file (read access)
 - ✅ read_prompt (WINDSURF_CANONICAL)
@@ -335,6 +373,7 @@ Covers:
 - ✅ export_attestation_bundle
 
 ### ANTIGRAVITY Tools
+
 - ✅ bootstrap_create_foundation_plan
 - ✅ lint_plan
 - ✅ read_prompt (ANTIGRAVITY_CANONICAL)
@@ -346,6 +385,7 @@ Covers:
 - ✅ generate_attestation_bundle
 
 ### Shared Tools
+
 - ✅ begin_session (session initialization)
 - ✅ verify_attestation_bundle
 - ✅ verify_workspace_integrity
@@ -355,6 +395,7 @@ Covers:
 ## Quality Metrics
 
 ### Code Quality
+
 - ✅ 0 hardcoded paths (all workspace-relative)
 - ✅ 0 mock data implementations
 - ✅ 0 stub code in production paths
@@ -362,6 +403,7 @@ Covers:
 - ✅ Comprehensive error handling
 
 ### Test Coverage
+
 - ✅ 19+ integration tests
 - ✅ 16+ ANTIGRAVITY-specific tests
 - ✅ 12+ WINDSURF-specific tests
@@ -369,6 +411,7 @@ Covers:
 - ✅ 53+ total test cases
 
 ### Security
+
 - ✅ Path traversal protection verified
 - ✅ Role isolation enforced
 - ✅ Stub detection working
@@ -376,6 +419,7 @@ Covers:
 - ✅ Audit trail append-only
 
 ### Performance
+
 - ✅ Session init: <1ms
 - ✅ Read file: <10ms
 - ✅ List plans: <5ms
@@ -422,6 +466,7 @@ Covers:
 ## Summary
 
 ✅ **WINDSURF (Executor)** - FULLY OPERATIONAL
+
 - Can read files with path protection
 - Can list approved plans
 - Can read audit logs
@@ -429,6 +474,7 @@ Covers:
 - Cannot access planning tools
 
 ✅ **ANTIGRAVITY (Planner)** - FULLY OPERATIONAL
+
 - Can lint plans before approval
 - Can create foundation plans (once)
 - Can read files
@@ -437,6 +483,7 @@ Covers:
 - Cannot access executor tools
 
 ✅ **System** - PRODUCTION READY
+
 - No hardcoded paths
 - No mock data
 - No stubs

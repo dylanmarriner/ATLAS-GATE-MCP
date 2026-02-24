@@ -35,6 +35,7 @@ The ATLAS-GATE MCP audit system provides non-repudiable, forensically-auditable 
 ```
 
 **Rules**:
+
 - The audit directory `.atlas-gate/` is created automatically on first `appendAuditEntry()` call
 - The audit log is created in `.atlas-gate/` when the first entry is written
 - Both paths are bound to the locked `workspace_root` from `begin_session`
@@ -305,7 +306,7 @@ For each line in the audit log:
 1. **Parse JSON** (fail on invalid JSON)
 2. **Check sequence**: `expected_seq === entry.seq`
 3. **Check hash chain**: `expected_prev_hash === entry.prev_hash`
-4. **Recompute entry hash**: 
+4. **Recompute entry hash**:
    - Remove `entry_hash` field
    - Canonicalize (sort keys, no whitespace)
    - SHA-256 hash
@@ -317,6 +318,7 @@ For each line in the audit log:
 **To manually verify audit log integrity:**
 
 1. Export `.atlas-gate/audit.log` to readable format:
+
    ```bash
    # Pretty-print audit log (one entry per line)
    cat .atlas-gate/audit.log | jq -R 'fromjson'
@@ -328,6 +330,7 @@ For each line in the audit log:
    - `prev_hash` mismatch with previous entry's `entry_hash`
 
 3. Use the verification tool:
+
    ```bash
    node -e "
      const { verifyAuditLogIntegrity } = require('./core/audit-system.js');
@@ -459,6 +462,7 @@ function wrapHandler(handler, toolName) {
 ```
 
 **Notes**:
+
 - Each entry is a complete JSON object, one per line
 - All timestamps in UTC ISO 8601 format
 - Sequence numbers are strictly monotonic (1, 2, 3)
@@ -530,6 +534,7 @@ npm run verify
 ### begin_session
 
 When called:
+
 1. Lock workspace root
 2. Flush pre-session buffered events to newly-available audit log
 3. Subsequent calls use the audit log directly
@@ -537,12 +542,14 @@ When called:
 ### read_file, list_plans, read_prompt, read_audit_log
 
 All read-only operations:
+
 - Audit entry: `result="ok"`, `args_hash` of path/selector, `result_hash` of response summary
 - No file content logged (only file existence confirmed)
 
 ### write_file
 
 Mutation operation:
+
 - Audit entry: `result="ok"` or `"error"`, `args_hash` includes file hash + length (NOT raw content)
 - Plan hash logged if provided
 - Error code logged if failed
@@ -550,6 +557,7 @@ Mutation operation:
 ### bootstrap_create_foundation_plan
 
 Planning operation (ANTIGRAVITY only):
+
 - Audit entry: `result="ok"`, plan hash logged
 - Signature and payload logged (for non-repudiation)
 

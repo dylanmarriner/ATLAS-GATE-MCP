@@ -5,11 +5,13 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 ## Quick Navigation
 
 ### **I'm New Here — Where Do I Start?**
+
 - **Never heard of this project?** → [START_HERE.md](../START_HERE.md) (5-minute overview)
 - **Non-technical stakeholder?** → [Executive Summary](#for-executives--decision-makers)
 - **Want to understand what it does?** → [BEGINNER_GUIDE.md](./user-guide/BEGINNER_GUIDE.md)
 
 ### **For End Users**
+
 - [Installation & Setup](./user-guide/INSTALLATION.md) — Get it running step-by-step
 - [Configuration Guide](./user-guide/CONFIGURATION.md) — All options explained
 - [Usage Guide](./user-guide/USAGE_GUIDE.md) — Daily operations
@@ -18,6 +20,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 - [FAQ](./user-guide/FAQ.md) — Frequently asked questions
 
 ### **For Contributors**
+
 - [Contributing Guide](./contributor-guide/CONTRIBUTING.md) — How to contribute
 - [Development Setup](./contributor-guide/DEVELOPMENT_SETUP.md) — Set up your dev environment
 - [Code Standards](./contributor-guide/CODE_STANDARDS.md) — Style & conventions
@@ -25,6 +28,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 - [Pull Request Guide](./contributor-guide/PULL_REQUEST_GUIDE.md) — Submitting PRs
 
 ### **For Maintainers**
+
 - [Release Process](./maintainer-guide/RELEASE_PROCESS.md) — How to cut releases
 - [Triage Guide](./maintainer-guide/TRIAGE_GUIDE.md) — Managing issues
 - [Security Response](./maintainer-guide/SECURITY_RESPONSE.md) — Security incidents
@@ -32,6 +36,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 - [Roadmap](./maintainer-guide/ROADMAP.md) — Future direction
 
 ### **For Architects & Enterprise Adopters**
+
 - [Deployment Guide](./enterprise-guide/DEPLOYMENT.md) — Production deployment
 - [Compliance & Audit](./enterprise-guide/COMPLIANCE.md) — SOC 2, ISO 27001, GDPR
 - [Audit Readiness](./enterprise-guide/AUDIT_READINESS.md) — Audit procedures
@@ -39,6 +44,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 - [Disaster Recovery](./enterprise-guide/DISASTER_RECOVERY.md) — Business continuity
 
 ### **For Understanding the System**
+
 - [Architecture Overview](./architecture/ARCHITECTURE.md) — How the system is designed
 - [System Design](./architecture/SYSTEM_DESIGN.md) — Component breakdown
 - [Data Flows](./architecture/DATA_FLOWS.md) — Data movement
@@ -46,6 +52,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 - [Performance](./architecture/PERFORMANCE.md) — Performance characteristics
 
 ### **Reference Materials**
+
 - [Architecture Decision Records (ADRs)](./adr/) — Why we made certain decisions
 - [Changelog](./changelog/CHANGELOG.md) — Version history
 - [Glossary](./GLOSSARY.md) — Terms explained for non-technical readers
@@ -55,24 +62,28 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 ## Documentation by Audience
 
 ### For Non-Technical Users (Business, Legal, Executive)
+
 1. **Start**: [What is ATLAS-GATE-MCP?](../START_HERE.md) — Plain English explanation
 2. **Understand**: [GLOSSARY.md](./GLOSSARY.md) — No jargon
 3. **Evaluate**: [Use Cases](./user-guide/EXAMPLES.md) — Real-world scenarios
 4. **Deploy**: [Enterprise Deployment](./enterprise-guide/DEPLOYMENT.md) — IT/ops focused
 
 ### For First-Time Developers
+
 1. **Understand**: [BEGINNER_GUIDE.md](./user-guide/BEGINNER_GUIDE.md) — No assumptions
 2. **Install**: [INSTALLATION.md](./user-guide/INSTALLATION.md) — Step-by-step
 3. **Try**: [EXAMPLES.md](./user-guide/EXAMPLES.md) — Run examples
 4. **Learn**: [Architecture](./architecture/ARCHITECTURE.md) — How it works
 
 ### For Experienced Engineers
+
 1. **Quick**: [QUICK_REFERENCE.md](./reference/QUICK_REFERENCE.md) — Fast lookup
 2. **Deep Dive**: [SYSTEM_DESIGN.md](./architecture/SYSTEM_DESIGN.md) — Architecture details
 3. **Code**: [CODE_STANDARDS.md](./contributor-guide/CODE_STANDARDS.md) — Development rules
 4. **Contribute**: [CONTRIBUTING.md](./contributor-guide/CONTRIBUTING.md) — How to contribute
 
 ### For Security & Compliance Teams
+
 1. **Overview**: [Security Model](./architecture/SECURITY_MODEL.md) — Architecture perspective
 2. **Controls**: [SECURITY_CONTROLS.md](./enterprise-guide/SECURITY_CONTROLS.md) — Control mapping
 3. **Audit**: [AUDIT_READINESS.md](./enterprise-guide/AUDIT_READINESS.md) — Audit procedures
@@ -80,6 +91,7 @@ Welcome to the comprehensive documentation hub for ATLAS-GATE-MCP. This page hel
 5. **Incident**: [SECURITY_RESPONSE.md](./maintainer-guide/SECURITY_RESPONSE.md) — Incident procedures
 
 ### For DevOps & Operations
+
 1. **Deploy**: [DEPLOYMENT.md](./enterprise-guide/DEPLOYMENT.md) — Production setup
 2. **Configure**: [CONFIGURATION.md](./user-guide/CONFIGURATION.md) — All options
 3. **Monitor**: [Architecture](./architecture/ARCHITECTURE.md) — System overview
@@ -123,4 +135,4 @@ See [Contributing Guide](./contributor-guide/CONTRIBUTING.md) for details.
 
 **Last Updated**: February 2026  
 **Version**: 2.0.0  
-**Contact**: documentation@atlas-gate-mcp.org
+**Contact**: <documentation@atlas-gate-mcp.org>

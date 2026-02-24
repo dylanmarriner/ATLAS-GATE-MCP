@@ -56,77 +56,91 @@ Every tool failure produces a `SystemError` envelope with these NON-NEGOTIABLE f
 All error codes are uppercase snake_case. New codes MUST be registered in `core/system-error.js` under `SYSTEM_ERROR_CODES`.
 
 ### Session Errors
+
 - `SESSION_NOT_INITIALIZED` - No session created via begin_session
 - `SESSION_LOCKED` - Session locked due to prior failure
 - `SESSION_INITIALIZATION_FAILED` - Failed to initialize session
 
 ### Input Validation Errors
+
 - `INVALID_INPUT_TYPE` - Wrong data type (e.g., string instead of object)
 - `INVALID_INPUT_FORMAT` - Malformed input (e.g., invalid JSON)
 - `INVALID_INPUT_VALUE` - Invalid value (e.g., empty string where required)
 - `MISSING_REQUIRED_FIELD` - Required field is absent
 
 ### Authorization Errors
+
 - `UNAUTHORIZED_ACTION` - Action not allowed for current role
 - `INSUFFICIENT_PERMISSIONS` - Caller lacks required permissions
 - `ROLE_MISMATCH` - Role conflicts with expected role
 
 ### Path Errors
+
 - `INVALID_PATH` - Path is malformed or invalid
 - `PATH_NOT_FOUND` - Path does not exist
 - `PATH_TRAVERSAL_BLOCKED` - Path traversal (..) attempt blocked
 - `OUTSIDE_WORKSPACE` - Path is outside workspace root
 
 ### File Operation Errors
+
 - `FILE_NOT_FOUND` - File does not exist
 - `FILE_ALREADY_EXISTS` - File already exists (when not allowed)
 - `FILE_READ_FAILED` - Failed to read file
 - `FILE_WRITE_FAILED` - Failed to write file
 
 ### Patch Errors
+
 - `PATCH_INVALID` - Patch is malformed
 - `PATCH_APPLY_FAILED` - Patch could not be applied
 - `HASH_MISMATCH` - File hash mismatch (concurrent modification)
 
 ### Plan Errors
+
 - `PLAN_NOT_FOUND` - Plan file not found
 - `PLAN_NOT_APPROVED` - Plan is not marked APPROVED
 - `PLAN_ENFORCEMENT_FAILED` - Plan validation failed
 - `PLAN_SCOPE_VIOLATION` - Operation outside plan scope
 
 ### Policy Enforcement Errors
+
 - `POLICY_VIOLATION` - Code violates policy
 - `RUST_POLICY_VIOLATION` - Rust-specific policy violation
 - `PREFLIGHT_FAILED` - Preflight checks (tests/lint) failed
 
 ### Governance Errors
+
 - `INVARIANT_VIOLATION` - System invariant was violated
 - `BOOTSTRAP_FAILURE` - Bootstrap initialization failed
 - `SELF_AUDIT_FAILURE` - Server self-audit failed at startup
 
 ### Audit/Logging Errors
+
 - `AUDIT_LOG_FAILED` - Failed to write to audit log
 - `AUDIT_LOCK_FAILED` - Failed to acquire audit log lock
 
 ### Generic Errors
+
 - `INTERNAL_ERROR` - Unexpected server error
 - `UNKNOWN_TOOL_FAILURE` - Fallback for unmapped errors
 
 ## 3. Determinism Guarantees
 
 ### Serialization Determinism
+
 1. All `SystemError` envelopes are JSON-serializable with no circular references
 2. All fields are either `string`, `number`, `boolean`, `null`, or plain objects
 3. `cause` field is normalized: Error objects become `{ message, code, name }` objects
 4. Timestamp is ISO 8601 format (always deterministic for given instant)
 
 ### Code Determinism
+
 1. Same error condition → same `error_code` (always)
 2. Same `error_code` → same semantics (always)
 3. Invariant ID is stable and never generated randomly
 4. Error codes never change during runtime
 
 ### Transport Determinism
+
 1. Every thrown `SystemError` reaches MCP client unmodified
 2. No error is swallowed or converted to warning
 3. Audit log records exactly what was thrown (for forensics)
@@ -138,7 +152,9 @@ All error codes are uppercase snake_case. New codes MUST be registered in `core/
 All `SystemError` instances MUST be created via one of these factories:
 
 #### `SystemError.fromUnknown(err, context)`
+
 Converts unknown errors to SystemError:
+
 ```javascript
 const systemErr = SystemError.fromUnknown(rawErr, {
   error_code: SYSTEM_ERROR_CODES.FILE_READ_FAILED,
@@ -149,7 +165,9 @@ const systemErr = SystemError.fromUnknown(rawErr, {
 ```
 
 #### `SystemError.invariantViolation(invariant_id, context)`
+
 For invariant violations:
+
 ```javascript
 const systemErr = SystemError.invariantViolation(
   "MANDATORY_DIAGNOSTICS",
@@ -161,7 +179,9 @@ const systemErr = SystemError.invariantViolation(
 ```
 
 #### `SystemError.toolFailure(error_code, context)`
+
 For tool-specific failures:
+
 ```javascript
 const systemErr = SystemError.toolFailure(
   SYSTEM_ERROR_CODES.INVALID_PATH,
@@ -174,7 +194,9 @@ const systemErr = SystemError.toolFailure(
 ```
 
 #### `SystemError.startupFailure(error_code, context)`
+
 For startup/initialization failures:
+
 ```javascript
 const systemErr = SystemError.startupFailure(
   SYSTEM_ERROR_CODES.BOOTSTRAP_FAILURE,
@@ -186,6 +208,7 @@ const systemErr = SystemError.startupFailure(
 ```
 
 ### Direct Construction (Not Recommended)
+
 ```javascript
 new SystemError({
   error_code: SYSTEM_ERROR_CODES.INTERNAL_ERROR,
@@ -212,6 +235,7 @@ The `wrapHandler` function in `server.js` enforces SystemError enveloping at the
 ## 6. Audit Trail Integration
 
 Every tool failure is logged to `audit-log.jsonl` with:
+
 - tool_name
 - error_code
 - invariant_id (if applicable)
@@ -227,7 +251,7 @@ Clients MUST interpret MCP tool call failures as follows:
 
 1. **Check for error response** in MCP protocol
 2. **Extract `error_code`** from response body
-3. **Use `error_code` to determine action**: 
+3. **Use `error_code` to determine action**:
    - `SESSION_NOT_INITIALIZED` → Call begin_session
    - `SESSION_LOCKED` → Write failure report to docs/reports/
    - `UNAUTHORIZED_ACTION` → Check role and permissions
@@ -261,11 +285,13 @@ See `test-system-error.js` for comprehensive test suite.
 ### For Existing Raw Error Throws
 
 **Before**:
+
 ```javascript
 throw new Error(`INVALID_PATH: ${err.message}`);
 ```
 
 **After**:
+
 ```javascript
 throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_PATH, {
   human_message: `Invalid path: ${err.message}`,
@@ -284,22 +310,26 @@ Existing `KaizaError` instances are handled by `wrapHandler` which converts them
 These are FORBIDDEN:
 
 ❌ Throwing raw Error:
+
 ```javascript
 throw new Error("Something failed");
 ```
 
 ❌ Returning error as object:
+
 ```javascript
 return { ok: false, error: "Something failed" };
 ```
 
 ❌ console.error without throwing:
+
 ```javascript
 console.error("Error occurred");
 // Continue execution...
 ```
 
 ❌ Swallowing errors in catch:
+
 ```javascript
 try { /* ... */ } catch (e) { /* silently ignore */ }
 ```

@@ -81,9 +81,9 @@ The policy engine detects language from file extension and optional content heur
 
 ### Fallback: Content Heuristics
 
-- **Rust**: `fn `, `impl `, `pub fn`
+- **Rust**: `fn`, `impl`, `pub fn`
 - **TypeScript**: `import ... from` pattern
-- **Python**: `def `, `import`
+- **Python**: `def`, `import`
 - **Unknown**: Applied if no extension match and heuristics inconclusive
 
 ---
@@ -422,6 +422,7 @@ Every write attempt (success or failure) produces an audit entry in `/.atlas-gat
 ```
 
 The audit log is:
+
 - **Append-only** — never rewritten or truncated
 - **Hash-chained** — each entry references the previous entry's hash
 - **Tamper-evident** — any modification breaks the chain

@@ -8,16 +8,20 @@
 ## Critical Issues Fixed
 
 ### Issue #1: governance.js Missing keyPair Argument ✅ FIXED
+
 **Before**: `const planSignature = await signWithCosign(planContent);`  
-**After**: 
+**After**:
+
 ```javascript
 const keyPair = await loadOrGenerateKeyPair(repoRootPath);
 const planSignature = await signWithCosign(planContent, keyPair);
 ```
 
 ### Issue #2: audit-log.js Passing File Path Instead of keyPair ✅ FIXED
+
 **Before**: `const signature = await signWithCosign(payload, privateKeyPath);`  
 **After**:
+
 ```javascript
 const keyPair = await loadOrGenerateKeyPair(repoRoot);
 const signature = await signWithCosign(payload, keyPair);
@@ -28,6 +32,7 @@ const signature = await signWithCosign(payload, keyPair);
 ## Cryptographic Correctness
 
 ### End-to-End Test Results
+
 All tests **PASSED** ✅
 
 1. **ECDSA P-256 Key Generation** ✅
@@ -73,6 +78,7 @@ All tests **PASSED** ✅
 ## File Changes
 
 ### tools/begin_session.js ✅ NEW
+
 - Added `loadOrGenerateKeyPair` import from audit-system
 - Added key pair initialization on session start
 - If keys exist: idempotent (no regeneration)
@@ -80,11 +86,13 @@ All tests **PASSED** ✅
 - Updated response to indicate "ECDSA P-256 keys initialized"
 
 ### core/audit-system.js ✅ UPDATED
+
 - Exported `loadOrGenerateKeyPair` function (was private)
 - Function checks for existing keys before generating (idempotent)
 - Uses in-memory cache to avoid repeated filesystem reads
 
 ### core/governance.js ✅ FIXED
+
 - Added `crypto` import
 - Added `generateCosignKeyPair` import
 - Added `loadOrGenerateKeyPair()` function (37 lines)
@@ -93,6 +101,7 @@ All tests **PASSED** ✅
   - Pass keyPair to `signWithCosign()`
 
 ### core/audit-log.js ✅ FIXED
+
 - Added `crypto` import
 - Added `COSIGN_KEYS_DIR` constant
 - Added `loadOrGenerateKeyPair()` function (37 lines)
@@ -103,6 +112,7 @@ All tests **PASSED** ✅
   - Always use cosign signing (no fallback)
 
 ### core/cosign-hash-provider.js
+
 - No changes (implementation already correct)
 
 ---
@@ -110,11 +120,13 @@ All tests **PASSED** ✅
 ## Test Results
 
 ### Syntax Validation
+
 - ✅ core/governance.js - syntax valid
 - ✅ core/audit-log.js - syntax valid
 - ✅ core/cosign-hash-provider.js - syntax valid
 
 ### End-to-End Test (test-cosign-e2e.js)
+
 ```
 🎉 All cosign tests passed!
 ✅ ECDSA P-256 key generation
@@ -134,6 +146,7 @@ All tests **PASSED** ✅
 ## Key Pair Storage
 
 Keys are stored consistently across the system:
+
 - **Location**: `.atlas-gate/.cosign-keys/`
 - **Private Key**: `private.pem` (PKCS8)
 - **Public Key**: `public.pem` (SPKI)
@@ -145,15 +158,18 @@ Keys are stored consistently across the system:
 ## Verification Strategy
 
 ### 1. Signing & Verification Chain
+
 Plan signatures → Stored as filenames  
 Audit entries → Signed with cosign → Chain verified on read
 
 ### 2. Tamper Detection
+
 - Plan content hash = signature
 - Audit entry chain includes previous signature
 - Any modification breaks verification
 
 ### 3. Determinism
+
 - Canonicalization sorts object keys
 - Same content always produces same signature
 - Facilitates offline verification
@@ -163,16 +179,19 @@ Audit entries → Signed with cosign → Chain verified on read
 ## API Contract Compliance
 
 ### signWithCosign(content, keyPair)
+
 - **Input**: content (string/buffer), keyPair { publicKey, privateKey }
 - **Output**: URL-safe base64 signature
 - **Status**: ✅ All calls fixed to match
 
 ### verifyWithCosign(content, signature, publicKey)
+
 - **Input**: content, URL-safe base64 signature, public key PEM
 - **Output**: boolean
 - **Status**: ✅ Verified working
 
 ### generateCosignKeyPair()
+
 - **Input**: None
 - **Output**: { publicKey, privateKey } in PEM format
 - **Status**: ✅ Verified working
@@ -182,6 +201,7 @@ Audit entries → Signed with cosign → Chain verified on read
 ## Breaking Changes
 
 **None** - The fixes maintain backward compatibility:
+
 - `appendAuditLog()` signature changed from `(entry, sessionId, privateKeyPath)` to `(entry, sessionId)`, but no external callers used privateKeyPath parameter
 - All calling code (human-factor-audit.js) passes only `(entry, sessionId)`
 - Governance API unchanged
@@ -191,11 +211,13 @@ Audit entries → Signed with cosign → Chain verified on read
 ## Recommendations
 
 ### For Production Deployment
+
 1. ✅ Ensure `.atlas-gate/.cosign-keys/` directory is created with appropriate permissions
 2. ✅ Keys should be backed up securely
 3. ✅ Consider environment-variable-based key rotation mechanism
 
 ### For Further Enhancement
+
 - [ ] Add key rotation mechanism
 - [ ] Support for encrypted private keys (password protection)
 - [ ] Audit log signature chain verification utility
@@ -206,6 +228,7 @@ Audit entries → Signed with cosign → Chain verified on read
 ## Session Initialization Flow
 
 ### begin_session Handler
+
 1. Lock workspace root (validates path)
 2. **Generate or load ECDSA P-256 keys** (NEW - idempotent)
    - If keys exist in `.atlas-gate/.cosign-keys/`: load them (no-op)
@@ -214,6 +237,7 @@ Audit entries → Signed with cosign → Chain verified on read
 4. Return status with "ECDSA P-256 keys initialized"
 
 ### Key Idempotency
+
 - First session: generates new keys
 - Second session: loads existing keys (no regeneration)
 - Multiple calls: in-memory cached (no repeated filesystem reads)
@@ -225,6 +249,7 @@ Audit entries → Signed with cosign → Chain verified on read
 **The cosign implementation is now CORRECT and VERIFIED.**
 
 All critical issues have been fixed:
+
 - ✅ **begin_session** explicitly generates/loads keys at session start
 - ✅ **governance.js** loads keyPair before signing plans
 - ✅ **audit-log.js** loads keyPair before signing entries

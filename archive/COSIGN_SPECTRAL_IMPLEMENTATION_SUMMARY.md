@@ -7,31 +7,37 @@ All linting, hashing, and signing operations are now **fully aligned** with cosi
 ### 1. **Core Module (plan-linter.js)**
 
 ✅ **Key Generation**
+
 - `generateCosignKeys()` - Generates ECDSA P-256 key pairs
 - Auto-creates `.cosign-keys/` directory
 - Returns private + public keys with paths
 
 ✅ **Signing**
+
 - `signPlan()` - Signs plan content with cosign
 - Uses canonical content (stripped of comments, normalized)
 - Returns base64-encoded signature
 
 ✅ **Verification**
+
 - `verifyPlanSignature()` - Verifies signatures with cosign
 - Uses same canonicalization as signing
 - Returns boolean verification result
 
 ✅ **Hashing**
+
 - `hashPlanContent()` - Computes SHA256 hash
 - Exported for external use
 - Uses same canonicalization as signing/verification
 
 ✅ **Spectral Linting**
+
 - `initializeSpectral()` - Configures Spectral with 3 plan-specific rules
 - `runSpectralLinting()` - Executes spectral linting in-process
 - Integrated as Stage 6 of linting pipeline
 
 ✅ **Main Linting Function**
+
 ```javascript
 lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
   Stage -1: Generate cosign keys if needed
@@ -95,22 +101,24 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
 ✅ Fixed: All `lintPlan()` calls use await
 ✅ Fixed: Test runner handles async functions with `await fn()`
 ✅ Test coverage includes:
-  - Missing sections
-  - Missing phase fields
-  - Invalid phase IDs
-  - Ambiguous language (may, should)
-  - Path escapes (..)
-  - Non-auditable objectives
-  - Valid plans
-  - Hash computation
-  - Signature verification
-  - Duplicate phase IDs
-  - Absolute paths
-  - Human judgment clauses
+
+- Missing sections
+- Missing phase fields
+- Invalid phase IDs
+- Ambiguous language (may, should)
+- Path escapes (..)
+- Non-auditable objectives
+- Valid plans
+- Hash computation
+- Signature verification
+- Duplicate phase IDs
+- Absolute paths
+- Human judgment clauses
 
 ## Alignment Verification
 
 ### Cosign Integration
+
 | Component | Cosign Signing | Cosign Verification | Key Generation |
 |-----------|---|---|---|
 | plan-linter.js | ✅ `signPlan()` | ✅ `verifyPlanSignature()` | ✅ `generateCosignKeys()` |
@@ -120,6 +128,7 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
 | attestation-engine.js | N/A (bundle HMAC) | N/A | ✅ Verifies plans |
 
 ### Spectral Integration
+
 | Component | Spectral Rules | Execution | Error Handling |
 |-----------|---|---|---|
 | plan-linter.js | ✅ 3 custom rules | ✅ Stage 6 | ✅ Fail-open (warns) |
@@ -127,6 +136,7 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
 | Tests | ✅ Coverage | ✅ Test 8+ | ✅ Assertions |
 
 ### Async/Await Alignment
+
 | Function | Async | Awaited At | Status |
 |----------|---|---|---|
 | `lintPlan()` | ✅ Yes | All call sites | ✅ Fixed |
@@ -192,6 +202,7 @@ Three custom rules are configured:
 ## Output Format
 
 Every `lintPlan()` call returns:
+
 ```javascript
 {
   passed: boolean,              // true iff no errors
@@ -212,6 +223,7 @@ Every `lintPlan()` call returns:
 ## Testing
 
 All changes are backward compatible with existing tests. The test suite:
+
 - Runs 14+ plan linting tests
 - Tests cosign signing/verification flows
 - Tests hash determinism
@@ -219,6 +231,7 @@ All changes are backward compatible with existing tests. The test suite:
 - Uses async test functions where needed
 
 Run tests with:
+
 ```bash
 npm test
 node tests/system/test-plan-linter.js

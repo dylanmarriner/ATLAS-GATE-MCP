@@ -12,6 +12,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
 ### Added
 
 #### 🎓 Beginner Documentation
+
 - **Absolute Beginner's Guide** (`docs/ABSOLUTE_BEGINNER_GUIDE.md`)
   - Complete setup for people who have never used a computer
   - Platform-specific instructions (Windows, macOS, Linux)
@@ -21,6 +22,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
   - Related: Software v1.0.0 release
 
 #### 📚 Documentation System
+
 - **Documentation Lifecycle** (`docs/DOCUMENTATION_LIFECYCLE.md`)
   - Versioned documentation strategy (v1, v2, etc.)
   - Documentation ownership model and update frequency
@@ -30,6 +32,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
   - Related: Docs-as-a-Product discipline initiative
 
 #### 📊 Diagrams System
+
 - **Diagram Guide** (`docs/diagrams/DIAGRAM_GUIDE.md`)
   - Mermaid and PlantUML tool instructions
   - Directory structure (source + rendered)
@@ -39,6 +42,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
   - Related: Architecture documentation infrastructure
 
 #### 🏢 Enterprise Documentation
+
 - **Executive Overview** (`EXECUTIVE_OVERVIEW.md`)
   - One-page strategic summary for decision-makers
   - Business value proposition and risk mitigation
@@ -57,6 +61,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
   - Related: Long-term product vision and planning
 
 #### 🤝 Community Guidelines
+
 - **Contributing Guide** (`CONTRIBUTING.md`)
   - Full contribution workflow (fork → PR → merge)
   - Code standards (JavaScript ES modules, naming, error handling)
@@ -69,6 +74,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
   - Related: Project governance and community health
 
 #### 📋 GitHub Templates
+
 - **Bug Report Template** (`.github/ISSUE_TEMPLATE/bug_report.md`)
 - **Feature Request Template** (`.github/ISSUE_TEMPLATE/feature_request.md`)
 - **Pull Request Template** (`.github/pull_request_template.md`)
@@ -113,6 +119,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
 ### Software Version Alignment
 
 **ATLAS-GATE MCP v1.0.0** includes:
+
 - Core dual-role governance (ANTIGRAVITY/WINDSURF)
 - Plan-based authorization with cryptographic verification
 - Comprehensive audit logging and replay
@@ -120,6 +127,7 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
 - Complete test coverage
 
 **This documentation release (v1.0.0)** adds:
+
 - Docs-as-a-Product system with versioning
 - Enterprise-grade guides (executive, beginners, maturity model)
 - Governance documentation (lifecycle, contributing, ADR system)
@@ -143,21 +151,25 @@ All notable changes to ATLAS-GATE-MCP documentation are recorded here, aligned w
 ### For Different Audiences
 
 **Complete Novices**:
+
 - Start with [Absolute Beginner's Guide](./docs/ABSOLUTE_BEGINNER_GUIDE.md)
 - Reference [Glossary](./docs/GLOSSARY.md) for unfamiliar terms
 - Use [Troubleshooting](./docs/TROUBLESHOOTING.md) section
 
 **Developers & Technical Teams**:
+
 - Read [Architecture Overview](./docs/ARCHITECTURE.md)
 - Study [ADRs](./adr/) for design decisions
 - Follow [Contributing Guide](./CONTRIBUTING.md)
 
 **Executives & Stakeholders**:
+
 - Read [Executive Overview](./EXECUTIVE_OVERVIEW.md) (1 page)
 - Review [Maturity Model](./docs/MATURITY_MODEL.md) for capabilities
 - Check [Security Policy](./SECURITY.md) for risk posture
 
 **Operators & DevOps**:
+
 - Follow deployment in [Getting Started](./docs/ABSOLUTE_BEGINNER_GUIDE.md)
 - Reference [Troubleshooting](./docs/TROUBLESHOOTING.md)
 - Monitor using [Audit Log Guide](./docs/guides/AUDIT_LOG_ANALYSIS.md)
@@ -171,6 +183,7 @@ N/A — This is the initial v1.0 documentation release.
 **2026-04-21** (3 months)
 
 Expected updates:
+
 - v2.0 roadmap progress
 - Kubernetes deployment documentation
 - Compliance reporting guide

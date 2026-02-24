@@ -20,6 +20,7 @@ The ATLAS-GATE MCP Server has been successfully hardened with:
 5. ✅ **Production-Ready** - No mocks, placeholders, or TODOs
 
 **Critical Guarantees Achieved**:
+
 - Plans written to exactly one canonical location ✓
 - Plans discovered from exactly one location ✓
 - Path traversal attacks structurally impossible ✓
@@ -105,6 +106,7 @@ Test Categories:
 ### Enforced Invariants: 40+
 
 **By Category**:
+
 - Repository & Path: 6 invariants
 - Plan Directory: 3 invariants
 - Plan Lifecycle: 7 invariants
@@ -114,6 +116,7 @@ Test Categories:
 - Error Classification: 3 invariants
 
 **By Implementation**:
+
 - `path-resolver.js`: 9 invariants
 - `plan-enforcer.js`: 8 invariants
 - `write_file.js`: 5 invariants
@@ -129,6 +132,7 @@ Test Categories:
 **Claim**: Same repo state → same plans every time
 
 **Verification**:
+
 1. `getPlansDir()` enforces `INV_PLANS_DIR_CANONICAL` ✓
 2. Single candidate source prevents multi-location confusion ✓
 3. Result cached in immutable `SESSION_REPO_ROOT` ✓
@@ -143,6 +147,7 @@ Test Categories:
 **Claim**: Write target cannot escape repo bounds
 
 **Verification**:
+
 1. `resolveWriteTarget()` enforces `INV_PATH_WITHIN_REPO` ✓
 2. Explicit check: `normalizedTarget.startsWith(repoRoot + sep)` ✓
 3. Violation throws unrecoverable `InvariantViolationError` ✓
@@ -157,6 +162,7 @@ Test Categories:
 **Claim**: No write without valid, approved, existing plan
 
 **Verification**:
+
 1. `write_file()` calls `enforcePlan()` always ✓
 2. `enforcePlan()` enforces `INV_PLAN_EXISTS` ✓
 3. `enforcePlan()` enforces `INV_PLAN_APPROVED` ✓
@@ -172,6 +178,7 @@ Test Categories:
 **Claim**: Invalid state → explicit error always
 
 **Verification**:
+
 1. All critical operations guarded by invariants ✓
 2. Each invariant uses explicit error code ✓
 3. `InvariantViolationError` includes message + stack ✓

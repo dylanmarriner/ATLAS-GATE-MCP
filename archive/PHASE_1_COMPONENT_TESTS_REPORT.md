@@ -1,6 +1,7 @@
 # PHASE 1: COMPONENT TESTS (UNIT + CONTRACT) REPORT
 
 ## EXECUTION LOG
+
 **Date**: 2026-01-31
 **Analyst**: Principal Full-Stack QA Engineer
 **Environment**: Development configuration (Node.js v20.19.4, npm v9.2.0)
@@ -28,9 +29,11 @@
 ### **🔧 Module-Level Tests**
 
 #### **A. AST Policy Enforcement (`tests/system/test-ast-policy.js`)**
+
 **Status**: ✅ **PASS**
 
 **Validated Components**:
+
 - ✅ Stub detection blocks empty functions
 - ✅ Stub detection blocks null returns  
 - ✅ Stub detection blocks TODO/FIXME markers
@@ -38,6 +41,7 @@
 - ✅ Error handling and rejection messages clear
 
 **Test Results**:
+
 ```
 PASS: function valid() { return true...
 PASS: const x = () => { console.log(...
@@ -50,9 +54,11 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ```
 
 #### **B. Bootstrap System (`tests/system/test-bootstrap.js`)**
+
 **Status**: ✅ **PASS**
 
 **Validated Components**:
+
 - ✅ Plan creation workflow functional
 - ✅ Cryptographic plan hash generation
 - ✅ File system integration working
@@ -60,6 +66,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 - ✅ Session management operational
 
 **Results**:
+
 ```json
 {
   "status": "PLAN_CREATED",
@@ -70,15 +77,18 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ```
 
 #### **C. Enforcement System (`tests/system/test-enforcement.js`)**
+
 **Status**: ✅ **PASS (Expected Failure)**
 
 **Validated Components**:
+
 - ✅ Write-time policy enforcement active
 - ✅ Debug logging blocked in production code
 - ✅ Policy violation detection working
 - ✅ Error handling and rejection functional
 
 **Expected Policy Violation**:
+
 ```
 [POLICY_VIOLATION] WRITE_POLICY_DENYLIST_VIOLATION:
   • console.log: Debug logging in production code
@@ -91,9 +101,11 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🌐 MCP Server Interface**
 
 #### **Server Startup Validation**
+
 **Status**: ✅ **PASS**
 
 **Verified Contracts**:
+
 - ✅ Server starts without critical errors
 - ✅ Self-audit passes all 10 checks
 - ✅ Sandbox enforcement active on startup
@@ -101,6 +113,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 - ✅ MCP protocol initialization complete
 
 **Startup Audit Results**:
+
 ```
 [STARTUP_AUDIT] Completed 10 checks
 [STARTUP_AUDIT] Passed: 10, Failed: 0
@@ -108,18 +121,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ```
 
 #### **Windsurf Role Contract**
+
 **Status**: ✅ **PASS**
 
 **Validated Interfaces**:
+
 - ✅ Session management: `session=045033b8-9a16-4a05-94b8-77a4524f2838`
 - ✅ Tool manifestation: "manifesting execution tools"
 - ✅ Sandbox lockdown: Process exit attempts blocked
 - ✅ MCP server: `atlas-gate-mcp-windsurf running`
 
 #### **Antigravity Role Contract**
+
 **Status**: ✅ **PASS**
 
 **Validated Interfaces**:
+
 - ✅ Session management: `session=f1b440fe-9adb-4bbd-8286-c1e4e596cb93`
 - ✅ Tool manifestation: "manifesting planning tools"
 - ✅ Read-only restrictions enforced
@@ -132,18 +149,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **📁 File-Based Persistence**
 
 #### **Audit Log System**
+
 **Status**: ✅ **PASS**
 
 **Validated Components**:
+
 - ✅ Audit log file creation and writing
 - ✅ JSON structure integrity maintained
 - ✅ Session tracking functional
 - ✅ Cryptographic hash verification working
 
 #### **Plan Storage System**
+
 **Status**: ✅ **PASS**
 
 **Validated Components**:
+
 - ✅ Plan file creation in correct directory
 - ✅ File naming convention follows standards
 - ✅ Content validation and integrity checks
@@ -156,18 +177,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **⚠️ Error Scenarios Tested**
 
 #### **A. Policy Violation Handling**
+
 **Status**: ✅ **PASS**
 
 **Tested Scenarios**:
+
 - ✅ Debug logging rejection with clear error messages
 - ✅ Stub code detection and blocking
 - ✅ TODO/FIXME marker enforcement
 - ✅ SystemError thrown with proper context
 
 #### **B. Runtime Error Handling**
+
 **Status**: ✅ **PASS**
 
 **Tested Scenarios**:
+
 - ✅ Process exit attempts blocked and logged
 - ✅ Sandbox violations properly handled
 - ✅ Governance enforcement failures caught
@@ -180,18 +205,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🔍 Parameter Validation**
 
 #### **Tool Parameter Enforcement**
+
 **Status**: ✅ **VALIDATED**
 
 **Evidence from Enforcement Test**:
+
 - ✅ Schema validation active
 - ✅ Required field validation working
 - ✅ Type checking implemented
 - ✅ Value validation functional
 
 #### **File Path Validation**
+
 **Status**: ✅ **VALIDATED**
 
 **Evidence from Bootstrap Test**:
+
 - ✅ Path resolution working correctly
 - ✅ Workspace root enforcement active
 - ✅ File creation permissions validated
@@ -204,9 +233,11 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🏗️ Core Workflows**
 
 #### **Plan Creation Workflow**
+
 **Status**: ✅ **PASS**
 
 **Validated Steps**:
+
 1. ✅ Plan request received and processed
 2. ✅ Cryptographic hash generated
 3. ✅ Plan file created with proper structure
@@ -214,9 +245,11 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 5. ✅ Response formatted correctly
 
 #### **Role-Based Access Control**
+
 **Status**: ✅ **PASS**
 
 **Validated Controls**:
+
 - ✅ Windsurf role: Execution tools available
 - ✅ Antigravity role: Planning tools only
 - ✅ Session isolation between roles
@@ -229,18 +262,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🔗 Component Integration**
 
 #### **Core Module Integration**
+
 **Status**: ✅ **PASS**
 
 **Validated Integrations**:
+
 - ✅ `mcp-sandbox.js` ↔ `server.js`
 - ✅ `tool-enforcement.js` ↔ MCP tools
 - ✅ `governance.js` ↔ Plan system
 - ✅ `stub-detector.js` ↔ Validation pipeline
 
 #### **Entry Point Integration**
+
 **Status**: ✅ **PASS**
 
 **Validated Integrations**:
+
 - ✅ `bin/ATLAS-GATE-MCP-windsurf.js` ↔ Core modules
 - ✅ `bin/ATLAS-GATE-MCP-antigravity.js` ↔ Core modules
 - ✅ Both roles ↔ Shared MCP server infrastructure
@@ -258,6 +295,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 | Antigravity Entry | < 1s | ~45MB | ✅ Optimal |
 
 ### **Resource Utilization**
+
 - ✅ No memory leaks detected during startup
 - ✅ CPU usage within expected ranges
 - ✅ File I/O operations efficient
@@ -270,18 +308,22 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🛡️ Security Controls**
 
 #### **Sandbox Enforcement**
+
 **Status**: ✅ **PASS**
 
 **Validated Controls**:
+
 - ✅ Process.exit() blocked and logged
 - ✅ Filesystem access restricted
 - ✅ Module imports controlled
 - ✅ Environment variable access blocked
 
 #### **Governance Enforcement**
+
 **Status**: ✅ **PASS**
 
 **Validated Controls**:
+
 - ✅ Plan authorization required
 - ✅ Cryptographic validation working
 - ✅ Audit trail comprehensive
@@ -304,6 +346,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ### **🎯 CRITICAL FINDINGS**
 
 **Positive Findings**:
+
 - ✅ Zero stub code in production paths
 - ✅ Comprehensive anti-stub enforcement working
 - ✅ Multi-layer security model functional
@@ -311,6 +354,7 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 - ✅ Cryptographic audit logging active
 
 **Expected Issues** (Not Blocking):
+
 - ⚠️ Some code quality violations detected in markenz/ (external dependency)
 - ⚠️ Module type warnings (cosmetic,不影响功能)
 
@@ -325,12 +369,14 @@ PASS (Blocked): function fixme() { /* FIXME */... [PERMANENTLY_BLOCKED]
 ## 12. TEST ARTIFACTS
 
 ### **Generated During Testing**
+
 - Plan ID: `3249c908daa76ef24742884505c541098ee3a9f9d88c2ca69c9a1f0365956911`
 - Windsurf Session: `045033b8-9a16-4a05-94b8-77a4524f2838`
 - Antigravity Session: `f1b440fe-9adb-4bbd-8286-c1e4e596cb93`
 - Audit logs generated and validated
 
 ### **Evidence Collected**
+
 - Startup audit logs (10 checks passed)
 - Policy violation test results
 - Enforcement system validation

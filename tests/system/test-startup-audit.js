@@ -104,7 +104,7 @@ test('Startup Audit: Session state starts uninitialized', async () => {
  * Test 6: Error codes completeness
  */
 test('Startup Audit: All required error codes defined', async () => {
-  const { ERROR_CODES } = await import('../../core/error.js');
+  const { SYSTEM_ERROR_CODES } = await import('../../core/error.js');
   
   const requiredCodes = [
     'UNAUTHORIZED_ACTION',
@@ -120,26 +120,26 @@ test('Startup Audit: All required error codes defined', async () => {
   ];
   
   for (const code of requiredCodes) {
-    assert(ERROR_CODES[code], `ERROR_CODES.${code} must be defined`);
+    assert(SYSTEM_ERROR_CODES[code], `SYSTEM_ERROR_CODES.${code} must be defined`);
   }
 });
 
 /**
- * Test 7: KaizaError class structure
+ * Test 7: SystemError class structure
  */
-test('Startup Audit: KaizaError has correct structure', async () => {
-  const { KaizaError, ERROR_CODES } = await import('../../core/error.js');
+test('Startup Audit: SystemError has correct structure', async () => {
+  const { SystemError, SYSTEM_ERROR_CODES } = await import('../../core/error.js');
   
-  const err = new KaizaError({
-    error_code: ERROR_CODES.SELF_AUDIT_FAILURE,
+  const err = new SystemError({
+    error_code: SYSTEM_ERROR_CODES.SELF_AUDIT_FAILURE,
     phase: 'STARTUP',
     component: 'AUDIT',
     invariant: 'TEST_INV',
     human_message: 'Test error'
   });
   
-  assert(err instanceof KaizaError, 'Should be instance of KaizaError');
-  assert(err.error_code === ERROR_CODES.SELF_AUDIT_FAILURE, 'Should have error_code');
+  assert(err instanceof SystemError, 'Should be instance of SystemError');
+  assert(err.error_code === SYSTEM_ERROR_CODES.SELF_AUDIT_FAILURE, 'Should have error_code');
   assert(err.phase === 'STARTUP', 'Should have phase');
   assert(err.component === 'AUDIT', 'Should have component');
   assert(err.invariant === 'TEST_INV', 'Should have invariant');
@@ -147,7 +147,7 @@ test('Startup Audit: KaizaError has correct structure', async () => {
   assert(err.timestamp, 'Should have timestamp');
   
   const diagnostic = err.toDiagnostic();
-  assert(diagnostic.error_code === ERROR_CODES.SELF_AUDIT_FAILURE, 'Diagnostic has error_code');
+  assert(diagnostic.error_code === SYSTEM_ERROR_CODES.SELF_AUDIT_FAILURE, 'Diagnostic has error_code');
   assert(diagnostic.phase === 'STARTUP', 'Diagnostic has phase');
 });
 
@@ -160,8 +160,8 @@ test('Startup Audit: Critical infrastructure modules load', async () => {
   const pathResolver = await import('../../core/path-resolver.js');
   const session = await import('../../session.js');
   
-  assert(error.KaizaError, 'error.js exports KaizaError');
-  assert(error.ERROR_CODES, 'error.js exports ERROR_CODES');
+  assert(error.SystemError, 'error.js exports SystemError');
+  assert(error.SYSTEM_ERROR_CODES, 'error.js exports SYSTEM_ERROR_CODES');
   assert(invariant.invariant, 'invariant.js exports invariant');
   assert(pathResolver.lockWorkspaceRoot, 'path-resolver exports lockWorkspaceRoot');
   assert(pathResolver.getRepoRoot, 'path-resolver exports getRepoRoot');

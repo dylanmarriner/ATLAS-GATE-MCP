@@ -10,11 +10,13 @@ scope: "tests/lang/java/**"
 # Java Full-Stack Implementation Plan
 
 ## Overview
+
 Build an enterprise-grade CRM system using Java with Spring Boot, implementing complex object hierarchies, service layers, repository patterns, and transaction management.
 
 ## Architecture
 
 ### Backend (Spring Boot + Spring Data JPA)
+
 - Microservice architecture with service discovery
 - Hibernate ORM for data persistence
 - Transaction management and distributed transactions
@@ -22,6 +24,7 @@ Build an enterprise-grade CRM system using Java with Spring Boot, implementing c
 - Spring Security with OAuth2 integration
 
 ### Frontend (Vaadin / Spring MVC + Thymeleaf)
+
 - Server-side Java web components
 - Rich UI with Vaadin framework
 - Real-time server push
@@ -31,6 +34,7 @@ Build an enterprise-grade CRM system using Java with Spring Boot, implementing c
 ## Core Domain Model
 
 ### 1. Entity Hierarchy
+
 ```java
 abstract class BaseEntity {
     - id, createdAt, updatedAt, createdBy
@@ -68,6 +72,7 @@ class Activity extends BaseEntity {
 ### 2. Business Logic Components
 
 #### Service Layer
+
 ```java
 interface AccountService {
     - createAccount(AccountDTO): Account
@@ -94,6 +99,7 @@ interface ContactService {
 ```
 
 #### Repository Layer
+
 ```java
 interface AccountRepository extends JpaRepository<Account, Long> {
     - findByIndustry(industry): List<Account>
@@ -111,6 +117,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 ## Key Features
 
 ### 1. Lead Management
+
 - Lead capture and scoring
 - Lead-to-account conversion
 - Duplicate lead detection
@@ -118,6 +125,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Lead lifecycle tracking
 
 ### 2. Account Management
+
 - Account hierarchies (parent/subsidiary)
 - Account merging with conflict resolution
 - Account timeline view
@@ -125,6 +133,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Account health indicators
 
 ### 3. Opportunity Management
+
 - Sales pipeline visualization
 - Opportunity stage progression
 - Weighted forecast calculation
@@ -132,6 +141,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Revenue recognition handling
 
 ### 4. Activity Tracking
+
 - Call logs with recording integration
 - Email synchronization
 - Meeting scheduling
@@ -139,6 +149,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Activity timeline
 
 ### 5. Reporting & Analytics
+
 - Sales dashboards with real-time metrics
 - Forecasting reports
 - Activity analysis
@@ -146,6 +157,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Custom report builder
 
 ### 6. Integration Features
+
 - Email integration (IMAP/SMTP)
 - Calendar synchronization
 - Third-party API integrations
@@ -155,6 +167,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 ## Transaction Management
 
 ### 1. ACID Compliance
+
 - Optimistic locking for concurrent updates
 - Pessimistic locking where needed
 - Read-only transactions for queries
@@ -162,6 +175,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 - Rollback strategies
 
 ### 2. Event Sourcing
+
 - Domain events for state changes
 - Event store implementation
 - Event replay for rebuilding state
@@ -171,6 +185,7 @@ interface OpportunityRepository extends JpaRepository<Opportunity, Long> {
 ## Spring Boot Components
 
 ### 1. Controllers
+
 ```java
 @RestController
 @RequestMapping("/api/accounts")
@@ -185,6 +200,7 @@ class AccountController {
 ```
 
 ### 2. Configuration
+
 - Datasource configuration
 - JPA/Hibernate configuration
 - Transaction manager setup
@@ -192,6 +208,7 @@ class AccountController {
 - CORS and interceptors
 
 ### 3. Exception Handling
+
 - Custom exceptions
 - Global exception handler
 - Validation error handling
@@ -200,6 +217,7 @@ class AccountController {
 ## Database Design
 
 ### 1. Schema
+
 - Accounts table with indexes
 - Contacts with account foreign key
 - Opportunities with account and user FK
@@ -207,6 +225,7 @@ class AccountController {
 - Attachments with blob storage
 
 ### 2. Optimization
+
 - Efficient JPA fetch strategies
 - Database indexing on key columns
 - Query optimization with EXPLAIN
@@ -216,18 +235,21 @@ class AccountController {
 ## Security & Access Control
 
 ### 1. Authentication
+
 - OAuth2 with third-party providers
 - JWT token management
 - Session handling
 - Password hashing (bcrypt)
 
 ### 2. Authorization
+
 - Role-based access control (RBAC)
 - Object-level permissions
 - Field-level permissions
 - Data segregation
 
 ### 3. Data Protection
+
 - Encryption for sensitive fields
 - Audit logging
 - Field masking for PII
@@ -236,18 +258,21 @@ class AccountController {
 ## Testing Strategy
 
 ### 1. Unit Tests
+
 - Service layer testing with mocks
 - Repository testing with TestContainers
 - Validation testing
 - Business logic testing
 
 ### 2. Integration Tests
+
 - Spring Test with embedded database
 - Transaction rollback for test isolation
 - API endpoint testing
 - Event listener testing
 
 ### 3. End-to-End Tests
+
 - Selenium for UI testing
 - API contract testing
 - Performance testing
@@ -255,12 +280,14 @@ class AccountController {
 ## Performance Optimization
 
 ### 1. Database
+
 - Query optimization
 - Index strategies
 - Caching (Redis)
 - Connection pooling
 
 ### 2. Application
+
 - Lazy loading strategies
 - Batch operations
 - Pagination
@@ -269,12 +296,14 @@ class AccountController {
 ## Monitoring & Logging
 
 ### 1. Observability
+
 - Spring Actuator metrics
 - Micrometer integration
 - Prometheus for metrics
 - ELK stack for logs
 
 ### 2. Performance Monitoring
+
 - Query execution time tracking
 - Slow query identification
 - Memory usage monitoring

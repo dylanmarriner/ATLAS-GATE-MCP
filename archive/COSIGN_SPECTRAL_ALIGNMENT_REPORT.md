@@ -3,12 +3,14 @@
 ## Executive Summary
 
 **Critical Issues Found:**
+
 - ❌ **MISALIGNMENT:** `lintPlan()` is now **async** (generates keys, calls cosign, signs) but called **synchronously** in 3 places
 - ❌ **MISALIGNMENT:** `plan-enforcer.js` and `governance.js` call `lintPlan` without `await`
 - ❌ **MISALIGNMENT:** `attestation-engine.js` imports `lintPlan` but never uses it
 - ⚠️ **INCOMPLETE:** Plan files in `.cosign-keys/` directory may not exist, causing key generation failures
 
 **What Works:**
+
 - ✅ `plan-linter.js` properly implements cosign signing + spectral linting
 - ✅ `tools/lint_plan.js` correctly awaits `lintPlan()`
 - ✅ Hashing uses SHA256 consistently across all modules
@@ -26,12 +28,14 @@ const lintResult = lintPlan(fileContent, planHash);
 ```
 
 **Why it's broken:**
+
 - `lintPlan()` is now `async` (calls cosign, generates keys)
 - Returns a Promise, not the result object
 - Code expects synchronous return
 - Will fail with `TypeError: Cannot read property 'passed' of Promise`
 
 **Fix:**
+
 ```javascript
 // ✅ CORRECT
 const lintResult = await lintPlan(fileContent);
@@ -51,10 +55,12 @@ const lintResult = lintPlan(planContent);
 ```
 
 **Why it's broken:**
+
 - Same as Issue 1
 - `bootstrapCreateFoundationPlan()` must be declared `async`
 
 **Fix:**
+
 ```javascript
 // ✅ CORRECT
 const lintResult = await lintPlan(planContent);
@@ -75,12 +81,14 @@ import { lintPlan } from "./plan-linter.js";
 **Status:** Imported but never used in the file.
 
 **Analysis:**
+
 - Attestation engine handles HMAC-SHA256 signing (different from cosign)
 - Does NOT call `lintPlan` anywhere
 - Should either use it or remove the import
 
 **Recommendation:**
-- If attestation bundles should verify plans: add call in `gatherEvidence()` 
+
+- If attestation bundles should verify plans: add call in `gatherEvidence()`
 - If not needed: remove import to reduce coupling
 
 ---
@@ -98,11 +106,13 @@ export async function generateCosignKeys(keyDir = "./.cosign-keys") {
 ```
 
 **Problem:**
+
 - `.cosign-keys/` directory may not exist on first run
 - Code attempts to create it, but uses dynamic import of `fs/promises`
 - This works but is unconventional
 
 **Better Approach:**
+
 ```javascript
 import { mkdir } from "fs/promises";
 
@@ -138,7 +148,7 @@ export async function generateCosignKeys(keyDir = "./.cosign-keys") {
    - Proper error handling
 
 4. **Hashing (plan-linter.js:471-485)**
-   - Uses `crypto.createHash("sha256")` 
+   - Uses `crypto.createHash("sha256")`
    - Consistent with `stripComments()` + canonicalization
    - Returns hex digest
 
@@ -164,7 +174,7 @@ export async function generateCosignKeys(keyDir = "./.cosign-keys") {
    - Creates Spectral instance with custom rules
    - 3 plan-specific rules defined:
      - `plan-required-sections`
-     - `plan-no-stubs` 
+     - `plan-no-stubs`
      - `plan-phase-format`
    - Uses proper severity levels (error)
 
@@ -177,6 +187,7 @@ export async function generateCosignKeys(keyDir = "./.cosign-keys") {
 ### ⚠️ Spectral Rules Could Be Extended
 
 Current rules only use `truthy` and `pattern` functions. Could add:
+
 - Schema validation rules
 - Path validation rules
 - Phase ordering rules
@@ -219,6 +230,7 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
 ### P0: Critical - Breaks Execution
 
 1. **Fix plan-enforcer.js**
+
    ```javascript
    export async function enforcePlan(planHash, targetPath) {
      // ... existing code ...
@@ -226,11 +238,13 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
      // ... rest of function ...
    }
    ```
+
    - Make function `async`
    - Add `await` before `lintPlan()`
    - Remove `planHash` parameter (not used by new signature)
 
 2. **Fix governance.js**
+
    ```javascript
    export async function bootstrapCreateFoundationPlan(repoRoot = null, planContent, payload, signature) {
      // ... existing code ...
@@ -238,25 +252,30 @@ lintPlan(planContent, privateKeyPath?, publicKeyPath?, expectedSignature?)
      // ... rest of function ...
    }
    ```
+
    - Make function `async`
    - Add `await` before `lintPlan()`
 
 ### P1: Important - Consistency
 
 3. **Update plan-linter.js imports**
+
    ```javascript
    import { mkdir } from "fs/promises";  // ← Add this
    // ... remove dynamic import from generateCosignKeys
    ```
+
    - Move `fs/promises` to top-level imports
    - Simplify key generation function
 
 ### P2: Nice-to-Have - Cleanup
 
 4. **Remove unused import from attestation-engine.js (if not needed)**
+
    ```javascript
    // Remove: import { lintPlan } from "./plan-linter.js";
    ```
+
    - Or, if attestation should verify plans, use it in `gatherEvidence()`
 
 5. **Update documentation**

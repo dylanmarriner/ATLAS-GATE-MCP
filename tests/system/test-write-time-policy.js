@@ -11,8 +11,8 @@ import assert from "assert";
 import {
   detectLanguage,
   executeWriteTimePolicy,
-} from "../../core/write-time-policy-engine.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../../core/system-error.js";
+} from "../src/infrastructure/write-time-policy-engine.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
 import crypto from "crypto";
 import path from "path";
 import os from "os";

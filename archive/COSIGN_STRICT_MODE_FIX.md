@@ -29,6 +29,7 @@ npm install @sigstore/sign @sigstore/verify --save
 ```
 
 This added to package.json:
+
 - `@sigstore/sign@^4.1.0`
 - `@sigstore/verify@^3.1.0`
 
@@ -37,6 +38,7 @@ This added to package.json:
 Changed `core/cosign-hash-provider.js` to use strict imports (no fallbacks):
 
 **Before**:
+
 ```javascript
 export async function signWithCosign(content, keyPair) {
     try {
@@ -52,6 +54,7 @@ export async function signWithCosign(content, keyPair) {
 ```
 
 **After**:
+
 ```javascript
 export async function signWithCosign(content, keyPair) {
     const { sign } = await import('@sigstore/sign');
@@ -67,6 +70,7 @@ export async function signWithCosign(content, keyPair) {
 ### 3. Applied to All Three Functions
 
 Updated in strict mode (no fallbacks, no mocks):
+
 - `signWithCosign()` - requires `@sigstore/sign`
 - `verifyWithCosign()` - requires `@sigstore/verify`
 - `generateCosignKeyPair()` - requires `@sigstore/sign`
@@ -101,6 +105,7 @@ These packages require Node.js 20.17.0+ or 22.9.0+.
 Current system has Node 18.19.1, so there are engine warnings but packages will still work.
 
 To use on Node 18, either:
+
 1. Upgrade to Node 20+ (recommended for production)
 2. Accept the warnings (development okay)
 

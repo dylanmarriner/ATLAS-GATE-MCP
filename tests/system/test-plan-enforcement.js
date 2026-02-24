@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { writeFileHandler } from "../../tools/write_file.js";
-import { lockWorkspaceRoot, getPlansDir } from "../../core/path-resolver.js";
+import { lockWorkspaceRoot, getPlansDir } from "../src/infrastructure/path-resolver.js";
 
 const REPO_ROOT = process.cwd();
 try {

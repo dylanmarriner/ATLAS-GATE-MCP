@@ -26,21 +26,25 @@ ATLAS-GATE MCP is an **enterprise governance gateway** that safely integrates AI
 ## Key Business Benefits
 
 ### 🔐 Risk Reduction
+
 - **Zero-Trust Enforcement**: Every action requires explicit authorization
 - **Audit Compliance**: Complete, tamper-proof record of all changes
 - **Dual-Role Governance**: Separation of planning and execution prevents rogue changes
 
 ### ⚡ Operational Efficiency
+
 - **Approved Plan Execution**: AI operates within pre-approved boundaries
 - **Automatic Enforcement**: No manual review needed (plans signed cryptographically)
 - **Reduced Human Bottleneck**: Less approval overhead than traditional code reviews
 
 ### 📊 Visibility & Control
+
 - **Complete Audit Trail**: Every change, who made it, when, and why
 - **Forensic Analysis**: Replay and verify any past operation
 - **Compliance Evidence**: Ready for SOC 2, ISO 27001, regulatory audits
 
 ### 🚀 Developer Experience
+
 - **Fast Iteration**: Approved plans enable quick AI-assisted changes
 - **Clear Authority**: Developers know exactly what's allowed
 - **Error Recovery**: Audit logs enable point-in-time restoration
@@ -61,6 +65,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ```
 
 **Key Design Points**:
+
 - **Separation of Concerns**: Planner and executor roles are strict
 - **Cryptographic Verification**: Plans signed with SHA256; changes detected
 - **Immutable Audit**: Append-only log prevents tampering
@@ -71,18 +76,21 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Risk Posture
 
 ### Governance Model
+
 - ✅ **Mandatory Plans**: No changes without pre-approval
 - ✅ **Cryptographic Binding**: Plans verified before execution
 - ✅ **Role Isolation**: Planner and executor have different permissions
 - ✅ **Audit Completeness**: 100% of operations logged
 
 ### Security Controls
+
 - ✅ **Zero-Trust**: No implicit trust; all operations verified
 - ✅ **Content Integrity**: SHA256 verification of file changes
 - ✅ **Bootstrap Security**: Initial setup requires secret authentication
 - ✅ **Session Locking**: Hard failures lock session until manual recovery
 
 ### Compliance Readiness
+
 - ✅ **OWASP Top 10**: Compliant with application security best practices
 - ✅ **SOC 2 Ready**: Audit logging, access controls, secure defaults
 - ✅ **Regulatory**: Supports SOC 2 Type II, ISO 27001, NIST frameworks
@@ -106,18 +114,21 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Adoption Path
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 1. Install ATLAS-GATE MCP
 2. Configure with your MCP client (Claude Desktop, Windsurf, etc.)
 3. Run initial tests and verify audit logging
 4. Train a pilot team (2-3 developers)
 
 ### Phase 2: Controlled Rollout (Weeks 3-8)
+
 1. Expand to development team
 2. Create and test approval workflows
 3. Monitor audit logs; refine policies
 4. Build runbooks for common scenarios
 
 ### Phase 3: Production Integration (Weeks 9+)
+
 1. Integrate with your CI/CD pipeline
 2. Export audit logs to compliance systems
 3. Define SLAs and monitoring
@@ -130,15 +141,18 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Investment & Costs
 
 ### License
+
 - **Open Source**: Free (ISC License)
 - **Support**: Community support (GitHub Discussions)
 
 ### Implementation
+
 - **Setup Time**: 2-4 hours (experienced DevOps engineer)
 - **Training Time**: 4-8 hours per team
 - **Infrastructure**: Runs on existing Node.js infrastructure
 
 ### Ongoing
+
 - **Monitoring**: Minimal (append-only logging)
 - **Maintenance**: Low (stable API)
 - **Updates**: Quarterly security patches + occasional features
@@ -165,6 +179,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 **Challenge**: How to maintain compliance while enabling AI productivity?
 
 **Solution with ATLAS-GATE MCP**:
+
 - ✅ Developers create plans with AI (architecture first)
 - ✅ Security team reviews and approves plans
 - ✅ Execution is automatic and audited
@@ -172,6 +187,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 - ✅ Result: 3x faster development, 100% audit trail
 
 **Without ATLAS-GATE MCP**:
+
 - ❌ AI makes unauthorized changes
 - ❌ No clear approval process
 - ❌ Audit trail is incomplete
@@ -182,17 +198,20 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Roadmap & Future
 
 ### Current (v1.0)
+
 - ✅ Core governance and audit
 - ✅ Dual-role enforcement
 - ✅ Comprehensive documentation
 
 ### Near Term (v2.0 - 2026 Q2-Q3)
+
 - 🔄 Automated compliance reporting (SOC 2)
 - 🔄 Kubernetes deployment
 - 🔄 Cloud provider integrations (AWS, GCP, Azure)
 - 🔄 Advanced metrics and monitoring
 
 ### Long Term (v3.0 - 2027)
+
 - 📋 Predictive analytics and AI-driven anomaly detection
 - 📋 Multi-region deployment
 - 📋 ISO 27001 certification
@@ -202,6 +221,7 @@ AI Assistant ──┬──→ [ANTIGRAVITY: Planning Role]
 ## Getting Started
 
 **Step 1**: Download and install
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP-server.git
 npm install
@@ -218,30 +238,36 @@ npm install
 ## Key Questions Answered
 
 ### Q: Is ATLAS-GATE MCP production-ready?
+
 **A**: Yes. It's currently deployed in enterprise environments and has been thoroughly tested.
 
 ### Q: What's the learning curve?
+
 **A**: Moderate. Most developers understand the model in 1-2 hours. The beginner's guide covers everything.
 
 ### Q: Can it integrate with our existing tools?
+
 **A**: Yes. ATLAS-GATE MCP works with any MCP-compatible client (Claude Desktop, Windsurf, custom integrations).
 
 ### Q: What happens if something goes wrong?
+
 **A**: The audit log has a complete history. You can replay operations, identify the issue, and recover.
 
 ### Q: Is there a SaaS offering?
+
 **A**: Currently open-source only. We're evaluating managed service options for v2.0.
 
 ### Q: How does it handle secrets?
+
 **A**: Secrets are never logged. The system uses environment variables and secure configuration practices.
 
 ---
 
 ## Contact & Support
 
-- **GitHub**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server
-- **Discussions**: https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions
-- **Security Reports**: security@atlas-gate-mcp.org
+- **GitHub**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server>
+- **Discussions**: <https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions>
+- **Security Reports**: <security@atlas-gate-mcp.org>
 - **Documentation**: [Full Docs](./docs/)
 
 ---
@@ -249,6 +275,7 @@ npm install
 ## Summary
 
 **ATLAS-GATE MCP enables you to:**
+
 1. **Use AI safely** — Approve plans before execution
 2. **Stay compliant** — Complete audit trail for regulators
 3. **Maintain control** — Role-based separation of duties

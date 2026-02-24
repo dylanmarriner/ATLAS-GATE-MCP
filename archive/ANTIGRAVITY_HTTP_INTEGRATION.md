@@ -5,6 +5,7 @@ Connect Antigravity to the remote ATLAS-GATE HTTP server for plan creation and g
 ## Overview
 
 Antigravity uses ATLAS-GATE to:
+
 1. **Create plans** - Define execution strategies
 2. **Lint plans** - Validate before approval
 3. **Read audit logs** - Verify execution
@@ -76,6 +77,7 @@ antigravity session create \
 ```
 
 **Response:**
+
 ```
 Session created: session_abc123xyz789
 Workspace: /path/to/repo
@@ -407,16 +409,19 @@ antigravity audit view --verbose
 ## Security Best Practices
 
 1. **Never hardcode API keys**
+
    ```bash
    export ATLAS_GATE_API_KEY=$(aws secretsmanager get-secret-value ...)
    ```
 
 2. **Use HTTPS in production**
+
    ```bash
    export ATLAS_GATE_URL=https://atlas-gate.company.com
    ```
 
 3. **Rotate API keys regularly**
+
    ```bash
    # Create new tenant
    curl -X POST https://atlas-gate.company.com/tenants/create \
@@ -425,11 +430,13 @@ antigravity audit view --verbose
    ```
 
 4. **Monitor audit logs**
+
    ```bash
    antigravity audit view --since "7 days ago" > weekly-audit.json
    ```
 
 5. **Limit network access**
+
    ```bash
    # Only allow Antigravity CI/CD from specific IPs
    ufw allow from 203.0.113.5 to any port 3000
@@ -440,6 +447,7 @@ antigravity audit view --verbose
 For Windsurf to use plans created by Antigravity:
 
 1. **Windsurf must reference the plan**
+
    ```bash
    # In write_file calls, include plan signature from Antigravity
    curl -X POST http://atlas-gate:3000/tools/write_file \
@@ -448,6 +456,7 @@ For Windsurf to use plans created by Antigravity:
    ```
 
 2. **Verify plan before execution**
+
    ```javascript
    // Antigravity lints the plan
    const valid = await client.callTool('lint_plan', {
@@ -460,6 +469,7 @@ For Windsurf to use plans created by Antigravity:
    ```
 
 3. **Monitor cross-tool operations**
+
    ```bash
    antigravity audit view --role "WINDSURF"
    ```

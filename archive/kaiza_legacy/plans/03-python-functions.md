@@ -10,11 +10,13 @@ scope: "tests/lang/python/**"
 # Python Full-Stack Implementation Plan
 
 ## Overview
+
 Build a complete data analytics platform with Python, featuring data ingestion, transformation pipelines, real-time dashboards, and machine learning models for predictive analytics.
 
 ## Architecture
 
 ### Backend (Django + DRF)
+
 - RESTful API for data ingestion and querying
 - Database models with ORM relationships
 - Task scheduling with Celery for batch processing
@@ -22,6 +24,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 - Authentication and authorization system
 
 ### Data Processing Layer
+
 - ETL pipelines with Apache Airflow/Celery
 - Data validation and quality checks
 - Time-series data aggregation
@@ -29,6 +32,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 - Machine learning model training and inference
 
 ### Frontend (React/Vue with Python templates)
+
 - Interactive dashboards with D3.js/Chart.js
 - Real-time metric updates via WebSocket
 - Data export in multiple formats
@@ -38,6 +42,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 ## Core Components
 
 ### 1. Data Ingestion Pipeline
+
 - Multi-source data connectors (APIs, CSV, databases)
 - Stream processing for real-time events
 - Data validation and schema enforcement
@@ -45,6 +50,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 - Data normalization and transformation
 
 ### 2. Analytics Engine
+
 - Aggregation functions for metrics calculation
 - Time-series decomposition and forecasting
 - Cohort analysis and funnel tracking
@@ -52,6 +58,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 - Segment and filter operations
 
 ### 3. Machine Learning Module
+
 - Predictive models using scikit-learn/TensorFlow
 - Time-series forecasting (ARIMA, Prophet)
 - Anomaly detection algorithms
@@ -59,6 +66,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 - Model versioning and registry
 
 ### 4. Dashboard System
+
 - Pre-built visualization templates
 - Custom dashboard builder
 - Real-time data refresh
@@ -68,6 +76,7 @@ Build a complete data analytics platform with Python, featuring data ingestion, 
 ## Data Models
 
 ### 1. Core Entities
+
 ```python
 class DataSource:
     - name, type, connection_config
@@ -91,6 +100,7 @@ class Alert:
 ```
 
 ### 2. Relationships
+
 - Data source to raw data tables
 - Metrics to data sources
 - Dashboards to metrics
@@ -100,12 +110,14 @@ class Alert:
 ## ETL Pipeline Features
 
 ### 1. Extraction Phase
+
 - Connection pooling for databases
 - API rate limiting and retry logic
 - Incremental data loading with checkpoints
 - Data quality validation on source
 
 ### 2. Transformation Phase
+
 - Data type conversions
 - Null handling strategies
 - Aggregation and grouping
@@ -113,6 +125,7 @@ class Alert:
 - Deduplication
 
 ### 3. Loading Phase
+
 - Batch inserts with transaction management
 - Upsert operations for updates
 - Partitioning for large datasets
@@ -120,6 +133,7 @@ class Alert:
 - Materialized view refreshing
 
 ## Real-Time Features
+
 - WebSocket connections for live updates
 - Event streaming with Kafka/Redis
 - Real-time metric calculation
@@ -129,6 +143,7 @@ class Alert:
 ## Machine Learning Integration
 
 ### 1. Model Training Pipeline
+
 - Automated feature selection
 - Hyperparameter tuning
 - Cross-validation
@@ -136,6 +151,7 @@ class Alert:
 - Training data management
 
 ### 2. Model Deployment
+
 - Model serialization (pickle, joblib, ONNX)
 - Version control for models
 - A/B testing framework
@@ -143,6 +159,7 @@ class Alert:
 - Rollback capabilities
 
 ### 3. Inference Pipeline
+
 - Batch predictions for reports
 - Real-time predictions via API
 - Prediction confidence intervals
@@ -152,6 +169,7 @@ class Alert:
 ## Security & Compliance
 
 ### 1. Data Security
+
 - Column-level encryption for sensitive data
 - Role-based access control (RBAC)
 - Data masking for PII
@@ -159,6 +177,7 @@ class Alert:
 - GDPR compliance features
 
 ### 2. API Security
+
 - JWT authentication
 - API rate limiting
 - Request validation
@@ -168,6 +187,7 @@ class Alert:
 ## Performance Optimization
 
 ### 1. Database Optimization
+
 - Query optimization with EXPLAIN plans
 - Indexing strategy
 - Materialized views
@@ -175,6 +195,7 @@ class Alert:
 - Connection pooling
 
 ### 2. Pipeline Optimization
+
 - Parallel processing with multiprocessing
 - Distributed computing ready
 - Memory-efficient data loading
@@ -184,18 +205,21 @@ class Alert:
 ## Testing Strategy
 
 ### 1. Unit Tests
+
 - Model validation tests
 - Pipeline step testing
 - Utility function testing
 - Mock external APIs
 
 ### 2. Integration Tests
+
 - End-to-end pipeline testing
 - Database integration tests
 - API endpoint testing
 - Real-time update testing
 
 ### 3. Data Quality Tests
+
 - Schema validation
 - Business logic validation
 - Data completeness checks
@@ -204,6 +228,7 @@ class Alert:
 ## Monitoring & Logging
 
 ### 1. Metrics to Track
+
 - Pipeline execution time
 - Data freshness
 - Error rates
@@ -211,6 +236,7 @@ class Alert:
 - Model prediction latency
 
 ### 2. Logging Strategy
+
 - Structured logging with timestamps
 - Log levels and filtering
 - Centralized log aggregation

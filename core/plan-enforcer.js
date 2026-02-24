@@ -35,14 +35,14 @@ export async function enforcePlan(planSignatureOrName, targetPath) {
   const fileContent = fs.readFileSync(planFile, "utf8");
 
   // Extract the embedded signature from the canonical header.
-  // We expect a signature header (format TBD based on storage mechanism)
-  // For now, maintain backward compatibility with hash-based headers
-  // but prefer signature-based validation.
-  const signatureHeaderMatch = fileContent.match(/<!--\s*(?:PLAN_SIGNATURE|COSIGN_SIGNATURE):\s*([A-Za-z0-9+/=]+)[\s\S]*?STATUS:\s*APPROVED\s*-->/);
+  // Header format written by save_plan/governance:
+  //   <!-- ATLAS-GATE_PLAN_SIGNATURE: <url-safe-base64> ROLE: ANTIGRAVITY STATUS: APPROVED -->
+  // Signature uses URL-safe base64 (- and _ instead of + and /), no padding.
+  const signatureHeaderMatch = fileContent.match(/<!--[\s\S]*?ATLAS-GATE_PLAN_SIGNATURE:\s*([A-Za-z0-9+/=_-]+)[\s\S]*?STATUS:\s*APPROVED\s*-->/);
   const hashHeaderMatch = fileContent.match(/<!--\s*ATLAS-GATE_PLAN_HASH:\s*([a-fA-F0-9]{64})[\s\S]*?STATUS:\s*APPROVED\s*-->/);
 
   if (!signatureHeaderMatch && !hashHeaderMatch) {
-    throw new Error(`REFUSE: Plan ${planSignatureOrName} is not APPROVED or has invalid header format.`);
+    throw new Error(`REFUSE: Plan ${planSignatureOrName} is not APPROVED or has invalid header format. Expected <!-- ATLAS-GATE_PLAN_SIGNATURE: <sig> ... STATUS: APPROVED -->`);
   }
 
   const embeddedSignature = signatureHeaderMatch ? signatureHeaderMatch[1] : null;

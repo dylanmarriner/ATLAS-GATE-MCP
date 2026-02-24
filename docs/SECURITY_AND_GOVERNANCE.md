@@ -1,46 +1,52 @@
-# Security & Governance Policy
+# Enterprise Security & Governance Architecture
 
-## The Trust Model
+## The Zero-Trust Model
 
-Kaiza MCP Server operates on a **Zero-Trust** basis regarding the calling agent.
+ATLAS-GATE-MCP operates on a strict **Zero-Trust** basis regarding the executing AI agent (e.g., Windsurf, LobeHub, Claude).
 
-1. **Untrusted Caller**: The LLM/Agent is considered potentially hallucogenic, error-prone, or misaligned. It is **never** implicitly trusted to determine what files it can edit or the quality of its code.
-2. **Trusted Authority**: The **Implementation Plan** (stored in `docs/plans/`) is the sole Source of Truth for authorization.
-3. **Enforcement Agent**: The MCP Server acts as the non-negotiable guardian of the repository state.
+1. **Untrusted Agent**: The connected LLM or orchestration agent is treated as potentially hallucogenic or unaligned. It is **never** implicitly trusted to determine what files it can edit.
+2. **Cryptographic Authority**: The **Implementation Plan** (stored in `docs/plans/`) is the sole Source of Truth for authorization. Plans must be cryptographically signed using Cosign (`public.pem`).
+3. **Deterministic Gateway**: The MCP Server acts as the non-negotiable, fail-closed guardian of the repository state.
 
-## Governance Controls
+## Core Governance Controls
 
-### 1. Scope Enforcement (The Barrier)
+### 1. Scope Enforcement (Plan Validation)
 
-The server rejects "wild" writes. To modify the system, an agent must cite a specific **Plan ID**.
+The server rejects unapproved write operations. To modify the system, an agent must cite an authorized **Plan ID**.
 
-- **Governance**: Plans effectively act as "Capabilities" or "Tickets".
-- **Validation**: The server verifies that the cited plan ID maps to a real, existing planning document in the repository.
-- **Result**: An agent cannot randomly edit `core/kernel.js` unless it has a plan that authorizes work in that domain.
+- **Governance**: Plans are not merely text; they are execution tokens backed by cryptographic signatures.
+- **Validation**: The server uses Cosign to verify the `bundleJSON` or the raw ECDSA signature against the pre-provisioned `public.pem` key. Any mismatch in the plan's canonical hash results in an immediate authorization failure.
+- **Result**: An agent cannot randomly edit `core/server.js` unless it has a signed plan explicitly authorizing work in that domain.
 
-### 2. Enterprise Quality Barrier (The Filter)
+### 2. Mandatory Intent Artifacts (Semantic Validation)
 
-To prevent "Technical Debt Injection"—where agents leave placeholders that look functional but fail in production—the server enforces a **Hard Block** on non-production code.
+Before any source code modification is permitted, the agent must generate a standalone `.intent.md` artifact.
 
-**Forbidden Patterns:**
+- **Requirement**: The artifact must strictly follow a 9-section semantic schema defined by `intent-validator.js`.
+- **Purpose**: This forces the agent to explicitly declare its structural intent, authority references, and rollback strategies *before* the AST is altered. It creates an explicit, auditable paper trail of reasoning.
 
-- **Markers**: `TODO`, `FIXME`, `XXX`
-- **Fakes**: `stub`, `mock`, `placeholder`, `dummy`
-- **Incomplete Logic**: `return null`, `return undefined`, `return {}` (empty objects), `throw "not implemented"`
-- **Test Junk**: `hardcoded`, `test data`
+### 3. Enterprise Quality Barrier (AST Filter)
 
-**Why?**
-Startups often accept "good enough". Enterprise applications require "correct". By blocking stubs at the Write level, we force the agent to solve the problem *now*, rather than deferring it to a human who may never see it.
+To prevent the injection of technical debt—where agents leave placeholders that look functional but fail in production—the server enforces a **Hard Block** during AST static analysis.
 
-### 3. Write-Time Validation
+**Forbidden Constructs:**
 
-Validation occurs **before** the disk is touched.
+- **Markers**: Code containing `TODO`, `FIXME`, `XXX`.
+- **Fakes**: References to `stub`, `mock`, `placeholder`, `dummy`.
+- **Incomplete Logic**: Empty object returns (`return {}`), `throw "not implemented"`.
 
-- **Syntax**: JSON structure is validated.
-- **Semantics**: Logic checks (plan existence, stub detection) run.
-- **Commit**: Only if all checks pass is the file handle opened.
+**Rationale**: Enterprise applications require absolute correctness. By blocking functional stubs at the pipeline level, the agent is forced to resolve the implementation completely rather than deferring it.
 
-This "Fail-Fast" approach ensures that a failed operation leaves the filesystem in a pristine, unchanged state.
+### 4. Write-Time Atomic Execution
+
+Validation completes **before** any disk manipulation occurs.
+
+- **Authorization**: Cosign signature is verified.
+- **Semantic**: Intent validation matches the `.intent.md` hash.
+- **Static**: The AST filter scans the target payload.
+- **Commit**: The file handle is only opened if *all* gates pass flawlessly.
+
+This "Fail-Closed" pipeline guarantees that a failed operation leaves the filesystem in a pristine, uncorrupted state.
 
 ## Prevention of Silent Corruption
 
@@ -57,10 +63,10 @@ Every write is cryptographically hashed and logged.
 
 Input normalization prevents "Format Confusion" attacks or bugs where an agent sends a string when an object is expected, potentially bypassing validation logic. By strictly normalizing inputs server-side, we ensure uniformly applied security policies.
 
-## Governance Recommendations
+## Advanced Governance Capabilities
 
-For teams using Kaiza MCP:
+For enterprise teams utilizing ATLAS-GATE-MCP through LobeHub or custom workflows:
 
-1. **Review Plans First**: Do not allow agents to write plans *and* code in the same loop without human review of the plan.
-2. **Treat Warnings as Errors**: The server does this automatically. Do not attempt to patch the server to lower these standards.
-3. **Audit the Log**: Periodically review `audit-log.jsonl` to spot patterns of failed attempts or suspicious scope expansion.
+1. **Maturity Reports**: Utilize the `generate_maturity_report` tool to enforce automated assessments of documentation, test coverage, and security, converting arbitrary code metrics into standardized risk data.
+2. **Attestation Bundles**: All operations are wrapped in exportable cryptographic Attestation Bundles (`export_attestation_bundle`), providing seamless compliance readiness for SOC2/ISO27001 deployments.
+3. **Immutable Auditing**: Treat `audit-log.jsonl` not merely as a text file, but as an Append-Only non-repudiation ledger. Do not attempt to bypass or prune this ledger manually.

@@ -273,13 +273,42 @@ export async function startServer(role = "ANTIGRAVITY") {
           path: z.string(),
           content: z.string().optional(),
           patch: z.string().optional(),
-          previousHash: z.string().optional(),
           plan: z.string().describe("The cosign signature identifying the authorized plan"),
           role: z.enum(["EXECUTABLE", "BOUNDARY", "INFRASTRUCTURE", "VERIFICATION"]).optional(),
           intent: z.string().optional().describe("Summary of intent for this change (MANDATORY for governance)"),
         }),
       },
       wrapHandler(writeFileHandler, "write_file")
+    );
+    // WINDSURF: Remediation Proposal Generation
+    const { generateRemediationProposals } = await import("./tools/generate-remediation-proposals.js");
+    server.registerTool(
+      "generate_remediation_proposals",
+      {
+        description: "Generate remediation proposals from forensic/audit/error evidence",
+        inputSchema: z.object({
+          plan_signature: z.string().describe("Cosign plan signature"),
+          evidence_selectors: z.object({
+            forensic_findings: z.array(z.any()).optional(),
+            system_errors: z.array(z.any()).optional(),
+            audit_filter: z.any().optional(),
+          }).optional()
+        }),
+      },
+      wrapHandler(generateRemediationProposals, "generate_remediation_proposals")
+    );
+
+    // WINDSURF: List Proposals
+    const { listRemediationProposals } = await import("./tools/list-proposals.js");
+    server.registerTool(
+      "list_proposals",
+      {
+        description: "List all pending read-only proposals and their metadata",
+        inputSchema: z.object({
+          filter: z.any().optional(),
+        }),
+      },
+      wrapHandler(listRemediationProposals, "list_proposals")
     );
   } else if (role === "ANTIGRAVITY") {
     console.error("[SERVER] ANTIGRAVITY: manifesting planning tools");
@@ -316,6 +345,17 @@ export async function startServer(role = "ANTIGRAVITY") {
         }),
       },
       wrapHandler(savePlanHandler, "save_plan")
+    );
+
+    // ANTIGRAVITY: Generate Maturity Report (read-only computation)
+    const { generateMaturityReportHandler } = await import("./tools/generate_maturity_report.js");
+    server.registerTool(
+      "generate_maturity_report",
+      {
+        description: "Generate a formal maturity score report based on workspace evidence",
+        inputSchema: z.object({}),
+      },
+      wrapHandler(generateMaturityReportHandler, "generate_maturity_report")
     );
   }
 

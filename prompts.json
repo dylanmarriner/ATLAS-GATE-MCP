@@ -1,0 +1,24 @@
+{
+    "prompts": [
+        {
+            "name": "ANTIGRAVITY Planning Agent Prompt",
+            "path": "docs/templates/antigravity_planning_prompt_v2.md",
+            "purpose": "Instructs the ANTIGRAVITY planning agent on how to use lint_plan, save_plan, and begin_session to draft and cryptographically sign governance-compliant Level-5 plans."
+        },
+        {
+            "name": "WINDSURF Execution Agent Prompt",
+            "path": "docs/templates/windsurf_execution_prompt_v2.md",
+            "purpose": "Instructs the WINDSURF execution agent on how to read plans from docs/plans/<signature>.md, generate .intent.md artifacts, and execute audited writes using write_file."
+        },
+        {
+            "name": "Plan Scaffold Template",
+            "path": "docs/templates/plan_scaffold.md",
+            "purpose": "A pre-formatted 7-section skeleton ensuring that plans meet the strict Spectral linting validation rules mandated by the Level-5 continuous assurance architecture."
+        },
+        {
+            "name": "Prompt Templates Index",
+            "path": "docs/PROMPT_TEMPLATES.md",
+            "purpose": "Central directory summarizing agent roles, assigned MCP tools, and example execution workflows for the v2 signature-based governance system."
+        }
+    ]
+}

@@ -94,6 +94,44 @@ All 7 sections are required.
 
 ---
 
+## THE INTENT ARTIFACT LAW (CRITICAL)
+
+**Before you can write ANY file**, you MUST first create a corresponding intent artifact file named `<filename>.intent.md`. 
+The `write_file` tool will **mathematically reject** any write if it cannot find and validate this `.intent.md` file.
+
+The intent file MUST follow this exact 9-section canonical schema, with no deviations, code blocks, or conditional language:
+
+```markdown
+# Intent: src/auth.js
+
+## Purpose
+Plain English explanation of what this file does and why it is being changed. (Minimum 30 characters, no code symbols allowed).
+
+## Authority
+Plan Signature: [URL-safe base64 signature]
+Phase ID: PHASE_[NAME]
+
+## Inputs
+- Bulleted list of inputs this code accepts
+- Must have at least one bullet
+
+## Outputs
+- Bulleted list of what this code returns or affects
+
+## Invariants
+- Declarative rules that must always be true
+- NO conditional language (might, should, could)
+
+## Failure Modes
+- Bulleted list of how this code can fail
+
+## Debug Signals
+- Observability points (e.g., logs, metrics)
+
+## Out-of-Scope
+- Explicit constraints on what this code does NOT do
+```
+
 ## `write_file` TOOL SCHEMA
 
 ```javascript
@@ -106,24 +144,11 @@ await write_file({
   content: "... complete file content ...",   // Full file content
   patch: "--- a/src/auth.js\n+++...",         // Unified diff patch (optional alternative)
 
-  // INTENT GATE: provide ONE of these options
-  // Option A (preferred):
-  intent: "Implement JWT token validation with proper error handling and refresh logic",  // Min 20 chars
-
-  // Option B (full metadata):
-  // purpose: "Brief purpose",
-  // authority: "y6RIU0Xr1_fLxte...",  // Same as plan signature
-  // failureModes: "How errors are handled",
-
   // OPTIONAL
   role: "EXECUTABLE",           // EXECUTABLE | BOUNDARY | INFRASTRUCTURE | VERIFICATION
-  previousHash: "abc123...",    // SHA256 of existing file (concurrency guard)
+  intent: "Short summary",      // Optional inline summary, but .intent.md file is STILL REQUIRED
 });
 ```
-
-**Intent gate**: `write_file` will be **REJECTED** unless you provide either:
-- `intent` with at least 20 characters, **OR**
-- All three of `purpose` + `authority` + `failureModes`
 
 ---
 
@@ -141,8 +166,9 @@ await write_file({
 
 For each file in `Scope & Constraints`:
 
-1. **Validate Path**: Ensure the path is in the `Path Allowlist`.
-2. **Execute Write**: Call `write_file` with required parameters (see schema above).
+1. **Validate Path**: Ensure the target path is in the `Path Allowlist`.
+2. **Create Intent**: Write the `<target_path>.intent.md` file using `write_file` (this file exempts itself from the rule).
+3. **Execute Write**: Call `write_file` for the actual target path (see schema above). It will automatically validate the intent file you just created.
 
 ### Step 4: Verification
 - Run the `Verification Gates` commands from the plan (e.g., `npm test`).

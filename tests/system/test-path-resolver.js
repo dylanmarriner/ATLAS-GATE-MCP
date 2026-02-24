@@ -85,14 +85,14 @@ test("Initialize and lock path resolver", () => {
   }
 });
 
-// TEST 2: Get repo root
+// TEST 2: Get cached repository root
 test("Get cached repository root", () => {
   const repoRoot = getRepoRoot();
   assert(repoRoot, "Repo root should be set");
   assert(fs.existsSync(repoRoot), "Repo root should exist");
   assert(
-    repoRoot.includes("ATLAS-GATE-MCP-server"),
-    "Repo root should contain ATLAS-GATE-MCP-server"
+    repoRoot.includes("ATLAS-GATE-MCP"),
+    "Repo root should contain ATLAS-GATE-MCP"
   );
 });
 

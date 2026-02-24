@@ -1,0 +1,102 @@
+{
+    "skills": [
+        {
+            "name": "begin_session",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Initialize and lock the workspace authority for the session (MANDATORY FIRST CALL)."
+        },
+        {
+            "name": "read_file",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Read any repository file (read-only)."
+        },
+        {
+            "name": "write_file",
+            "roles": [
+                "WINDSURF"
+            ],
+            "description": "Authoritative audited file write. Enforces canonical intent schema, enterprise policies, and cryptographic plan verification."
+        },
+        {
+            "name": "lint_plan",
+            "roles": [
+                "ANTIGRAVITY"
+            ],
+            "description": "Validate a plan structure and contents against Spectral ruleset without approval."
+        },
+        {
+            "name": "save_plan",
+            "roles": [
+                "ANTIGRAVITY"
+            ],
+            "description": "Sign a lint-passing plan and save it as a Cosign-compatible Sigstore bundle."
+        },
+        {
+            "name": "list_plans",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "List existing approved plans."
+        },
+        {
+            "name": "generate_remediation_proposals",
+            "roles": [
+                "WINDSURF"
+            ],
+            "description": "Generate remediation proposals from forensic, audit, or error evidence."
+        },
+        {
+            "name": "list_proposals",
+            "roles": [
+                "WINDSURF"
+            ],
+            "description": "List all pending read-only proposals and their metadata."
+        },
+        {
+            "name": "generate_maturity_report",
+            "roles": [
+                "ANTIGRAVITY"
+            ],
+            "description": "Generate a formal Level-5 maturity score report based on workspace evidence."
+        },
+        {
+            "name": "read_audit_log",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Read append-only audit log."
+        },
+        {
+            "name": "verify_workspace_integrity",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Verify workspace audit log and artifact integrity."
+        },
+        {
+            "name": "replay_execution",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Deterministic forensic replay of execution from audit log."
+        },
+        {
+            "name": "generate_attestation_bundle",
+            "roles": [
+                "ANTIGRAVITY",
+                "WINDSURF"
+            ],
+            "description": "Generate signed attestation bundle from workspace evidence."
+        }
+    ]
+}

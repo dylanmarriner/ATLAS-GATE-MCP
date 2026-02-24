@@ -1,0 +1,18 @@
+{
+  "mediaType": "application/vnd.dev.sigstore.bundle+json;version=0.3",
+  "verificationMaterial": {
+    "publicKey": {
+      "hint": "atlas-gate-local-key",
+      "rawBytes": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEGQHesDCTV/VWDzLEUo3gPnoBqqHx\n8grcNmKVy540Z8hjLqGtLULr3A0ObXPHxAhSSx25zpW36HKKoNpeDXwPvQ==\n-----END PUBLIC KEY-----\n"
+    },
+    "tlogEntries": [],
+    "timestampVerificationData": null
+  },
+  "messageSignature": {
+    "messageDigest": {
+      "algorithm": "SHA2_256",
+      "digest": "B7Uo0xwmJZ5EMOV/Si5LDQp9Ox0mbpaEH1tnoO6mVxE="
+    },
+    "signature": "MEUCIQDlQpSb18hhZ7clK1aCX2es530CRoUv4o7f1sSob/jOYAIgbRdz6vQjYVpCSjbQm+YdOZN5qF9nU//PyyawtN7z/bQ="
+  }
+}

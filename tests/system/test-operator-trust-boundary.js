@@ -130,7 +130,7 @@ test("Risk acknowledgement: HIGH-risk requires explicit confirmation", () => {
 // TEST 6: Two-step confirmation enforces delay
 test("Two-step confirmation: minimum delay enforced", async () => {
   resetPendingConfirmations();
-  
+
   const init = initiateConfirmation(
     "action-456",
     "Approve critical change",
@@ -153,7 +153,7 @@ test("Two-step confirmation: minimum delay enforced", async () => {
 // TEST 7: Two-step confirmation requires verbatim consequences
 test("Two-step confirmation: consequences must match verbatim", () => {
   resetPendingConfirmations();
-  
+
   const consequences = ["Delete all backups", "Commit irreversible change"];
   const init = initiateConfirmation(
     "action-789",
@@ -242,7 +242,7 @@ test("Fatigue guards: resets after mandatory pause", () => {
 // TEST 14: Inspection tools work without mutation
 test("Inspection tools: operator actions readable", () => {
   resetWorkspaceRootForTesting();
-  lockWorkspaceRoot("/media/linnyux/development3/developing/ATLAS-GATE-MCP-server");
+  lockWorkspaceRoot("/media/linnyux/development1/developing/ATLAS-GATE-MCP");
   try {
     const inspection = inspectOperatorActions({
       time_start_ms: Date.now() - 86400000,
@@ -260,7 +260,7 @@ test("Inspection tools: operator actions readable", () => {
 // TEST 15: High-risk approval inspection
 test("Inspection tools: high-risk approvals isolated", () => {
   resetWorkspaceRootForTesting();
-  lockWorkspaceRoot("/media/linnyux/development3/developing/ATLAS-GATE-MCP-server");
+  lockWorkspaceRoot("/media/linnyux/development1/developing/ATLAS-GATE-MCP");
   try {
     const inspection = inspectHighRiskApprovals({
       time_start_ms: Date.now() - 604800000,
@@ -278,7 +278,7 @@ test("Inspection tools: high-risk approvals isolated", () => {
 // TEST 16: Refusal is deterministic
 test("Error handling: refusal is deterministic and logged", () => {
   resetOperatorIdentity();
-  
+
   // Missing operator should consistently fail
   for (let i = 0; i < 3; i++) {
     try {

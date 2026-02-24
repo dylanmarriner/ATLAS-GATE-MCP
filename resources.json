@@ -1,0 +1,29 @@
+{
+    "resources": [
+        {
+            "name": "Level 5 Roadmap",
+            "path": "docs/LEVEL_5_ROADMAP.md",
+            "purpose": "A comprehensive strategy outlining the trajectory of the MCP Server towards Level-5 maturity across Reliability, Security, Operability, Governance, Observability, and Documentation dimensions."
+        },
+        {
+            "name": "Maturity Model Specification",
+            "path": "docs/MATURITY_MODEL.md",
+            "purpose": "Details the baseline standards for Levels 3–5 organizational maturity and maps system capabilities to the maturity dimensions, defining success criteria for continuous evidence scoring."
+        },
+        {
+            "name": "Architecture Guidelines",
+            "path": "docs/ARCHITECTURE.md",
+            "purpose": "High-level overview of the event-driven validation loops and the execution/infrastructure separation within the ATLAS-GATE MCP server ecosystem."
+        },
+        {
+            "name": "System Security and Governance",
+            "path": "docs/GOVERNANCE.md",
+            "purpose": "Authoritative requirements for cryptography, audit trailing, intent schemas, and human oversight gates protecting the workspace from malicious or unbounded agentic drift."
+        },
+        {
+            "name": "Prompt Templates Directory",
+            "path": "docs/PROMPT_TEMPLATES.md",
+            "purpose": "Contains the mandatory syntax for generating plans (ANTIGRAVITY) and enforcing execution (WINDSURF) in the v2 identity-based zero-trust proxy model."
+        }
+    ]
+}

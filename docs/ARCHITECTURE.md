@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Kaiza MCP Server acts as a deterministic state machine that transitions the filesystem from `State A` to `State B` only when a strictly valid transition request is received. The architecture prioritizes **safety over availability** and **correctness over flexibility**.
+The ATLAS-GATE-MCP Server acts as a deterministic state machine that transitions the filesystem from `State A` to `State B` only when a strictly valid transition request is received and authenticated via an explicit `.intent.md` artifact. The architecture prioritizes **safety over availability** and **correctness over flexibility**.
 
 ## System Lifecycle
 
@@ -32,28 +32,28 @@ Located in `server.js`, this layer intercepts `validateToolInput`:
 
 A write operation must pass **five distinct gates** to succeed. Failure at any gate results in an immediate atomic abort.
 
-1. **Schema Validation**: Zod ensures presence of `path`, `content`, and `plan` ID.
-2. **Plan Authority Check**:
-    - The server resolves the `plan` ID against the `docs/plans/` directory.
-    - The plan must exist and be in a valid directory structure.
-    - *Note: In strict computation, the plan is the capability token.*
-3. **Role Metadata Validation**:
-    - Checks `role`, `purpose`, and verification fields if provided.
-    - Ensures alignment with the plan's architectural intent.
+1. **Schema Validation**: Zod ensures the strict presence of `path`, `content`, and an explicit `plan` string ID.
+2. **Cryptographic Plan Authority (`plan-enforcer.js`)**:
+    - The server extracts the provided Cosign signature (`signature`) and matches it against `bundleJSON` or the raw ECDSA fallback.
+    - If the signature verification against the pre-provisioned `public.pem` key fails, the request is violently aborted.
+    - This proves the agent is acting on a pre-authorized plan.
+3. **Intent Artifact Validation (`intent-validator.js`)**:
+    - Before a file like `index.js` is modified, the agent must have separately created `index.js.intent.md`.
+    - The MCP ensures this intent document exists, matches the 9-section Level-5 schema, is linked to the current plan, and its SHA256 mapping corresponds to the active writing context.
 4. **Enterprise Quality Guard (`stub-detector.js`)**:
-    - **Static Analysis**: Scans the `content` payload.
-    - **Pattern Matching**: Rejects regex matches for `TODO`, `return null`, `mock`, etc.
-    - **Outcome**: A "Hard Block" exception is thrown if violations are found.
-5. **Filesystem & Audit Commit**:
+    - **Static Analysis**: Scans the `content` payload for AST deficiencies.
+    - **Pattern Matching**: Rejects regex matches for `TODO`, `return {}`, `mock`, etc.
+    - **Outcome**: A "Hard Block" exception is thrown if violations are found, ensuring technical debt cannot be checked in.
+5. **Filesystem & Audit Commit (`audit-system.js`)**:
     - The file is written to disk.
-    - An entry is immediately appended to `audit-log.jsonl` containing the file path, plan ID, session ID, and timestamp.
+    - An immutable entry is appended to `audit-log.jsonl` mapping the session ID, target file, intent validation state, and execution timestamp.
 
 ## Subsystems
 
 ### Plan Authority System
 
-- **Discovery**: Plans are discovered in `docs/plans/`, `docs/planning/`, and `docs/antigravity/`.
-- **Constraint**: The server treats these files as the source of truth for authorization. A write request referencing a non-existent plan is invalid by definition.
+- **Discovery**: Plans are located in `docs/plans/`.
+- **Constraint**: The server treats these files, paired with their respective Cosign Signatures, as the ultimate, irrevocable source of truth for authorization. A write request with an invalid signature is equivalent to cyber-trespass.
 
 ### Stub Detection Engine
 

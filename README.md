@@ -10,11 +10,11 @@
 
 ## High-Level Overview
 
-ATLAS-GATE-MCP is a production-grade Model Context Protocol (MCP) server that implements enterprise-grade security governance, process-level sandbox enforcement, and comprehensive audit trails for AI agent operations. The system transforms unconstrained AI agents into governed execution authorities through a multi-layered security architecture that enforces zero-trust principles, plan-based authorization, and immutable audit logging.
+ATLAS-GATE-MCP is a production-grade Model Context Protocol (MCP) server that implements true "Level 5" enterprise-grade security governance, process-level sandbox enforcement, and cryptographically verifiable audit trails for AI agent operations. The system transforms unconstrained AI agents into governed execution authorities through a multi-layered security architecture that enforces zero-trust principles, Cosign-based plan authorization, mandatory intent artifact generation, and immutable audit logging.
 
-The system addresses the fundamental security challenge of allowing AI agents to interact with critical systems while maintaining enterprise-grade security posture, compliance requirements, and operational visibility. ATLAS-GATE-MCP serves as a security gateway that mediates all AI agent interactions with development environments, enforcing strict governance policies while providing the flexibility required for modern AI-assisted development workflows.
+The system addresses the fundamental security challenge of allowing autonomous AI agents (like Windsurf, Claude Desktop, or custom orchestrators) to interact with critical systems while maintaining an enterprise-grade security posture, regulatory compliance, and deterministic operational visibility. ATLAS-GATE-MCP serves as a security gateway that mediates all AI agent interactions with development environments, enforcing strict governance policies while providing the flexibility required for modern AI-assisted workflows.
 
-ATLAS-GATE-MCP operates as an MCP server/gateway in modern AI infrastructure, sitting between AI models/clients and target systems (filesystems, databases, APIs, development tools). It is designed for enterprise environments where security, auditability, and compliance are non-negotiable requirements.
+Designed for frictionless integration into enterprise setups like **LobeHub** and Kubernetes clusters, ATLAS-GATE-MCP operates via robust JSON-RPC 2.0 stdio or HTTP transports. It is explicitly architected for environments where security, auditability, and compliance are non-negotiable requirements before source code is ever touched.
 
 
 ## MCP Fundamentals
@@ -66,13 +66,14 @@ ATLAS-GATE-MCP implements MCP through a multi-layered security architecture with
   - **Windsurf Role**: Execution and mutation capabilities with full audit logging
   - **Antigravity Role**: Read-only analysis and planning capabilities
 
-- **Tool Registry**: 17 specialized tools covering file operations, plan management, audit logging, and attestation services. Each tool implements comprehensive validation and enforcement.
-- **Governance Engine**: Multi-layer policy enforcement including:
+- **Tool Registry**: 17 specialized tools covering file operations, plan management, audit logging, and attestation services. Each tool implements comprehensive validation and enforcement, including maturity report generation and proposal remediation generation.
+- **Level-5 Governance Engine**: Multi-layer policy enforcement including:
   - Input validation with Zod schemas
-  - Plan-based authorization checking
-  - Static analysis for forbidden patterns
+  - **Cosign Cryptographic Plan Enforcement**: Operations only proceed if backed by a valid, signature-verified master plan.
+  - **Mandatory Intent Artifacts**: Agents must generate structured `.intent.md` documents detailing their logic *before* modifying source code.
+  - AST / Static analysis for forbidden patterns (stub detection, unauthorized imports).
   - Content integrity verification
-  - Audit trail generation
+  - Tamper-evident Audit trail generation via Attestation Bundles.
 - **Security Layers**:
   - Process-level sandbox enforcement
   - MCP-only operation restrictions
@@ -84,9 +85,10 @@ ATLAS-GATE-MCP implements MCP through a multi-layered security architecture with
 
 - **Trust Boundary 1**: Process isolation through MCP sandbox prevents direct system access
 - **Trust Boundary 2**: Role separation ensures read-only operations cannot mutate data
-- **Trust Boundary 3**: Plan authorization requires explicit approval for operations
-- **Trust Boundary 4**: Content validation prevents injection of malicious code
-- **Trust Boundary 5**: Audit logging provides non-repudiation and traceability
+- **Trust Boundary 3**: **Plan Authority (Cosign)**: Authorization requires an explicit, cryptographically signed plan. Tools will fail-closed if signatures don't match payload hashes.
+- **Trust Boundary 4**: **Intent Validation**: Content mutation requires pre-declared `.intent.md` artifacts conforming to a strict 9-section semantic schema.
+- **Trust Boundary 5**: Content validation (AST parsing) prevents injection of malicious code, stubs, or TODOs.
+- **Trust Boundary 6**: Audit logging provides cryptographic non-repudiation and traceability via Attestation Bundles.
 
 ### Component Security Responsibilities
 
@@ -420,13 +422,15 @@ ATLAS-GATE-MCP implements comprehensive MCP primitives with enterprise-grade sec
 
 ### Typical Deployment Scenarios
 
+**LobeHub & Cloud-Native Orchestration**: Serving as the bedrock MCP integration for LobeHub platforms or Kubernetes environments, ensuring that remote/cloud-based AI interactions remain deterministically safe, logged, and plan-guided via simple stdio JSON-RPC bindings.
+
 **Development Gateway**: ATLAS-GATE-MCP deployed as a gateway between AI development tools and code repositories, enforcing governance policies and maintaining audit trails.
 
-**Compliance Enforcement**: Integration with compliance systems to ensure all AI-assisted development meets regulatory requirements and organizational policies.
+**Compliance Enforcement**: Integration with compliance systems to ensure all AI-assisted development meets regulatory requirements through automated Maturity Reports and Remediation Proposals.
 
-**Security Monitoring**: Integration with security operations centers to monitor AI agent activities and detect potential security violations.
+**Security Monitoring**: Integration with security operations centers to monitor AI agent activities and detect potential security violations via cryptographic Attestation Bundles.
 
-**Audit and Forensics**: Providing comprehensive audit trails for incident response, forensic analysis, and compliance reporting.
+**Audit and Forensics**: Providing immutable audit trails for incident response, forensic analysis, and compliance reporting.
 
 ### Target Users
 

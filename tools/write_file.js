@@ -9,6 +9,7 @@ import { extractRoleHeader } from "../core/role-parser.js";
 import { parseRoleMetadata } from "../core/role-metadata.js";
 import { validateRoleMetadata } from "../core/role-validator.js";
 import { validateRoleMismatch } from "../core/role-mismatch-validator.js";
+import { validateIntentArtifact } from "../core/intent-validator.js";
 import { detectStubs } from "../core/stub-detector.js";
 import { SESSION_ID, SESSION_STATE } from "../session.js";
 import { runPreflight } from "../core/preflight.js";
@@ -85,7 +86,6 @@ export async function writeFileHandler({
   path: filePath,
   content,
   patch,
-  previousHash,
   plan,
   planId,
   planSignature,
@@ -121,7 +121,7 @@ export async function writeFileHandler({
   // GATE 0: PROMPT GATE
   // Must fetch canonical prompt before writing.
   // Prompt access removed - prompts are sent by the caller
-  
+
   if (SESSION_STATE.role !== "WINDSURF") {
     throw new KaizaError({
       error_code: ERROR_CODES.UNAUTHORIZED_ACTION,
@@ -134,20 +134,19 @@ export async function writeFileHandler({
 
   // GATE 1: INTENT & AUTHORITY ENFORCEMENT (Requirement 4)
   const isFailureReport = filePath.includes("docs/reports/");
+  const isIntentArtifact = filePath.endsWith(".intent.md");
 
-  if (!isFailureReport) {
-    const hasIntent = intent && intent.trim().length > 20;
-    const hasMetadata = purpose && authority && failureModes;
-
-    if (!hasIntent && !hasMetadata) {
-      throw new KaizaError({
-        error_code: ERROR_CODES.WRITE_REJECTED,
-        phase: "EXECUTION",
-        component: "WRITE_FILE",
-        invariant: "MANDATORY_COMMENTARY",
-        human_message: "REFUSE WRITE: Mandatory intent commentary missing. You must provide 'intent' (min 20 chars) or complete metadata (purpose, authority, failureModes). Governance requires every change to have recorded intent."
-      });
-    }
+  // Skip intent checks for failure reports and the intent artifacts themselves
+  if (!isFailureReport && !isIntentArtifact) {
+    // Perform strict schema validation on the external intent.md file
+    // Throws a SystemError if validation fails, enforcing fail-closed semantics
+    await validateIntentArtifact(
+      filePath,
+      workspace_root,
+      false,
+      planSignature,
+      planId
+    );
   }
 
   // GATE 1.1: INPUT VALIDATION & NORMALIZATION
@@ -175,25 +174,9 @@ export async function writeFileHandler({
   }
 
   const normalizedPath = filePath.replace(/\\/g, "/");
-  let oldContent = "";
-  let fileExists = false;
-
-  if (fs.existsSync(abs)) {
-    oldContent = fs.readFileSync(abs, "utf8");
-    fileExists = true;
-  }
-
-  // CONCURRENCY CHECK
-  if (previousHash && fileExists) {
-    const currentHash = crypto.createHash("sha256").update(oldContent).digest("hex");
-    if (currentHash !== previousHash) {
-      throw SystemError.toolFailure(SYSTEM_ERROR_CODES.HASH_MISMATCH, {
-        human_message: `File hash mismatch. Concurrent modification detected.`,
-        tool_name: "write_file",
-        cause: new Error(`expected ${previousHash}, got ${currentHash}`),
-      });
-    }
-  }
+  // Read file if it exists for diffing
+  const fileExists = fs.existsSync(abs);
+  const oldContent = fileExists ? fs.readFileSync(abs, "utf8") : null;
 
   let finalContent;
 
@@ -248,12 +231,12 @@ export async function writeFileHandler({
 
   // Generate content hash - use workspace root if available, otherwise use a default
   const workspaceRoot = SESSION_STATE.workspaceRoot || process.cwd();
-  
+
   // Compute contentHash - guaranteed to have finalContent from above
   const contentHashObj = crypto.createHash("sha256");
   contentHashObj.update(finalContent);
   const contentHash = contentHashObj.digest("hex");
-  
+
   // Verify contentHash was computed
   if (!contentHash || typeof contentHash !== 'string' || contentHash.length === 0) {
     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
@@ -277,7 +260,7 @@ export async function writeFileHandler({
     content_hash: contentHash,
     content_length: finalContent.length,
   };
-  
+
   // Verify all required parameters before calling policy engine
   if (!policyParams.content_hash) {
     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {

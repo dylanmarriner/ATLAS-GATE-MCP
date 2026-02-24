@@ -3,6 +3,7 @@ import { lockWorkspaceRoot } from "../core/path-resolver.js";
 import { KaizaError, ERROR_CODES } from "../core/error.js";
 import { flushPreSessionBuffer, appendAuditEntry, loadOrGenerateKeyPair } from "../core/audit-system.js";
 import { SESSION_ID } from "../session.js";
+import { ensureDependencies } from "../core/dependency-manager.js";
 
 /**
  * RF1: Explicit Workspace Root Declaration (Hard Gate)
@@ -20,6 +21,15 @@ export async function beginSessionHandler({ workspace_root }) {
 
         // Update local session state
         SESSION_STATE.workspaceRoot = workspace_root;
+
+        // Ensure all required Sigstore and Spectral packages are installed
+        // This runs NPM install synchronously if anything is missing
+        let depStatus;
+        try {
+            depStatus = await ensureDependencies();
+        } catch (depErr) {
+            throw new Error(`DEPENDENCY_INIT_FAILED: ${depErr.message}`);
+        }
 
         // Generate or load ECDSA P-256 keys for this session
         // If keys already exist, this is a no-op (idempotent)
@@ -56,7 +66,8 @@ export async function beginSessionHandler({ workspace_root }) {
                         status: "SESSION_INITIALIZED",
                         workspace_root: workspace_root,
                         message: "Authority locked. All subsequent operations must be relative to this root.",
-                        cryptography: "ECDSA P-256 keys initialized"
+                        cryptography: "ECDSA P-256 keys initialized",
+                        dependencies: `Verified ${depStatus?.alreadyPresent?.length || 0} existing, installed ${depStatus?.installed?.length || 0} missing`
                     }, null, 2)
                 }
             ]

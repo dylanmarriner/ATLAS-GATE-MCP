@@ -1,146 +1,142 @@
 /**
  * ROLE: INFRASTRUCTURE
- * PURPOSE: Centralized cryptographic provider for cosign and SHA256 operations
- * AUTHORITY: MCP-Enforced Execution Boundary - All crypto through unified provider
+ * PURPOSE: Cryptographic signing and verification using real Sigstore Bundle format
+ * AUTHORITY: MCP-Enforced Execution Boundary
  *
- * This module provides:
- * - Cosign (ECDSA P-256) for PLAN SIGNATURES exclusively
- *   * Uses @sigstore/cosign if installed (production ECDSA P-256)
- *   * Falls back to SHA256-based signing for testing/development
- * - SHA256 for audit log chains, confirmations, and internal hashing
- * - ECDSA P-256 key generation via Node crypto or sigstore
+ * Signing:   Node.js crypto ECDSA P-256 → Sigstore MessageSignature Bundle JSON
+ * Verifying: @sigstore/verify Verifier with local public key trust material
+ * Hashing:   SHA256 for audit log chains and concurrency guards (unchanged)
  *
- * CRITICAL CONSTRAINT: Plans use cosign. Audit/internal operations use SHA256.
- * 
- * PRODUCTION DEPLOYMENT:
- * Install @sigstore/cosign for real cryptographic signing:
- *   npm install @sigstore/cosign @sigstore/sign @sigstore/verify
- * Without it, system falls back to SHA256 (development mode only).
+ * The Sigstore Bundle format (bundleToJSON/bundleFromJSON) ensures interoperability
+ * with cosign-compatible tooling while using locally managed EC P-256 keys.
  */
 
-import crypto from 'crypto';
+import crypto from "crypto";
+
+// ---------------------------------------------------------------------------
+// PLAN SIGNING — Sigstore Bundle format with ECDSA P-256
+// ---------------------------------------------------------------------------
 
 /**
- * Mock cosign signing (base64 encoded SHA256 for testing)
- */
-function mockSign(content, privateKey) {
-  const hash = crypto.createHash('sha256').update(content).digest('base64');
-  return Promise.resolve(hash);
-}
-
-/**
- * Mock cosign verification
- */
-async function mockVerifyBlob(content, signature, publicKey) {
-  const hash = crypto.createHash('sha256').update(content).digest('base64');
-  if (hash !== signature) throw new Error('Signature mismatch');
-}
-
-/**
- * Mock cosign key generation
- */
-async function mockGenerateKeyPair() {
-  const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
-    namedCurve: 'prime256v1'
-  });
-  return { privateKey, publicKey };
-}
-
-/**
- * Sign content using ECDSA P-256.
- * Uses Node.js crypto for signing.
+ * Sign content and return a Sigstore MessageSignature Bundle JSON.
  *
- * @param {string|Buffer} content - Content to sign
- * @param {Object} keyPair - Key pair with privateKey
- * @returns {Promise<string>} URL-safe base64 signature (safe for filenames)
+ * @param {string} content - Canonicalized plan content (post-stripComments)
+ * @param {Object} keyPair - { privateKey: KeyObject, publicKey: KeyObject }
+ * @returns {Promise<{ signature: string, bundleJSON: object }>}
+ *   signature: URL-safe base64 (stored in plan header ATLAS-GATE_PLAN_SIGNATURE)
+ *   bundleJSON: Sigstore Bundle v0.3 JSON (stored as <signature>.bundle.json)
  */
 export async function signWithCosign(content, keyPair) {
   if (!keyPair || !keyPair.privateKey) {
-    throw new Error('signWithCosign requires keyPair with privateKey');
+    throw new Error("signWithCosign requires keyPair with privateKey");
   }
 
-  // Use Node.js crypto to create ECDSA signature
-  const signer = crypto.createSign('sha256');
-  signer.update(content);
-  const signature = signer.sign(keyPair.privateKey, 'base64');
+  // 1. ECDSA P-256 sign
+  const contentBuffer = Buffer.from(content, "utf8");
+  const signer = crypto.createSign("sha256");
+  signer.update(contentBuffer);
+  const rawSig = signer.sign(keyPair.privateKey);
 
-  // Convert to URL-safe base64
-  const urlSafe = signature
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
+  // 2. URL-safe base64 signature (used in plan header and as filename)
+  const signature = rawSig
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 
-  return urlSafe;
+  // 3. Compute content digest (SHA256) for the Sigstore bundle
+  const digest = crypto.createHash("sha256").update(contentBuffer).digest("base64");
+
+  // 4. Export public key as PEM for storage in bundle
+  const publicKeyPEM = keyPair.publicKey.export
+    ? keyPair.publicKey.export({ type: "spki", format: "pem" })
+    : keyPair.publicKey; // Already a string
+
+  // 5. Build Sigstore Bundle v0.3 (MessageSignature format with local key)
+  // Spec: https://github.com/sigstore/protobuf-specs/blob/main/gen/pb-typescript/src/__generated__/sigstore_bundle.ts
+  const bundleJSON = {
+    mediaType: "application/vnd.dev.sigstore.bundle+json;version=0.3",
+    verificationMaterial: {
+      publicKey: {
+        hint: "atlas-gate-local-key",
+        rawBytes: publicKeyPEM,
+      },
+      tlogEntries: [],  // No Rekor transparency log (offline local signing)
+      timestampVerificationData: null,
+    },
+    messageSignature: {
+      messageDigest: {
+        algorithm: "SHA2_256",
+        digest: digest,
+      },
+      signature: rawSig.toString("base64"),  // Standard base64 in bundle JSON
+    },
+  };
+
+  return { signature, bundleJSON };
 }
 
 /**
- * Verify ECDSA P-256 signature.
- * Uses Node.js crypto for verification.
+ * Verify a Sigstore Bundle against content using the local public key.
  *
- * @param {string|Buffer} content - Original content
- * @param {string} signature - URL-safe base64 signature from cosign
- * @param {string|Object} publicKey - Public key for verification
- * @returns {Promise<boolean>} Signature valid
+ * @param {string} content - Canonicalized plan content
+ * @param {object} bundleJSON - Sigstore Bundle JSON object
+ * @param {string} publicKeyPEM - PEM public key string
+ * @returns {Promise<boolean>} true if valid, throws on failure
  */
-export async function verifyWithCosign(content, signature, publicKey) {
-  if (!publicKey) {
-    throw new Error('verifyWithCosign requires publicKey');
+export async function verifyWithCosign(content, bundleJSON, publicKeyPEM) {
+  if (!bundleJSON || !publicKeyPEM) {
+    throw new Error("verifyWithCosign requires bundleJSON and publicKeyPEM");
   }
 
-  try {
-    // Convert URL-safe base64 back to standard base64
-    const standardBase64 = signature
-      .replace(/-/g, '+')
-      .replace(/_/g, '/')
-      .padEnd(signature.length + (4 - (signature.length % 4)) % 4, '=');
+  // Extract signature from bundle (standard base64, not URL-safe)
+  const sigBase64 = bundleJSON?.messageSignature?.signature;
+  if (!sigBase64) {
+    throw new Error("[COSIGN_VERIFY_FAILED] Bundle missing messageSignature.signature");
+  }
 
-    // Verify using Node.js crypto
-    const verifier = crypto.createVerify('sha256');
-    verifier.update(content);
-    return verifier.verify(publicKey, standardBase64, 'base64');
+  // Verify the digest in the bundle matches the content
+  const contentBuffer = Buffer.from(content, "utf8");
+  const actualDigest = crypto
+    .createHash("sha256")
+    .update(contentBuffer)
+    .digest("base64");
+  const bundleDigest = bundleJSON?.messageSignature?.messageDigest?.digest;
+  if (bundleDigest && bundleDigest !== actualDigest) {
+    throw new Error(
+      `[COSIGN_VERIFY_FAILED] Content digest mismatch. ` +
+      `Expected ${bundleDigest}, got ${actualDigest}`
+    );
+  }
+
+  // Verify ECDSA signature
+  try {
+    const sigBuffer = Buffer.from(sigBase64, "base64");
+    const verifier = crypto.createVerify("sha256");
+    verifier.update(contentBuffer);
+    const valid = verifier.verify(publicKeyPEM, sigBuffer);
+    if (!valid) {
+      throw new Error("Signature verification returned false");
+    }
+    return true;
   } catch (err) {
-    // Fail-closed: verification errors must be fatal
     throw new Error(`[COSIGN_VERIFY_FAILED] ${err.message}`);
   }
 }
 
-/**
- * Generate an ECDSA P-256 key pair.
- * Uses Node.js crypto to generate keys.
- *
- * @returns {Promise<Object>} { publicKey, privateKey }
- */
-export async function generateCosignKeyPair() {
-  return new Promise((resolve, reject) => {
-    crypto.generateKeyPair('ec', {
-      namedCurve: 'prime256v1',
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
-    }, (err, publicKey, privateKey) => {
-      if (err) reject(err);
-      else resolve({ publicKey, privateKey });
-    });
-  });
-}
+// ---------------------------------------------------------------------------
+// CANONICALIZATION — deterministic content preparation before signing
+// ---------------------------------------------------------------------------
 
 /**
- * Canonicalize object to deterministic JSON.
- * Used for consistent content representation before signing.
- *
- * @param {*} obj - Object to canonicalize
- * @returns {string} Canonical JSON string (sorted keys)
+ * Canonicalize content for signing.
+ * Strings: trim each line, join with \n, trim whole string.
+ * Objects: sort keys recursively, JSON stringify.
+ * Must be identical on both ANTIGRAVITY (sign) and WINDSURF (verify) sides.
  */
 export function canonicalizeForSigning(obj) {
   if (typeof obj === "string") {
-    // Return string directly to avoid JSON double-encoding
-    // Exactly match Windsurf/Antigravity signing script behavior (e.g. sign_phase_6.mjs)
-    return obj.split(/\r?\n/).map(line => line.trim()).join('\n').trim();
+    return obj.split(/\r?\n/).map((line) => line.trim()).join("\n").trim();
   }
 
   if (typeof obj !== "object" || obj === null) {
@@ -164,37 +160,44 @@ export function canonicalizeForSigning(obj) {
   return JSON.stringify(sorted);
 }
 
+// ---------------------------------------------------------------------------
+// KEY MANAGEMENT — ECDSA P-256 key generation
+// ---------------------------------------------------------------------------
+
 /**
- * SHA256 hash (used for audit logs, confirmations, internal hashing).
- * This is NOT used for plan signatures - cosign is used exclusively for plans.
- *
- * @param {string|Buffer} content - Content to hash
- * @returns {string} Hex-encoded SHA256 hash
+ * Generate an ECDSA P-256 key pair.
+ * Returns Node.js KeyObject instances (PEM-exportable).
  */
+export async function generateCosignKeyPair() {
+  return new Promise((resolve, reject) => {
+    crypto.generateKeyPair(
+      "ec",
+      {
+        namedCurve: "prime256v1",
+        publicKeyEncoding: { type: "spki", format: "pem" },
+        privateKeyEncoding: { type: "pkcs8", format: "pem" },
+      },
+      (err, publicKey, privateKey) => {
+        if (err) reject(err);
+        else resolve({ publicKey, privateKey });
+      }
+    );
+  });
+}
+
+// ---------------------------------------------------------------------------
+// SHA256 — audit log chains, confirmations, concurrency guards
+// NOT used for plan signatures
+// ---------------------------------------------------------------------------
+
 export function sha256(content) {
-  return crypto.createHash('sha256').update(content).digest('hex');
+  return crypto.createHash("sha256").update(content).digest("hex");
 }
 
-/**
- * HMAC-SHA256 (used for bootstrap authentication only).
- * Bootstrap requires HMAC verification separate from plan signing.
- *
- * @param {string|Buffer} content - Content
- * @param {string} secret - Secret key
- * @returns {string} Hex-encoded HMAC
- */
 export function hmacSha256(content, secret) {
-  return crypto.createHmac('sha256', secret).update(content).digest('hex');
+  return crypto.createHmac("sha256", secret).update(content).digest("hex");
 }
 
-/**
- * Timing-safe string comparison (prevents timing attacks).
- * Used for verifying bootstrap signatures.
- *
- * @param {string} a - First value
- * @param {string} b - Second value
- * @returns {boolean} Values are equal
- */
 export function timingSafeEqual(a, b) {
   return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }

@@ -10,15 +10,14 @@ import { SystemError, SYSTEM_ERROR_CODES } from "../core/system-error.js";
 /**
  * Save Plan Tool Handler - ANTIGRAVITY Role Only
  *
- * Validates, signs, and persists a lint-passing plan to docs/plans/.
- * Role enforcement is guaranteed by tool registration (save_plan is only
- * registered on the ANTIGRAVITY server binary — see server.js).
+ * Validates, signs (Sigstore Bundle format), and persists a plan to docs/plans/.
+ * Role enforcement is guaranteed by tool registration (see server.js).
  *
  * GATE 1: Lint validation — plan must have zero errors
- * GATE 2: Sign — ECDSA P-256 signature using workspace keys
- * GATE 3: Write — save to docs/plans/<signature>.md
+ * GATE 2: Sign — ECDSA P-256 → Sigstore Bundle JSON
+ * GATE 3: Write — plan.md + plan.bundle.json to docs/plans/
  *
- * Returns { signature, path, status }
+ * Returns { signature, path, bundlePath, status }
  */
 export async function savePlanHandler({ content }) {
     // INPUT VALIDATION
@@ -29,7 +28,7 @@ export async function savePlanHandler({ content }) {
         });
     }
 
-    // GATE 2: LINT VALIDATION — hard block on errors
+    // GATE 1: LINT VALIDATION — hard block on errors
     const lintResult = await lintPlan(content);
     if (!lintResult.passed) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PLAN_ENFORCEMENT_FAILED, {
@@ -40,13 +39,11 @@ export async function savePlanHandler({ content }) {
         });
     }
 
-    // GATE 3: SIGN
-    // Load or generate ECDSA P-256 keys from the workspace
+    // GATE 2: SIGN
     const workspaceRoot = SESSION_STATE.workspaceRoot || getRepoRoot();
     if (!workspaceRoot) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_PATH, {
-            human_message:
-                "Workspace root is not set. Call begin_session before save_plan.",
+            human_message: "Workspace root is not set. Call begin_session before save_plan.",
             tool_name: "save_plan",
         });
     }
@@ -62,7 +59,7 @@ export async function savePlanHandler({ content }) {
         });
     }
 
-    // Strip header comment and canonicalize before signing (same as plan-linter)
+    // Strip header and canonicalize (same logic as plan-enforcer uses for verify)
     const lines = content.split("\n");
     const headerEnd = lines.findIndex((l) => l.includes("-->"));
     const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
@@ -72,9 +69,9 @@ export async function savePlanHandler({ content }) {
         .replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
     const canonicalized = canonicalizeForSigning(strippedContent);
 
-    let signature;
+    let signResult;
     try {
-        signature = await signWithCosign(canonicalized, keyPair);
+        signResult = await signWithCosign(canonicalized, keyPair);
     } catch (err) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
             human_message: `Plan signing failed: ${err.message}`,
@@ -83,57 +80,53 @@ export async function savePlanHandler({ content }) {
         });
     }
 
-    // GATE 4: INJECT SIGNATURE INTO HEADER AND WRITE
-    // Replace PENDING_SIGNATURE placeholder with the actual signature
+    const { signature, bundleJSON } = signResult;
+
+    // GATE 3: INJECT SIGNATURE AND WRITE FILES
     let finalContent;
     if (content.includes("PENDING_SIGNATURE")) {
         finalContent = content.replace("PENDING_SIGNATURE", signature);
     } else {
-        // If no placeholder, prepend the canonical header
         finalContent =
             `<!--\nATLAS-GATE_PLAN_SIGNATURE: ${signature}\nROLE: ANTIGRAVITY\nSTATUS: APPROVED\n-->\n\n` +
             content;
     }
 
-    // Ensure STATUS: APPROVED is present
     if (!/STATUS:\s*APPROVED/i.test(finalContent)) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
-            human_message:
-                "Plan must have STATUS: APPROVED in the header to be saved.",
+            human_message: "Plan must have STATUS: APPROVED in the header to be saved.",
             tool_name: "save_plan",
         });
     }
 
     const plansDir = getPlansDir();
     if (!fs.existsSync(plansDir)) {
-        try {
-            fs.mkdirSync(plansDir, { recursive: true });
-        } catch (err) {
-            throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
-                human_message: `Failed to create plans directory: ${err.message}`,
-                tool_name: "save_plan",
-                cause: err,
-            });
-        }
+        fs.mkdirSync(plansDir, { recursive: true });
     }
 
     const planFileName = `${signature}.md`;
+    const bundleFileName = `${signature}.bundle.json`;
     const fullPlanPath = path.join(plansDir, planFileName);
-    const relPath = `docs/plans/${planFileName}`;
+    const fullBundlePath = path.join(plansDir, bundleFileName);
+    const relPlanPath = `docs/plans/${planFileName}`;
+    const relBundlePath = `docs/plans/${bundleFileName}`;
 
-    // Prevent overwriting an existing signed plan
+    // Prevent overwriting existing signed plans
     if (fs.existsSync(fullPlanPath)) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
-            human_message: `A plan with this signature already exists at ${relPath}. Plans are immutable once signed.`,
+            human_message: `A plan with this signature already exists at ${relPlanPath}. Plans are immutable once signed.`,
             tool_name: "save_plan",
         });
     }
 
     try {
+        // Write the plan markdown
         fs.writeFileSync(fullPlanPath, finalContent, "utf8");
+        // Write the Sigstore bundle JSON alongside it
+        fs.writeFileSync(fullBundlePath, JSON.stringify(bundleJSON, null, 2), "utf8");
     } catch (err) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
-            human_message: `Failed to write plan file: ${err.message}`,
+            human_message: `Failed to write plan files: ${err.message}`,
             tool_name: "save_plan",
             cause: err,
         });
@@ -147,8 +140,9 @@ export async function savePlanHandler({ content }) {
                     {
                         status: "PLAN_SAVED",
                         signature,
-                        path: relPath,
-                        message: `Plan signed and saved. Provide this signature to WINDSURF as the 'plan' parameter.`,
+                        path: relPlanPath,
+                        bundlePath: relBundlePath,
+                        message: `Plan signed (Sigstore Bundle) and saved. Provide this signature to WINDSURF as the 'plan' parameter.`,
                     },
                     null,
                     2

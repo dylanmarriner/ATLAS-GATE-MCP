@@ -50,116 +50,28 @@ const REQUIRED_PHASE_FIELDS = [
   "Failure stop conditions",
 ];
 
-const AMBIGUOUS_PATTERNS = [
-  /\bmay\b/i,
-  /\bshould\b/i,
-  /\bif possible\b/i,
-  /\buse best judgment\b/i,
-  /\boptional\b/i,
-  /\btry to\b/i,
-  /\battempt to\b/i,
-];
-
-const STUB_PATTERNS = [
-  /TODO[:\s]/i,
-  /FIXME[:\s]/i,
-  /XXX[:\s]/i,
-  /HACK[:\s]/i,
-  /stub/i,
-  /mock/i,
-  /placeholder/i,
-  /temp.*implementation/i,
-  /to be (determined|implemented|defined)/i,
-  /tbd/i,
-  /wip\b/i,
-];
-
-const FORBIDDEN_PATH_PATTERNS = [
-  /\.\./,           // Parent directory escape
-  /^\/[a-z_]/i,     // Absolute path
-  /\$\{/,           // Unresolved variable
-];
+import { buildPlanRuleset } from "./spectral-ruleset.js";
 
 /**
- * Initialize spectral with plan-specific rules
- * Lazily loads spectral to handle optional dependency
+ * Initialize spectral with our real plan ruleset.
  */
 async function initializeSpectral() {
   try {
     const core = await import("@stoplight/spectral-core");
+    const parsers = await import("@stoplight/spectral-parsers");
     const Spectral = core.Spectral || (core.default && core.default.Spectral);
-
-    const { truthy, pattern } = await import("@stoplight/spectral-functions");
+    const Document = core.Document || (core.default && core.default.Document);
+    const Parsers = parsers.default || parsers;
 
     const spectral = new Spectral();
+    const ruleset = await buildPlanRuleset();
+    spectral.setRuleset(ruleset);
 
-    // Define custom rules for plan validation
-    spectral.setRuleset({
-      rules: {
-        "plan-required-sections": {
-          description: "Plan must contain all required sections",
-          severity: "error",
-          given: "$",
-          then: {
-            function: truthy,
-          },
-        },
-        "plan-no-stubs": {
-          description: "Plan must not contain stub/incomplete code",
-          severity: "error",
-          given: "$",
-          then: {
-            function: pattern,
-            functionOptions: {
-              notMatch: STUB_PATTERNS.map(p => p.source).join("|"),
-            },
-          },
-        },
-        "plan-phase-format": {
-          description: "Phase IDs must be uppercase alphanumeric + underscore",
-          severity: "error",
-          given: "$",
-          then: {
-            function: pattern,
-            functionOptions: {
-              match: "^[A-Z0-9_]+$",
-            },
-          },
-        }
-      }
-    });
-
-    return spectral;
+    return { spectral, Document, Parsers };
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     console.error(`[SPECTRAL] Failed to initialize Spectral: ${errorMsg}`);
     throw new Error(`Failed to initialize Spectral linter: ${errorMsg}`);
-  }
-}
-
-/**
- * Sign plan content using cosign (ECDSA P-256)
- * Returns signature in base64
- */
-export async function signPlan(planContent, keyPair) {
-  invariantNotNull(planContent, "PLAN_CONTENT_REQUIRED", "Plan content is required");
-  invariantNotNull(keyPair, "KEY_PAIR_REQUIRED", "Key pair is required");
-  invariantTrue(
-    typeof planContent === "string" && planContent.length > 0,
-    "PLAN_CONTENT_INVALID",
-    "Plan content must be non-empty string"
-  );
-
-  try {
-    const stripedContent = stripComments(planContent);
-    const canonicalized = canonicalizeForSigning(stripedContent);
-
-    // Sign using cosign
-    const signature = await signWithCosign(canonicalized, keyPair);
-
-    return signature;
-  } catch (err) {
-    throw new Error(`[PLAN_SIGNING_FAILED] ${err.message}`);
   }
 }
 
@@ -317,82 +229,16 @@ function validatePathAllowlist(planContent) {
   const violations = [];
   const allowlist = extractPathAllowlist(planContent);
 
-  for (const path of allowlist) {
-    // Check for escape patterns
-    for (const pattern of FORBIDDEN_PATH_PATTERNS) {
-      if (pattern.test(path)) {
-        violations.push({
-          code: PLAN_LINT_ERROR_CODES.PATH_ESCAPE,
-          message: `Path escape detected: "${path}"`,
-          severity: "ERROR",
-          invariant: "PLAN_SCOPE_LAW",
-        });
-      }
-    }
-
-    // Paths must be workspace-relative
-    if (path.startsWith("/") && !path.includes("**")) {
-      violations.push({
-        code: PLAN_LINT_ERROR_CODES.INVALID_PATH,
-        message: `Absolute path not allowed: "${path}" (use workspace-relative paths)`,
-        severity: "ERROR",
-        invariant: "PLAN_SCOPE_LAW",
-      });
-    }
-  }
+  // Path format constraints (no absolute, no parent escape) are handled by Spectral.
+  // We can add semantic workspace validation here if needed in the future.
 
   return violations;
 }
 
 /**
- * Validate enforceability
+ * Enforceability (no stubs, explicit language) 
+ * is now validated exclusively by the Spectral ruleset.
  */
-function validateEnforceability(planContent) {
-  const violations = [];
-
-  // Check for stubs
-  for (const pattern of STUB_PATTERNS) {
-    const matches = planContent.match(new RegExp(pattern, "g")) || [];
-    for (const _ of matches) {
-      const lines = planContent.split("\n");
-      const lineNum = lines.findIndex(l => pattern.test(l));
-      violations.push({
-        code: PLAN_LINT_ERROR_CODES.NON_ENFORCEABLE,
-        message: `Stub/incomplete code detected (line ~${lineNum + 1}). Plans must contain complete, production-ready implementations.`,
-        severity: "ERROR",
-        invariant: "PRODUCTION_READY",
-      });
-    }
-  }
-
-  // Check for ambiguous language
-  for (const pattern of AMBIGUOUS_PATTERNS) {
-    const matches = planContent.match(new RegExp(pattern, "g")) || [];
-    for (const _ of matches) {
-      const line = planContent
-        .split("\n")
-        .findIndex(l => pattern.test(l));
-      violations.push({
-        code: PLAN_LINT_ERROR_CODES.NON_ENFORCEABLE,
-        message: `Non-enforceable language detected (line ~${line + 1}). Plans must use binary language (MUST, MUST NOT, etc.)`,
-        severity: "ERROR",
-        invariant: "MECHANICAL_LAW_ONLY",
-      });
-    }
-  }
-
-  // Check for human judgment clauses
-  if (/use best judgment|use judgment|exercise judgment/i.test(planContent)) {
-    violations.push({
-      code: PLAN_LINT_ERROR_CODES.NON_ENFORCEABLE,
-      message: "Plans cannot include human judgment clauses. All rules must be deterministic.",
-      severity: "ERROR",
-      invariant: "MECHANICAL_LAW_ONLY",
-    });
-  }
-
-  return violations;
-}
 
 /**
  * Validate auditability
@@ -425,14 +271,13 @@ function validateAuditability(planContent) {
 async function runSpectralLinting(planContent) {
   const violations = [];
   try {
-    const spectral = await initializeSpectral();
+    const { spectral, Document, Parsers } = await initializeSpectral();
 
-    // Spectral is optional - skip if not available
-    if (!spectral) {
-      return violations;
-    }
-
-    const results = await spectral.run(planContent);
+    // Spectral expects a Document object, not a raw string
+    // Markdown doesn't have a specific parser in Spectral, but the YAML parser
+    // gracefully handles falling back to raw text for regex pattern rules
+    const doc = new Document(planContent, Parsers.Yaml, "plan.md");
+    const results = await spectral.run(doc);
 
     for (const result of results) {
       violations.push({
@@ -478,15 +323,17 @@ export function canonicalizePlanContent(planContent) {
 
 /**
  * Main linting function - validates plan structure and content
- * Validates structure, phases, paths, enforceability, and auditability.
- * Signing is now done separately with cosign-hash-provider.
+ * Validates structure, phases, paths, and auditability.
+ * Enforceability (stubs/language) is handled by Spectral.
  */
 export async function lintPlan(planContent, expectedSignature = null, publicKey = null) {
   invariantNotNull(planContent, "PLAN_CONTENT_REQUIRED", "Plan content is required");
 
-  const violations = [];
+  // Stage 6: Spectral linting comes FIRST now, because it handles the core
+  // structural checks (required sections) and enforceability checks.
+  const violations = await runSpectralLinting(planContent);
 
-  // Stage 1: Structure validation
+  // Stage 1: Legacy Structure validation (supplements Spectral)
   violations.push(...validatePlanStructure(planContent));
 
   // Stage 2: Phase validation
@@ -495,18 +342,13 @@ export async function lintPlan(planContent, expectedSignature = null, publicKey 
   // Stage 3: Path validation
   violations.push(...validatePathAllowlist(planContent));
 
-  // Stage 4: Enforceability validation
-  violations.push(...validateEnforceability(planContent));
-
   // Stage 5: Auditability validation
   violations.push(...validateAuditability(planContent));
-
-  // Stage 6: Spectral linting
-  violations.push(...await runSpectralLinting(planContent));
 
   // Stage 7: Signature verification (if signature and public key provided)
   if (expectedSignature && publicKey) {
     try {
+      const { verifyPlanSignature } = await import("./cosign-hash-provider.js");
       const isValid = await verifyPlanSignature(planContent, expectedSignature, publicKey);
       if (!isValid) {
         violations.push({
@@ -518,7 +360,7 @@ export async function lintPlan(planContent, expectedSignature = null, publicKey 
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
-        throw new Error(`Signature verification failed: ${errorMsg}`);
+      throw new Error(`Signature verification failed: ${errorMsg}`);
     }
   }
 

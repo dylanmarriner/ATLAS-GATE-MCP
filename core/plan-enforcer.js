@@ -58,32 +58,57 @@ export async function enforcePlan(planSignatureOrName, targetPath) {
     throw new Error(`REFUSE: Failed to load public key for plan verification: ${err.message}`);
   }
 
+  // Extract canonicalized content (always needed for validation)
+  const { canonicalizeForSigning } = await import("./cosign-hash-provider.js");
+  const lines = fileContent.split('\n');
+  const headerEnd = lines.findIndex(l => l.includes('-->'));
+  const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
+  const stripped = bodyLines.join('\n')
+    .replace(/<!--[\s\S]*?-->\s*/gm, "")
+    .replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
+  const canonicalized = canonicalizeForSigning(stripped);
+
   // GATE: VERIFY CRYPTOGRAPHIC INTEGRITY
-  // Instead of full structural linting, Windsurf only verifies the cryptographic signature/hash.
   if (publicKey && embeddedSignature) {
-    const { verifyPlanSignature } = await import("./plan-linter.js");
+    // 1. Try to load the Sigstore bundle JSON
+    const bundlePath = planFile.replace(/\.md$/, ".bundle.json");
+    let bundleJSON = null;
+    if (fs.existsSync(bundlePath)) {
+      try {
+        bundleJSON = JSON.parse(fs.readFileSync(bundlePath, "utf8"));
+      } catch (err) {
+        throw new Error(`REFUSE: Failed to parse Sigstore bundle: ${err.message}`);
+      }
+    }
+
+    const { verifyWithCosign } = await import("./cosign-hash-provider.js");
+
     try {
-      const isValid = await verifyPlanSignature(fileContent, embeddedSignature, publicKey);
-      if (!isValid) {
-        throw new Error("Signature mathematically failed verification.");
+      if (bundleJSON) {
+        // New proper Sigstore Bundle format
+        await verifyWithCosign(canonicalized, bundleJSON, publicKey);
+      } else {
+        // Fallback for just-signed plans missing the bundle (legacy/transition)
+        // Here we just use the raw crypto verify without the bundle
+        const sigBuffer = Buffer.from(embeddedSignature.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+        const verifier = crypto.createVerify("sha256");
+        verifier.update(Buffer.from(canonicalized, "utf8"));
+        if (!verifier.verify(publicKey, sigBuffer)) {
+          throw new Error("Signature mathematically failed verification (raw ECDSA fallback).");
+        }
       }
     } catch (err) {
       throw new Error(`REFUSE: Plan signature verification failed. ${err.message}`);
     }
   } else if (hashHeaderMatch) {
+    // Legacy hash-based plan support
     const expectedHash = hashHeaderMatch[1];
-    const { canonicalizeForSigning } = await import("./cosign-hash-provider.js");
-    const lines = fileContent.split('\n');
-    const headerEnd = lines.findIndex(l => l.includes('-->'));
-    const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
-    const striped = bodyLines.join('\n').replace(/<!--[\s\S]*?-->\s*/gm, "").replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
-    const canonicalized = canonicalizeForSigning(striped);
     const actualHash = crypto.createHash('sha256').update(canonicalized).digest('hex');
     if (actualHash !== expectedHash) {
       throw new Error(`REFUSE: Plan hash mismatch. Expected ${expectedHash}, got ${actualHash}`);
     }
   } else if (embeddedSignature && !publicKey) {
-    throw new Error(`REFUSE: Cannot verify COSIGN_SIGNATURE because public.pem is missing from .atlas-gate/.cosign-keys/`);
+    throw new Error(`REFUSE: Cannot verify signature because public.pem is missing from .atlas-gate/.cosign-keys/`);
   }
 
   // SCOPE CHECK: Still mandatory (RF2 says plans stay with local dir)

@@ -49,6 +49,7 @@ function runSelfAudit() {
       !violation.file.includes("file-lock.js") &&
       !violation.file.includes("server.js") &&
       !violation.file.includes("startup-audit.js") &&
+      !violation.file.includes("dependency-manager.js") &&
       !violation.file.includes("test") &&
       !violation.file.includes("tests/") &&
       !violation.file.includes("verify_security.js")

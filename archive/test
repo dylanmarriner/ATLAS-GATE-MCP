@@ -1,0 +1,10 @@
+/**
+ * ROLE: BOUNDARY
+ * USED BY: BillingService
+ * PURPOSE: Define invoice shape
+ */
+// TODO: implement later
+export interface Invoice {
+  id: string;
+}
+test

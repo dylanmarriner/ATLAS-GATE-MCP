@@ -1,0 +1,187 @@
+================================================================================
+ATLAS-GATE-MCP Cloud Deployment - Setup Summary
+================================================================================
+
+YOUR SETUP:
+- Server: Hetzner cax31 (49.12.230.179)
+- SSH Key: /home/kubuntux/Downloads/.ssh/id_rsa
+- Cost: $3.99/month
+
+FILES CREATED:
+
+1. DEPLOY_INSTRUCTIONS.md (START HERE)
+   - Quick start guide (5 minutes to running)
+   - Troubleshooting
+   - Common commands
+
+2. deploy.sh (MAIN SCRIPT)
+   - Fully automated deployment
+   - Installs k3s, PostgreSQL, Redis, MCP server
+   - Sets up persistent volumes
+   - Usage: ./deploy.sh 49.12.230.179 /path/to/ssh/key
+
+3. KUBERNETES_CLIENT_CONFIG.md (REFERENCE)
+   - Full Kubernetes documentation
+   - Monitoring, scaling, backups
+   - Advanced configuration
+   - Troubleshooting details
+
+4. bin/server-network.js
+   - HTTP/TCP server for cloud deployment
+   - Health checks, metrics, audit endpoints
+   - Database integration
+
+QUICK START:
+
+1. Make script executable:
+   chmod +x deploy.sh
+
+2. Deploy to server:
+   ./deploy.sh 49.12.230.179 /home/kubuntux/Downloads/.ssh/id_rsa
+
+3. Wait 2-3 minutes for pods to boot
+
+4. Test connection:
+   curl http://49.12.230.179:30000/health
+
+5. Configure your client to connect to:
+   http://49.12.230.179:30000/mcp
+
+WHAT GETS DEPLOYED:
+
+✓ k3s (lightweight Kubernetes)
+✓ PostgreSQL 15 (audit logs)
+✓ Redis 7 (sessions)
+✓ MCP Server (your app)
+✓ nginx ingress controller
+✓ Persistent volumes (20GB postgres, 5GB redis, 5GB workspace)
+
+ARCHITECTURE:
+
+Internet → Port 30000 (NodePort)
+    ↓
+nginx Ingress Controller
+    ↓
+MCP Server Pod
+    ├→ PostgreSQL (audit)
+    └→ Redis (sessions)
+    
+All data persisted to /mnt/atlas-data on the server
+
+ACCESS ENDPOINTS:
+
+Health:        http://49.12.230.179:30000/health
+MCP API:       http://49.12.230.179:30000/mcp
+Metrics:       http://49.12.230.179:30000/metrics
+Audit Export:  http://49.12.230.179:30000/audit/export
+
+CONNECTING CLIENTS:
+
+Windsurf/Antigravity should connect to:
+  http://49.12.230.179:30000
+
+(See KUBERNETES_CLIENT_CONFIG.md for detailed setup)
+
+MONITORING:
+
+Check pod status:
+  ssh root@49.12.230.179
+  kubectl get pods -n atlas-gate
+
+View logs:
+  kubectl logs -n atlas-gate -l app=mcp-server -f
+
+Check services:
+  kubectl get svc -n atlas-gate
+
+DATABASE ACCESS:
+
+PostgreSQL:
+  kubectl exec -it deployment/postgres -n atlas-gate -- \
+    psql -U atlas_user -d atlas_gate
+
+Redis:
+  kubectl exec -it deployment/redis -n atlas-gate -- \
+    redis-cli
+
+SCALING:
+
+Add more servers (replicas):
+  kubectl scale deployment mcp-server --replicas=2 -n atlas-gate
+
+Increase database storage:
+  kubectl edit pvc postgres-pvc -n atlas-gate
+  (Change: storage: 20Gi → 50Gi)
+
+TROUBLESHOOTING:
+
+If deployment fails:
+  1. Verify SSH works: ssh -i key root@49.12.230.179
+  2. Check k3s installed: ssh root@49.12.230.179 'k3s --version'
+  3. View script output for errors
+  4. Run deploy.sh again
+
+If pods don't start:
+  1. Check status: kubectl get pods -n atlas-gate
+  2. Describe stuck pod: kubectl describe pod <name> -n atlas-gate
+  3. View logs: kubectl logs -n atlas-gate <pod-name>
+  4. Common issue: waiting for database/redis to be ready (takes ~30s)
+
+If can't connect:
+  1. Verify service is exposed: kubectl get svc -n atlas-gate
+  2. Check NodePort: should be 30000
+  3. Test: curl http://49.12.230.179:30000/health
+  4. Check firewall: port 30000 must be accessible
+
+PERSISTENCE:
+
+All data is stored on the server:
+  /mnt/atlas-data/postgres  (20GB)
+  /mnt/atlas-data/redis     (5GB)
+  /mnt/atlas-data/workspace (5GB)
+
+Data survives pod restarts, server reboots, etc.
+
+BACKUPS:
+
+PostgreSQL backup:
+  kubectl exec deployment/postgres -n atlas-gate -- \
+    pg_dump -U atlas_user atlas_gate | gzip > backup.sql.gz
+
+Redis backup:
+  kubectl exec deployment/redis -n atlas-gate -- \
+    redis-cli BGSAVE
+
+Copy from server:
+  scp -i key root@49.12.230.179:/mnt/atlas-data/postgres/* ./backups/
+
+SECURITY NOTES:
+
+⚠ Default password in deploy.sh: "atlas_password_secure_change_me"
+  Change it in production:
+  1. Edit deploy.sh (line with POSTGRES_PASSWORD)
+  2. Update secret: kubectl create secret... -n atlas-gate
+  3. Restart pods
+
+⚠ Exposed on public IP
+  Consider:
+  - SSH tunnel for access
+  - Firewall rules
+  - TLS/HTTPS setup
+  - Rate limiting (already configured)
+
+NEXT STEPS:
+
+1. Read DEPLOY_INSTRUCTIONS.md (5-minute guide)
+2. Run ./deploy.sh
+3. Test with curl
+4. Configure your clients
+5. Monitor with kubectl logs -f
+6. Refer to KUBERNETES_CLIENT_CONFIG.md for advanced setup
+
+================================================================================
+
+Questions? Check the documentation files:
+- DEPLOY_INSTRUCTIONS.md (quick start)
+- KUBERNETES_CLIENT_CONFIG.md (reference)
+- CLOUD_DEPLOYMENT_GUIDE.md (architecture details)

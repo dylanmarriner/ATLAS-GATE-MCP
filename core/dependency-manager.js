@@ -27,7 +27,8 @@ async function canImport(importPath) {
     try {
         await import(importPath);
         return true;
-    } catch {
+    } catch (err) {
+        console.warn(`[DEPENDENCY] Expected dynamic import failure for ${importPath}: ${err.message}`);
         return false;
     }
 }

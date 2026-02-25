@@ -61,6 +61,7 @@ atlas-gate-mcp-windsurf --remote 100.64.x.x:3000
 ### Step 1: Raspberry Pi Hardware & OS
 
 **Minimum Requirements:**
+
 - RPi 3B+ or newer (RPi 4B/5 recommended)
 - 1-2GB RAM
 - 16GB microSD card (SSD preferred)
@@ -242,6 +243,7 @@ curl http://localhost:3000/health
 ### 2. ATLAS-GATE Authorization
 
 Even with network access, ATLAS-GATE enforces:
+
 - Zero-trust execution (no operations without cryptographic authorization)
 - Workspace isolation (paths bounded to `/workspace`)
 - Audit logging of all operations

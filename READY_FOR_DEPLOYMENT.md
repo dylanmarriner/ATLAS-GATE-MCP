@@ -17,6 +17,7 @@
 ## Deployment Paths
 
 ### 1. Raspberry Pi (Easiest - 10 minutes)
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -25,6 +26,7 @@ sudo systemctl start atlas-gate
 ```
 
 ### 2. Linux Server (20 minutes)
+
 ```bash
 npm install @sigstore/cosign @sigstore/sign @sigstore/verify
 npm install
@@ -32,12 +34,14 @@ node bin/ATLAS-GATE-HTTP.js
 ```
 
 ### 3. Docker (5 minutes)
+
 ```bash
 docker build -t atlas-gate .
 docker run -p 3000:3000 atlas-gate
 ```
 
 ### 4. Kubernetes (15 minutes)
+
 See: PRODUCTION_DEPLOYMENT.md
 
 ## Key Features

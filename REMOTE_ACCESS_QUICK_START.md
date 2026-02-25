@@ -5,6 +5,7 @@
 ## 5-Minute Setup (Raspberry Pi)
 
 ### 1. Install System Dependencies
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -12,12 +13,14 @@ sudo apt install -y nodejs
 ```
 
 ### 2. Install TailScale
+
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 ```
 
 ### 3. Clone & Install ATLAS-GATE
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -25,6 +28,7 @@ npm install
 ```
 
 ### 4. Generate Secrets & Configure
+
 ```bash
 cat > .env << EOF
 NODE_ENV=production
@@ -36,6 +40,7 @@ EOF
 ```
 
 ### 5. Set Up Systemd Service
+
 ```bash
 sudo tee /etc/systemd/system/atlas-gate.service > /dev/null << 'EOF'
 [Unit]
@@ -60,6 +65,7 @@ sudo systemctl start atlas-gate
 ```
 
 ### 6. Get Your TailScale IP
+
 ```bash
 tailscale ip -4
 # Copy this IP (e.g., 100.64.x.x)
@@ -68,6 +74,7 @@ tailscale ip -4
 ## Using from Your Laptop (5 Minutes)
 
 ### 1. Install TailScale on Laptop
+
 ```bash
 # Download from https://tailscale.com/download
 # Or via package manager:
@@ -76,11 +83,13 @@ apt install tailscale       # Linux
 ```
 
 ### 2. Authenticate
+
 ```bash
 tailscale up
 ```
 
 ### 3. Test Connection (Replace IP!)
+
 ```bash
 RPi_IP=100.64.x.x  # Your RPi's TailScale IP from step 6 above
 
@@ -92,6 +101,7 @@ curl http://$RPi_IP:3000/health
 ### 4. Use the MCP Tools
 
 **Option A: Direct SSH (Simplest)**
+
 ```bash
 # Create helper script
 cat > ~/.local/bin/atlas-windsurf << 'EOF'
@@ -105,6 +115,7 @@ chmod +x ~/.local/bin/atlas-windsurf
 ```
 
 **Option B: SSH Tunnel (Best for IDEs)**
+
 ```bash
 # Terminal 1: Create tunnel
 ssh -L 3000:localhost:3000 pi@100.64.x.x
@@ -114,6 +125,7 @@ ssh -L 3000:localhost:3000 pi@100.64.x.x
 ```
 
 **Option C: HTTP API (Simple requests)**
+
 ```bash
 RPi_IP=100.64.x.x
 
@@ -130,6 +142,7 @@ curl http://$RPi_IP:3000/api/call \
 ## Verification Commands
 
 ### On Raspberry Pi
+
 ```bash
 # Check service is running
 sudo systemctl status atlas-gate
@@ -145,6 +158,7 @@ netstat -tlnp | grep 3000
 ```
 
 ### From Your Laptop
+
 ```bash
 # Verify connectivity
 ping 100.64.x.x              # Should respond
@@ -160,6 +174,7 @@ curl http://100.64.x.x:3000/tools
 ## Switching Between Windsurf & Antigravity
 
 ### On RPi, Edit Systemd Service
+
 ```bash
 # To use WINDSURF (write/execute):
 ExecStart=/usr/bin/node bin/ATLAS-GATE-MCP-windsurf.js
@@ -169,6 +184,7 @@ ExecStart=/usr/bin/node bin/ATLAS-GATE-MCP-antigravity.js
 ```
 
 Then restart:
+
 ```bash
 sudo systemctl restart atlas-gate
 ```
@@ -176,6 +192,7 @@ sudo systemctl restart atlas-gate
 ## Troubleshooting
 
 ### Can't Connect to RPi
+
 ```bash
 # 1. Check TailScale on RPi
 ssh pi@100.64.x.x "tailscale status"
@@ -188,6 +205,7 @@ ssh pi@100.64.x.x "sudo systemctl status atlas-gate"
 ```
 
 ### TailScale IP Shows But Can't Access
+
 ```bash
 # 1. Check if port 3000 is listening on RPi
 ssh pi@100.64.x.x "netstat -tlnp | grep 3000"
@@ -200,6 +218,7 @@ ssh pi@100.64.x.x "sudo journalctl -u atlas-gate -e"
 ```
 
 ### ATLAS-GATE Won't Start
+
 ```bash
 # Check errors
 ssh pi@100.64.x.x "node ~/ATLAS-GATE-MCP/bin/ATLAS-GATE-MCP-windsurf.js"

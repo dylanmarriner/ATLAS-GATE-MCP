@@ -9,6 +9,7 @@ ATLAS-GATE uses **fail-closed enforcement** - if any check fails, the operation 
 ### 1. Write-Time Policy Enforcement
 
 Every file write is blocked if it contains:
+
 - TODO, FIXME, XXX, HACK markers
 - mock*, fake*, dummy* patterns
 - Empty functions {}
@@ -17,6 +18,7 @@ Every file write is blocked if it contains:
 ### 2. Plan Validation (7 Stages)
 
 All plans must pass:
+
 1. Structure validation
 2. Phase validation
 3. Path validation

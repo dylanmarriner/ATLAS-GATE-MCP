@@ -12,7 +12,7 @@
  * 8. Audit log entry on failure is written
  */
 
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../src/domain/system-error.js";
 import assert from "assert";
 
 const tests = [];

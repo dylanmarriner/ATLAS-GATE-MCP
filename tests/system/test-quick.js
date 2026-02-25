@@ -5,7 +5,7 @@ import crypto from "crypto";
 import {
   generateAttestationBundle,
   verifyAttestationBundle,
-} from "../src/application/attestation-engine.js";
+} from "../../src/application/attestation-engine.js";
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "attestation-test-"));
 const atlasGateDir = path.join(tmpDir, ".atlas-gate");

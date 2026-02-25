@@ -29,13 +29,13 @@ import {
   replayExecution,
   verifyWorkspaceIntegrity,
   FINDING_CODES,
-} from "../src/application/replay-engine.js";
-import { generateForensicReport } from "../src/application/forensic-report-generator.js";
+} from "../../src/application/replay-engine.js";
+import { generateForensicReport } from "../../src/application/forensic-report-generator.js";
 import {
   appendAuditEntry,
   readAuditLog,
   verifyAuditLogIntegrity,
-} from "../src/application/audit-system.js";
+} from "../../src/application/audit-system.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

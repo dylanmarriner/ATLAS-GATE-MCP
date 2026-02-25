@@ -19,7 +19,7 @@ import crypto from "crypto";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // CRITICAL: Initialize path resolver before any other tests
-import { autoInitializePathResolver } from "../src/infrastructure/path-resolver.js";
+import { autoInitializePathResolver } from "../../src/infrastructure/path-resolver.js";
 autoInitializePathResolver(process.cwd());
 
 // Test counters
@@ -73,7 +73,7 @@ function assertIncludes(haystack, needle, message) {
 
 console.log("\n=== STUB DETECTOR TESTS ===\n");
 
-import { detectStubs } from "../src/application/stub-detector.js";
+import { detectStubs } from "../../src/application/stub-detector.js";
 
 test("Allows 'return true' as legitimate code", () => {
   const code = `function isValid() { return true; }`;
@@ -195,7 +195,7 @@ import {
   resolveWriteTarget,
   resolveReadTarget,
   isPathWithinRepo,
-} from "../src/infrastructure/path-resolver.js";
+} from "../../src/infrastructure/path-resolver.js";
 
 test("getRepoRoot returns current repo", () => {
   const root = getRepoRoot();
@@ -278,8 +278,8 @@ test("listPlansHandler only returns APPROVED plans", async () => {
 
 console.log("\n=== AUDIT LOG TESTS ===\n");
 
-import { appendAuditLog } from "../src/application/audit-log.js";
-import { getAuditLogPath } from "../src/infrastructure/path-resolver.js";
+import { appendAuditLog } from "../../src/application/audit-log.js";
+import { getAuditLogPath } from "../../src/infrastructure/path-resolver.js";
 
 test("appendAuditLog creates audit log entry", async () => {
   const before = getAuditLogPath();
@@ -318,7 +318,7 @@ test("appendAuditLog includes hash field", async () => {
 
 console.log("\n=== PLAN ENFORCER TESTS ===\n");
 
-import { enforcePlan } from "../src/application/plan-enforcer.js";
+import { enforcePlan } from "../../src/application/plan-enforcer.js";
 
 test("enforcePlan throws for non-existent plan", () => {
   try {

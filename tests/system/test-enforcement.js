@@ -1,13 +1,13 @@
 import fs from "fs";
 import path from "path";
-import { writeFileHandler } from "../../tools/write_file.js";
-import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
+import { writeFileHandler } from "../../src/interfaces/tools/write_file.js";
+import { lockWorkspaceRoot } from "../../src/infrastructure/path-resolver.js";
 const REPO_ROOT = process.cwd();
 try {
     lockWorkspaceRoot(REPO_ROOT);
 } catch (e) { }
 
-import { readPromptHandler } from "../../tools/read_prompt.js";
+import { readPromptHandler } from "../../src/interfaces/tools/read_prompt.js";
 import { SESSION_STATE } from "../../session.js";
 
 async function runTest() {

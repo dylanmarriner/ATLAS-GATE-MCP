@@ -1,4 +1,4 @@
-import { lintPlan } from "../src/application/plan-linter.js";
+import { lintPlan } from "../../src/application/plan-linter.js";
 import fs from "fs";
 import crypto from "crypto";
 

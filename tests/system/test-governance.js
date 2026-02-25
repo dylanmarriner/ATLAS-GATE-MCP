@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
-import { analyzeFileGovernance } from "../src/application/static-analyzer.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../src/domain/system-error.js";
+import { analyzeFileGovernance } from "../../src/application/static-analyzer.js";
 import { writeFileHandler } from "./tools/write_file.js";
 import { readPromptHandler } from "./tools/read_prompt.js";
-import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
+import { lockWorkspaceRoot } from "../../src/infrastructure/path-resolver.js";
 import { SESSION_STATE } from "./session.js";
 
 const REPO_ROOT = process.cwd();
@@ -35,7 +35,7 @@ function wrapHandler(handler, toolName) {
     };
 }
 
-import { ensureSystemError } from "../src/domain/system-error.js";
+import { ensureSystemError } from "../../src/domain/system-error.js";
 
 async function runTest() {
     console.log("🧪 STARTING GOVERNANCE VERIFICATION TEST");

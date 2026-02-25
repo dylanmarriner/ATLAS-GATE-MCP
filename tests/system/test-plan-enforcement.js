@@ -1,20 +1,20 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { writeFileHandler } from "../../tools/write_file.js";
-import { lockWorkspaceRoot, getPlansDir } from "../src/infrastructure/path-resolver.js";
+import { writeFileHandler } from "../../src/interfaces/tools/write_file.js";
+import { lockWorkspaceRoot, getPlansDir } from "../../src/infrastructure/path-resolver.js";
 
 const REPO_ROOT = process.cwd();
 try {
     lockWorkspaceRoot(REPO_ROOT);
 } catch (e) { }
 
-import { bootstrapPlanHandler } from "../../tools/bootstrap_tool.js";
+import { bootstrapPlanHandler } from "../../src/interfaces/tools/bootstrap_tool.js";
 
 const TEST_FILE = "test-plan-enforce.tmp.js";
 const TEST_PATH = path.join(REPO_ROOT, TEST_FILE);
 
-import { readPromptHandler } from "../../tools/read_prompt.js";
+import { readPromptHandler } from "../../src/interfaces/tools/read_prompt.js";
 
 async function runTest() {
     console.log("Testing Plan Enforcement...");

@@ -15,7 +15,6 @@ This is the foundation plan that bootstraps the ATLAS-GATE MCP governance system
 This plan is scoped to the ATLAS-GATE MCP server repository and establishes baseline governance.
 
 Operations MUST NOT:
-
 - Modify files outside the workspace
 - Execute arbitrary shell commands
 - Delete files
@@ -25,7 +24,6 @@ Operations MUST NOT:
 # Phase Definitions
 
 ## Phase: BOOTSTRAP_FOUNDATION
-
 Phase ID: BOOTSTRAP_PHASE
 
 Objective: Establish the foundation governance and audit systems.
@@ -69,7 +67,6 @@ Failure stop conditions: Any system failure
 # Rollback / Failure Policy
 
 On failure:
-
 1. Revert changes
 2. Log to audit trail
 3. Require manual review

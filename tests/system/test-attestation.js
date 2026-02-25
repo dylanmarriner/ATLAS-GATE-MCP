@@ -30,7 +30,7 @@ import {
    verifyAttestationBundle,
    exportAttestationBundle,
    ATTESTATION_SCHEMA,
- } from "../src/application/attestation-engine.js";
+ } from "../../src/application/attestation-engine.js";
 
 const TEST_SUITE = "ATTESTATION";
 

@@ -28,14 +28,14 @@ import {
   Proposal,
   PROPOSAL_TYPES,
   PROPOSAL_STATUS,
-} from "../src/application/remediation-engine.js";
+} from "../../src/application/remediation-engine.js";
 import {
   writeProposal,
   readProposal,
   listProposals,
   updateProposalStatus,
-} from "../src/application/proposal-store.js";
-import { appendAuditEntry, readAuditLog } from "../src/application/audit-system.js";
+} from "../../src/application/proposal-store.js";
+import { appendAuditEntry, readAuditLog } from "../../src/application/audit-system.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

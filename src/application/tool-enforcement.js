@@ -1,6 +1,6 @@
-import { SystemError, SYSTEM_ERROR_CODES } from './system-error.js';
+import { SystemError, SYSTEM_ERROR_CODES } from '../domain/system-error.js';
 import { appendAuditEntry } from './audit-system.js';
-import { SESSION_ID, SESSION_STATE } from '../session.js';
+import { SESSION_ID, SESSION_STATE } from '../../session.js';
 
 /**
  * TOOL ENFORCEMENT LAYER
@@ -417,12 +417,12 @@ export function installEnforcementLayer(server, role) {
         }
 
         // Throw system error
-        throw SystemError.badRequest(
-          SYSTEM_ERROR_CODES.INVALID_INPUT,
+        throw SystemError.toolFailure(
+          SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE,
           {
             human_message: `Tool call failed enforcement validation: ${validation.error}`,
-            tool: toolName,
-            violation: validation.error
+            tool_name: toolName,
+            cause: new Error(validation.error)
           }
         );
       }

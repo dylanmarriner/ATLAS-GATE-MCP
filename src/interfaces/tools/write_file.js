@@ -101,7 +101,7 @@ export async function writeFileHandler({
     SESSION_STATE.workspaceRoot = workspace_root;
     // Also lock workspace root in path-resolver module
     try {
-      const { lockWorkspaceRoot } = await import("../../domain/path-resolver.js");
+      const { lockWorkspaceRoot } = await import("../../infrastructure/path-resolver.js");
       lockWorkspaceRoot(workspace_root);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
@@ -118,7 +118,8 @@ export async function writeFileHandler({
   // Must fetch canonical prompt before writing.
   // Prompt access removed - prompts are sent by the caller
 
-  if (SESSION_STATE.role !== "WINDSURF") {
+  const serverRole = process.argv.join(" ").includes("windsurf") ? "WINDSURF" : "ANTIGRAVITY";
+  if (serverRole !== "WINDSURF") {
     throw new SystemError({
       error_code: SYSTEM_ERROR_CODES.UNAUTHORIZED_ACTION,
       phase: "EXECUTION",

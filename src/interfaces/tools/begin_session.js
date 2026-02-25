@@ -4,6 +4,7 @@ import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 import { flushPreSessionBuffer, appendAuditEntry, loadOrGenerateKeyPair } from "../../application/audit-system.js";
 import { SESSION_ID } from "../../../session.js";
 import { ensureDependencies } from "../../infrastructure/dependency-manager.js";
+import { initializeGovernanceState } from "../../domain/governance.js";
 
 /**
  * RF1: Explicit Workspace Root Declaration (Hard Gate)
@@ -21,6 +22,8 @@ export async function beginSessionHandler({ workspace_root }) {
 
         // Update local session state
         SESSION_STATE.workspaceRoot = workspace_root;
+        // Ensure governance state is initialized (governance.json)
+        initializeGovernanceState(workspace_root);
 
         // Ensure all required Sigstore and Spectral packages are installed
         // This runs NPM install synchronously if anything is missing

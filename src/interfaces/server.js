@@ -9,7 +9,6 @@ import { writeFileHandler } from "./tools/write_file.js";
 import { listPlansHandler } from "./tools/list_plans.js";
 import { readFileHandler } from "./tools/read_file.js";
 import { readAuditLogHandler } from "./tools/read_audit_log.js";
-import { bootstrapPlanHandler, bootstrapToolSchema } from "./tools/bootstrap_tool.js";
 import { lintPlanHandler } from "./tools/lint_plan.js";
 import { savePlanHandler } from "./tools/save_plan.js";
 import { replayExecutionHandler } from "./tools/replay_execution.js";
@@ -311,14 +310,6 @@ export async function startServer(role = "ANTIGRAVITY") {
     );
   } else if (role === "ANTIGRAVITY") {
     console.error("[SERVER] ANTIGRAVITY: manifesting planning tools");
-    server.registerTool(
-      "bootstrap_create_foundation_plan",
-      {
-        description: "Create the first approved plan (Antigravity only)",
-        inputSchema: bootstrapToolSchema,
-      },
-      wrapHandler(bootstrapPlanHandler, "bootstrap_create_foundation_plan")
-    );
 
     // ANTIGRAVITY: Lint Plan Tool (read-only, non-mutating)
     server.registerTool(

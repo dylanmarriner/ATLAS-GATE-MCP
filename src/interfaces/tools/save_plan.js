@@ -4,6 +4,7 @@ import { lintPlan } from "../../application/plan-linter.js";
 import { signWithCosign, canonicalizeForSigning } from "../../infrastructure/cosign-hash-provider.js";
 import { getRepoRoot, getPlansDir } from "../../infrastructure/path-resolver.js";
 import { loadOrGenerateKeyPair } from "../../application/audit-system.js";
+import { readGovernanceState, writeGovernanceState } from "../../domain/governance.js";
 import { SESSION_STATE } from "../../../session.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
@@ -124,6 +125,11 @@ export async function savePlanHandler({ content }) {
         fs.writeFileSync(fullPlanPath, finalContent, "utf8");
         // Write the Sigstore bundle JSON alongside it
         fs.writeFileSync(fullBundlePath, JSON.stringify(bundleJSON, null, 2), "utf8");
+
+        // Update governance state
+        const state = readGovernanceState(workspaceRoot);
+        state.approved_plans_count = (state.approved_plans_count || 0) + 1;
+        writeGovernanceState(workspaceRoot, state);
     } catch (err) {
         throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INTERNAL_ERROR, {
             human_message: `Failed to write plan files: ${err.message}`,

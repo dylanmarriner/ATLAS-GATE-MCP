@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { getRepoRoot, getGovernancePath as getResolvedGovernancePath, getPlansDir } from "./path-resolver.js";
-import { lintPlan } from "./plan-linter.js";
-import { hmacSha256, timingSafeEqual, signWithCosign, generateCosignKeyPair } from "./cosign-hash-provider.js";
+import { getRepoRoot, getGovernancePath as getResolvedGovernancePath, getPlansDir } from "../infrastructure/path-resolver.js";
+import { lintPlan } from "../application/plan-linter.js";
+import { hmacSha256, timingSafeEqual, signWithCosign, generateCosignKeyPair } from "../infrastructure/cosign-hash-provider.js";
 
 const GOVERNANCE_FILE = "governance.json";
 const COSIGN_KEYS_DIR = ".cosign-keys";

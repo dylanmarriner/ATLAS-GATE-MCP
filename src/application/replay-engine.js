@@ -20,7 +20,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { canonicalizeForSigning, verifyWithCosign } from "./cosign-hash-provider.js";
+import { canonicalizeForSigning, verifyWithCosign } from "../infrastructure/cosign-hash-provider.js";
 
 // ============================================================================
 // FINDING CODES (REQUIRED BY SPEC SECTION 4)

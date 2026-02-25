@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { runRustVerificationGates } from "./rust-policy-engine.js";
+import { runRustVerificationGates } from "../infrastructure/rust-policy-engine.js";
 
 export function runPreflight(repoRoot) {
     // RUST VERIFICATION GATES (CRITICAL) - Must run first if Rust project

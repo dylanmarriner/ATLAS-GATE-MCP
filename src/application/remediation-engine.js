@@ -10,7 +10,7 @@
  * SPEC: PROMPT 08 - MCP REMEDIATION PROPOSALS (PROPOSE-ONLY)
  */
 
-import { sha256 } from "./cosign-hash-provider.js";
+import { sha256 } from "../infrastructure/cosign-hash-provider.js";
 import { SYSTEM_ERROR_CODES } from "../domain/system-error.js";
 
 /**

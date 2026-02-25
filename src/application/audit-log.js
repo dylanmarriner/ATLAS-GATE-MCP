@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { signWithCosign } from "./cosign-hash-provider.js";
-import { getAuditLogPath as getResolvedAuditLogPath, getRepoRoot } from "./path-resolver.js";
-import { acquireLock, releaseLock } from "./file-lock.js";
+import { signWithCosign } from "../infrastructure/cosign-hash-provider.js";
+import { getAuditLogPath as getResolvedAuditLogPath, getRepoRoot } from "../infrastructure/path-resolver.js";
+import { acquireLock, releaseLock } from "../infrastructure/file-lock.js";
 
 const COSIGN_KEYS_DIR = ".cosign-keys";
 

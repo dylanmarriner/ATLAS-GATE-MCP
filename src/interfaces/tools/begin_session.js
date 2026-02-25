@@ -1,9 +1,9 @@
-import { SESSION_STATE } from "../session.js";
-import { lockWorkspaceRoot } from "../src/infrastructure/path-resolver.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
-import { flushPreSessionBuffer, appendAuditEntry, loadOrGenerateKeyPair } from "../src/application/audit-system.js";
-import { SESSION_ID } from "../session.js";
-import { ensureDependencies } from "../src/infrastructure/dependency-manager.js";
+import { SESSION_STATE } from "../../../session.js";
+import { lockWorkspaceRoot } from "../../infrastructure/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
+import { flushPreSessionBuffer, appendAuditEntry, loadOrGenerateKeyPair } from "../../application/audit-system.js";
+import { SESSION_ID } from "../../../session.js";
+import { ensureDependencies } from "../../infrastructure/dependency-manager.js";
 
 /**
  * RF1: Explicit Workspace Root Declaration (Hard Gate)

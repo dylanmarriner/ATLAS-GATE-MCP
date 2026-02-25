@@ -7,7 +7,7 @@
  * Intents are non-negotiable for every file write (except failure reports).
  */
 
-import { sha256 } from "./cosign-hash-provider.js";
+import { sha256 } from "../infrastructure/cosign-hash-provider.js";
 
 /**
  * Canonical intent artifact schema (REQUIRED SECTIONS IN ORDER)

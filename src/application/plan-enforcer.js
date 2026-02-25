@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
 import crypto from "crypto";
-import { getRepoRoot, resolvePlanPath, getGovernancePath, normalizePathForDisplay } from "./path-resolver.js";
-import { invariant, invariantNotNull, invariantTrue, invariantEqual } from "./invariant.js";
+import { getRepoRoot, resolvePlanPath, getGovernancePath, normalizePathForDisplay } from "../infrastructure/path-resolver.js";
+import { invariant, invariantNotNull, invariantTrue, invariantEqual } from "../domain/invariant.js";
 import { lintPlan } from "./plan-linter.js";
 
 function readGovernanceState(repoRoot) {

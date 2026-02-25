@@ -1,5 +1,5 @@
 import fs from "fs";
-import { sha256 } from "../src/infrastructure/cosign-hash-provider.js";
+import { sha256 } from "../../../../infrastructure/cosign-hash-provider.js";
 
 const lines = fs.readFileSync("audit-log.jsonl", "utf8").trim().split("\n");
 

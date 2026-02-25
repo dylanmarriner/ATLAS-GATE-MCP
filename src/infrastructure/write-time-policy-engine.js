@@ -20,8 +20,8 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { SystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
-import { appendAuditEntry } from "./audit-system.js";
-import { validateIntentArtifact } from "./intent-validator.js";
+import { appendAuditEntry } from "../application/audit-system.js";
+import { validateIntentArtifact } from "../application/intent-validator.js";
 
 // ============================================================================
 // LANGUAGE DETECTION

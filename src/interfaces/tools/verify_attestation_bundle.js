@@ -17,10 +17,10 @@
  * - Human-readable explanation
  */
 
-import { verifyAttestationBundle } from "../src/application/attestation-engine.js";
-import { SESSION_STATE } from "../session.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { verifyAttestationBundle } from "../../application/attestation-engine.js";
+import { SESSION_STATE } from "../../../session.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 /**
  * Tool handler for verify_attestation_bundle.

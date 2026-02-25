@@ -25,9 +25,9 @@
  * - Modify plan
  */
 
-import { readProposal, updateProposalStatus } from "../src/application/proposal-store.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { readProposal, updateProposalStatus } from "../../application/proposal-store.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 export async function approveProposal(params) {
   const {

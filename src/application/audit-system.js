@@ -22,9 +22,9 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { getRepoRoot } from "./path-resolver.js";
-import { acquireLock, releaseLock } from "./file-lock.js";
-import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "./cosign-hash-provider.js";
+import { getRepoRoot } from "../infrastructure/path-resolver.js";
+import { acquireLock, releaseLock } from "../infrastructure/file-lock.js";
+import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "../infrastructure/cosign-hash-provider.js";
 
 // ============================================================================
 // CONSTANTS & CONFIG

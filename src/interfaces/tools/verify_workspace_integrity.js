@@ -15,9 +15,9 @@
  * - List of all violations found
  */
 
-import { verifyWorkspaceIntegrity, FINDING_CODES } from "../src/application/replay-engine.js";
-import { SESSION_STATE } from "../session.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
+import { verifyWorkspaceIntegrity, FINDING_CODES } from "../../application/replay-engine.js";
+import { SESSION_STATE } from "../../../session.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
 
 /**
  * Tool handler for verify_workspace_integrity.

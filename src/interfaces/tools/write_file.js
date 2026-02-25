@@ -1,23 +1,19 @@
 import fs from "fs";
-import path from "path";
-import crypto from "crypto";
-
-import { analyzeDiffCompliance, applyUnifiedPatch } from "../src/infrastructure/policy-engine.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { enforcePlan } from "../src/application/plan-enforcer.js";
-import { extractRoleHeader } from "../src/domain/role-parser.js";
-import { parseRoleMetadata } from "../src/domain/role-metadata.js";
-import { validateRoleMetadata } from "../src/domain/role-validator.js";
-import { validateRoleMismatch } from "../src/domain/role-mismatch-validator.js";
-import { validateIntentArtifact } from "../src/application/intent-validator.js";
-import { detectStubs } from "../src/application/stub-detector.js";
-import { SESSION_ID, SESSION_STATE } from "../session.js";
-import { runPreflight } from "../src/application/preflight.js";
-import { resolveWriteTarget, ensureDirectoryExists } from "../src/infrastructure/path-resolver.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
-import { enforceRustPolicy, runRustVerificationGates } from "../src/infrastructure/rust-policy-engine.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
-import { executeWriteTimePolicy, detectLanguage } from "../src/infrastructure/write-time-policy-engine.js";
+import { analyzeDiffCompliance, applyUnifiedPatch } from "../../infrastructure/policy-engine.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { enforcePlan } from "../../application/plan-enforcer.js";
+import { extractRoleHeader } from "../../domain/role-parser.js";
+import { parseRoleMetadata } from "../../domain/role-metadata.js";
+import { validateRoleMetadata } from "../../domain/role-validator.js";
+import { validateRoleMismatch } from "../../domain/role-mismatch-validator.js";
+import { validateIntentArtifact } from "../../application/intent-validator.js";
+import { detectStubs } from "../../application/stub-detector.js";
+import { SESSION_ID, SESSION_STATE } from "../../../session.js";
+import { runPreflight } from "../../application/preflight.js";
+import { resolveWriteTarget, ensureDirectoryExists } from "../../infrastructure/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
+import { enforceRustPolicy, runRustVerificationGates } from "../../infrastructure/rust-policy-engine.js";
+import { executeWriteTimePolicy, detectLanguage } from "../../infrastructure/write-time-policy-engine.js";
 
 /**
  * Extract Rust allowed patterns from plan content
@@ -105,7 +101,7 @@ export async function writeFileHandler({
     SESSION_STATE.workspaceRoot = workspace_root;
     // Also lock workspace root in path-resolver module
     try {
-      const { lockWorkspaceRoot } = await import("../src/domain/path-resolver.js");
+      const { lockWorkspaceRoot } = await import("../../domain/path-resolver.js");
       lockWorkspaceRoot(workspace_root);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);

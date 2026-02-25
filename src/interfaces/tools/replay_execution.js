@@ -14,9 +14,9 @@
  * - Non-coder friendly timeline
  */
 
-import { replayExecution, FINDING_CODES } from "../src/application/replay-engine.js";
-import { SESSION_STATE } from "../session.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
+import { replayExecution, FINDING_CODES } from "../../application/replay-engine.js";
+import { SESSION_STATE } from "../../../session.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
 
 /**
  * Tool handler for replay_execution.

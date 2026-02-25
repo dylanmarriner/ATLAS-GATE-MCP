@@ -4,7 +4,7 @@
  * ATLAS-GATE MCP SERVER - Antigravity (Read-Only/Analysis)
  */
 
-import { startServer } from "../server.js";
+import { startServer } from "../src/interfaces/server.js";
 
 const ROLE = "ANTIGRAVITY";
 

@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { bootstrapCreateFoundationPlan } from "../src/domain/governance.js";
-import { getRepoRoot } from "../src/infrastructure/path-resolver.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
-import { lintPlan } from "../src/application/plan-linter.js";
+import { bootstrapCreateFoundationPlan } from "../../domain/governance.js";
+import { getRepoRoot } from "../../infrastructure/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
+import { lintPlan } from "../../application/plan-linter.js";
 
 // Input schema for the bootstrap tool
 export const bootstrapToolSchema = z.object({

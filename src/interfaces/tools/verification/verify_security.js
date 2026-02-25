@@ -1,8 +1,8 @@
-import { writeFileHandler } from "./tools/write_file.js";
-import { SESSION_STATE } from "./session.js";
+import { writeFileHandler } from "../write_file.js";
+import { SESSION_STATE } from "../session.js";
 import fs from "fs";
 import path from "path";
-import { lockWorkspaceRoot, getPlansDir, getRepoRoot, getAuditLogPath } from "./core/path-resolver.js";
+import { lockWorkspaceRoot, getPlansDir, getRepoRoot, getAuditLogPath } from "../../../../infrastructure/path-resolver.js";
 
 const REPO_ROOT = process.cwd();
 try {

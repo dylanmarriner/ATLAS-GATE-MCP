@@ -17,10 +17,10 @@
  */
 
 import crypto from "crypto";
-import { RemediationEngine, PROPOSAL_TYPES } from "../src/application/remediation-engine.js";
-import { writeProposal, listProposals } from "../src/application/proposal-store.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { RemediationEngine, PROPOSAL_TYPES } from "../../application/remediation-engine.js";
+import { writeProposal, listProposals } from "../../application/proposal-store.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 /**
  * Generate remediation proposals from evidence bundle

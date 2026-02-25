@@ -14,7 +14,7 @@
 
 import fs from "fs";
 import path from "path";
-import { getRepoRoot } from "./path-resolver.js";
+import { getRepoRoot } from "../infrastructure/path-resolver.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
 
 const KILL_SWITCH_DIR = ".atlas-gate";

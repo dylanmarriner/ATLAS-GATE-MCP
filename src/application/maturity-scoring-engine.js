@@ -16,7 +16,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { sha256 } from './cosign-hash-provider.js';
+import { sha256 } from '../infrastructure/cosign-hash-provider.js';
 
 const MATURITY_DIMENSIONS = {
   RELIABILITY: 'Reliability',

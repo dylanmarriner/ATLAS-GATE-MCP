@@ -12,8 +12,8 @@
 
 import fs from "fs";
 import path from "path";
-import { invariantTrue, invariantNotNull, invariantFalse } from "./invariant.js";
-import { SESSION_STATE } from "../session.js";
+import { invariantTrue, invariantNotNull, invariantFalse } from "../domain/invariant.js";
+import { SESSION_STATE } from "../../session.js";
 
 let SESSION_WORKSPACE_ROOT = null;
 

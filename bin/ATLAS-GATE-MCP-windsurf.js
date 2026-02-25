@@ -4,7 +4,7 @@
  * ATLAS-GATE MCP SERVER - Windsurf (Mutation/Execution)
  */
 
-import { startServer } from "../server.js";
+import { startServer } from "../src/interfaces/server.js";
 
 const ROLE = "WINDSURF";
 

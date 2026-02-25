@@ -1,4 +1,4 @@
-import { lintPlan } from "../src/application/plan-linter.js";
+import { lintPlan } from "../../../../application/plan-linter.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";

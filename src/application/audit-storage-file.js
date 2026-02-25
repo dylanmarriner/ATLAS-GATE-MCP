@@ -7,7 +7,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { sha256 } from './cosign-hash-provider.js';
+import { sha256 } from '../infrastructure/cosign-hash-provider.js';
 import { AuditStorage } from './audit-storage.js';
 
 export class FileAuditStorage extends AuditStorage {

@@ -8,8 +8,8 @@
  * No I/O side effects beyond reads
  */
 
-import { listProposals } from "../src/application/proposal-store.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { listProposals } from "../../application/proposal-store.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 export async function listRemediationProposals(params) {
   const {

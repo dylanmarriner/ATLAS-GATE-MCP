@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getRepoRoot, getPlansDir } from '../core/path-resolver.js';
+import { getRepoRoot, getPlansDir } from '../../infrastructure/path-resolver.js';
 
 export async function listPlansHandler() {
   const plansDir = getPlansDir();
@@ -16,11 +16,11 @@ export async function listPlansHandler() {
       const signature = f.replace(".md", "");
       const filePath = path.join(plansDir, f);
       const content = fs.readFileSync(filePath, 'utf8');
-      
+
       let status = "UNKNOWN";
       let scope = "UNKNOWN";
       let version = "UNKNOWN";
-      
+
       // Try parsing ATLAS-GATE_PLAN_SIGNATURE format (HTML comment header)
       const headerMatch = content.match(/<!--\s*ATLAS-GATE_PLAN_SIGNATURE:\s*([A-Za-z0-9+/=]+)\s+ROLE:\s*(\w+)\s+STATUS:\s*(\w+)\s*-->/);
       if (headerMatch) {
@@ -44,7 +44,7 @@ export async function listPlansHandler() {
       if (versionMatch) {
         version = versionMatch[1].trim();
       }
-      
+
       return {
         signature,
         file: f,

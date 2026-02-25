@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { lintPlan } from "../src/application/plan-linter.js";
-import { getPlansDir } from "../src/infrastructure/path-resolver.js";
+import { lintPlan } from "../../application/plan-linter.js";
+import { getPlansDir } from "../../infrastructure/path-resolver.js";
 
 /**
  * Lint Plan Tool Handler

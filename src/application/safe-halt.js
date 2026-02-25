@@ -17,7 +17,7 @@
 import fs from "fs";
 import path from "path";
 import { readAuditLog, verifyAuditLogIntegrity } from "./audit-system.js";
-import { getRepoRoot } from "./path-resolver.js";
+import { getRepoRoot } from "../infrastructure/path-resolver.js";
 
 const HALT_REPORTS_DIR = "docs/reports";
 

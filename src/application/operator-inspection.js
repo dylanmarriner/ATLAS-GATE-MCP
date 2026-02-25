@@ -1,5 +1,5 @@
 import fs from "fs";
-import { getAuditLogPath } from "./path-resolver.js";
+import { getAuditLogPath } from "../infrastructure/path-resolver.js";
 
 /**
  * ROLE: INFRASTRUCTURE

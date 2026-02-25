@@ -1,7 +1,7 @@
-import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "./cosign-hash-provider.js";
+import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "../infrastructure/cosign-hash-provider.js";
 import { writeFileSync, readFileSync, existsSync } from "fs";
 import { mkdir } from "fs/promises";
-import { invariant, invariantNotNull, invariantTrue } from "./invariant.js";
+import { invariant, invariantNotNull, invariantTrue } from "../domain/invariant.js";
 
 /**
  * PLAN LINTER: Deterministic validation with cosign + spectral

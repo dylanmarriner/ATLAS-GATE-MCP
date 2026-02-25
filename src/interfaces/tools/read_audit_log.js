@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getAuditLogPath } from "../src/infrastructure/path-resolver.js";
+import { getAuditLogPath } from "../../infrastructure/path-resolver.js";
 
 export async function readAuditLogHandler() {
   const auditPath = getAuditLogPath();

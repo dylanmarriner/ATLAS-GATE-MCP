@@ -1,4 +1,4 @@
-import { sha256 } from "./cosign-hash-provider.js";
+import { sha256 } from "../infrastructure/cosign-hash-provider.js";
 import crypto from "crypto";
 
 /**

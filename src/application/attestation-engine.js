@@ -24,7 +24,7 @@ import crypto from "crypto";
 import { replayExecution } from "./replay-engine.js";
 import { computeMaturityScore } from "./maturity-scoring-engine.js";
 import { lintPlan } from "./plan-linter.js";
-import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "./cosign-hash-provider.js";
+import { signWithCosign, verifyWithCosign, canonicalizeForSigning } from "../infrastructure/cosign-hash-provider.js";
 
 // ============================================================================
 // SIGNING CONFIGURATION

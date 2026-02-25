@@ -15,10 +15,10 @@
  * - Markdown representation (human-readable)
  */
 
-import { exportAttestationBundle } from "../src/application/attestation-engine.js";
-import { SESSION_STATE } from "../session.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { exportAttestationBundle } from "../../application/attestation-engine.js";
+import { SESSION_STATE } from "../../../session.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 /**
  * Tool handler for export_attestation_bundle.

@@ -16,10 +16,10 @@
  * - Audit trail entry
  */
 
-import { generateAttestationBundle } from "../src/application/attestation-engine.js";
-import { SESSION_STATE } from "../session.js";
-import { appendAuditEntry } from "../src/application/audit-system.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { generateAttestationBundle } from "../../application/attestation-engine.js";
+import { SESSION_STATE } from "../../../session.js";
+import { appendAuditEntry } from "../../application/audit-system.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 import path from "path";
 
 /**

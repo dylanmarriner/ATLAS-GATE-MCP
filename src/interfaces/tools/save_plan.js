@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { lintPlan } from "../src/application/plan-linter.js";
-import { signWithCosign, canonicalizeForSigning } from "../src/infrastructure/cosign-hash-provider.js";
-import { getRepoRoot, getPlansDir } from "../src/infrastructure/path-resolver.js";
-import { loadOrGenerateKeyPair } from "../src/application/audit-system.js";
-import { SESSION_STATE } from "../session.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { lintPlan } from "../../application/plan-linter.js";
+import { signWithCosign, canonicalizeForSigning } from "../../infrastructure/cosign-hash-provider.js";
+import { getRepoRoot, getPlansDir } from "../../infrastructure/path-resolver.js";
+import { loadOrGenerateKeyPair } from "../../application/audit-system.js";
+import { SESSION_STATE } from "../../../session.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 /**
  * Save Plan Tool Handler - ANTIGRAVITY Role Only

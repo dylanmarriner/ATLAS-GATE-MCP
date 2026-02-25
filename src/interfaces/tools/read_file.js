@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { resolveReadTarget } from "../src/infrastructure/path-resolver.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
+import { resolveReadTarget } from "../../infrastructure/path-resolver.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 
 /**
  * PLAN DISCOVERY: Automatically grant read access to /docs/** paths

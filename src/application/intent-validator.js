@@ -20,7 +20,7 @@ import {
   checkForbiddenPatterns,
   parseSections,
   hashIntent
-} from "./intent-schema.js";
+} from "../domain/intent-schema.js";
 
 /**
  * Validation result structure

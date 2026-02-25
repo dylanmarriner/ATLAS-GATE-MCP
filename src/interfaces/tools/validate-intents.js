@@ -11,8 +11,8 @@
  * 5. Does NOT modify any files
  */
 
-import { validateAllIntents } from "../src/application/intent-validator.js";
-import { getRepoRoot } from "../src/infrastructure/path-resolver.js";
+import { validateAllIntents } from "../../application/intent-validator.js";
+import { getRepoRoot } from "../../infrastructure/path-resolver.js";
 
 /**
  * Handler for validate-intents tool

@@ -19,7 +19,7 @@ import { verifyAttestationBundleHandler } from "./tools/verify_attestation_bundl
 import { exportAttestationBundleHandler } from "./tools/export_attestation_bundle.js";
 
 // GOVERNANCE IMPORTS
-import { ensureSystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
+import { SystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
 import { logHardFailure } from "../application/audit-log.js";
 import { analyzeDirectoryGovernance } from "../application/static-analyzer.js";
 import { appendAuditEntry, flushPreSessionBuffer } from "../application/audit-system.js";
@@ -30,7 +30,6 @@ import { fileURLToPath } from "url";
 import { getRepoRoot } from "../infrastructure/path-resolver.js";
 import { SESSION_ID, SESSION_STATE } from "../../session.js";
 import { runStartupAudit } from "../application/startup-audit.js";
-import { SystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
 
 // RF1-RF3: Explicit workspace authority model.
 // No eager or lazy initialization via discovery.

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getPlansDir, resolvePlanPath } from "./path-resolver.js";
+import { getPlansDir, resolvePlanPath } from "../infrastructure/path-resolver.js";
 
 export function loadPlan(planId) {
   // CANONICAL PATH RESOLUTION: Use path resolver for deterministic plan discovery

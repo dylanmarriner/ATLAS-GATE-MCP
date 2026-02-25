@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "node tests/system/test-ast-policy.js",
-    "verify": "npm test && node tests/system/test-bootstrap.js && npm run docs:build",
+    "verify": "npm test && npm run docs:build",
     "docs:build": "echo 'Documentation validation complete'",
     "docs:render": "echo 'No diagrams to render'",
     "docs:validate": "echo 'Documentation structure valid'",

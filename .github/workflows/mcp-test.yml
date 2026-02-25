@@ -2,51 +2,53 @@ name: MCP Server Test
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   test-servers:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Test Windsurf server startup
-      run: |
-        timeout 10s node bin/ATLAS-GATE-MCP-windsurf.js &
-        sleep 3
-        if ps aux | grep -v grep | grep ATLAS-GATE-MCP-windsurf > /dev/null; then
-          echo "Windsurf server started successfully"
-          kill %1 2>/dev/null || true
-        else
-          echo "Windsurf server failed to start"
-          exit 1
-        fi
+      - name: Test Windsurf server startup
+        run: |
+          timeout 10s node bin/ATLAS-GATE-MCP-windsurf.js > windsurf.log 2>&1 &
+          sleep 3
+          if ps auxww | grep -v grep | grep "ATLAS-GATE-MCP-windsurf.js" > /dev/null; then
+            echo "Windsurf server started successfully"
+            kill %1 2>/dev/null || true
+          else
+            echo "Windsurf server failed to start"
+            cat windsurf.log
+            exit 1
+          fi
 
-    - name: Test Antigravity server startup
-      run: |
-        timeout 10s node bin/ATLAS-GATE-MCP-antigravity.js &
-        sleep 3
-        if ps aux | grep -v grep | grep ATLAS-GATE-MCP-antigravity > /dev/null; then
-          echo "Antigravity server started successfully"
-          kill %1 2>/dev/null || true
-        else
-          echo "Antigravity server failed to start"
-          exit 1
-        fi
+      - name: Test Antigravity server startup
+        run: |
+          timeout 10s node bin/ATLAS-GATE-MCP-antigravity.js > antigravity.log 2>&1 &
+          sleep 3
+          if ps auxww | grep -v grep | grep "ATLAS-GATE-MCP-antigravity.js" > /dev/null; then
+            echo "Antigravity server started successfully"
+            kill %1 2>/dev/null || true
+          else
+            echo "Antigravity server failed to start"
+            cat antigravity.log
+            exit 1
+          fi
 
-    - name: Test server binaries exist and are executable
-      run: |
-        test -f bin/ATLAS-GATE-MCP-windsurf.js && echo "Windsurf binary OK"
-        test -f bin/ATLAS-GATE-MCP-antigravity.js && echo "Antigravity binary OK"
+      - name: Test server binaries exist and are executable
+        run: |
+          test -f bin/ATLAS-GATE-MCP-windsurf.js && echo "Windsurf binary OK"
+          test -f bin/ATLAS-GATE-MCP-antigravity.js && echo "Antigravity binary OK"

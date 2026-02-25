@@ -8,14 +8,17 @@ This document indexes all verification results and deployment documentation crea
 ## Quick Navigation
 
 ### For Immediate Deployment
+
 - Start here → **[REMOTE_ACCESS_QUICK_START.md](./REMOTE_ACCESS_QUICK_START.md)** (5-minute setup)
 - Then read → **[TAILSCALE_DEPLOYMENT.md](./TAILSCALE_DEPLOYMENT.md)** (detailed guide)
 
 ### For Detailed Information
+
 - Verification results → **[VERIFICATION_REPORT.md](./VERIFICATION_REPORT.md)** (technical details)
 - Run verification → **`node verify-complete-setup.js`** (automated checks)
 
 ### For Understanding the System
+
 - Architecture overview → **[README.md](./README.md)**
 - Security details → **[SECURITY_HARDENING.md](./SECURITY_HARDENING.md)**
 - General deployment → **[PRODUCTION_DEPLOYMENT.md](./PRODUCTION_DEPLOYMENT.md)**
@@ -25,24 +28,28 @@ This document indexes all verification results and deployment documentation crea
 ## What Was Verified (31/31 Checks Passed)
 
 ### ✅ Core System (4 checks)
+
 - [x] WINDSURF MCP server starts cleanly
 - [x] ANTIGRAVITY MCP server starts cleanly
 - [x] Self-audit passes on startup
 - [x] Startup audit: 10/10 checks passing
 
 ### ✅ MCP Tools (4 checks)
+
 - [x] WINDSURF role tools configured (write_file, list_plans, read_audit_log)
 - [x] ANTIGRAVITY role tools configured (read_file, list_plans, read_audit_log)
 - [x] Tool error handling implemented
 - [x] AST Policy enforcement working
 
 ### ✅ Security & Isolation (4 checks)
+
 - [x] Path resolver preventing directory traversal
 - [x] Workspace isolation enforced
 - [x] Audit system functional (JSONL format)
 - [x] Security analysis tools available
 
 ### ✅ Deployment Infrastructure (7 checks)
+
 - [x] Docker configuration ready
 - [x] Docker Compose ready
 - [x] Kubernetes manifest ready
@@ -52,12 +59,14 @@ This document indexes all verification results and deployment documentation crea
 - [x] Security hardening guide present
 
 ### ✅ TailScale & Remote Access (4 checks)
+
 - [x] HTTP server supports remote clients
 - [x] Stdio transport configured
 - [x] Network access via HTTP possible
 - [x] TailScale-compatible network setup
 
 ### ✅ Node.js & Dependencies (2 checks)
+
 - [x] Node.js version >= 18.0.0
 - [x] All required dependencies installed
 
@@ -93,6 +102,7 @@ This document indexes all verification results and deployment documentation crea
 ### Scenario: Deploy on Raspberry Pi, Access from Laptop via TailScale
 
 #### Phase 1: Raspberry Pi Setup (30 minutes)
+
 ```bash
 # 1. Install system dependencies
 sudo apt update && sudo apt upgrade -y
@@ -141,6 +151,7 @@ sudo systemctl start atlas-gate
 ```
 
 #### Phase 2: Laptop Setup (10 minutes)
+
 ```bash
 # 1. Install TailScale
 # Download from: https://tailscale.com/download
@@ -155,6 +166,7 @@ curl http://100.x.x.x:3000/health
 ```
 
 #### Phase 3: Use the Tools
+
 ```bash
 # Option A: SSH Tunnel (best for IDEs/integrated tools)
 ssh -L 3000:localhost:3000 pi@100.x.x.x
@@ -175,6 +187,7 @@ ssh -C "pi@100.x.x.x" "cd ATLAS-GATE-MCP && node bin/ATLAS-GATE-MCP-windsurf.js"
 ## Tool Roles
 
 ### atlas-gate-mcp-windsurf (Executor/Mutation)
+
 - ✅ Read files
 - ✅ **Write files** (requires plan authorization)
 - ✅ Execute operations
@@ -185,6 +198,7 @@ ssh -C "pi@100.x.x.x" "cd ATLAS-GATE-MCP && node bin/ATLAS-GATE-MCP-windsurf.js"
 **Use for:** Code generation, file creation, configuration updates, automation
 
 ### atlas-gate-mcp-antigravity (Read-Only/Analysis)
+
 - ✅ Read files
 - ✅ Analyze code
 - ✅ List plans
@@ -200,17 +214,20 @@ ssh -C "pi@100.x.x.x" "cd ATLAS-GATE-MCP && node bin/ATLAS-GATE-MCP-windsurf.js"
 ## Security Features (All Verified ✅)
 
 ### Network Security
+
 - **TailScale VPN:** All traffic encrypted, authenticated
 - **Nginx Reverse Proxy:** Acts as gateway
 - **0.0.0.0 Binding:** Accessible over network
 
 ### Operation Security
+
 - **Zero-Trust Authorization:** Every operation requires cryptographic approval
 - **Plan Signing:** Only pre-approved plans execute
 - **Role Isolation:** WINDSURF and ANTIGRAVITY cannot access each other's tools
 - **Path Isolation:** No directory traversal attacks (`../` blocked)
 
 ### Data Security
+
 - **Immutable Audit Trail:** JSONL format, cryptographically chained
 - **Error Handling:** Comprehensive, no silent failures
 - **AST Policy:** Blocks stubs, TODOs, empty catch blocks
@@ -233,6 +250,7 @@ ssh -C "pi@100.x.x.x" "cd ATLAS-GATE-MCP && node bin/ATLAS-GATE-MCP-windsurf.js"
 ## Troubleshooting Quick Reference
 
 ### Server won't start
+
 ```bash
 # 1. Check Node version
 node --version  # Must be >= 18.0.0
@@ -246,6 +264,7 @@ sudo journalctl -u atlas-gate -e
 ```
 
 ### Can't connect via TailScale
+
 ```bash
 # 1. Verify TailScale on RPi
 tailscale status
@@ -258,6 +277,7 @@ netstat -tlnp | grep 3000
 ```
 
 ### MCP tools not responding
+
 ```bash
 # 1. Verify service running
 sudo systemctl is-active atlas-gate
@@ -273,12 +293,14 @@ node bin/ATLAS-GATE-MCP-windsurf.js
 
 ## Deployment Verification
 
-### To verify system is still operational:
+### To verify system is still operational
+
 ```bash
 node verify-complete-setup.js
 ```
 
 This runs 31 automated checks covering:
+
 - File structure & dependencies
 - Server startup & initialization
 - Tool configuration & roles
@@ -301,6 +323,7 @@ Expected output: **All 31 checks passing ✅**
 2. **Follow the deployment guide appropriate for your environment**
 
 3. **Verify with:**
+
    ```bash
    node verify-complete-setup.js
    ```
@@ -319,16 +342,19 @@ Expected output: **All 31 checks passing ✅**
 ## Support & Resources
 
 ### Documentation
+
 - Full documentation: See `docs/` directory
 - Architecture decisions: See `adr/` directory
 - Deployment guides: See root directory
 
 ### Verification
+
 - Run automated checks: `node verify-complete-setup.js`
 - View audit logs: `tail -f audit-log.jsonl`
 - Check service status: `sudo systemctl status atlas-gate`
 
 ### Issues
+
 - GitHub: https://github.com/dylanmarriner/ATLAS-GATE-MCP/issues
 - Security: See [SECURITY.md](./SECURITY.md) for responsible disclosure
 

@@ -24,7 +24,7 @@ jobs:
 
       - name: Test Windsurf server startup
         run: |
-          timeout 10s node bin/ATLAS-GATE-MCP-windsurf.js > windsurf.log 2>&1 &
+          tail -f /dev/null | timeout 10s node bin/ATLAS-GATE-MCP-windsurf.js > windsurf.log 2>&1 &
           sleep 3
           if ps auxww | grep -v grep | grep "ATLAS-GATE-MCP-windsurf.js" > /dev/null; then
             echo "Windsurf server started successfully"
@@ -37,7 +37,7 @@ jobs:
 
       - name: Test Antigravity server startup
         run: |
-          timeout 10s node bin/ATLAS-GATE-MCP-antigravity.js > antigravity.log 2>&1 &
+          tail -f /dev/null | timeout 10s node bin/ATLAS-GATE-MCP-antigravity.js > antigravity.log 2>&1 &
           sleep 3
           if ps auxww | grep -v grep | grep "ATLAS-GATE-MCP-antigravity.js" > /dev/null; then
             echo "Antigravity server started successfully"

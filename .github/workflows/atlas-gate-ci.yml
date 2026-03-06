@@ -36,6 +36,10 @@ jobs:
           if [ -d "$PLANS_DIR" ]; then
             for planFile in "$PLANS_DIR"/*.json; do
               [ -f "$planFile" ] || continue
+              # Skip files that are already bundles
+              if [[ "$planFile" == *".bundle.json" ]]; then
+                continue
+              fi
               bundle="${planFile%.json}.bundle.json"
               if [ ! -f "$bundle" ]; then
                 echo "::error::Missing bundle for plan: $planFile"

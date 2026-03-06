@@ -11,6 +11,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import os from "os";
 import TenantManager from "../src/application/multi-tenant-manager.js";
 import { SystemError, SYSTEM_ERROR_CODES } from "../src/domain/system-error.js";
 
@@ -124,7 +125,7 @@ export class AtlasGateHttpServer {
         { name: "Audit Log Excellence", path: auditLogPath, type: "file" },
         { name: "Antigravity Server", path: path.join(repoRoot, "bin/ATLAS-GATE-MCP-antigravity.js"), type: "file" },
         { name: "Windsurf Server", path: path.join(repoRoot, "bin/ATLAS-GATE-MCP-windsurf.js"), type: "file" },
-        { name: "Session Directory", path: path.join(repoRoot, ".gemini/antigravity/sessions"), type: "dir" }
+        { name: "Session Directory", path: path.join(os.homedir(), ".gemini/antigravity/sessions"), type: "dir" }
       ];
 
       for (const check of checks) {

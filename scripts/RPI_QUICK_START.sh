@@ -64,8 +64,12 @@ else
   echo -e "${GREEN}✓ .env.production already exists${NC}"
 fi
 
+# Get current user and directory
+CURRENT_USER=$(whoami)
+CURRENT_DIR=$(pwd)
+
 echo "[6/8] Creating systemd service..."
-sudo tee /etc/systemd/system/atlas-gate.service > /dev/null << 'EOF'
+sudo tee /etc/systemd/system/atlas-gate.service > /dev/null << EOF
 [Unit]
 Description=ATLAS-GATE MCP Server
 After=network-online.target
@@ -73,9 +77,9 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=pi
-WorkingDirectory=/home/pi/ATLAS-GATE-MCP
-EnvironmentFile=/home/pi/ATLAS-GATE-MCP/.env.production
+User=${CURRENT_USER}
+WorkingDirectory=${CURRENT_DIR}
+EnvironmentFile=${CURRENT_DIR}/.env.production
 ExecStart=/usr/bin/node bin/ATLAS-GATE-HTTP.js
 Restart=on-failure
 RestartSec=10
@@ -163,7 +167,7 @@ echo ""
 
 echo "5️⃣  Remote access options:"
 echo "   a) SSH tunnel:"
-echo "      ssh -L 3000:localhost:3000 pi@$(hostname).local"
+echo "      ssh -L 3000:localhost:3000 ${CURRENT_USER}@$(hostname).local"
 echo "      curl http://localhost:3000/health"
 echo ""
 echo "   b) ngrok (public URL):"

@@ -100,18 +100,25 @@ export function resolvePlanPath(planSignature) {
 
   const plansDir = getPlansDir();
 
-  // Remove .md extension if present to normalize the input
-  const normalized = planSignature.endsWith('.md') ? planSignature.slice(0, -3) : planSignature;
+  // Normalize: strip .json or .md extension if present
+  let normalized = planSignature;
+  if (normalized.endsWith('.json')) normalized = normalized.slice(0, -5);
+  else if (normalized.endsWith('.md')) normalized = normalized.slice(0, -3);
 
-  // Build candidate path assuming the string is the safe identifier
-  const planFile = path.join(plansDir, `${normalized}.md`);
-
-  // Check if file exists (strict exact case match)
-  if (fs.existsSync(planFile)) {
-    return planFile;
+  // V5: Try .json first (new JSON plan format)
+  const jsonPlanFile = path.join(plansDir, `${normalized}.json`);
+  if (fs.existsSync(jsonPlanFile)) {
+    return jsonPlanFile;
   }
 
-  throw new Error(`REFUSE: Plan not found by strict signature/hash filename: ${planSignature}`);
+  // Legacy fallback: try .md (V4 and earlier Markdown plans)
+  const mdPlanFile = path.join(plansDir, `${normalized}.md`);
+  if (fs.existsSync(mdPlanFile)) {
+    console.error(`[PATH_RESOLVER] Legacy .md plan loaded: ${normalized}.md — migrate to JSON format`);
+    return mdPlanFile;
+  }
+
+  throw new Error(`REFUSE: Plan not found (tried .json and .md): ${planSignature}`);
 }
 
 /**

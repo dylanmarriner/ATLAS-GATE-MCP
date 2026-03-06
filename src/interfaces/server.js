@@ -16,6 +16,7 @@ import { verifyWorkspaceIntegrityHandler } from "./tools/verify_workspace_integr
 import { generateAttestationBundleHandler } from "./tools/generate_attestation_bundle.js";
 import { verifyAttestationBundleHandler } from "./tools/verify_attestation_bundle.js";
 import { exportAttestationBundleHandler } from "./tools/export_attestation_bundle.js";
+import { commitPhase } from "../application/post-execution-commit.js";
 
 // GOVERNANCE IMPORTS
 import { SystemError, SYSTEM_ERROR_CODES } from "../domain/system-error.js";
@@ -308,7 +309,35 @@ export async function startServer(role = "ANTIGRAVITY") {
       },
       wrapHandler(listRemediationProposals, "list_proposals")
     );
-  } else if (role === "ANTIGRAVITY") {
+
+    // WINDSURF: Commit Phase — post-execution signed Git commit
+    server.registerTool(
+      "commit_phase",
+      {
+        description: "Commit all changes within the plan path_allowlist after a phase completes successfully",
+        inputSchema: z.object({
+          plan_id: z.string().describe("plan_metadata.plan_id from the executed plan"),
+          phase_id: z.string().describe("phase_id of the completed phase"),
+          plan_signature: z.string().describe("Cosign signature of the executed plan"),
+          path_allowlist: z.array(z.string()).describe("path_allowlist from the executed plan JSON"),
+        }),
+      },
+      wrapHandler(
+        async (args) => {
+          const result = await commitPhase({
+            planId: args.plan_id,
+            phaseId: args.phase_id,
+            planSignature: args.plan_signature,
+            pathAllowlist: args.path_allowlist,
+            workspaceRoot: SESSION_STATE.workspaceRoot,
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        },
+        "commit_phase"
+      )
+    );
+
+    } else if (role === "ANTIGRAVITY") {
     console.error("[SERVER] ANTIGRAVITY: manifesting planning tools");
 
     // ANTIGRAVITY: Lint Plan Tool (read-only, non-mutating)
@@ -319,7 +348,7 @@ export async function startServer(role = "ANTIGRAVITY") {
         inputSchema: z.object({
           path: z.string().optional().describe("Path to plan file in docs/plans/"),
           signature: z.string().optional().describe("Plan signature to validate (Base64)"),
-          content: z.string().optional().describe("Raw plan content to lint"),
+          content: z.string().optional().describe("Raw plan JSON content to lint"),
         }),
       },
       wrapHandler(lintPlanHandler, "lint_plan")
@@ -329,9 +358,9 @@ export async function startServer(role = "ANTIGRAVITY") {
     server.registerTool(
       "save_plan",
       {
-        description: "Sign and save a lint-passing plan to docs/plans/<signature>.md (ANTIGRAVITY only)",
+        description: "Sign and save a lint-passing plan to docs/plans/<signature>.json (ANTIGRAVITY only)",
         inputSchema: z.object({
-          content: z.string().describe("Complete lint-passing plan markdown content"),
+          content: z.string().describe("Complete lint-passing plan JSON content"),
         }),
       },
       wrapHandler(savePlanHandler, "save_plan")
@@ -346,6 +375,57 @@ export async function startServer(role = "ANTIGRAVITY") {
         inputSchema: z.object({}),
       },
       wrapHandler(generateMaturityReportHandler, "generate_maturity_report")
+    );
+
+    // ANTIGRAVITY: Recovery tools (OWNER role enforced inside each handler)
+    const { initiateRecovery, confirmRecovery, getRecoveryStatus } = await import("../application/recovery-gate.js");
+    server.registerTool(
+      "recovery_initiate",
+      {
+        description: "Initiate kill-switch recovery procedure (OWNER role required)",
+        inputSchema: z.object({
+          owner_acknowledgement: z.string().describe("Explicit acknowledgement of recovery responsibility"),
+          reason: z.string().describe("Reason for initiating recovery"),
+        }),
+      },
+      wrapHandler(
+        async (args) => {
+          const result = await initiateRecovery(args);
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        },
+        "recovery_initiate"
+      )
+    );
+    server.registerTool(
+      "recovery_confirm",
+      {
+        description: "Confirm recovery with verification code (OWNER role required)",
+        inputSchema: z.object({
+          confirmation_code: z.string().describe("The confirmation code returned by recovery_initiate"),
+          final_acknowledgement: z.string().describe("Final explicit acknowledgement to clear kill-switch"),
+        }),
+      },
+      wrapHandler(
+        async (args) => {
+          const result = await confirmRecovery(args);
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        },
+        "recovery_confirm"
+      )
+    );
+    server.registerTool(
+      "recovery_status",
+      {
+        description: "Check current kill-switch and verification status",
+        inputSchema: z.object({}),
+      },
+      wrapHandler(
+        async (_args) => {
+          const result = await getRecoveryStatus();
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        },
+        "recovery_status"
+      )
     );
   }
 

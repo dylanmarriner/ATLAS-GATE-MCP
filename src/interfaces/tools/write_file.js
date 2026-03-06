@@ -14,6 +14,7 @@ import { resolveWriteTarget, ensureDirectoryExists } from "../../infrastructure/
 import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
 import { enforceRustPolicy, runRustVerificationGates } from "../../infrastructure/rust-policy-engine.js";
 import { executeWriteTimePolicy, detectLanguage } from "../../infrastructure/write-time-policy-engine.js";
+import { rollback } from "../../application/rollback-executor.js";
 
 /**
  * Extract Rust allowed patterns from plan content
@@ -269,7 +270,15 @@ export async function writeFileHandler({
   try {
     await executeWriteTimePolicy(policyParams);
   } catch (err) {
-    // Policy failure is fatal - refuse write
+    // Policy failure is fatal - refuse write, then rollback git state
+    const planRef = effectivePlanRef || null;
+    await rollback({
+      planSignature: planRef,
+      phaseId: null,
+      triggerReason: `WRITE_TIME_POLICY_REJECT: ${err.message}`,
+      workspaceRoot: SESSION_STATE.workspaceRoot,
+    }).catch(() => {}); // Non-fatal if rollback itself fails
+
     if (err instanceof SystemError) {
       throw err;
     }
@@ -372,12 +381,20 @@ export async function writeFileHandler({
   try {
     runPreflight(repoRoot);
   } catch (err) {
-    // REVERT: Changes failed preflight, so we reject them completely
+    // REVERT: Changes failed preflight — restore fileystem and rollback git state
     if (fileExists) {
       fs.writeFileSync(abs, oldContent, "utf8");
     } else {
       fs.unlinkSync(abs);
     }
+    // Also revert via git to ensure no partially staged state
+    await rollback({
+      planSignature: effectivePlanRef || null,
+      phaseId: null,
+      triggerReason: `PREFLIGHT_FAILURE: ${err.message.slice(0, 200)}`,
+      workspaceRoot: SESSION_STATE.workspaceRoot,
+    }).catch(() => {});
+
     throw SystemError.toolFailure(SYSTEM_ERROR_CODES.PREFLIGHT_FAILED, {
       human_message: `Code rejected because it breaks the build: ${err.message}`,
       tool_name: "write_file",

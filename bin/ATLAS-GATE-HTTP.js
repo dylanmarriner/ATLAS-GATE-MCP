@@ -15,8 +15,8 @@
  */
 
 import AtlasGateHttpServer from "../api/http-server.js";
-import { startServer } from "../server.js";
-import TenantManager from "../core/multi-tenant-manager.js";
+import { startServer } from "../src/interfaces/server.js";
+import TenantManager from "../src/application/multi-tenant-manager.js";
 
 // Parse command-line arguments
 const args = process.argv.slice(2);

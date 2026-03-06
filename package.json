@@ -20,6 +20,7 @@
     "start:windsurf": "node bin/ATLAS-GATE-MCP-windsurf.js",
     "start:antigravity": "node bin/ATLAS-GATE-MCP-antigravity.js",
     "start:http": "node bin/ATLAS-GATE-HTTP.js",
+    "start:dashboard": "npm run start:http",
     "example:client": "node examples/multi-tenant-client.js"
   },
   "keywords": [

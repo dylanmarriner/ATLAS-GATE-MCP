@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ATLAS-GATE | Live Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dark-mode">
+    <div class="glass-bg"></div>
+
+    <header>
+      <div class="logo">
+        <span class="brand">ATLAS-GATE</span>
+        <span class="status-badge pulse">LIVE MONITOR</span>
+      </div>
+      <div class="controls">
+        <button id="doctor-btn" class="action-btn">
+          <span class="icon">🩺</span> Run Doctor
+        </button>
+        <div id="connection-status" class="status-indicator loading">
+          Connecting...
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="stats-grid">
+        <div class="stat-card" id="card-total">
+          <div class="stat-label">Total Events</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card success" id="card-success">
+          <div class="stat-label">Successful Actions</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card danger" id="card-error">
+          <div class="stat-label">Failures & Errors</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card info" id="card-active-sessions">
+          <div class="stat-label">Active Sessions</div>
+          <div class="stat-value">0</div>
+        </div>
+      </section>
+
+      <section class="log-container">
+        <div class="log-header">
+          <h2>Real-Time Audit Feed</h2>
+          <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="WINDSURF">Windsurf</button>
+            <button class="filter-btn" data-filter="ANTIGRAVITY">
+              Antigravity
+            </button>
+            <button class="filter-btn" data-filter="error">Errors</button>
+          </div>
+        </div>
+        <div id="audit-feed" class="feed">
+          <!-- Entries will appear here -->
+        </div>
+
+        <div id="doctor-results" class="doctor-panel hidden">
+            <div class="panel-header">
+                <h3>System Diagnostic Results</h3>
+                <button id="close-doctor" class="close-btn">&times;</button>
+            </div>
+            <div id="doctor-content" class="panel-body">
+                <!-- Diagnostic results will appear here -->
+            </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="active-alert" class="hidden">
+      <div class="alert-content">
+        <span class="icon">⚠️</span>
+        <span class="message"
+          >SECURITY ALERT: Invariant Violation Detected</span
+        >
+      </div>
+    </footer>
+
+    <script src="monitor.js"></script>
+  </body>
+</html>

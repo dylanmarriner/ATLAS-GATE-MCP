@@ -16,7 +16,7 @@ import { SystemError, SYSTEM_ERROR_CODES } from "../../domain/system-error.js";
  *
  * GATE 1: Lint validation — plan must have zero errors
  * GATE 2: Sign — ECDSA P-256 → Sigstore Bundle JSON
- * GATE 3: Write — plan.md + plan.bundle.json to docs/plans/
+ * GATE 3: Write — plan.json + plan.bundle.json to docs/plans/
  *
  * Returns { signature, path, bundlePath, status }
  */
@@ -60,15 +60,27 @@ export async function savePlanHandler({ content }) {
         });
     }
 
-    // Strip header and canonicalize (same logic as plan-enforcer uses for verify)
-    const lines = content.split("\n");
-    const headerEnd = lines.findIndex((l) => l.includes("-->"));
-    const bodyLines = headerEnd === -1 ? lines : lines.slice(headerEnd + 1);
-    const strippedContent = bodyLines
-        .join("\n")
-        .replace(/<!--[\s\S]*?-->\s*/gm, "")
-        .replace(/\s*\[COSIGN_SIGNATURE:\s*[^\]]*\]\s*$/gm, "");
-    const canonicalized = canonicalizeForSigning(strippedContent);
+    // Canonicalize JSON plan for signing: remove atlas_gate_plan_signature before hashing
+    const { canonicalizePlanContent } = await import("../../application/plan-linter.js");
+    let parsedPlan;
+    try {
+        parsedPlan = JSON.parse(content);
+    } catch (err) {
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+            human_message: `Plan content is not valid JSON: ${err.message}`,
+            tool_name: "save_plan",
+        });
+    }
+
+    // Gate: status must be APPROVED
+    if (parsedPlan.status !== "APPROVED") {
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+            human_message: `Plan status must be "APPROVED" to be saved. Got: "${parsedPlan.status}"`,
+            tool_name: "save_plan",
+        });
+    }
+
+    const canonicalized = canonicalizePlanContent(content);
 
     let signResult;
     try {
@@ -83,29 +95,16 @@ export async function savePlanHandler({ content }) {
 
     const { signature, bundleJSON } = signResult;
 
-    // GATE 3: INJECT SIGNATURE AND WRITE FILES
-    let finalContent;
-    if (content.includes("PENDING_SIGNATURE")) {
-        finalContent = content.replace("PENDING_SIGNATURE", signature);
-    } else {
-        finalContent =
-            `<!--\nATLAS-GATE_PLAN_SIGNATURE: ${signature}\nROLE: ANTIGRAVITY\nSTATUS: APPROVED\n-->\n\n` +
-            content;
-    }
-
-    if (!/STATUS:\s*APPROVED/i.test(finalContent)) {
-        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
-            human_message: "Plan must have STATUS: APPROVED in the header to be saved.",
-            tool_name: "save_plan",
-        });
-    }
+    // GATE 3: INJECT SIGNATURE INTO JSON AND WRITE FILES
+    parsedPlan.atlas_gate_plan_signature = signature;
+    const finalContent = JSON.stringify(parsedPlan, null, 2);
 
     const plansDir = getPlansDir();
     if (!fs.existsSync(plansDir)) {
         fs.mkdirSync(plansDir, { recursive: true });
     }
 
-    const planFileName = `${signature}.md`;
+    const planFileName = `${signature}.json`;
     const bundleFileName = `${signature}.bundle.json`;
     const fullPlanPath = path.join(plansDir, planFileName);
     const fullBundlePath = path.join(plansDir, bundleFileName);

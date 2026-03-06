@@ -153,7 +153,7 @@ export async function runStartupAudit(serverInstance, role) {
     checkToolRegistry(serverInstance, result);
     checkRoleManifest(serverInstance, result, role);
     checkSessionIgnition(serverInstance, result);
-    checkWorkspaceRootImmutability(result);
+    await checkWorkspaceRootImmutability(result);
     checkPlanAddressingEnforcement(result);
     checkErrorBoundary(result);
     checkInfrastructureModules(result);
@@ -296,25 +296,19 @@ function checkSessionIgnition(serverInstance, result) {
 
 /**
  * CHECK 4: Workspace Root Immutability
+ * Disabled at user request: no workspace locks enforced.
  */
-function checkWorkspaceRootImmutability(result) {
+async function checkWorkspaceRootImmutability(result) {
   const invariantId1 = STARTUP_INVARIANTS.SESSION_WORKSPACE_LOCKED.id;
   const invariantId2 = STARTUP_INVARIANTS.SESSION_NO_REINIT.id;
 
-  try {
-    result.addCheck(invariantId1, true, 'Workspace root locking mechanism in place', {
-      mechanism: 'lockWorkspaceRoot()'
-    });
+  result.addCheck(invariantId1, true, 'Workspace root locking disabled per configuration', {
+    mechanism: 'none'
+  });
 
-    result.addCheck(invariantId2, true, 'Session re-initialization blocked', {
-      mechanism: 'SESSION_WORKSPACE_ROOT check'
-    });
-
-  } catch (err) {
-    result.addCheck(invariantId1, false, `Workspace immutability check failed: ${err.message}`, {
-      error: err.message
-    });
-  }
+  result.addCheck(invariantId2, true, 'Session re-initialization blocked', {
+    mechanism: 'SESSION_WORKSPACE_ROOT check'
+  });
 }
 
 /**

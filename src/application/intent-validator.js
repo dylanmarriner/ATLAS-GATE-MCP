@@ -244,7 +244,7 @@ import {
   // === CHECK 7: VALIDATE AUTHORITY (with drift detection) ===
   const authorityValidation = CANONICAL_INTENT_SCHEMA.sections[2].validator(
     sections.authority,
-    executingPlanHash,
+    executingPlanSignature,
     executingPhaseId
   );
 

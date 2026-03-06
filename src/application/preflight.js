@@ -15,10 +15,46 @@ export function runPreflight(repoRoot) {
         }
     }
 
-    // Detect package manager
+    // PYTHON VERIFICATION GATES - Run if Python project detected
+    const isPythonProject =
+        fs.existsSync(path.join(repoRoot, "pyproject.toml")) ||
+        fs.existsSync(path.join(repoRoot, "setup.py")) ||
+        fs.existsSync(path.join(repoRoot, "requirements.txt"));
+
+    if (isPythonProject) {
+        const pythonCommands = [];
+
+        // Detect available Python tools and add checks
+        const toolChecks = [
+            { cmd: "ruff check .", detectCmd: "ruff --version", label: "ruff" },
+            { cmd: "mypy .", detectCmd: "mypy --version", label: "mypy" },
+            { cmd: "pytest --tb=short -q", detectCmd: "pytest --version", label: "pytest" },
+        ];
+
+        for (const { cmd, detectCmd, label } of toolChecks) {
+            try {
+                execSync(detectCmd, { cwd: repoRoot, stdio: "pipe", timeout: 5000 });
+                pythonCommands.push({ cmd, label });
+            } catch {
+                // Tool not installed — skip silently (not a failure)
+                console.error(`[PREFLIGHT] ${label} not found — skipping`);
+            }
+        }
+
+        for (const { cmd, label } of pythonCommands) {
+            try {
+                execSync(cmd, { cwd: repoRoot, stdio: "pipe", timeout: 60000 });
+            } catch (e) {
+                const stdout = e.stdout ? e.stdout.toString() : "";
+                const stderr = e.stderr ? e.stderr.toString() : "";
+                throw new Error(`PREFLIGHT_FAILURE: Python check '${label}' failed.\nSTDOUT: ${stdout}\nSTDERR: ${stderr}`);
+            }
+        }
+    }
+
+    // Detect Node.js package manager
     const hasPnpm = fs.existsSync(path.join(repoRoot, "pnpm-lock.yaml"));
     const hasYarn = fs.existsSync(path.join(repoRoot, "yarn.lock"));
-    const hasNpm = fs.existsSync(path.join(repoRoot, "package-lock.json"));
 
     let pm = "npm";
     if (hasPnpm) pm = "pnpm";
@@ -37,21 +73,11 @@ export function runPreflight(repoRoot) {
         }
     }
 
-    // Fallbacks if scripts missing but configs exist
-    if (!commands.some(c => c.includes("typecheck"))) {
-        if (fs.existsSync(path.join(repoRoot, "tsconfig.json"))) {
-            // commands.push("tsc --noEmit"); // assume tsc in path or npx
-            // Best effort: only run if we strictly know how.
-        }
-    }
-
-    // Execute
+    // Execute JS commands
     for (const cmd of commands) {
         try {
-            // Run with timeout to prevent hang
-            execSync(cmd, { cwd: repoRoot, stdio: 'pipe', timeout: 30000 });
+            execSync(cmd, { cwd: repoRoot, stdio: "pipe", timeout: 30000 });
         } catch (e) {
-            // Capture output
             const stdout = e.stdout ? e.stdout.toString() : "";
             const stderr = e.stderr ? e.stderr.toString() : "";
             throw new Error(`PREFLIGHT_FAILURE: Command '${cmd}' failed.\nSTDOUT: ${stdout}\nSTDERR: ${stderr}`);
@@ -60,3 +86,4 @@ export function runPreflight(repoRoot) {
 
     return true;
 }
+

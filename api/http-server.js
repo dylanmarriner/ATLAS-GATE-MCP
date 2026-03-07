@@ -118,7 +118,6 @@ export class AtlasGateHttpServer {
       });
     });
 
-    // Doctor endpoint
     this.app.get("/api/doctor", async (c) => {
       const issues = [];
       const checks = [
@@ -156,6 +155,150 @@ export class AtlasGateHttpServer {
         timestamp: new Date().toISOString(),
         issues,
         summary: issues.length === 0 ? "System is functioning correctly." : `${issues.length} issue(s) detected.`
+      });
+    });
+
+    this.app.post("/api/doctor-fix", async (c) => {
+      const fixes_applied = [];
+      const atlasGateDir = path.join(repoRoot, ".atlas-gate");
+
+      if (!fs.existsSync(atlasGateDir)) {
+        try {
+          fs.mkdirSync(atlasGateDir, { recursive: true });
+          fixes_applied.push({
+            action: "Create .atlas-gate directory",
+            message: "Created missing .atlas-gate directory",
+            success: true
+          });
+        } catch (e) {
+          fixes_applied.push({
+            action: "Create .atlas-gate directory",
+            message: `Failed: ${e.message}`,
+            success: false
+          });
+        }
+      }
+
+      if (!fs.existsSync(auditLogPath)) {
+        try {
+          fs.writeFileSync(auditLogPath, "");
+          fixes_applied.push({
+            action: "Create audit log",
+            message: "Created missing audit.log file",
+            success: true
+          });
+        } catch (e) {
+          fixes_applied.push({
+            action: "Create audit log",
+            message: `Failed: ${e.message}`,
+            success: false
+          });
+        }
+      }
+
+      const sessionDir = path.join(os.homedir(), ".gemini/antigravity/sessions");
+      if (!fs.existsSync(sessionDir)) {
+        try {
+          fs.mkdirSync(sessionDir, { recursive: true });
+          fixes_applied.push({
+            action: "Create session directory",
+            message: `Created missing session directory at ${sessionDir}`,
+            success: true
+          });
+        } catch (e) {
+          fixes_applied.push({
+            action: "Create session directory",
+            message: `Failed: ${e.message}`,
+            success: false
+          });
+        }
+      }
+
+      if (fs.existsSync(auditLogPath)) {
+        try {
+          const content = fs.readFileSync(auditLogPath, 'utf8');
+          const lines = content.split('\n').filter(l => l.trim());
+          let hasInvalidJson = false;
+          
+          for (let i = 0; i < lines.length; i++) {
+            try {
+              JSON.parse(lines[i]);
+            } catch (e) {
+              hasInvalidJson = true;
+              break;
+            }
+          }
+
+          if (hasInvalidJson) {
+            const validLines = lines.filter(l => {
+              try {
+                JSON.parse(l);
+                return true;
+              } catch {
+                return false;
+              }
+            });
+            fs.writeFileSync(auditLogPath, validLines.join('\n'));
+            fixes_applied.push({
+              action: "Repair audit log",
+              message: "Removed invalid JSON entries from audit log",
+              success: true
+            });
+          }
+        } catch (e) {
+          fixes_applied.push({
+            action: "Repair audit log",
+            message: `Failed: ${e.message}`,
+            success: false
+          });
+        }
+      }
+
+      try {
+        const cosignKeysDir = path.join(atlasGateDir, ".cosign-keys");
+        if (!fs.existsSync(cosignKeysDir)) {
+          fs.mkdirSync(cosignKeysDir, { recursive: true });
+          fixes_applied.push({
+            action: "Create cosign keys directory",
+            message: "Created .cosign-keys directory for cryptographic keys",
+            success: true
+          });
+        }
+      } catch (e) {
+        fixes_applied.push({
+          action: "Create cosign keys directory",
+          message: `Failed: ${e.message}`,
+          success: false
+        });
+      }
+
+      const govPath = path.join(atlasGateDir, "governance.json");
+      if (!fs.existsSync(govPath)) {
+        try {
+          const govState = {
+            approved_plans_count: 0,
+            auto_register_plans: true,
+            bootstrap_enabled: true
+          };
+          fs.writeFileSync(govPath, JSON.stringify(govState, null, 2));
+          fixes_applied.push({
+            action: "Initialize governance state",
+            message: "Created governance.json with default settings",
+            success: true
+          });
+        } catch (e) {
+          fixes_applied.push({
+            action: "Initialize governance state",
+            message: `Failed: ${e.message}`,
+            success: false
+          });
+        }
+      }
+
+      return c.json({
+        status: fixes_applied.every(f => f.success) ? "all_fixed" : "partial",
+        fixes_applied,
+        timestamp: new Date().toISOString()
       });
     });
 
@@ -279,7 +422,6 @@ export class AtlasGateHttpServer {
       }
     });
 
-    // Audit
     this.app.get("/audit", (c) => {
       const { tenantId } = this.getAuthContext(c);
       const query = c.req.query();
@@ -291,7 +433,76 @@ export class AtlasGateHttpServer {
       return c.json({ count: logs.length, logs });
     });
 
-    // Error handling
+    this.app.get("/api/governance", async (c) => {
+      try {
+        const govPath = path.join(repoRoot, ".atlas-gate", "governance.json");
+        if (fs.existsSync(govPath)) {
+          const content = JSON.parse(fs.readFileSync(govPath, 'utf8'));
+          return c.json(content);
+        }
+        return c.json({
+          approved_plans_count: 0,
+          bootstrap_enabled: false,
+          auto_register_plans: false
+        });
+      } catch (e) {
+        return c.json({
+          approved_plans_count: 0,
+          bootstrap_enabled: false,
+          auto_register_plans: false,
+          error: e.message
+        });
+      }
+    });
+
+    this.app.get("/api/sessions", async (c) => {
+      const sessions = Array.from(TenantManager.activeSessions?.values() || []).map(session => ({
+        session_id: session.sessionId,
+        role: session.role,
+        workspace_root: session.workspaceRoot,
+        active: true,
+        last_activity: new Date().toISOString()
+      }));
+      return c.json({ sessions, count: sessions.length });
+    });
+
+    this.app.get("/api/remediation-proposals", async (c) => {
+      try {
+        const proposalsPath = path.join(repoRoot, ".atlas-gate", "proposal-approvals.jsonl");
+        const proposals = [];
+        if (fs.existsSync(proposalsPath)) {
+          const content = fs.readFileSync(proposalsPath, 'utf8');
+          const lines = content.split('\n').filter(l => l.trim());
+          lines.forEach(line => {
+            try {
+              proposals.push(JSON.parse(line));
+            } catch (e) {}
+          });
+        }
+        return c.json({ proposals, count: proposals.length });
+      } catch (e) {
+        return c.json({ proposals: [], count: 0, error: e.message });
+      }
+    });
+
+    this.app.get("/api/audit-full", async (c) => {
+      try {
+        const events = [];
+        if (fs.existsSync(auditLogPath)) {
+          const content = fs.readFileSync(auditLogPath, 'utf8');
+          const lines = content.split('\n').filter(l => l.trim());
+          lines.forEach(line => {
+            try {
+              events.push(JSON.parse(line));
+            } catch (e) {}
+          });
+        }
+        return c.json({ events, count: events.length });
+      } catch (e) {
+        return c.json({ events: [], count: 0, error: e.message });
+      }
+    });
+
     this.app.onError((err, c) => {
       console.error("[APP_ERROR]", err);
       if (err instanceof SystemError) {

@@ -1,295 +1,309 @@
 # ATLAS-GATE MCP Documentation Index
 
-**Complete guide to all documentation organized by audience and purpose.**
+Complete reference for the zero-trust Model Context Protocol security gateway.
 
----
+## Quick Links
 
-## 🎯 Quick Navigation by Role
+| Need | Document |
+|------|----------|
+| **First time?** | [00-GETTING_STARTED.md](./00-GETTING_STARTED.md) |
+| **Create a plan** | [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md) |
+| **Execute a plan** | [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md) |
+| **AI prompts & templates** | [03-TEMPLATE_REFERENCE.md](./03-TEMPLATE_REFERENCE.md) |
+| **Security & governance** | [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) |
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| **Original README** | [README.md](../README.md) |
 
-### 👶 Complete Novice (Never used a computer)
+## Documentation Structure
 
-Start here if you have no computer experience:
+### Core Documentation (Read in Order)
 
-1. [Absolute Beginner's Guide](./ABSOLUTE_BEGINNER_GUIDE.md) — Installation from zero
-2. [Glossary](./GLOSSARY.md) — Define unfamiliar terms
-3. [Troubleshooting](./TROUBLESHOOTING.md) — Common problems and fixes
-4. [Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Security best practices
+1. **[00-GETTING_STARTED.md](./00-GETTING_STARTED.md)** — Start here
+   - What ATLAS-GATE is
+   - 5-minute setup
+   - Core concepts (Plans Are Laws, Two Agents, Five Gates)
+   - First plan walkthrough
 
-### 👨‍💻 Developer / Engineer
+2. **[01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md)** — Design plans
+   - Complete plan structure (10 sections)
+   - Linting 7-stage validation
+   - Common mistakes
+   - Real-world examples
 
-For technical implementation and usage:
+3. **[02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)** — Run plans
+   - Execution sequence (5 steps)
+   - Five-gate write pipeline (detailed)
+   - Rollback & recovery
+   - Audit trail structure
 
-1. [Architecture Overview](./ARCHITECTURE.md) — System design and concepts
-2. [MCP Usage Guide](./MCP_USAGE_GUIDE.md) — How to use ATLAS-GATE MCP
-3. [Security & Governance](./SECURITY_AND_GOVERNANCE.md) — Technical security model
-4. [ADRs](../adr/) — Design decisions and rationale
-5. [API Reference](./reference/) — Tool definitions and schemas
+4. **[03-TEMPLATE_REFERENCE.md](./03-TEMPLATE_REFERENCE.md)** — Prompts for AI
+   - ANTIGRAVITY planning prompt (copy-paste ready)
+   - WINDSURF execution prompt (copy-paste ready)
+   - Intent artifact template
+   - Language rules & examples
 
-### 🔧 Operator / DevOps Engineer
+5. **[04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)** — Compliance & ops
+   - Security model & threat mitigation
+   - Cryptography (cosign ECDSA P-256)
+   - Hard block policy (absolute violations)
+   - Recovery procedures
+   - Compliance (SOC 2, HIPAA, PCI-DSS, NIST)
 
-For deployment and operations:
+### Reference Documentation
 
-1. [Bootstrap Secret Guide](./BOOTSTRAP_SECRET_GUIDE.md) — Initial setup
-2. [Getting Started Guide](./guides/) — Deployment procedures
-3. [Troubleshooting](./TROUBLESHOOTING.md) — Common operational issues
-4. [Audit Log Analysis](./guides/AUDIT_LOG_ANALYSIS.md) — Monitoring and verification
-5. [Maturity Model](./MATURITY_MODEL.md) — Operational capabilities roadmap
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — System design
+  - Lifecycle & request pipeline
+  - Five execution gates
+  - Subsystems
+  - Failure semantics
 
-### 🏢 Executive / Decision-Maker
+- **[README.md](../README.md)** — Original overview
+  - Project vision
+  - Core security philosophy
+  - Feature list
 
-For business and strategy:
+## Key Concepts
 
-1. [Executive Overview](../EXECUTIVE_OVERVIEW.md) — 1-page strategic summary
-2. [Maturity Model & Roadmap](./MATURITY_MODEL.md) — Capabilities and timeline
-3. [SECURITY.md](../SECURITY.md) — Risk posture and compliance
+### Plans Are Laws
+Every code change must be pre-approved via a cryptographically signed JSON plan. Plans cannot be modified without invalidating the signature.
 
-### 🤝 Contributor
+**Documents**: [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md), [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)
 
-For code and documentation contributions:
+### Two-Agent Architecture
+- **ANTIGRAVITY** (Planning): Designs plans, validates with linting, signs with cosign
+- **WINDSURF** (Execution): Executes signed plans, passes 5-gate pipeline, creates audit trail
 
-1. [Contributing Guide](../CONTRIBUTING.md) — Workflow and standards
-2. [ADRs](../adr/) — Technical decision framework
-3. [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Doc standards and versioning
-4. [Diagram Guide](./diagrams/DIAGRAM_GUIDE.md) — Creating architecture diagrams
+**Documents**: [00-GETTING_STARTED.md](./00-GETTING_STARTED.md), [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md), [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)
 
----
+### Five-Gate Pipeline
+Every file write must pass:
+1. **Schema Validation** (Zod) — Correct field types
+2. **Plan Authority** (cosign verify) — Signature valid
+3. **Intent Artifact** (must exist) — `.intent.md` file present
+4. **Stub Detection** (AST + regex) — No TODO/mock/fake/empty code
+5. **Audit Commit** (append-only) — Immutable log entry
 
-## 📚 Documentation by Topic
+**Documents**: [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)
 
-### Getting Started
+### Fail-Closed Design
+Any gate failure → entire operation rejected → no partial writes → audit entry created → session marked failed
 
-- [Absolute Beginner's Guide](./ABSOLUTE_BEGINNER_GUIDE.md) — No experience needed
-- [Bootstrap Secret Guide](./BOOTSTRAP_SECRET_SETUP_QUICK_START.md) — Initial setup
-- [Quick Reference Card](./MCP_QUICK_REFERENCE.md) — 1-page cheat sheet
+**Documents**: [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)
 
-### Architecture & Design
+### Immutable Audit Trail
+All operations logged in `audit-log.jsonl` with:
+- Monotonic sequence number
+- Session ID
+- Cryptographic hash chain (detects tampering)
+- Plan signature
+- File path and timestamp
 
-- [Architecture Overview](./ARCHITECTURE.md) — System design
-- [ADRs (Architecture Decision Records)](../adr/) — Why things are designed a certain way
-  - [ADR-001: Dual-Role Governance](../adr/001-dual-role-governance.md)
-  - [ADR-002: Plan-Based Authorization](../adr/002-plan-based-authorization.md)
-  - [ADR-003: Cryptographic Audit Logging](../adr/003-cryptographic-audit-logging.md)
-  - [ADR-004: Zero-Trust Execution](../adr/004-zero-trust-execution.md)
-  - [ADR-005: Role-Based Access Control](../adr/005-role-based-access-control.md)
-  - [ADR-006: Content Integrity Verification](../adr/006-content-integrity-verification.md)
+**Documents**: [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md), [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)
 
-### Usage & Integration
+## Workflows
 
-- [Complete Usage Guide](./MCP_USAGE_GUIDE.md) — How to use ATLAS-GATE MCP
-- [MCP Quick Reference](./MCP_QUICK_REFERENCE.md) — Commands and options
-- [Usage Examples](./examples/) — Real-world scenarios
-- [Prompt Templates](./PROMPT_TEMPLATES.md) — Template prompts for common tasks
+### Workflow: Create & Execute a Feature
 
-### Security & Governance
+1. **Operator** specifies: "Add JWT authentication"
 
-- [Security & Governance](./SECURITY_AND_GOVERNANCE.md) — Technical security model
-- [Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md) — Secret management, secure defaults
-- [Security Policy](../SECURITY.md) — Vulnerability reporting, incident response
+2. **ANTIGRAVITY**:
+   - Read docs → [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md)
+   - Analyze codebase
+   - Design phases
+   - Output JSON plan
+   - Run lint_plan()
 
-### Operations & Monitoring
+3. **Plan** signed with cosign, saved to `docs/plans/<SIGNATURE>.json`
 
-- [Audit Log Analysis](./guides/AUDIT_LOG_ANALYSIS.md) — Monitoring and verification
-- [Troubleshooting](./TROUBLESHOOTING.md) — Common issues and solutions
-- [Bootstrap Governance System Plan](./BOOTSTRAP_GOVERNANCE_SYSTEM_PLAN.md) — Detailed governance setup
+4. **WINDSURF**:
+   - Read docs → [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)
+   - Call begin_session()
+   - Create intent artifacts
+   - Call write_file() for each file (5 gates)
+   - Run verification commands
+   - Call commit_phase()
 
-### Enterprise & Roadmap
+5. **Audit Trail** immutable in `audit-log.jsonl`
 
-- [Executive Overview](../EXECUTIVE_OVERVIEW.md) — Strategic 1-page summary
-- [Maturity Model & Roadmap](./MATURITY_MODEL.md) — Capabilities, levels, timeline
-- [Documentation Changelog](../DOCUMENTATION_CHANGELOG.md) — Doc updates per release
+### Workflow: Fix Issues During Execution
 
-### Documentation & Contribution
+1. Phase fails verification
+2. Rollback executes automatically
+3. Operator reviews audit log for failure reason
+4. Operator either:
+   - Fixes code issue and resubmits, or
+   - Revises plan and resubmits for linting
 
-- [Contributing Guide](../CONTRIBUTING.md) — How to contribute
-- [Documentation Lifecycle](./DOCUMENTATION_LIFECYCLE.md) — Doc standards and versioning
-- [Diagram Management Guide](./diagrams/DIAGRAM_GUIDE.md) — Creating/editing diagrams
+## Common Questions
 
-### Reference & Glossary
+**Q: How do I get started?**
+A: Read [00-GETTING_STARTED.md](./00-GETTING_STARTED.md) first (5 minutes).
 
-- [Glossary](./GLOSSARY.md) — Plain-English term definitions
-- [API Reference](./reference/) — Tool definitions and schemas
-- [Status Taxonomy](../adr/STATUS_TAXONOMY.md) — ADR status definitions
+**Q: How do I create a valid plan?**
+A: Read [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md) (30 minutes).
 
----
+**Q: How do I execute a plan?**
+A: Read [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md) (30 minutes).
 
-## 🗂️ Directory Structure
+**Q: What prompts should I use for AI agents?**
+A: Read [03-TEMPLATE_REFERENCE.md](./03-TEMPLATE_REFERENCE.md) (copy-paste ready).
 
+**Q: Why was my write rejected?**
+A: Check which of the 5 gates failed. See [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md) for solutions.
+
+**Q: What code patterns are hard-blocked?**
+A: See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Hard Block Policy.
+
+**Q: How do I verify my plan?**
+A: Read linting stages in [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md#linting-7-stage-validation).
+
+**Q: What's the security model?**
+A: Read [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Security Model section.
+
+**Q: How do I implement recovery?**
+A: Read [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Recovery Procedures section.
+
+## File Locations
+
+| Path | Purpose |
+|------|---------|
+| `docs/plans/` | Signed, immutable plans |
+| `audit-log.jsonl` | Append-only audit trail |
+| `.atlas-gate/.cosign-keys/` | Cosign key pair |
+| `docs/00-GETTING_STARTED.md` | Quick start guide |
+| `docs/01-PLANNING_GUIDE.md` | Plan design guide |
+| `docs/02-EXECUTION_GUIDE.md` | Execution guide |
+| `docs/03-TEMPLATE_REFERENCE.md` | AI prompts & templates |
+| `docs/04-SECURITY_GOVERNANCE.md` | Security & compliance |
+| `src/interfaces/server.js` | MCP server entry point |
+| `src/application/plan-linter.js` | 7-stage plan validation |
+| `src/application/stub-detector.js` | Stub/pattern detection |
+| `src/infrastructure/path-resolver.js` | Path confinement |
+
+## Key Terminology
+
+| Term | Definition |
+|------|-----------|
+| **Plan** | JSON document specifying what WINDSURF can do |
+| **Phase** | One logical unit within a plan (e.g., "Create auth module") |
+| **Signature** | ECDSA P-256 cosign hash (43 chars, proves plan authenticity) |
+| **Intent Artifact** | `.intent.md` file justifying a file write |
+| **Gate** | One validation step in the write pipeline |
+| **Path Allowlist** | List of files that can be modified |
+| **Stub** | Incomplete code (TODO, mock, fake, empty function) |
+| **Hard Block** | Code pattern that absolutely cannot be written |
+| **Audit Entry** | Immutable log entry for one operation |
+| **Hash Chain** | Linked hash of audit entries (detects tampering) |
+| **Rollback** | Automatic reversal of changes on failure |
+| **ANTIGRAVITY** | Planning agent (generates plans) |
+| **WINDSURF** | Execution agent (runs plans) |
+
+## Checklist: Before First Use
+
+- [ ] Read [00-GETTING_STARTED.md](./00-GETTING_STARTED.md)
+- [ ] Run `npm install`
+- [ ] Generate cosign key pair
+- [ ] Start `npm run start:windsurf`
+- [ ] Create first plan JSON
+- [ ] Run `lint_plan()` on the plan
+- [ ] Save plan to `docs/plans/<SIGNATURE>.json`
+- [ ] Create intent artifacts
+- [ ] Run first `write_file()`
+- [ ] Verify audit log entry created
+- [ ] Read [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) for operations
+
+## Checklist: Before Production
+
+- [ ] Cosign keys stored securely
+- [ ] Public key distributed to execution environment
+- [ ] Audit log backed up regularly
+- [ ] Recovery procedure tested
+- [ ] SIEM integration configured (if required)
+- [ ] Hard block patterns understood by team
+- [ ] Plan validation process documented
+- [ ] Operator training completed
+- [ ] Kill switch procedure tested (once)
+- [ ] Compliance checklist passed
+
+## Integration with Other Tools
+
+### Git Integration
+Plans include git commit information:
 ```
-ATLAS-GATE-MCP-server/
-├── docs/
-│   ├── v1/                             ← Production version (v1.x)
-│   ├── v2/                             ← Development version (v2.x)
-│   ├── latest -> v1/                   ← Symlink to current production
-│   │
-│   ├── guides/                         ← Step-by-step walkthroughs
-│   │   ├── ABSOLUTE_BEGINNER_GUIDE.md
-│   │   ├── AUDIT_LOG_ANALYSIS.md
-│   │   └── ...
-│   │
-│   ├── diagrams/                       ← Architecture diagrams
-│   │   ├── source/                     ← Editable source (Mermaid/PlantUML)
-│   │   ├── rendered/                   ← Generated outputs (SVG/PNG)
-│   │   └── DIAGRAM_GUIDE.md
-│   │
-│   ├── examples/                       ← Usage examples and code samples
-│   ├── reference/                      ← API reference and schemas
-│   ├── audit/                          ← Audit log examples and analysis tools
-│   │
-│   ├── ABSOLUTE_BEGINNER_GUIDE.md     ← Start here (no experience needed)
-│   ├── ARCHITECTURE.md                 ← System design overview
-│   ├── DOCUMENTATION_LIFECYCLE.md      ← How docs are maintained
-│   ├── GLOSSARY.md                     ← Term definitions (30+ terms)
-│   ├── MATURITY_MODEL.md               ← Capabilities and roadmap
-│   ├── MCP_QUICK_REFERENCE.md          ← 1-page cheat sheet
-│   ├── MCP_USAGE_GUIDE.md              ← Complete usage guide
-│   ├── SAFETY_AND_DATA_HANDLING.md     ← Secret management
-│   ├── SECURITY_AND_GOVERNANCE.md      ← Technical security details
-│   ├── TROUBLESHOOTING.md              ← Common problems and fixes
-│   └── README.md                       ← Docs overview
-│
-├── adr/                                ← Architecture Decision Records
-│   ├── README.md                       ← ADR index
-│   ├── TEMPLATE.md                     ← ADR template
-│   ├── STATUS_TAXONOMY.md              ← Status definitions
-│   ├── 001-dual-role-governance.md
-│   ├── 002-plan-based-authorization.md
-│   └── ...
-│
-├── .github/
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.md               ← Bug report template
-│       └── feature_request.md          ← Feature request template
-│
-├── CONTRIBUTING.md                     ← Contribution guidelines
-├── DOCUMENTATION_CHANGELOG.md          ← Doc updates per release
-├── EXECUTIVE_OVERVIEW.md               ← 1-page strategic summary
-├── README.md                           ← Main overview
-├── SECURITY.md                         ← Security policy & reporting
-└── ...
+commit_phase() → Creates git commit with plan signature
 ```
 
----
+### SIEM Integration
+Audit log ready for Splunk/Datadog:
+```
+cat audit-log.jsonl | [your-siem-agent]
+```
 
-## 🔗 Cross-References
+### Policy as Code
+Plans enforce policy through:
+- Path allowlist (which files)
+- Verification gates (what to test)
+- Constraints (how to implement)
+- Forbidden actions (what never)
 
-### Learning Path: Novice to Expert
+## Advanced Topics
 
-**Week 1: Foundation**
+### Custom Spectral Rules
+Plans use Spectral for linting. See `src/application/spectral-ruleset.js` for custom rules.
 
-1. [Absolute Beginner's Guide](./ABSOLUTE_BEGINNER_GUIDE.md)
-2. [Glossary](./GLOSSARY.md) (reference as needed)
-3. [Quick Reference](./MCP_QUICK_REFERENCE.md)
+### Hash Chain Verification
+See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Hash Chain section.
 
-**Week 2-3: Core Concepts**
+### Key Rotation
+See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Cryptography section.
 
-1. [Architecture Overview](./ARCHITECTURE.md)
-2. [Security & Governance](./SECURITY_AND_GOVERNANCE.md)
-3. [MCP Usage Guide](./MCP_USAGE_GUIDE.md)
+### SIEM Configuration
+See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Compliance section.
 
-**Week 4+: Deep Dives**
+## Support & Resources
 
-1. [ADRs](../adr/) (understand design decisions)
-2. [Audit Log Analysis](./guides/AUDIT_LOG_ANALYSIS.md) (monitoring)
-3. [Contributing Guide](../CONTRIBUTING.md) (if contributing)
+| Resource | Location |
+|----------|----------|
+| Quick Start | [00-GETTING_STARTED.md](./00-GETTING_STARTED.md) |
+| Planning Guide | [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md) |
+| Execution Guide | [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md) |
+| Templates | [03-TEMPLATE_REFERENCE.md](./03-TEMPLATE_REFERENCE.md) |
+| Security | [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) |
+| Architecture | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| Examples | `/examples/` directory |
+| Issues | GitHub repository |
 
-### Common Questions Answered
+## Document Versions
 
-**Q: How do I get started?**  
-A: See [Absolute Beginner's Guide](./ABSOLUTE_BEGINNER_GUIDE.md)
+| Document | Version | Date | Status |
+|----------|---------|------|--------|
+| 00-GETTING_STARTED.md | 2.0 | 2026-03-07 | Final |
+| 01-PLANNING_GUIDE.md | 2.0 | 2026-03-07 | Final |
+| 02-EXECUTION_GUIDE.md | 2.0 | 2026-03-07 | Final |
+| 03-TEMPLATE_REFERENCE.md | 2.0 | 2026-03-07 | Final |
+| 04-SECURITY_GOVERNANCE.md | 2.0 | 2026-03-07 | Final |
+| ARCHITECTURE.md | 1.0 | 2026-03-07 | Current |
 
-**Q: What does ATLAS-GATE MCP do?**  
-A: See [Executive Overview](../EXECUTIVE_OVERVIEW.md) (quick) or [Architecture Overview](./ARCHITECTURE.md) (detailed)
+## Feedback & Contributions
 
-**Q: How do I use it?**  
-A: See [MCP Usage Guide](./MCP_USAGE_GUIDE.md) and [Quick Reference](./MCP_QUICK_REFERENCE.md)
+Found an issue in the docs? Missing something important?
 
-**Q: How is it secured?**  
-A: See [Security & Governance](./SECURITY_AND_GOVERNANCE.md) and [SECURITY.md](../SECURITY.md)
+1. Check if your question is answered in one of the main docs
+2. Review the examples in `/examples/`
+3. Check GitHub issues
+4. Submit a pull request with your improvement
 
-**Q: What are my responsibilities?**  
-A: See [Safety & Data Handling](./SAFETY_AND_DATA_HANDLING.md)
+## Legal
 
-**Q: Something's broken. Help!**  
-A: See [Troubleshooting](./TROUBLESHOOTING.md)
-
-**Q: How do I contribute?**  
-A: See [Contributing Guide](../CONTRIBUTING.md)
-
-**Q: Where is the architecture diagram?**  
-A: See [Architecture Overview](./ARCHITECTURE.md) and [diagrams/](./diagrams/)
-
-**Q: What's the roadmap?**  
-A: See [Maturity Model & Roadmap](./MATURITY_MODEL.md)
-
----
-
-## 📊 Documentation Statistics
-
-| Category | Count | Status |
-|----------|-------|--------|
-| **Core Guides** | 10+ | ✅ Complete |
-| **API References** | 5+ | ✅ Complete |
-| **Examples** | 15+ | ✅ Complete |
-| **ADRs** | 6+ | ✅ Complete |
-| **Diagrams** | 3+ | ✅ Complete |
-| **Troubleshooting Topics** | 20+ | ✅ Complete |
-| **Glossary Terms** | 30+ | ✅ Complete |
+ATLAS-GATE MCP is open source under the ISC license. See LICENSE file.
 
 ---
 
-## 📝 Documentation Maintenance
+**Last Updated**: 2026-03-07
+**Authority**: ATLAS-GATE Governance
+**Maintained By**: Dylan Marriner
 
-**Responsibility**: See [DOCUMENTATION_LIFECYCLE.md](./DOCUMENTATION_LIFECYCLE.md)
+## Navigation
 
-**Update Frequency**:
-
-- Core guides: Per release
-- API reference: Per release
-- Troubleshooting: As needed
-- Architecture diagrams: Per major change
-- ADRs: Per new decision
-
-**Changelog**: [DOCUMENTATION_CHANGELOG.md](../DOCUMENTATION_CHANGELOG.md)
-
-**Version Control**: Docs versioned with code (v1, v2, etc.)
-
----
-
-## 🔍 Search & Filtering
-
-### By Audience
-
-- **Beginners**: [ABSOLUTE_BEGINNER_GUIDE.md](./ABSOLUTE_BEGINNER_GUIDE.md), [GLOSSARY.md](./GLOSSARY.md)
-- **Developers**: [ARCHITECTURE.md](./ARCHITECTURE.md), [ADRs](../adr/)
-- **Operators**: [Guides](./guides/), [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
-- **Executives**: [EXECUTIVE_OVERVIEW.md](../EXECUTIVE_OVERVIEW.md), [MATURITY_MODEL.md](./MATURITY_MODEL.md)
-- **Contributors**: [CONTRIBUTING.md](../CONTRIBUTING.md), [DOCUMENTATION_LIFECYCLE.md](./DOCUMENTATION_LIFECYCLE.md)
-
-### By Topic
-
-- **Security**: [SECURITY_AND_GOVERNANCE.md](./SECURITY_AND_GOVERNANCE.md), [SECURITY.md](../SECURITY.md)
-- **Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md), [ADRs](../adr/), [diagrams/](./diagrams/)
-- **Operations**: [guides/](./guides/), [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
-- **Contribution**: [CONTRIBUTING.md](../CONTRIBUTING.md), [DOCUMENTATION_LIFECYCLE.md](./DOCUMENTATION_LIFECYCLE.md)
-
-### By Format
-
-- **Text Guides**: [guides/](./guides/), [GLOSSARY.md](./GLOSSARY.md)
-- **Diagrams**: [diagrams/](./diagrams/)
-- **Code Examples**: [examples/](./examples/)
-- **References**: [reference/](./reference/)
-
----
-
-## 🆘 Still Can't Find What You Need?
-
-1. **Check Glossary**: [GLOSSARY.md](./GLOSSARY.md)
-2. **Search Issues**: [GitHub Issues](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/issues)
-3. **Ask in Discussions**: [GitHub Discussions](https://github.com/dylanmarriner/ATLAS-GATE-MCP-server/discussions)
-4. **Report a Bug**: [Bug Report Template](./.github/ISSUE_TEMPLATE/bug_report.md)
-
----
-
-**Document Version**: 1.0.0  
-**Last Updated**: 2026-01-21  
-**Status**: Complete
+- **← Previous**: [README.md](../README.md) (project overview)
+- **Next →**: [00-GETTING_STARTED.md](./00-GETTING_STARTED.md) (start here)

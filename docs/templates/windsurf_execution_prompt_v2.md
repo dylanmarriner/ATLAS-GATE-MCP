@@ -50,9 +50,10 @@ You will receive EXACTLY these two values:
 
 ## MANDATORY INIT SEQUENCE
 
-1. **Initialize Session**: Call `begin_session({ workspace_root: "/path/to/project" })` (MANDATORY).
-2. **Read Plan**: Use `read_file({ path: "docs/plans/<SIGNATURE>.md" })`.
-3. **Verify Plan Integrity**:
+1. **Verify Server**: Check if the ATLAS-GATE MCP server is running. If not, start it using `bin/start-server.sh` (in the workspace root).
+2. **Initialize Session**: Call `begin_session({ workspace_root: "/path/to/project" })` (MANDATORY).
+3. **Read Plan**: Use `read_file({ path: "docs/plans/<SIGNATURE>.md" })`.
+4. **Verify Plan Integrity**:
    - Confirm all 7 required sections are present.
    - The MCP server will automatically load and verify the Sigstore bundle (`<signature>.bundle.json`) mathematically against the content on every `write_file` call.
 

@@ -1,0 +1,125 @@
+{
+  "atlas_gate_plan_signature": "",
+  "role": "ANTIGRAVITY",
+  "status": "APPROVED",
+  "plan_metadata": {
+    "plan_id": "YOUR_PLAN_ID_HERE",
+    "version": "1.0.0",
+    "author": "your-email@company.com",
+    "timestamp": "2026-03-07T12:00:00Z",
+    "governance": "ATLAS-GATE-v2"
+  },
+  "scope_and_constraints": {
+    "objective": "Plain English description of what this plan accomplishes",
+    "affected_files": [
+      "src/file1.js",
+      "src/file2.js",
+      "tests/test.js"
+    ],
+    "out_of_scope": [
+      "What this plan explicitly does NOT include"
+    ],
+    "constraints": [
+      "MUST follow these rules",
+      "MUST NOT violate these rules",
+      "MUST use this technology",
+      "MUST NOT expose secrets"
+    ]
+  },
+  "phase_definitions": [
+    {
+      "phase_id": "PHASE_001_CREATE_MODULE",
+      "objective": "Create core module with main functionality",
+      "allowed_operations": [
+        "write_file",
+        "read_file"
+      ],
+      "forbidden_operations": [
+        "delete_file",
+        "execute_shell"
+      ],
+      "required_intent_artifacts": [
+        "src/file1.js.intent.md",
+        "src/file2.js.intent.md"
+      ],
+      "verification_commands": [
+        "npm run lint src/",
+        "npm test -- tests/test.js"
+      ],
+      "expected_outcomes": [
+        "Module exports required functions",
+        "All tests pass",
+        "No linting errors"
+      ],
+      "failure_stop_conditions": [
+        "Tests fail or timeout",
+        "Linting errors found",
+        "Code contains TODO or stub"
+      ]
+    },
+    {
+      "phase_id": "PHASE_002_ADD_TESTS",
+      "objective": "Write comprehensive test suite",
+      "allowed_operations": [
+        "write_file",
+        "read_file"
+      ],
+      "forbidden_operations": [
+        "delete_file",
+        "execute_shell"
+      ],
+      "required_intent_artifacts": [
+        "tests/test.js.intent.md"
+      ],
+      "verification_commands": [
+        "npm test -- tests/test.js --coverage"
+      ],
+      "expected_outcomes": [
+        "All tests pass",
+        "Coverage >= 95%"
+      ],
+      "failure_stop_conditions": [
+        "Test coverage < 95%",
+        "Any test fails"
+      ]
+    }
+  ],
+  "path_allowlist": [
+    "src/file1.js",
+    "src/file2.js",
+    "tests/test.js"
+  ],
+  "verification_gates": [
+    "GATE_SYNTAX: All files parse without errors",
+    "GATE_LINT: ESLint passes with 0 warnings",
+    "GATE_TEST: All tests pass 100%",
+    "GATE_COVERAGE: Coverage >= 95%"
+  ],
+  "forbidden_actions": [
+    "Modifying files outside path_allowlist",
+    "Writing code with TODO or FIXME",
+    "Using @ts-ignore or @ts-nocheck",
+    "Returning null or undefined",
+    "Creating empty functions or catch blocks"
+  ],
+  "rollback_failure_policy": {
+    "automatic_rollback_triggers": [
+      "Any verification command fails",
+      "Tests fail or timeout",
+      "Code quality metrics fail",
+      "Stub code detected"
+    ],
+    "rollback_procedure": [
+      "Delete: src/file1.js",
+      "Delete: src/file2.js",
+      "Delete: tests/test.js",
+      "Restore: git checkout HEAD -- src/ tests/"
+    ],
+    "recovery_steps": [
+      "Review audit-log.jsonl for failure details",
+      "Fix the failing code or tests",
+      "Ensure no TODO or stub code",
+      "Re-run linting locally before resubmitting"
+    ]
+  }
+}

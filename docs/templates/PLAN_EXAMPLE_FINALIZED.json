@@ -1,0 +1,120 @@
+{
+  "atlas_gate_plan_signature": "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
+  "role": "ANTIGRAVITY",
+  "status": "APPROVED",
+  "plan_metadata": {
+    "plan_id": "PLAN_AUTH_JWT_INTEGRATION_V1",
+    "version": "1.0.0",
+    "author": "ANTIGRAVITY",
+    "timestamp": "2026-03-07T15:30:00Z",
+    "governance": "ATLAS-GATE-v2"
+  },
+  "scope_and_constraints": {
+    "objective": "Implement JWT authentication middleware in the Express API to secure protected endpoints and validate user tokens",
+    "affected_files": [
+      "src/middleware/auth.js: Create new JWT authentication middleware",
+      "src/routes/protected.js: Add authentication to protected routes",
+      "tests/middleware/auth.test.js: Add comprehensive JWT middleware tests",
+      "docs/API_AUTH.md: Document JWT authentication implementation"
+    ],
+    "out_of_scope": [
+      "Database schema changes",
+      "User registration endpoints",
+      "Password hashing implementation",
+      "Third-party OAuth integration"
+    ],
+    "constraints": [
+      "MUST use jsonwebtoken library (already in package.json)",
+      "MUST NOT expose private signing keys in code",
+      "MUST validate token expiration",
+      "MUST handle all error cases (missing token, invalid signature, expired token)",
+      "MUST NOT break existing API contracts",
+      "MUST pass all existing tests"
+    ]
+  },
+  "phase_definitions": [
+    {
+      "phase_id": "PHASE_IMPLEMENTATION",
+      "objective": "Implement JWT authentication middleware and apply it to protected routes",
+      "allowed_operations": [
+        "CREATE",
+        "MODIFY"
+      ],
+      "forbidden_operations": [
+        "DELETE"
+      ],
+      "required_intent_artifacts": [
+        "src/middleware/auth.js.intent.md",
+        "src/routes/protected.js.intent.md",
+        "tests/middleware/auth.test.js.intent.md",
+        "docs/API_AUTH.md.intent.md"
+      ],
+      "verification_commands": [
+        "npm run lint src/middleware/ src/routes/",
+        "npm test -- tests/middleware/auth.test.js",
+        "npm test -- --testPathPattern=existing"
+      ],
+      "expected_outcomes": [
+        "Authentication middleware correctly validates JWT tokens",
+        "Protected routes reject requests without valid tokens",
+        "All new tests pass",
+        "All existing tests continue to pass",
+        "Zero linting errors"
+      ],
+      "failure_stop_conditions": [
+        "Any test fails",
+        "Linting errors detected",
+        "Code contains TODO, FIXME, or stub implementations",
+        "File modified outside path_allowlist",
+        "Token validation logic missing or incomplete"
+      ]
+    }
+  ],
+  "path_allowlist": [
+    "src/middleware/",
+    "src/routes/protected.js",
+    "tests/middleware/",
+    "docs/API_AUTH.md"
+  ],
+  "verification_gates": [
+    "GATE_SYNTAX: All JavaScript files parse without syntax errors",
+    "GATE_LINT: ESLint passes with zero warnings on auth middleware",
+    "GATE_AUTH_TEST: JWT middleware tests pass 100%",
+    "GATE_REGRESSION: All existing tests pass 100%",
+    "GATE_COVERAGE: Auth module has minimum 90% code coverage"
+  ],
+  "forbidden_actions": [
+    "MUST NOT modify files outside path_allowlist",
+    "MUST NOT delete existing files",
+    "MUST NOT write stub code (TODO, FIXME, mock implementations)",
+    "MUST NOT skip verification commands",
+    "MUST NOT hardcode secrets or private keys",
+    "MUST NOT use insecure token validation",
+    "MUST NOT modify database schema or migrations"
+  ],
+  "rollback_failure_policy": {
+    "automatic_rollback_triggers": [
+      "Verification gate fails",
+      "File written outside allowlist",
+      "Syntax error in code",
+      "Test failure",
+      "Linting errors found",
+      "Code coverage below threshold"
+    ],
+    "rollback_procedure": [
+      "git checkout HEAD -- src/middleware/ src/routes/protected.js tests/middleware/ docs/API_AUTH.md",
+      "Delete any newly created files in src/middleware/ or tests/middleware/",
+      "Verify workspace state: git status should show clean working tree",
+      "Run npm test to confirm workspace is stable"
+    ],
+    "recovery_steps": [
+      "Review audit-log.jsonl to identify which step failed",
+      "Identify the root cause of failure",
+      "Fix the issue in the code or plan",
+      "Ensure no TODO or stub code remains",
+      "Re-run linting and tests locally",
+      "Modify plan if needed and resubmit to ANTIGRAVITY",
+      "ANTIGRAVITY creates new plan, WINDSURF executes fresh"
+    ]
+  }
+}

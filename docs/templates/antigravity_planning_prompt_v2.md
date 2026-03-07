@@ -36,12 +36,13 @@ Obtain ALL of these before proceeding:
 
 ## PRE-PLANNING ANALYSIS
 
-1. **Initialize Session**: Call `begin_session({ workspace_root: "/path/to/project" })` (MANDATORY).
-2. **Read target files** from workspace (use `read_file` tool).
-3. **Understand current code** - what exists now.
-4. **Identify all changes** - what will be modified/created.
-5. **Design the solution** - exact implementation details.
-6. **Plan rollback** - how to revert on failure.
+1. **Verify Server**: Check if the ATLAS-GATE MCP server is running. If not, start it using `bin/start-server.sh` (in the workspace root).
+2. **Initialize Session**: Call `begin_session({ workspace_root: "/path/to/project" })` (MANDATORY).
+3. **Read target files** from workspace (use `read_file` tool).
+4. **Understand current code** - what exists now.
+5. **Identify all changes** - what will be modified/created.
+6. **Design the solution** - exact implementation details.
+7. **Plan rollback** - how to revert on failure.
 
 ---
 

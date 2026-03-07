@@ -5,6 +5,7 @@ This guide explains how the WINDSURF agent executes pre-approved ATLAS-GATE plan
 ## What WINDSURF Does
 
 WINDSURF is the **execution agent** that:
+
 1. Receives a signed plan from ANTIGRAVITY
 2. Verifies the plan's cryptographic signature
 3. Extracts constraints and phase definitions
@@ -15,12 +16,14 @@ WINDSURF is the **execution agent** that:
 ## Before Execution
 
 ### Prerequisites
+
 - ANTIGRAVITY has linted and signed a plan
 - Plan file exists at `docs/plans/<SIGNATURE>.json`
 - Signature is Base64-encoded (43 characters)
 - All intent artifacts are prepared
 
 ### Information You Need
+
 1. **Plan Signature**: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 2. **Workspace Root**: `/path/to/project`
 3. **Public Key Path**: `.atlas-gate/.cosign-keys/public.pem`
@@ -30,9 +33,11 @@ WINDSURF is the **execution agent** that:
 Every `write_file` request passes through five sequential gates. If *any* gate fails, the entire operation is rejected atomically.
 
 ### Gate 1: Schema Validation (Zod)
+
 **Purpose**: Ensure the request has required fields with correct types
 
 **Checks**:
+
 - `path`: string, relative to workspace
 - `content`: string, non-empty code
 - `plan`: string, plan signature
@@ -45,6 +50,7 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 **Failure**: Returns 400 Bad Request with field details
 
 **Example Valid Request**:
+
 ```json
 {
   "path": "src/auth/jwt.js",
@@ -59,9 +65,11 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 ```
 
 ### Gate 2: Plan Authority (plan-enforcer.js)
+
 **Purpose**: Verify that the plan signature is valid and authorizes this write
 
 **Checks**:
+
 1. Plan file exists at `docs/plans/<SIGNATURE>.json`
 2. Signature in request matches plan header
 3. Cosign signature verification against public key succeeds
@@ -71,6 +79,7 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 **Failure**: Throws cryptographic mismatch error, operation aborted
 
 **Verification Process**:
+
 ```
 1. Load plan from docs/plans/SIGNATURE.json
 2. Extract atlas_gate_plan_signature from plan header
@@ -82,9 +91,11 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 ```
 
 ### Gate 3: Intent Artifact Validation (intent-validator.js)
+
 **Purpose**: Ensure an accompanying `.intent.md` document exists that justifies this write
 
 **Checks**:
+
 1. File `path + ".intent.md"` exists
 2. Intent file contains required sections (9 sections total)
 3. Intent file references correct plan and phase
@@ -92,6 +103,7 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 5. Intent content matches current context
 
 **Intent Artifact Structure** (Required 9 Sections):
+
 ```markdown
 # Intent Artifact: src/auth/jwt.js
 
@@ -128,68 +140,86 @@ Entry includes: session ID, plan signature, file path, intent hash, timestamp
 **Failure**: Intent file missing or invalid → operation aborted
 
 ### Gate 4: Stub Detection (stub-detector.js)
+
 **Purpose**: Prevent incomplete, test, or unsafe code from being written
 
 **Checks** (in order):
 
 #### Phase 1: Hard Block Patterns (NO EXCEPTIONS)
+
 These constructs ABORT immediately, no override possible:
 
 **Policy Bypass Markers**:
+
 - ❌ "always allow"
 - ❌ "bypass", "BYPASS"
 
 **Simulated Outcome Markers**:
+
 - ❌ "SIMULATE", "DRY_RUN", "dry-run", "dryrun"
 
 **Incomplete Work Markers**:
+
 - ❌ TODO, FIXME, XXX
 
 **Test Doubles in Production**:
+
 - ❌ mock, Mock, fake, Fake, testData, test_data
 - ❌ fakeData, fake_data, dummyData, dummy_data, dummy
 
 #### Phase 2: Critical Violation Patterns (CRITICAL)
+
 These abort unless explicitly overridden in plan constraints:
 
 **Stub Indicators**:
+
 - ❌ stub, STUB, DEMO, placeholder, temporary
 
 **Hardcoded Returns**:
+
 - ❌ `return false`, `return 0`, `return 1`, `=> false`
 
 **Fake Approval**:
+
 - ❌ SYSTEM, APPROVED, approved_by, approvedBy
 
 **Fake Limits**:
+
 - ❌ `if (true)`, `if(true)`, `1=1`, `1==1`
 
 **Linting/Type Bypasses**:
+
 - ❌ @ts-ignore, @ts-nocheck, @ts-expect-error
 - ❌ // eslint-disable
 - ❌ suppress, suppress-next-line
 
 **Test Framework Abuse**:
+
 - ❌ jest.mock, sinon.stub, nock(), vi.mock, vi.stubGlobal
 
 **Non-Real Code**:
+
 - ❌ sample, Sample, test_only, testonly, noop, no-op
 - ❌ hack, HACK, temp, TMP, tmp
 
 #### Phase 3: AST Analysis (JavaScript/TypeScript)
+
 Deep code structure checks:
 
 **Empty Functions**:
+
 ```javascript
 function validate() { }  // ❌ Hard block - empty body
 ```
 
 **Empty Catch Blocks**:
+
 ```javascript
 try { ... } catch (e) { }  // ❌ Hard block - swallows errors
 ```
 
 **Null/Undefined Returns**:
+
 ```javascript
 function getValue() { return null; }        // ❌ Hard block
 function getItem() { return undefined; }    // ❌ Hard block
@@ -198,6 +228,7 @@ function getConfig() { return {}; }         // ❌ Hard block - empty object
 ```
 
 **Valid Returns** (these are OK):
+
 ```javascript
 return true;          // ✓ OK
 return 0;             // ✓ OK (unless hardcoded return in policy context)
@@ -208,9 +239,11 @@ return "";            // ✓ OK in contexts where empty string makes sense
 **Failure**: Any violation throws SystemError with detailed message → operation aborted
 
 ### Gate 5: Audit Commit (audit-system.js)
+
 **Purpose**: Write file to disk and create immutable audit log entry
 
 **Actions**:
+
 1. Write `content` to `path`
 2. Create audit entry with:
    - `session_id`: Cryptographic session ID
@@ -228,6 +261,7 @@ return "";            // ✓ OK in contexts where empty string makes sense
 ## Execution Sequence
 
 ### Step 1: Session Initialization
+
 ```bash
 begin_session({
   workspace_root: "/absolute/path/to/project"
@@ -235,12 +269,14 @@ begin_session({
 ```
 
 **Actions**:
+
 - Generates cryptographic session ID
 - Locks workspace root (cannot be changed)
 - Initializes session state
 - Verifies plans directory exists
 
 **Response**:
+
 ```json
 {
   "session_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -251,6 +287,7 @@ begin_session({
 ```
 
 ### Step 2: Load and Verify Plan
+
 ```bash
 read_file({
   path: "docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json"
@@ -258,20 +295,24 @@ read_file({
 ```
 
 **Actions**:
+
 - Load plan JSON
 - Extract plan metadata
 - Verify plan structure
 - Cache plan details in session
 
 ### Step 3: Execute Phase
+
 For each phase in `phase_definitions`:
 
 #### A. Pre-Phase Validation
+
 - Verify all required intent artifacts exist
 - Check path_allowlist for phase files
 - Validate verification commands are available
 
 #### B. Execute Phase Operations
+
 For each file in phase:
 
 1. **Create Intent Artifact** (if not exists)
@@ -280,6 +321,7 @@ For each file in phase:
    - Must have valid hash
 
 2. **Call write_file**
+
    ```bash
    write_file({
      path: "src/auth/jwt.js",
@@ -299,6 +341,7 @@ For each file in phase:
    - Confirm file path matches request
 
 #### C. Post-Phase Verification
+
 ```bash
 verification_commands: [
   "npm run lint src/auth/",
@@ -312,7 +355,9 @@ verification_commands: [
 - If all pass → PHASE SUCCEEDED → Continue to next phase
 
 ### Step 4: Run All Verification Gates
+
 After all phases complete:
+
 ```bash
 verification_gates: [
   "GATE_SYNTAX: All JS must parse",
@@ -324,7 +369,9 @@ verification_gates: [
 Execute real commands to verify overall success
 
 ### Step 5: Commit Changes
+
 After verification passes:
+
 ```bash
 commit_phase({
   plan_id: "FEATURE_JWT_AUTH_V1",
@@ -343,6 +390,7 @@ commit_phase({
 If *any* step fails, WINDSURF executes rollback:
 
 ### Automatic Rollback Triggers
+
 - Phase verification command fails (non-zero exit)
 - write_file rejected at any gate
 - Intent artifact invalid
@@ -350,6 +398,7 @@ If *any* step fails, WINDSURF executes rollback:
 - Verification gate fails
 
 ### Rollback Actions
+
 Configured in plan's `rollback_failure_policy`:
 
 ```json
@@ -364,12 +413,14 @@ Configured in plan's `rollback_failure_policy`:
 ```
 
 Executed in order:
+
 1. Delete newly created files
 2. Restore from git
 3. Clear working directory changes
 4. Log rollback in audit trail
 
 ### Recovery Steps
+
 ```json
 {
   "recovery_steps": [
@@ -405,6 +456,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 **Properties**:
+
 - `sequence`: Monotonic counter per session
 - `session_id`: Links all entries to session
 - `timestamp`: When operation occurred
@@ -417,6 +469,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 - `hash_chain`: SHA256 linking to previous entry (tamper detection)
 
 **Immutability**: Entries cannot be:
+
 - Deleted
 - Modified
 - Reordered
@@ -425,6 +478,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ## Common Workflow: Complete JWT Feature
 
 ### 1. ANTIGRAVITY Creates Plan
+
 ```
 → lint_plan({ path: "jwt-plan.json" })
 → Returns: signature = "y6RIU0Xr1..."
@@ -432,12 +486,14 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 ### 2. WINDSURF Initializes Session
+
 ```
 → begin_session({ workspace_root: "/project" })
 → Returns: session_id, workspace_root, audit_log_path
 ```
 
 ### 3. WINDSURF Loads Plan
+
 ```
 → read_file({ path: "docs/plans/y6RIU0Xr1.../json" })
 → Verifies plan structure
@@ -445,6 +501,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 ### 4. WINDSURF Executes Phase 1
+
 ```
 → For each file in phase:
   → Create src/auth/jwt.js.intent.md (or verify exists)
@@ -461,11 +518,13 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 ### 5. WINDSURF Executes Phase 2
+
 ```
 → (Same as Phase 1 for test files)
 ```
 
 ### 6. Run All Verification Gates
+
 ```
 → Run: npm run lint
 → Run: npm test
@@ -474,6 +533,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 ### 7. Commit Changes
+
 ```
 → commit_phase(plan_id, phase_id, signature, paths)
 → Git commit created with plan reference
@@ -481,6 +541,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ```
 
 ### 8. Audit Trail Complete
+
 ```
 audit-log.jsonl contains:
 - Entry 1: write_file for src/auth/jwt.js
@@ -494,9 +555,11 @@ audit-log.jsonl contains:
 ## Troubleshooting
 
 ### Gate 1 Fails: Schema Validation
+
 **Error**: `path must be a string`
 
 **Fix**: Ensure all required fields are present with correct types:
+
 ```json
 {
   "path": "src/file.js",
@@ -511,46 +574,56 @@ audit-log.jsonl contains:
 ```
 
 ### Gate 2 Fails: Plan Authority
+
 **Error**: `REFUSE: Signature verification failed`
 
 **Possible causes**:
+
 1. Plan file was modified after signing
 2. Wrong signature provided
 3. Public key doesn't match private key used to sign
 4. Plan not found in `docs/plans/`
 
 **Fix**:
+
 - Verify plan filename matches signature
 - Check public key path is correct
 - Re-lint plan if modified
 
 ### Gate 3 Fails: Intent Artifact
+
 **Error**: `Intent artifact not found: src/file.js.intent.md`
 
 **Fix**:
+
 - Create `.intent.md` file before write_file
 - Must be in same directory as target file
 - Must contain all 9 required sections
 - Must reference correct plan and phase
 
 ### Gate 4 Fails: Stub Detection
+
 **Error**: `HARD_BLOCK_VIOLATION: TODO found at line 42`
 
 **Fix**:
+
 - Remove TODO/FIXME comments
 - Complete stub code
 - Remove mock/fake/dummy variables
 - Re-run write_file
 
 ### Gate 5 Fails: Audit Commit
+
 **Error**: `Audit append failed`
 
 **Possible causes**:
+
 1. Disk full
 2. No write permission on audit-log.jsonl
 3. File descriptor limit
 
 **Fix**:
+
 - Check disk space
 - Check file permissions
 - Review audit log

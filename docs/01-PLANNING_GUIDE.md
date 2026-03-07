@@ -5,6 +5,7 @@ This guide explains how to design and validate execution plans using the ANTIGRA
 ## What Is a Plan?
 
 A **plan** is a cryptographically signed JSON document that:
+
 - Specifies *exactly* what the AI is allowed to do
 - Lists all affected files and constraints
 - Defines implementation phases with verification gates
@@ -16,6 +17,7 @@ A **plan** is a cryptographically signed JSON document that:
 Every ATLAS-GATE plan MUST have these sections in order:
 
 ### 1. Header (Meta + Signature)
+
 ```json
 {
   "atlas_gate_plan_signature": "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
@@ -31,6 +33,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 | `status` | `APPROVED` | Must be exactly this value |
 
 ### 2. Plan Metadata
+
 ```json
 {
   "plan_metadata": {
@@ -52,6 +55,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 | `governance` | `ATLAS-GATE-v2` | Always this value |
 
 ### 3. Scope & Constraints
+
 ```json
 {
   "scope_and_constraints": {
@@ -78,12 +82,14 @@ Every ATLAS-GATE plan MUST have these sections in order:
 ```
 
 **Rules**:
+
 - `objective`: Plain English, no code symbols
 - `affected_files`: Relative paths, no leading `/`
 - `out_of_scope`: List what's explicitly NOT allowed
 - `constraints`: Use **MUST** or **MUST NOT**; no ambiguous language (avoid "may", "should", "optional")
 
 ### 4. Phase Definitions
+
 ```json
 {
   "phase_definitions": [
@@ -138,6 +144,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 ```
 
 **Phase Rules**:
+
 - `phase_id`: UPPERCASE_WITH_UNDERSCORES, must be unique
 - `objective`: What this phase accomplishes (plain English)
 - `allowed_operations`: List exact MCP tools (read_file, write_file, etc.)
@@ -148,6 +155,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 - `failure_stop_conditions`: When to abort the phase
 
 ### 5. Path Allowlist
+
 ```json
 {
   "path_allowlist": [
@@ -159,6 +167,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 ```
 
 **Rules**:
+
 - Relative to workspace root (no leading `/`)
 - No `..` parent directory escapes
 - No variables or `${...}` placeholders
@@ -166,6 +175,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 - Any write to unlisted path is rejected
 
 ### 6. Verification Gates
+
 ```json
 {
   "verification_gates": [
@@ -179,12 +189,14 @@ Every ATLAS-GATE plan MUST have these sections in order:
 ```
 
 **Guidelines**:
+
 - Plain text descriptions of success criteria
 - Executed after all phases complete
 - Should map to real verification commands in phases
 - Help operator understand what "success" looks like
 
 ### 7. Forbidden Actions
+
 ```json
 {
   "forbidden_actions": [
@@ -202,6 +214,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 **These are absolute**. Any detected violation causes immediate abort.
 
 ### 8. Rollback / Failure Policy
+
 ```json
 {
   "rollback_failure_policy": {
@@ -227,6 +240,7 @@ Every ATLAS-GATE plan MUST have these sections in order:
 ```
 
 **Key points**:
+
 - Defines when execution should roll back
 - Lists explicit rollback commands
 - Provides recovery guidance for operator
@@ -236,38 +250,45 @@ Every ATLAS-GATE plan MUST have these sections in order:
 When you call `lint_plan()`, the system runs:
 
 ### Stage 1: JSON Parse & Structure
+
 - Validates JSON syntax
 - Checks all required top-level keys
 - Verifies `status === "APPROVED"`
 - Verifies `role === "ANTIGRAVITY"`
 
 ### Stage 2: Phase Validation
+
 - All required phase fields present
 - `phase_id` format: UPPERCASE_WITH_UNDERSCORES
 - No duplicate phase IDs
 - All phase array fields are actual arrays
 
 ### Stage 3: Path Allowlist Validation
+
 - No absolute paths (no leading `/`)
 - No parent directory escapes (`..`)
 - No unresolved variables
 
 ### Stage 4: Enforceability Check
+
 - No stub markers: TODO, FIXME, XXX, HACK
 - No ambiguous language: may, should, optional, try to
 - All action language must be binary (MUST/MUST NOT)
 
 ### Stage 5: Auditability Check
+
 - Objectives contain no code symbols (`${`, `<...>`, backticks)
 - All objectives are readable plain English
 - No function names in constraint descriptions
 
 ### Stage 6: Spectral Linting
+
 - JSON-aware validation rules
 - Field format verification
 - Structure consistency checks
 
 ### Stage 7: Cosign Signing
+
 - Canonicalizes JSON content
 - Signs with ECDSA P-256 private key
 - Returns URL-safe Base64 signature (43 characters)
@@ -276,6 +297,7 @@ When you call `lint_plan()`, the system runs:
 ## Creating a Plan: Step-by-Step
 
 ### Step 1: Understand the Objective
+
 ```
 Goal: Add JWT authentication to API
 Scope: Core authentication module + tests
@@ -283,13 +305,16 @@ Timeline: 2 phases (implementation + testing)
 ```
 
 ### Step 2: Analyze Affected Code
+
 - Read target files
 - Understand existing structure
 - Identify dependencies
 - Plan implementation phases
 
 ### Step 3: Design Phases
+
 Think about the natural sequence:
+
 1. **Phase 1**: Core authentication logic
 2. **Phase 2**: Test suite
 3. **Phase 3** (if needed): Integration or docs
@@ -297,14 +322,18 @@ Think about the natural sequence:
 Each phase should be independently verifiable.
 
 ### Step 4: List Constraints
+
 Use binary language:
+
 - ✓ "MUST use HMAC-SHA256 algorithm"
 - ✗ "Should probably use standard encryption"
 - ✓ "MUST NOT expose private keys"
 - ✗ "Try to keep credentials safe"
 
 ### Step 5: Write Path Allowlist
+
 List every file that will be touched:
+
 ```json
 "path_allowlist": [
   "src/auth/jwt.js",
@@ -315,7 +344,9 @@ List every file that will be touched:
 ```
 
 ### Step 6: Define Verification Gates
+
 For each phase, write verification commands:
+
 ```json
 "verification_commands": [
   "npm run lint src/auth/",
@@ -325,11 +356,13 @@ For each phase, write verification commands:
 ```
 
 ### Step 7: Lint the Plan
+
 ```
 lint_plan({ path: "my-plan.json" })
 ```
 
 Response:
+
 ```json
 {
   "passed": true,
@@ -340,12 +373,15 @@ Response:
 ```
 
 ### Step 8: Save Signed Plan
+
 Rename to signature:
+
 ```bash
 mv my-plan.json docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json
 ```
 
 The plan is now:
+
 - Immutable (can't modify without breaking signature)
 - Verifiable (cosign can verify authenticity)
 - Ready for execution (operator has signature)
@@ -353,6 +389,7 @@ The plan is now:
 ## Common Mistakes
 
 ### ❌ Ambiguous Language
+
 ```json
 "constraints": [
   "Should use proper error handling",  // ✗ "Should"
@@ -362,6 +399,7 @@ The plan is now:
 ```
 
 **Fix**: Use binary language
+
 ```json
 "constraints": [
   "MUST handle all errors explicitly",
@@ -371,6 +409,7 @@ The plan is now:
 ```
 
 ### ❌ Absolute Paths
+
 ```json
 "path_allowlist": [
   "/home/user/project/src/auth.js",  // ✗ Absolute
@@ -379,6 +418,7 @@ The plan is now:
 ```
 
 **Fix**: Relative paths
+
 ```json
 "path_allowlist": [
   "src/auth.js",   // ✓ Relative
@@ -387,6 +427,7 @@ The plan is now:
 ```
 
 ### ❌ Parent Directory Escapes
+
 ```json
 "path_allowlist": [
   "../other-project/file.js",  // ✗ Escapes sandbox
@@ -395,6 +436,7 @@ The plan is now:
 ```
 
 **Fix**: Only use files within workspace
+
 ```json
 "path_allowlist": [
   "src/auth.js",
@@ -403,6 +445,7 @@ The plan is now:
 ```
 
 ### ❌ Code in Plan
+
 ```json
 "constraints": [
   "function authenticateToken(token) { ... }",  // ✗ Code
@@ -411,6 +454,7 @@ The plan is now:
 ```
 
 **Fix**: Describe in plain English
+
 ```json
 "constraints": [
   "MUST implement token validation function",
@@ -419,6 +463,7 @@ The plan is now:
 ```
 
 ### ❌ Stub Markers
+
 ```json
 "phase_definitions": [{
   "objective": "TODO: Add error handling",     // ✗ TODO in plan
@@ -427,6 +472,7 @@ The plan is now:
 ```
 
 **Fix**: Complete descriptions
+
 ```json
 "phase_definitions": [{
   "objective": "Implement comprehensive error handling with typed exceptions",

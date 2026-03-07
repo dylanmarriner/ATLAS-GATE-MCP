@@ -44,6 +44,7 @@ File System (with audit trail) - Immutable record
 **Algorithm**: ECDSA P-256 (elliptic curve cryptography)
 
 **Key Generation**:
+
 ```bash
 cosign generate-key-pair
 # Produces: cosign.key (private), cosign.pub (public)
@@ -51,12 +52,14 @@ cosign generate-key-pair
 ```
 
 **Signing Process**:
+
 1. Plan JSON is canonicalized (whitespace normalized, keys sorted)
 2. SHA256 hash computed
 3. Signature created with private key
 4. Output: 43-character URL-safe Base64 string
 
 **Verification Process**:
+
 1. Plan signature extracted from header
 2. Content canonicalized identically to signing
 3. Public key loaded from `.atlas-gate/.cosign-keys/public.pem`
@@ -64,11 +67,13 @@ cosign generate-key-pair
 5. Returns true/false
 
 **Signature Format**:
+
 - 43 characters long
 - URL-safe Base64 (no `/`, `+`, `=` padding)
 - Example: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 
 **Key Rotation**:
+
 ```bash
 # Generate new key pair
 cosign generate-key-pair
@@ -82,6 +87,7 @@ cosign generate-key-pair
 **Purpose**: Detect tampering in audit log
 
 **Structure**:
+
 ```json
 {
   "sequence": 1,
@@ -91,12 +97,14 @@ cosign generate-key-pair
 ```
 
 **How it works**:
+
 1. Entry 1 has `hash_chain: null`
 2. Entry 2's `hash_chain` = SHA256(Entry 1)
 3. Entry 3's `hash_chain` = SHA256(Entry 2)
 4. And so on...
 
 **Tamper Detection**:
+
 ```
 If someone modifies Entry N:
   Entry N's hash changes
@@ -109,22 +117,26 @@ If someone modifies Entry N:
 ### Invariants (The Laws)
 
 #### I1: Plans Are Immutable
+
 - Plans cannot be modified after cosign signature
 - Any modification invalidates the signature
 - Operator must re-lint and re-sign if changes needed
 
 #### I2: Deterministic Constraints
+
 - Plans use binary language (MUST/MUST NOT)
 - No "may", "should", "optional", or judgment calls
 - Verification is objective, not subjective
 
 #### I3: Path Confinement
+
 - All writes must be in `path_allowlist`
 - No absolute paths
 - No parent directory escapes (`..`)
 - No symlink escapes
 
 #### I4: No Stubs in Code
+
 - TODO, FIXME, XXX absolutely forbidden
 - mock/fake/dummy data blocked
 - Empty functions blocked
@@ -132,24 +144,28 @@ If someone modifies Entry N:
 - No null/undefined returns
 
 #### I5: Intent Artifacts Required
+
 - Every file write needs accompanying `.intent.md`
 - Intent must be 9 sections
 - Intent must reference plan and phase
 - Intent provides human-readable justification
 
 #### I6: Immutable Audit Trail
+
 - audit-log.jsonl is append-only
 - Entries cannot be deleted or modified
 - Hash chain detects tampering
 - Every entry includes session ID, plan signature, file path
 
 #### I7: Cryptographic Authorization
+
 - Every write is tied to a signed plan
 - Plan signature verified before execution
 - If verification fails → operation aborted
 - Public key must match key used to sign
 
 #### I8: Fail-Closed Execution
+
 - Any gate failure → entire operation rejected
 - No partial writes
 - No exceptions or overrides
@@ -159,7 +175,9 @@ If someone modifies Entry N:
 ### Roles & Permissions
 
 #### ANTIGRAVITY (Planning Agent)
+
 Permissions:
+
 - ✓ read_file (analyze codebase)
 - ✓ lint_plan (validate plans)
 - ✓ save_plan (sign and file plans)
@@ -167,12 +185,15 @@ Permissions:
 - ✓ read_audit_log (review history)
 
 Restrictions:
+
 - ✗ Cannot write files
 - ✗ Cannot execute arbitrary code
 - ✗ Cannot modify workspace
 
 #### WINDSURF (Execution Agent)
+
 Permissions:
+
 - ✓ begin_session (initialize)
 - ✓ read_file (load plans and code)
 - ✓ write_file (only path_allowlist)
@@ -180,13 +201,16 @@ Permissions:
 - ✓ commit_phase (git commits)
 
 Restrictions:
+
 - ✗ Cannot lint plans (ANTIGRAVITY only)
 - ✗ Cannot sign plans (ANTIGRAVITY only)
 - ✗ Cannot write outside path_allowlist
 - ✗ Cannot execute shell commands
 
 #### Operator (Human)
+
 Permissions:
+
 - ✓ Review plans
 - ✓ Approve execution
 - ✓ Review audit logs
@@ -194,6 +218,7 @@ Permissions:
 - ✓ Rotate cosign keys
 
 Restrictions:
+
 - ✗ Cannot directly modify code (use WINDSURF)
 - ✗ Cannot approve own plans (human review required)
 
@@ -218,6 +243,7 @@ recovery_initiate  | OWNER role      | Role enforcement
 These are NEVER allowed, no exceptions, no plan override:
 
 #### Category C1: TODO Markers
+
 ```javascript
 // TODO: Fix error handling   ✗ HARD BLOCK
 // FIXME: Add validation      ✗ HARD BLOCK
@@ -225,6 +251,7 @@ These are NEVER allowed, no exceptions, no plan override:
 ```
 
 #### Category C2: Test Doubles
+
 ```javascript
 const mockData = { ... }      ✗ HARD BLOCK
 const fakeUser = { ... }      ✗ HARD BLOCK
@@ -235,6 +262,7 @@ sinon.stub(...)               ✗ HARD BLOCK
 ```
 
 #### Category C3: Incomplete Returns
+
 ```javascript
 function getValue() { return null; }      ✗ HARD BLOCK
 function getUser() { return undefined; }  ✗ HARD BLOCK
@@ -243,12 +271,14 @@ function getConfig() { return {}; }       ✗ HARD BLOCK
 ```
 
 #### Category C4: Empty Blocks
+
 ```javascript
 function validate() { }                    ✗ HARD BLOCK
 try { ... } catch (e) { }                  ✗ HARD BLOCK
 ```
 
 #### Category C5: Policy Bypass
+
 ```javascript
 if (true) {  // always execute
   allowAccess();  ✗ HARD BLOCK
@@ -256,6 +286,7 @@ if (true) {  // always execute
 ```
 
 #### Category C6: Hardcoded Decisions
+
 ```javascript
 if (user.isAdmin || true) {    ✗ HARD BLOCK
   grantAccess();
@@ -267,6 +298,7 @@ if (user.isAdmin || true) {    ✗ HARD BLOCK
 **Detection**: Regex + AST analysis during write_file Gate 4
 
 **Response**:
+
 1. Error thrown immediately
 2. Write rejected
 3. Audit entry created
@@ -274,6 +306,7 @@ if (user.isAdmin || true) {    ✗ HARD BLOCK
 5. No rollback needed (write didn't happen)
 
 **Recovery**:
+
 1. Remove hard block pattern
 2. Re-run write_file
 3. If recurring, redesign feature
@@ -283,17 +316,20 @@ if (user.isAdmin || true) {    ✗ HARD BLOCK
 **Detection**: Regex + AST analysis
 
 **Patterns**:
+
 - @ts-ignore, @ts-nocheck
 - // eslint-disable
 - Type safety bypasses
 - Linting suppressions
 
 **Response**:
+
 1. Error thrown
 2. Write rejected
 3. Can be overridden in plan constraints (not recommended)
 
 **Recovery**:
+
 1. Fix underlying issue (don't bypass)
 2. Remove bypass directive
 3. Re-run write_file
@@ -333,6 +369,7 @@ begin_session({ workspace_root: "/other" })
 ### Session State
 
 Each session has:
+
 ```json
 {
   "session_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -390,6 +427,7 @@ Each session has:
 ### Immutability Properties
 
 Audit log cannot be:
+
 - ✗ Deleted
 - ✗ Modified (any change breaks hash chain)
 - ✗ Reordered
@@ -397,6 +435,7 @@ Audit log cannot be:
 - ✗ Forged (would break hash chain)
 
 Audit log can be:
+
 - ✓ Read
 - ✓ Appended (only new entries)
 - ✓ Searched
@@ -433,6 +472,7 @@ recovery_initiate({
 ```
 
 Response:
+
 ```json
 {
   "status": "RECOVERY_INITIATED",
@@ -443,6 +483,7 @@ Response:
 ```
 
 Then confirm:
+
 ```bash
 recovery_confirm({
   confirmation_code: "ABCD-1234-EFGH-5678",
@@ -451,6 +492,7 @@ recovery_confirm({
 ```
 
 **Effect**:
+
 - All pending operations stopped
 - Session terminated
 - Rollback executed if mid-phase
@@ -479,6 +521,7 @@ Automatic rollback on phase failure:
 ```
 
 **Execution**:
+
 1. Each command executed in order
 2. Success/failure logged
 3. If rollback itself fails → escalate to OWNER
@@ -489,6 +532,7 @@ Automatic rollback on phase failure:
 After rollback:
 
 1. **Review Failure**
+
    ```bash
    # Find failure in audit log
    tail -20 audit-log.jsonl | jq '.[] | select(.result=="error")'
@@ -533,18 +577,21 @@ Before deploying ATLAS-GATE:
 ### Daily Operations
 
 1. **Monitor Audit Log**
+
    ```bash
    # Check for errors
    tail -100 audit-log.jsonl | jq '.[] | select(.result=="error")'
    ```
 
 2. **Verify Hash Chain**
+
    ```bash
    # Custom script to verify hash continuity
    node scripts/verify_hash_chain.js
    ```
 
 3. **Review Plans**
+
    ```bash
    # List all executed plans
    find docs/plans -name "*.json" | wc -l
@@ -553,12 +600,14 @@ Before deploying ATLAS-GATE:
 ### Weekly Operations
 
 1. **Rotate Logs**
+
    ```bash
    # Archive old audit logs
    cp audit-log.jsonl audit-log-$(date +%Y-%m-%d).jsonl
    ```
 
 2. **Key Rotation** (quarterly, minimum)
+
    ```bash
    cosign generate-key-pair
    # Update repository
@@ -575,11 +624,13 @@ Before deploying ATLAS-GATE:
 **Incident**: Unauthorized file modification
 
 1. **Stop Operations**
+
    ```bash
    recovery_initiate({ reason: "Unauthorized modification detected" })
    ```
 
 2. **Investigate**
+
    ```bash
    # Find the operation
    grep "unauthorized-file.js" audit-log.jsonl
@@ -593,6 +644,7 @@ Before deploying ATLAS-GATE:
    - If rogue agent: escalate to OWNER
 
 4. **Document**
+
    ```bash
    # Add to incident log
    echo "Incident: ..." >> incidents.log
@@ -612,6 +664,7 @@ Before deploying ATLAS-GATE:
 ## Compliance & Standards
 
 ### SOC 2 Type II
+
 - ✓ Immutable audit trail
 - ✓ Cryptographic signing
 - ✓ Role-based access control
@@ -619,18 +672,21 @@ Before deploying ATLAS-GATE:
 - ✓ Hash chain tamper detection
 
 ### HIPAA
+
 - ✓ Audit log immutability
 - ✓ User identification (role, session_id)
 - ✓ Comprehensive logging
 - ✓ Encryption (cosign P-256)
 
 ### PCI-DSS
+
 - ✓ Change management (plans gate all changes)
 - ✓ Audit trails
 - ✓ Non-repudiation (signatures)
 - ✓ Access controls (role-based)
 
 ### NIST Cybersecurity Framework
+
 - ✓ Identify: Plans document intent
 - ✓ Protect: Cryptographic signing, path confinement
 - ✓ Detect: Stub detection, hash chain

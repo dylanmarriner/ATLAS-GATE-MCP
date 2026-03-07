@@ -53,6 +53,7 @@ Every plan MUST have exactly these sections in this order:
 - `status`: Always "APPROVED"
 
 ### Section 2: plan_metadata
+
 ```json
 {
   "plan_metadata": {
@@ -66,6 +67,7 @@ Every plan MUST have exactly these sections in this order:
 ```
 
 Rules:
+
 - `plan_id`: UPPERCASE_WITH_UNDERSCORES, unique per plan
 - `version`: X.Y.Z semantic version
 - `author`: Email or team name
@@ -73,6 +75,7 @@ Rules:
 - `governance`: Exactly "ATLAS-GATE-v2"
 
 ### Section 3: scope_and_constraints
+
 ```json
 {
   "scope_and_constraints": {
@@ -89,12 +92,14 @@ Rules:
 ```
 
 Rules:
+
 - `objective`: Plain English, no code, no function names
 - `affected_files`: Relative paths, no leading `/`
 - `out_of_scope`: Explicit exclusions
 - `constraints`: Use MUST / MUST NOT only (no should, may, optional)
 
 ### Section 4: phase_definitions
+
 ```json
 {
   "phase_definitions": [
@@ -124,6 +129,7 @@ Rules:
 ```
 
 Rules for phases:
+
 - `phase_id`: UPPERCASE_WITH_UNDERSCORES, unique within plan
 - `objective`: Clear, plain English description
 - `allowed_operations`: List exact MCP tool names
@@ -136,6 +142,7 @@ Rules for phases:
 Design principle: Each phase should be independently verifiable and completable.
 
 ### Section 5: path_allowlist
+
 ```json
 {
   "path_allowlist": [
@@ -147,6 +154,7 @@ Design principle: Each phase should be independently verifiable and completable.
 ```
 
 Rules:
+
 - Relative to workspace root (no leading `/`)
 - No `..` parent directory escapes
 - No variables or placeholders
@@ -154,6 +162,7 @@ Rules:
 - Must cover all files written in phases
 
 ### Section 6: verification_gates
+
 ```json
 {
   "verification_gates": [
@@ -166,12 +175,14 @@ Rules:
 ```
 
 Rules:
+
 - Plain text descriptions
 - Should map to real verification commands
 - Run after all phases complete
 - Help operator understand success
 
 ### Section 7: forbidden_actions
+
 ```json
 {
   "forbidden_actions": [
@@ -187,6 +198,7 @@ Rules:
 These are absolute - any violation triggers HARD FAILURE.
 
 ### Section 8: rollback_failure_policy
+
 ```json
 {
   "rollback_failure_policy": {
@@ -210,6 +222,7 @@ These are absolute - any violation triggers HARD FAILURE.
 ```
 
 Rules:
+
 - Explicit rollback triggers
 - Real git/file commands
 - Clear recovery guidance
@@ -217,6 +230,7 @@ Rules:
 ## Language Rules (CRITICAL)
 
 ### ✓ Correct Constraint Language
+
 ```
 MUST validate all user input
 MUST use HTTPS for all API calls
@@ -226,6 +240,7 @@ MUST NOT delete existing user data
 ```
 
 ### ✗ Incorrect Constraint Language
+
 ```
 Should validate input               ✗ "Should" - use MUST
 May use error handling              ✗ "May" - binary only
@@ -237,6 +252,7 @@ If possible, use encryption         ✗ "If possible" - be absolute
 ## Path Rules (CRITICAL)
 
 ### ✓ Correct Paths
+
 ```
 "path_allowlist": [
   "src/auth/jwt.js",
@@ -246,6 +262,7 @@ If possible, use encryption         ✗ "If possible" - be absolute
 ```
 
 ### ✗ Incorrect Paths
+
 ```
 "/home/user/project/src/auth.js"     ✗ Absolute path
 "/src/auth.js"                       ✗ Leading /
@@ -257,6 +274,7 @@ If possible, use encryption         ✗ "If possible" - be absolute
 ## Stub-Free Language (CRITICAL)
 
 Plans themselves MUST NOT contain:
+
 - TODO, FIXME, XXX, HACK
 - mock, fake, dummy, test data
 - stub, placeholder, temporary
@@ -264,6 +282,7 @@ Plans themselves MUST NOT contain:
 - bypass, BYPASS
 
 Example violating plan:
+
 ```json
 {
   "objective": "TODO: Add authentication",  ✗ TODO in plan
@@ -274,6 +293,7 @@ Example violating plan:
 ```
 
 Fixed plan:
+
 ```json
 {
   "objective": "Implement JWT authentication with token validation",
@@ -364,6 +384,7 @@ Do NOT output as Markdown code block - output as pure JSON.
 ## Phase Design Tips
 
 ### Good Phase Design
+
 - **Cohesive**: One phase = one feature unit
 - **Verifiable**: Real commands prove success
 - **Independent**: Can fail without cascading
@@ -371,6 +392,7 @@ Do NOT output as Markdown code block - output as pure JSON.
 - **Documented**: Clear intent and outcomes
 
 ### Bad Phase Design
+
 - Multiple unrelated features in one phase
 - Verification that doesn't really test anything
 - Incomplete implementations left for later
@@ -528,6 +550,7 @@ Before outputting a plan:
 - [ ] Rollback procedure is realistic and safe
 
 If any checklist item fails, fix it before outputting.
+
 ```
 
 ## Template 2: WINDSURF Execution Prompt
@@ -558,9 +581,11 @@ Your role:
 
 ### Step 1: Initialize
 ```
+
 begin_session({
   workspace_root: "/absolute/path/to/project"
 })
+
 ```
 
 Expected response:
@@ -574,6 +599,7 @@ Expected response:
 ```
 
 ### Step 2: Load Plan
+
 ```
 read_file({
   path: "docs/plans/PLAN_SIGNATURE.json"
@@ -581,6 +607,7 @@ read_file({
 ```
 
 Parse JSON and extract:
+
 - `plan_metadata.plan_id`
 - `phase_definitions` array
 - `path_allowlist`
@@ -590,6 +617,7 @@ Parse JSON and extract:
 ### Step 3: For Each Phase
 
 #### A. Create Intent Artifacts
+
 For each file in phase, create `PATH.intent.md`:
 
 ```markdown
@@ -626,6 +654,7 @@ Immutable hash: sha256:...
 This MUST exist before write_file is called.
 
 #### B. Call write_file
+
 ```
 write_file({
   path: "src/auth/jwt.js",
@@ -640,6 +669,7 @@ write_file({
 ```
 
 The write_file tool will:
+
 1. Validate schema
 2. Verify plan signature
 3. Check intent artifact exists
@@ -648,17 +678,20 @@ The write_file tool will:
 6. Create audit entry
 
 #### C. Verify Audit Entry
+
 ```
 read_audit_log({})
 ```
 
 Check latest entry:
+
 - `sequence` is monotonically increasing
 - `hash_chain` links to previous entry
 - `file_path` matches request
 - `plan_signature` matches your plan
 
 #### D. Run Verification Commands
+
 For each command in phase definition:
 
 ```bash
@@ -670,6 +703,7 @@ If exit code is 0 → Phase succeeds
 If exit code != 0 → Phase fails → Execute rollback
 
 ### Step 4: Run Final Verification Gates
+
 After all phases complete:
 
 ```bash
@@ -682,6 +716,7 @@ npm audit                 # GATE_SECURITY
 All must exit 0.
 
 ### Step 5: Commit
+
 ```
 commit_phase({
   plan_id: "ADD_JWT_AUTH",
@@ -696,7 +731,9 @@ Creates git commit with plan details.
 ## The 5 Gates (In Order)
 
 ### Gate 1: Schema Validation
+
 All fields must be present with correct types:
+
 - `path`: string, workspace-relative
 - `content`: string, non-empty code
 - `plan`: string, plan signature
@@ -707,7 +744,9 @@ All fields must be present with correct types:
 - `failureModes`: string, error handling description
 
 ### Gate 2: Plan Authority
+
 The cosign signature must be valid:
+
 - Plan exists at docs/plans/<SIGNATURE>.json
 - Signature field matches request
 - Cosign verification passes
@@ -716,7 +755,9 @@ The cosign signature must be valid:
 If verification fails → HARD FAILURE, abort immediately.
 
 ### Gate 3: Intent Artifact
+
 File must exist: PATH.intent.md
+
 - Must contain 9 required sections
 - Must reference correct plan and phase
 - Must have valid SHA256 hash
@@ -725,9 +766,11 @@ File must exist: PATH.intent.md
 If missing → HARD FAILURE, abort immediately.
 
 ### Gate 4: Stub Detection
+
 Code is scanned for non-production patterns:
 
 **Hard Blocks (immediate abort, no exceptions)**:
+
 - TODO, FIXME, XXX, HACK
 - mock, Mock, fake, Fake, testData, fakeData, dummyData
 - SIMULATE, DRY_RUN, bypass, BYPASS
@@ -736,6 +779,7 @@ Code is scanned for non-production patterns:
 - Return null, undefined, empty strings, empty objects
 
 **Critical Violations**:
+
 - @ts-ignore, @ts-nocheck, @ts-expect-error
 - // eslint-disable, suppress, suppress-next-line
 - jest.mock, sinon.stub, nock(), vi.mock
@@ -744,7 +788,9 @@ Code is scanned for non-production patterns:
 If detected → HARD FAILURE, abort immediately.
 
 ### Gate 5: Audit Commit
+
 Success path:
+
 - File written to disk
 - Audit entry created with sequence number, hash chain
 - Entry immutable in audit-log.jsonl
@@ -773,6 +819,7 @@ If ANY step fails:
    - Session marked failed
 
 ### Rollback Execution
+
 ```
 For each command in rollback_failure_policy.rollback_procedure:
   Execute command (e.g., "git checkout HEAD -- src/")
@@ -780,6 +827,7 @@ For each command in rollback_failure_policy.rollback_procedure:
 ```
 
 After rollback:
+
 1. Report which phase failed
 2. Show failure reason
 3. Suggest recovery steps from plan
@@ -787,7 +835,8 @@ After rollback:
 
 ## Code Requirements (CRITICAL)
 
-### Code MUST be:
+### Code MUST be
+
 - ✓ Complete and production-ready
 - ✓ Properly error-handled
 - ✓ No TODO/FIXME/XXX comments
@@ -796,7 +845,8 @@ After rollback:
 - ✓ Type-safe (no @ts-ignore)
 - ✓ Lintable with project linter
 
-### Code MUST NOT:
+### Code MUST NOT
+
 - ✗ Return null/undefined/empty strings without intent
 - ✗ Have empty catch blocks
 - ✗ Have empty functions
@@ -866,6 +916,7 @@ After rollback:
 5. **Observable**: Audit trail shows all actions
 
 Always operate with these principles in mind.
+
 ```
 
 ## Template 3: Intent Artifact Template

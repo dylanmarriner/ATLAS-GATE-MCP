@@ -65,18 +65,22 @@ Complete reference for the zero-trust Model Context Protocol security gateway.
 ## Key Concepts
 
 ### Plans Are Laws
+
 Every code change must be pre-approved via a cryptographically signed JSON plan. Plans cannot be modified without invalidating the signature.
 
 **Documents**: [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md), [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)
 
 ### Two-Agent Architecture
+
 - **ANTIGRAVITY** (Planning): Designs plans, validates with linting, signs with cosign
 - **WINDSURF** (Execution): Executes signed plans, passes 5-gate pipeline, creates audit trail
 
 **Documents**: [00-GETTING_STARTED.md](./00-GETTING_STARTED.md), [01-PLANNING_GUIDE.md](./01-PLANNING_GUIDE.md), [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)
 
 ### Five-Gate Pipeline
+
 Every file write must pass:
+
 1. **Schema Validation** (Zod) — Correct field types
 2. **Plan Authority** (cosign verify) — Signature valid
 3. **Intent Artifact** (must exist) — `.intent.md` file present
@@ -86,12 +90,15 @@ Every file write must pass:
 **Documents**: [02-EXECUTION_GUIDE.md](./02-EXECUTION_GUIDE.md)
 
 ### Fail-Closed Design
+
 Any gate failure → entire operation rejected → no partial writes → audit entry created → session marked failed
 
 **Documents**: [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md)
 
 ### Immutable Audit Trail
+
 All operations logged in `audit-log.jsonl` with:
+
 - Monotonic sequence number
 - Session ID
 - Cryptographic hash chain (detects tampering)
@@ -228,19 +235,25 @@ A: Read [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Recovery Pr
 ## Integration with Other Tools
 
 ### Git Integration
+
 Plans include git commit information:
+
 ```
 commit_phase() → Creates git commit with plan signature
 ```
 
 ### SIEM Integration
+
 Audit log ready for Splunk/Datadog:
+
 ```
 cat audit-log.jsonl | [your-siem-agent]
 ```
 
 ### Policy as Code
+
 Plans enforce policy through:
+
 - Path allowlist (which files)
 - Verification gates (what to test)
 - Constraints (how to implement)
@@ -249,15 +262,19 @@ Plans enforce policy through:
 ## Advanced Topics
 
 ### Custom Spectral Rules
+
 Plans use Spectral for linting. See `src/application/spectral-ruleset.js` for custom rules.
 
 ### Hash Chain Verification
+
 See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Hash Chain section.
 
 ### Key Rotation
+
 See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Cryptography section.
 
 ### SIEM Configuration
+
 See [04-SECURITY_GOVERNANCE.md](./04-SECURITY_GOVERNANCE.md) — Compliance section.
 
 ## Support & Resources

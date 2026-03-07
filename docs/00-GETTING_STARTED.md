@@ -17,14 +17,18 @@
 ## Core Concepts
 
 ### Plans Are Laws
+
 Every code change must be pre-approved via a **JSON plan**—a structured, enforceable specification of what the AI is allowed to do. Plans are cryptographically signed with ECDSA P-256 (Cosign) and cannot be modified without invalidating the signature.
 
 ### Two-Agent Architecture
+
 - **ANTIGRAVITY** (Planning Agent): Generates and validates plans
 - **WINDSURF** (Execution Agent): Executes pre-approved plans with strict governance
 
 ### Five-Gate Write Pipeline
+
 Every `write_file` request passes through:
+
 1. Schema validation (Zod)
 2. Plan authority verification (cosign signature check)
 3. Intent artifact validation (matching `.intent.md` files)
@@ -36,11 +40,13 @@ If *any* gate fails, the write is rejected and the session is logged.
 ## 5-Minute Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - Git
 - ~5 MB disk space
 
 ### Install
+
 ```bash
 git clone https://github.com/dylanmarriner/ATLAS-GATE-MCP.git
 cd ATLAS-GATE-MCP
@@ -49,11 +55,13 @@ npm run build
 ```
 
 ### Start Server
+
 ```bash
 npm run start:windsurf
 ```
 
 You'll see:
+
 ```
 [MCP] kaiza-mcp-windsurf running | session=<SESSION_ID>
 ```
@@ -117,11 +125,13 @@ Save this as `my-first-plan.json`:
 ### Validate the Plan
 
 Call:
+
 ```bash
 lint_plan({ path: "my-first-plan.json" })
 ```
 
 This will:
+
 1. Validate JSON structure
 2. Verify all required sections
 3. Check path allowlist (no absolute paths, no `..` escapes)
@@ -131,15 +141,19 @@ This will:
 7. Return signature for filing
 
 ### Sign & Save
+
 Once linting passes:
+
 1. You'll receive a signature: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
 2. Rename plan file: `my-first-plan.json` → `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json`
 3. Plan is now immutable and cryptographically verified
 
 ### Create Intent Artifact
+
 Before writing a file, create an accompanying `.intent.md`:
 
 Save as `test-output.txt.intent.md`:
+
 ```markdown
 # Intent Artifact: test-output.txt
 
@@ -165,7 +179,9 @@ This intent is immutable and hashed in audit-log.jsonl
 ```
 
 ### Execute the Plan
+
 Call:
+
 ```bash
 write_file({
   path: "test-output.txt",
@@ -180,6 +196,7 @@ write_file({
 ```
 
 The system will:
+
 1. Validate schema
 2. Verify plan signature
 3. Check intent artifact exists
@@ -188,12 +205,14 @@ The system will:
 6. Append audit entry
 
 ### Check Results
+
 ```bash
 cat audit-log.jsonl | jq .
 cat test-output.txt
 ```
 
 You should see an immutable audit entry with:
+
 - Session ID
 - Plan signature
 - File path
@@ -225,6 +244,7 @@ You should see an immutable audit entry with:
 ## Common Workflows
 
 ### Workflow 1: Fix a Bug
+
 1. ANTIGRAVITY creates plan specifying files to modify
 2. ANTIGRAVITY creates plan intent artifact
 3. Plan is linted, signed, filed
@@ -232,6 +252,7 @@ You should see an immutable audit entry with:
 5. Audit log captures proof of execution
 
 ### Workflow 2: Add a Feature
+
 1. ANTIGRAVITY analyzes codebase
 2. ANTIGRAVITY designs phased implementation plan
 3. Each phase has verification gates
@@ -240,6 +261,7 @@ You should see an immutable audit entry with:
 6. If phase fails, plan specifies rollback
 
 ### Workflow 3: Security Audit
+
 1. Operator reviews `audit-log.jsonl`
 2. Each entry can be traced to plan signature
 3. Plan signature can be verified with cosign public key
@@ -258,6 +280,7 @@ You should see an immutable audit entry with:
 ## Key Constraints
 
 **HARD BLOCKS** (No Exceptions):
+
 - 🚫 TODO, FIXME, XXX comments
 - 🚫 mock, fake, dummy data/functions
 - 🚫 Policy bypass markers (always allow, SIMULATE, DRY_RUN)
@@ -265,6 +288,7 @@ You should see an immutable audit entry with:
 - 🚫 Returning null, undefined, or empty strings
 
 **SOFT BLOCKS** (Plan can override, but must be explicit):
+
 - Type safety bypasses (@ts-ignore, @ts-nocheck)
 - Lint bypasses (// eslint-disable)
 - Hardcoded returns (return false, return 0)

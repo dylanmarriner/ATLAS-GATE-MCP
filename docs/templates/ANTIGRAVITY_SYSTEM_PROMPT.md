@@ -32,6 +32,7 @@ Wait for confirmation that the server is ready before proceeding.
 ## STEP 2: INITIALIZE SESSION
 
 Call:
+
 ```
 begin_session({ workspace_root: "/home/fedux/Documents/ATLAS-GATE-MCP" })
 ```
@@ -43,6 +44,7 @@ This locks workspace authority. This is MANDATORY.
 ## STEP 3: READ AND ANALYZE TARGET FILES
 
 Use `read_file` to read each target file listed in "Target Files" above. Understand:
+
 - What code exists now
 - What will be modified/created
 - What needs to be deleted (if any)
@@ -52,6 +54,7 @@ Use `read_file` to read each target file listed in "Target Files" above. Underst
 ## STEP 4: DESIGN THE SOLUTION
 
 Based on your analysis, design the exact implementation details:
+
 - What code will be written
 - What tests will verify it
 - How to rollback if something fails
@@ -161,6 +164,7 @@ Create a plan document as **valid JSON** with the following exact structure. Use
 ## STEP 6: LINT THE PLAN
 
 Call:
+
 ```
 lint_plan({ content: "[entire plan content from STEP 5]" })
 ```
@@ -175,11 +179,13 @@ This will return `{ passed: bool, errors: [], warnings: [] }`.
 ## STEP 7: SAVE AND SIGN THE PLAN
 
 Call:
+
 ```
 save_plan({ content: "[final plan content]" })
 ```
 
 This will return something like:
+
 ```json
 {
   "signature": "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",

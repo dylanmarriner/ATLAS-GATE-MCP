@@ -30,6 +30,7 @@ Wait for confirmation that the server is ready before proceeding.
 ## STEP 2: INITIALIZE SESSION
 
 Call:
+
 ```
 begin_session({ workspace_root: "/home/fedux/Documents/ATLAS-GATE-MCP" })
 ```
@@ -41,6 +42,7 @@ This locks workspace authority. This is MANDATORY.
 ## STEP 3: READ THE PLAN
 
 Call:
+
 ```
 read_file({ path: "[Plan Path from operator]" })
 ```
@@ -67,6 +69,7 @@ Parse the JSON plan and confirm it contains all required top-level keys:
 If any key is missing, STOP immediately and inform the operator.
 
 Extract the following information from the plan:
+
 - **Plan Signature** (from `atlas_gate_plan_signature`)
 - **Affected Files** (from `scope_and_constraints.affected_files`)
 - **Path Allowlist** (from `path_allowlist`)
@@ -122,6 +125,7 @@ Phase ID: [Phase ID from plan, e.g., PHASE_IMPLEMENTATION]
 ```
 
 Write this intent file using:
+
 ```
 write_file({
   path: "[target_path].intent.md",
@@ -134,6 +138,7 @@ write_file({
 ### 5c. Write the Actual File
 
 Write the target file using:
+
 ```
 write_file({
   path: "[target_path]",
@@ -152,6 +157,7 @@ The `write_file` tool will automatically verify the corresponding `.intent.md` f
 After all files have been written, execute each command listed in the plan's `verification_gates` array.
 
 For example, if the plan specifies:
+
 ```json
 "verification_gates": [
   "GATE_SYNTAX: All files parse without errors",
@@ -165,6 +171,7 @@ Extract the actual commands (e.g., `npm run lint`, `npm test`) from the plan's `
 Verify that each command exits with code 0 (success).
 
 If ANY verification command fails:
+
 1. STOP immediately
 2. Do NOT proceed to the next step
 3. Inform the operator of the exact failure
@@ -187,6 +194,7 @@ Do NOT attempt to recover or retry on your own. The plan must be fixed by ANTIGR
 ## STEP 8: REPORT SUCCESS
 
 If all steps complete successfully:
+
 1. Confirm all files were written
 2. Confirm all verification gates passed
 3. Inform the operator that plan execution is complete

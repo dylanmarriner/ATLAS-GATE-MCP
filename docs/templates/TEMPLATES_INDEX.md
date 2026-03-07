@@ -5,17 +5,20 @@ Complete reference for all templates, prompts, and scaffolds.
 ## Available Templates
 
 ### 1. ANTIGRAVITY Planning Prompt
+
 **File**: `ANTIGRAVITY_PLANNING_PROMPT.md`
 
 **Use When**: You need to generate a plan
 
 **How to Use**:
+
 1. Copy entire file contents
 2. Feed to Claude/GPT-4 with your objective
 3. Provide codebase context (files to analyze)
 4. Agent will generate complete JSON plan
 
 **Contents**:
+
 - 10 required plan sections explained
 - Language rules (MUST/MUST NOT, no ambiguity)
 - Path rules (relative, no .., no /)
@@ -25,6 +28,7 @@ Complete reference for all templates, prompts, and scaffolds.
 - Output format (pure JSON)
 
 **Example Usage**:
+
 ```
 [Paste entire ANTIGRAVITY_PLANNING_PROMPT.md into Claude]
 [Add your objective]:
@@ -45,17 +49,20 @@ Generate a complete ATLAS-GATE plan in JSON format.
 ---
 
 ### 2. WINDSURF Execution Prompt
+
 **File**: `WINDSURF_EXECUTION_PROMPT.md`
 
 **Use When**: You need to execute a plan
 
 **How to Use**:
+
 1. Copy entire file contents
 2. Feed to Claude/GPT-4 with plan details
 3. Provide workspace path and plan signature
 4. Agent will execute the plan step-by-step
 
 **Contents**:
+
 - 5-step execution sequence
 - 5-gate pipeline explanation
 - Intent artifact creation (9 sections)
@@ -67,6 +74,7 @@ Generate a complete ATLAS-GATE plan in JSON format.
 - Safety principles
 
 **Example Usage**:
+
 ```
 [Paste entire WINDSURF_EXECUTION_PROMPT.md into Claude]
 [Add execution details]:
@@ -82,17 +90,20 @@ Follow the execution sequence step-by-step.
 ---
 
 ### 3. Intent Artifact Template
+
 **File**: `INTENT_ARTIFACT_TEMPLATE.md`
 
 **Use When**: You're about to write a file
 
 **How to Use**:
+
 1. For each file in `path_allowlist`, create a `.intent.md` file
 2. Copy template structure
 3. Fill in all 9 sections with details
 4. Save as `FILENAME.intent.md` in same directory as target file
 
 **Structure** (9 Required Sections):
+
 1. Purpose — What the file does
 2. Authorization — Plan, phase, signature
 3. Content Description — Plain English, no code
@@ -103,10 +114,12 @@ Follow the execution sequence step-by-step.
 8. Audit Trail — Metadata for logging
 
 **Example Intent Files**:
+
 - For `src/auth/jwt.js` → Create `src/auth/jwt.js.intent.md`
 - For `tests/auth.test.js` → Create `tests/auth.test.js.intent.md`
 
 **Example**:
+
 ```markdown
 # Intent Artifact: src/auth/jwt.js
 
@@ -128,11 +141,13 @@ Exports sign(payload, secret) and verify(token, secret) functions
 ---
 
 ### 4. Plan Scaffold (JSON)
+
 **File**: `PLAN_SCAFFOLD.json`
 
 **Use When**: You're creating a new plan
 
 **How to Use**:
+
 1. Copy this JSON file
 2. Rename to your plan ID: `PLAN_YOURFEATURE.json`
 3. Fill in all sections
@@ -140,6 +155,7 @@ Exports sign(payload, secret) and verify(token, secret) functions
 5. Signature returned, save to `docs/plans/<SIGNATURE>.json`
 
 **Structure**:
+
 ```json
 {
   "atlas_gate_plan_signature": "",        // Leave empty
@@ -156,6 +172,7 @@ Exports sign(payload, secret) and verify(token, secret) functions
 ```
 
 **Example**:
+
 ```bash
 # Copy scaffold
 cp docs/templates/PLAN_SCAFFOLD.json PLAN_JWT_AUTH.json
@@ -245,11 +262,13 @@ docs/templates/
 ### Required in Every Plan
 
 **Header Fields**:
+
 - `atlas_gate_plan_signature` — Leave empty (linter fills)
 - `role` — Always "ANTIGRAVITY"
 - `status` — Always "APPROVED"
 
 **Metadata Fields** (in plan_metadata):
+
 - `plan_id` — UPPERCASE_WITH_UNDERSCORES
 - `version` — X.Y.Z semantic version
 - `author` — Email or team name
@@ -257,6 +276,7 @@ docs/templates/
 - `governance` — Always "ATLAS-GATE-v2"
 
 **Phase Fields** (in phase_definitions):
+
 - `phase_id` — UPPERCASE_WITH_UNDERSCORES
 - `objective` — Plain English
 - `allowed_operations` — List of MCP tools
@@ -267,12 +287,14 @@ docs/templates/
 - `failure_stop_conditions` — Abort conditions
 
 **Scope Fields** (in scope_and_constraints):
+
 - `objective` — What plan accomplishes
 - `affected_files` — Files to be modified
 - `out_of_scope` — What's NOT included
 - `constraints` — MUST/MUST NOT rules
 
 **Write File Parameters** (write_file call):
+
 - `path` — Relative to workspace
 - `content` — Complete code
 - `plan` — Plan signature
@@ -287,6 +309,7 @@ docs/templates/
 ## Language Rules
 
 ### ✓ Correct Constraint Language
+
 ```
 MUST validate all input
 MUST NOT expose secrets
@@ -295,6 +318,7 @@ MUST use HTTPS for all requests
 ```
 
 ### ✗ Incorrect Constraint Language
+
 ```
 Should handle errors              ✗ Use MUST/MUST NOT
 May use encryption                ✗ Be definitive
@@ -308,6 +332,7 @@ If possible, validate input       ✗ MUST be done
 ## Path Rules
 
 ### ✓ Correct Paths
+
 ```
 src/auth/jwt.js
 src/api/routes.js
@@ -315,6 +340,7 @@ tests/auth.test.js
 ```
 
 ### ✗ Incorrect Paths
+
 ```
 /home/user/project/src/auth.js     ✗ Absolute
 /src/auth.js                        ✗ Leading /
@@ -327,6 +353,7 @@ src/${dir}/file.js                  ✗ Unresolved variable
 ## Hard Block Patterns
 
 These code patterns are ABSOLUTELY FORBIDDEN:
+
 - TODO, FIXME, XXX, HACK
 - mock, fake, dummy, testData
 - Empty functions: `function foo() { }`
@@ -354,17 +381,21 @@ All templates can be customized:
 Each template has real-world examples:
 
 **ANTIGRAVITY Prompt**:
+
 - JWT authentication feature example
 
 **WINDSURF Prompt**:
+
 - Complete JWT feature execution workflow
 
 **Intent Template**:
+
 - JWT module intent
 - Middleware intent
 - Test suite intent
 
 **Plan Scaffold**:
+
 - Two phases (create + test)
 - Real verification commands
 

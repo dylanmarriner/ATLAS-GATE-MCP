@@ -1,7 +1,6 @@
 import fs from "fs";
-import path from "path";
 import { lintPlan } from "../../application/plan-linter.js";
-import { getPlansDir } from "../../infrastructure/path-resolver.js";
+import { resolvePlanPath } from "../../infrastructure/path-resolver.js";
 
 /**
  * Lint Plan Tool Handler
@@ -19,25 +18,10 @@ export async function lintPlanHandler({ path: filePath, signature, content }) {
      // Direct content provided
      planContent = content;
    } else if (filePath) {
-     // Load from file path - extract just filename and normalize
-     let fileName = filePath;
-     
-     // Remove any existing path components
-     if (filePath.includes('/')) {
-       fileName = filePath.split('/').pop();
-     }
-     
-     // Remove .md if present
-     if (fileName.endsWith('.md')) {
-       fileName = fileName.slice(0, -3);
-     }
-     
-     // Add .md back and construct path
-     const fullPath = path.join(getPlansDir(), `${fileName}.md`);
+     const fullPath = resolvePlanPath(filePath);
      planContent = fs.readFileSync(fullPath, "utf8");
    } else if (signature) {
-     // Load from signature-named file
-     const fullPath = path.join(getPlansDir(), `${signature}.md`);
+     const fullPath = resolvePlanPath(signature);
      planContent = fs.readFileSync(fullPath, "utf8");
    } else {
      throw new Error("INVALID_INPUT: Must provide path, signature, or content");

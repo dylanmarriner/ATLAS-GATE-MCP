@@ -334,15 +334,15 @@ Please bootstrap with a basic plan that allows modifications to src/ and docs/ f
 The environment has ATLAS-GATE_BOOTSTRAP_SECRET set to my-secret-key."
 
 Expected Response:
-- Plan created: FOUNDATION-{uuid}.md
-- Location: docs/plans/FOUNDATION-{uuid}.md
+- Plan created and approved
+- Location: docs/plans/<signature>.json
 - Bootstrap mode disabled
 - Status: APPROVED
 ```
 
 **Result**:
 
-- Creates `docs/plans/FOUNDATION-{uuid}.md`
+- Creates a saved approved plan artifact in `docs/plans/` using the current plan contract
 - Disables bootstrap mode (prevents further plan creation via bootstrap)
 - Makes the plan immediately available for use
 
@@ -352,8 +352,8 @@ Expected Response:
 # Check that plan was created
 ls -la docs/plans/
 
-# You should see:
-# FOUNDATION-a1b2c3d4-e5f6-7890-ijkl-mnopqrstuvwx.md
+# You should see a saved approved plan artifact such as:
+# <signature>.json
 ```
 
 ---
@@ -628,7 +628,7 @@ If anyone modifies an entry, the hash chain breaks and it's detected!
   "registeredIn": "handlers.js",
   "executedVia": "POST /api/handle",
   "failureModes": "500 error if validation fails",
-  "authority": "FOUNDATION-a1b2c3d4-e5f6-7890.md",
+  "authority": "FOUNDATION-a1b2c3d4-e5f6-7890",
   "planSignature": "optional-hash-for-integrity-check"
 }
 ```

@@ -8,12 +8,12 @@
         {
             "name": "WINDSURF Execution Agent Prompt",
             "path": "docs/templates/windsurf_execution_prompt_v2.md",
-            "purpose": "Instructs the WINDSURF execution agent on how to read plans from docs/plans/<signature>.md, generate .intent.md artifacts, and execute audited writes using write_file."
+            "purpose": "Instructs the WINDSURF execution agent on how to read plans from docs/plans/<signature>.json, generate canonical .intent.md artifacts, and execute audited writes using write_file."
         },
         {
             "name": "Plan Scaffold Template",
-            "path": "docs/templates/plan_scaffold.md",
-            "purpose": "A pre-formatted 7-section skeleton ensuring that plans meet the strict Spectral linting validation rules mandated by the Level-5 continuous assurance architecture."
+            "path": "docs/templates/PLAN_SCAFFOLD.json",
+            "purpose": "The canonical JSON scaffold whose top-level keys and nested structures match lint_plan, save_plan, plan-enforcer, and WINDSURF execution requirements."
         },
         {
             "name": "Prompt Templates Index",

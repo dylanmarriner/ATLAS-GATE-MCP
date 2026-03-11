@@ -53,70 +53,16 @@ Before creating a plan, understand what it must contain:
 
 #### Required Plan Structure
 
-```yaml
----
-status: APPROVED              # REQUIRED: Must be APPROVED
-plan_id: unique-id-here      # RECOMMENDED: For tracking
-title: Plan Title             # RECOMMENDED: Clear title
-created_by: AMP or Antigravity # RECOMMENDED: Authority
-created_date: 2026-01-07      # RECOMMENDED: Timestamp
----
-
-# PLAN CONTENT STARTS HERE
-## Objective
-Clear statement of what this plan accomplishes
-
-## Requirements
-1. Requirement 1: Description
-2. Requirement 2: Description
-3. Requirement 3: Description
-
-## Architecture/Design
-If applicable, describe the technical design
-
-## Implementation Specifications
-1. File: src/component.js
-   - Purpose: [clear purpose]
-   - Behavior: [exact behavior expected]
-   - Dependencies: [what it depends on]
-   - Exports: [what it exports]
-
-2. File: src/service.js
-   - Purpose: [clear purpose]
-   - Behavior: [exact behavior expected]
-   - Dependencies: [what it depends on]
-   - Exports: [what it exports]
-
-## Success Criteria
-- Code passes npm run test
-- Code passes npm run lint
-- Code passes npm run typecheck
-- No mock data
-- No stubs or TODOs
-- All requirements implemented
-
-## Related Plans
-- Links to dependent or related plans
-
-## Approved By
-Name: AMP or Antigravity
-Authority: Plan creation authority
-Date: 2026-01-07
-```
+Plans are now strict JSON. Use `docs/templates/PLAN_SCAFFOLD.json` and the canonical planning prompt.
 
 ---
 
-### Step 3: Create the Plan File
+### Step 3: Create the Plan Draft
 
-**File location**: `docs/plans/YOUR_PLAN_NAME.md`
-
-**File naming**:
-
-- Use UPPERCASE with underscores
-- Examples: `FEATURE_AUTHENTICATION.md`, `IMPLEMENT_CACHE.md`
-- Avoid generic names like `PLAN_1.md`
-
-**File content**: See "Example Plan Template" section below
+- Draft as JSON using `PLAN_SCAFFOLD.json`
+- Validate with `lint_plan({ content })`
+- Save with `save_plan({ content })`
+- Saved location becomes `docs/plans/<signature>.json`
 
 ---
 
@@ -188,7 +134,7 @@ const result = await bootstrap_create_foundation_plan({
 });
 
 console.log('Plan created:', result);
-// Output: Plan created at docs/plans/PLAN_AUTH_2026_01_07.md
+// Output: Plan created at docs/plans/<signature>.json
 ```
 
 ---
@@ -203,11 +149,7 @@ After calling `bootstrap_create_foundation_plan`:
    ls -la /media/ubuntux/DEVELOPMENT/gemini_universe/docs/plans/ | grep YOUR_PLAN_NAME
    ```
 
-2. **Verify status is APPROVED**:
-
-   ```bash
-   grep "status: APPROVED" /media/ubuntux/DEVELOPMENT/gemini_universe/docs/plans/YOUR_PLAN_NAME.md
-   ```
+2. **Verify saved plan is JSON** and has `"status": "APPROVED"`
 
 3. **List plans via MCP**:
 
@@ -264,9 +206,9 @@ Call: list_plans with path '.'
 
 Response:
 [
-  "PLAN_AUTHENTICATION.md",
-  "PLAN_CACHING.md",
-  "PLAN_LOGGING.md"
+  "<signature-1>.json",
+  "<signature-2>.json",
+  "<signature-3>.json"
 ]
 ```
 
@@ -277,7 +219,7 @@ Response:
 **Pick a plan and read it completely**:
 
 ```
-Call: read_file(path: 'docs/plans/PLAN_AUTHENTICATION.md')
+Call: read_file(path: 'docs/plans/<signature>.json')
 
 Response: Full plan document with:
 - Objective
@@ -351,131 +293,7 @@ If commit fails, it means a file wasn't written through ATLAS-GATE-MCP. Use `wri
 
 Here's a complete example plan that could be created by AMP/Antigravity:
 
-```markdown
----
-status: APPROVED
-plan_id: plan-cache-layer-2026-01-07
-title: Implement Redis Caching Layer
-created_by: Antigravity
-created_date: 2026-01-07
----
-
-# Redis Caching Layer Implementation
-
-## Objective
-Implement a production-grade Redis caching layer that reduces database queries by 70% while maintaining data consistency.
-
-## Requirements
-1. Redis connection pooling with reconnect logic
-2. Cache key generation from query parameters
-3. Automatic cache invalidation on data mutations
-4. Cache hit/miss metrics
-5. Support for multiple data types (strings, objects, lists)
-6. Full test coverage (unit and integration)
-
-## Architecture
-
-The caching system sits between the application and database:
-
-```
-
-Application
-    ↓
-Cache Layer (new)
-    ↓ (if hit)
-Redis
-    ↓ (if miss)
-Database
-
-```
-
-## Implementation Specifications
-
-### File 1: src/cache/redis-client.js
-
-- **Purpose**: Manages Redis connection and provides reusable Redis client
-- **Behavior**:
-  - Creates connection pool on startup
-  - Implements automatic reconnection (exponential backoff)
-  - Provides health check method
-- **Dependencies**: redis, dotenv
-- **Exports**:
-  - `RedisClient` class with methods:
-    - `connect()`: Async, establishes connection
-    - `get(key)`: Async, returns cached value
-    - `set(key, value, ttl)`: Async, stores value with TTL
-    - `delete(key)`: Async, removes key
-    - `healthCheck()`: Returns boolean
-- **Error Handling**:
-  - Connection errors → retry with backoff
-  - Invalid keys → throw TypeError
-  - Redis errors → log and throw
-- **Notes**: Must use real Redis instance (no mocks)
-
-### File 2: src/cache/cache-layer.js
-
-- **Purpose**: Application-level caching logic
-- **Behavior**:
-  - Intercepts read operations
-  - Generates cache keys from function args
-  - Tracks cache hits/misses
-  - Invalidates on mutations
-- **Dependencies**: src/cache/redis-client.js
-- **Exports**:
-  - `CacheLayer` class with methods:
-    - `wrap(fn, options)`: Wraps function with caching
-    - `invalidate(pattern)`: Clears keys matching pattern
-    - `metrics()`: Returns {hits, misses, hitRate}
-- **Error Handling**: Graceful degradation (bypass cache on error)
-
-### File 3: src/cache/cache-invalidation.js
-
-- **Purpose**: Handles cache invalidation events
-- **Behavior**:
-  - Listens to data mutation events
-  - Invalidates affected cache keys
-  - Supports pattern-based invalidation
-- **Dependencies**: src/cache/redis-client.js, event emitter
-- **Exports**:
-  - `CacheInvalidator` class
-- **Error Handling**: Log invalidation errors but don't block mutations
-
-### File 4: tests/cache.test.js
-
-- **Purpose**: Complete test coverage
-- **Includes**:
-  - Connection pool tests
-  - Cache hit/miss scenarios
-  - TTL expiration tests
-  - Invalidation tests
-  - Metrics accuracy tests
-  - Error scenarios
-- **Test Data**: Uses fixtures from tests/fixtures/ (no faker)
-- **Coverage**: Must be > 95%
-
-## Success Criteria
-
-- ✅ All files implemented per specification
-- ✅ `npm run test` passes (95%+ coverage)
-- ✅ `npm run lint` passes
-- ✅ `npm run typecheck` passes (no @ts-ignore)
-- ✅ No mock Redis instances (use testcontainers or real Redis)
-- ✅ No TODOs or FIXMEs
-- ✅ No console.log() in production code
-- ✅ All error scenarios handled
-- ✅ Documentation updated
-
-## Related Plans
-
-- PLAN_DATABASE_OPTIMIZATION.md (depends on this)
-- PLAN_METRICS_COLLECTION.md (uses metrics from this)
-
-## Approved By
-
-Name: Antigravity  
-Authority: Implementation Planner  
-Date: 2026-01-07
-```
+- See `docs/templates/PLAN_EXAMPLE_FINALIZED.json`
 
 ---
 
@@ -612,7 +430,7 @@ Step 3: Try commit again
         └────────────┬────────────┘
                      ▼
         ┌─────────────────────────────────────┐
-        │ Create plan document (Markdown)      │
+        │ Create plan document (JSON)          │
         │ Include:                             │
         │ - Objective                          │
         │ - Requirements                       │
@@ -774,7 +592,7 @@ Step 3: Try commit again
 
 1. Call `read_prompt` to unlock
 2. Call `list_plans` to see plans
-3. Read plan document
+3. Read plan JSON document
 4. For each file: call `write_file` with complete code
 5. If rejected: fix the issue, retry
 6. When done: `git commit` (must pass pre-commit hook)

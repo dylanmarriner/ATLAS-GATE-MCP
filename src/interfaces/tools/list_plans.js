@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getRepoRoot, getPlansDir } from '../../infrastructure/path-resolver.js';
+import { getPlansDir } from '../../infrastructure/path-resolver.js';
 
 export async function listPlansHandler() {
   const plansDir = getPlansDir();
@@ -11,38 +11,25 @@ export async function listPlansHandler() {
 
   const plans = fs
     .readdirSync(plansDir)
-    .filter(f => f.endsWith(".md"))
+    .filter(f => f.endsWith(".json") && !f.endsWith(".bundle.json"))
     .map(f => {
-      const signature = f.replace(".md", "");
+      const signature = f.replace(".json", "");
       const filePath = path.join(plansDir, f);
       const content = fs.readFileSync(filePath, 'utf8');
 
       let status = "UNKNOWN";
       let scope = "UNKNOWN";
       let version = "UNKNOWN";
+      let planId = "UNKNOWN";
 
-      // Try parsing ATLAS-GATE_PLAN_SIGNATURE format (HTML comment header)
-      const headerMatch = content.match(/<!--\s*ATLAS-GATE_PLAN_SIGNATURE:\s*([A-Za-z0-9+/=]+)\s+ROLE:\s*(\w+)\s+STATUS:\s*(\w+)\s*-->/);
-      if (headerMatch) {
-        status = headerMatch[3];
-      }
-
-      // Fall back to inline STATUS: format
-      if (status === "UNKNOWN") {
-        const statusMatch = content.match(/STATUS:\s*(\w+)/i);
-        if (statusMatch) {
-          status = statusMatch[1];
-        }
-      }
-
-      const scopeMatch = content.match(/SCOPE:\s*([^\n]+)/i);
-      if (scopeMatch) {
-        scope = scopeMatch[1].trim();
-      }
-
-      const versionMatch = content.match(/VERSION:\s*([^\n]+)/i);
-      if (versionMatch) {
-        version = versionMatch[1].trim();
+      try {
+        const parsed = JSON.parse(content);
+        status = parsed.status || status;
+        scope = parsed.scope_and_constraints?.objective || scope;
+        version = parsed.plan_metadata?.version || version;
+        planId = parsed.plan_metadata?.plan_id || planId;
+      } catch (_err) {
+        status = "INVALID_JSON";
       }
 
       return {
@@ -50,13 +37,14 @@ export async function listPlansHandler() {
         file: f,
         status,
         scope,
-        version
+        version,
+        planId,
       };
     })
     .filter(p => p.status === "APPROVED"); // Only include approved plans
 
   const plansList = plans
-    .map(p => `• ${p.signature} (${p.status}) [${p.scope}] v${p.version}`)
+    .map(p => `• ${p.signature} (${p.status}) [${p.planId}] v${p.version}`)
     .join('\n');
 
   return {

@@ -63,7 +63,7 @@ npm run start:windsurf
 You'll see:
 
 ```
-[MCP] kaiza-mcp-windsurf running | session=<SESSION_ID>
+[MCP] atlas-gate-mcp-windsurf running | session=<SESSION_ID>
 ```
 
 ### Create Your First Plan
@@ -127,26 +127,29 @@ Save this as `my-first-plan.json`:
 Call:
 
 ```bash
-lint_plan({ path: "my-first-plan.json" })
+lint_plan({ content: "<full JSON plan content>" })
 ```
 
 This will:
 
 1. Validate JSON structure
-2. Verify all required sections
+2. Verify all required top-level keys and phase fields
 3. Check path allowlist (no absolute paths, no `..` escapes)
 4. Detect stub patterns (TODO, mock, etc.)
 5. Run Spectral linting rules
-6. Sign with cosign ECDSA P-256
-7. Return signature for filing
+6. Return pass/fail plus errors and warnings
 
 ### Sign & Save
 
-Once linting passes:
+Once linting passes, call `save_plan({ content: "<full JSON plan content>" })`.
 
-1. You'll receive a signature: `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
-2. Rename plan file: `my-first-plan.json` → `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json`
-3. Plan is now immutable and cryptographically verified
+This will:
+
+1. Generate a signature such as `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`
+2. Write `docs/plans/<SIGNATURE>.json`
+3. Write `docs/plans/<SIGNATURE>.bundle.json`
+4. Return the signature and saved paths
+5. Make the saved plan immutable and cryptographically verifiable
 
 ### Create Intent Artifact
 
@@ -155,27 +158,33 @@ Before writing a file, create an accompanying `.intent.md`:
 Save as `test-output.txt.intent.md`:
 
 ```markdown
-# Intent Artifact: test-output.txt
+# Intent: test-output.txt
 
 ## Purpose
 Verify ATLAS-GATE write pipeline works correctly
 
-## Authorization
-- Plan ID: EXAMPLE_SETUP
-- Phase: PHASE_001_CREATE_TEST
-- Role: WINDSURF
+## Authority
+- Plan Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9WHFh27o
+- Phase ID: PHASE_001_CREATE_TEST
 
-## Content Description
-Plain text file with verification message
+## Inputs
+- Execution request from the approved plan
 
-## Change Justification
-Creating minimal test file to confirm all 5 gates pass
+## Outputs
+- Plain text file with verification message
 
-## Error Handling
-If write fails: Check audit log for gate failures
+## Invariants
+- File content remains plain text
+- Write stays within plan allowlist
 
-## Audit Trail
-This intent is immutable and hashed in audit-log.jsonl
+## Failure Modes
+- Write rejected by governance gates
+
+## Debug Signals
+- Audit log entry confirms the authorized write
+
+## Out-of-Scope
+- No source code changes
 ```
 
 ### Execute the Plan
@@ -246,7 +255,7 @@ You should see an immutable audit entry with:
 ### Workflow 1: Fix a Bug
 
 1. ANTIGRAVITY creates plan specifying files to modify
-2. ANTIGRAVITY creates plan intent artifact
+2. ANTIGRAVITY saves the signed JSON plan with `save_plan`
 3. Plan is linted, signed, filed
 4. WINDSURF executes: reads plan, validates signature, writes fixes
 5. Audit log captures proof of execution

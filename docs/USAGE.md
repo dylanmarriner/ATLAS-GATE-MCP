@@ -6,8 +6,8 @@ Do not think of Kaiza MCP as a "File Editor". Think of it as a **"Contractor"** 
 
 **The Workflow:**
 
-1. **Plan**: You (or the agent) create a plan in `docs/plans/`.
-2. **Approve**: The plan exists (which counts as approval in this version).
+1. **Plan**: You (or the agent) draft a JSON plan.
+2. **Approve**: ANTIGRAVITY validates it with `lint_plan({ content })` and persists it with `save_plan({ content })`.
 3. **Execute**: The agent calls `write_file` citing that plan.
 4. **Verify**: The server enforces quality and logs the work.
 
@@ -44,13 +44,13 @@ The server listens on `stdin` and writes to `stdout`. You will not see a UI.
   "arguments": {
     "path": "src/utils/math.js",
     "content": "export function add(a, b) { return a + b; }",
-    "plan": "payment-system-refactor", 
+    "plan": "<saved-plan-signature>", 
     "role": "EXECUTABLE"
   }
 }
 ```
 
-*Note: The `plan` argument MUST match an ID found explicitly in `docs/plans/`.*
+*Note: The `plan` argument MUST match a saved plan signature found in `docs/plans/<signature>.json`.*
 
 ### 2. Reading Context (`read_file`)
 
@@ -60,7 +60,7 @@ The server listens on `stdin` and writes to `stdout`. You will not see a UI.
 {
   "tool": "read_file",
   "arguments": {
-    "path": "docs/plans/payment-system-refactor.md"
+    "path": "docs/plans/<signature>.json"
   }
 }
 ```
@@ -95,7 +95,7 @@ Use this to find what work orders are currently open.
 ### Error: `Plan not found`
 
 **Symptom**: The write is rejected because the plan ID is invalid.
-**Cause**: You cited a plan ID that does not exist in the `docs/plans` directory.
+**Cause**: You cited a plan signature that does not exist in the `docs/plans` directory.
 **Solution**: Use `list_plans` to see available plans.
 
 ## What NOT To Do

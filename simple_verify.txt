@@ -1,0 +1,24 @@
+CORE DOCUMENTS
+ALIGNMENT_INDEX.md: $([ -f ALIGNMENT_INDEX.md ] && echo FOUND || echo MISSING)
+ALIGNMENT_COMPLETE.md: $([ -f ALIGNMENT_COMPLETE.md ] && echo FOUND || echo MISSING)
+ALIGNMENT_AUDIT_AND_FIX.md: $([ -f ALIGNMENT_AUDIT_AND_FIX.md ] && echo FOUND || echo MISSING)
+
+SPECIFICATION FILES
+docs/PLAN_FORMAT_SPEC.md: $([ -f docs/PLAN_FORMAT_SPEC.md ] && echo FOUND || echo MISSING)
+docs/PROMPT_TEMPLATES.md: $([ -f docs/PROMPT_TEMPLATES.md ] && echo FOUND || echo MISSING)
+
+PROMPT TEMPLATES
+docs/templates/antigravity_planning_prompt_v2.md: $([ -f docs/templates/antigravity_planning_prompt_v2.md ] && echo FOUND || echo MISSING)
+docs/templates/windsurf_execution_prompt_v2.md: $([ -f docs/templates/windsurf_execution_prompt_v2.md ] && echo FOUND || echo MISSING)
+
+PLAN TEMPLATES
+docs/templates/PLAN_SCAFFOLD.json: $([ -f docs/templates/PLAN_SCAFFOLD.json ] && echo FOUND || echo MISSING)
+docs/templates/PLAN_EXAMPLE_FINALIZED.json: $([ -f docs/templates/PLAN_EXAMPLE_FINALIZED.json ] && echo FOUND || echo MISSING)
+
+CODE IMPLEMENTATIONS
+src/application/plan-linter.js: $([ -f src/application/plan-linter.js ] && echo FOUND || echo MISSING)
+src/interfaces/tools/lint_plan.js: $([ -f src/interfaces/tools/lint_plan.js ] && echo FOUND || echo MISSING)
+src/interfaces/tools/save_plan.js: $([ -f src/interfaces/tools/save_plan.js ] && echo FOUND || echo MISSING)
+src/interfaces/tools/write_file.js: $([ -f src/interfaces/tools/write_file.js ] && echo FOUND || echo MISSING)
+src/application/intent-validator.js: $([ -f src/application/intent-validator.js ] && echo FOUND || echo MISSING)
+src/application/plan-enforcer.js: $([ -f src/application/plan-enforcer.js ] && echo FOUND || echo MISSING)

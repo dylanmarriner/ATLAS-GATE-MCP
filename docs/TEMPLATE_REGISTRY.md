@@ -1,67 +1,33 @@
-# Atlas-Gate Template Registry
+# Template Registry
 
-**Status**: ✓ ALL TEMPLATES ALIGNED WITH MCP V2
+## Active canonical templates
 
-**Last Updated**: 2026-02-24
+| File | Status | Purpose |
+|---|---|---|
+| `docs/templates/antigravity_planning_prompt_v2.md` | Active | Planning prompt aligned to `lint_plan` + `save_plan` |
+| `docs/templates/windsurf_execution_prompt_v2.md` | Active | Execution prompt aligned to `write_file` + plan enforcement |
+| `docs/templates/PLAN_SCAFFOLD.json` | Active | Canonical JSON plan scaffold |
+| `docs/templates/INTENT_ARTIFACT_TEMPLATE.md` | Active | Canonical intent artifact scaffold |
+| `docs/templates/PLAN_EXAMPLE_FINALIZED.json` | Active | Example of a finalized JSON plan |
 
-**Registry Version**: 2.1
+## Verification target
 
----
+These templates must align with:
 
-## Overview
+- `src/application/plan-linter.js`
+- `src/application/plan-enforcer.js`
+- `src/application/intent-validator.js`
+- `src/domain/intent-schema.js`
+- `src/interfaces/tools/lint_plan.js`
+- `src/interfaces/tools/save_plan.js`
+- `src/interfaces/tools/write_file.js`
+- `src/interfaces/server.js`
 
-This registry documents all Atlas-Gate templates, their purposes, and alignment with the ATLAS-GATE MCP.
+## Current plan storage contract
 
-All templates are designed for use with:
+- approved saved plans: `docs/plans/<signature>.json`
+- signature bundles: `docs/plans/<signature>.bundle.json`
 
-- `atlas-gate-antigravity` (Planning)
-- `atlas-gate-windsurf` (Execution)
+## Legacy note
 
----
-
-## Template 1: Antigravity Planning Prompt
-
-**File**: `docs/templates/antigravity_planning_prompt_v2.md`
-
-**Purpose**: Instructions for ANTIGRAVITY agents. Covers `lint_plan` (validation only, returns errors/warnings) and `save_plan` (signs + saves plan to `docs/plans/`).
-
-**Verified**: ✓ YES (V2.1)
-
----
-
-## Template 2: Windsurf Execution Prompt
-
-**File**: `docs/templates/windsurf_execution_prompt_v2.md`
-
-**Purpose**: Instructions for executing plans. Covers `begin_session`, `read_file`, and `write_file` with the correct intent gate schema.
-
-**Verified**: ✓ YES (V2.1)
-
----
-
-## Template 3: Plan Scaffold
-
-**File**: `docs/templates/plan_scaffold.md`
-
-**Purpose**: Starting point for new plans; follows the exact 7-section structure required by `lint_plan`.
-
-**Verified**: ✓ YES
-
----
-
-## Verification Methodology
-
-Templates are verified by ensuring they accurately describe the current MCP tool parameters and enforcement logic.
-
-### Commands
-
-```bash
-# Verify a plan scaffold
-node tools/lint_plan.js --path docs/templates/plan_scaffold.md
-```
-
----
-
-**Registry Status**: ACTIVE
-**Templates Status**: PRODUCTION-READY
-**Governance**: ATLAS-GATE-v2
+Legacy Markdown plan material may still be present for compatibility or migration, but the canonical template registry is JSON-first.

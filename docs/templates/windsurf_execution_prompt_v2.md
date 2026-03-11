@@ -35,16 +35,24 @@ Core principle: **Plan specifies EXACTLY what to do. You do it.**
 
 You will receive EXACTLY these two values:
 
-- **Plan Signature**: Cryptographic identifier (URL-safe base64, e.g., `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`)
-- **Plan Path**: Path to the signed plan file (always `docs/plans/<SIGNATURE>.md`)
+- **Plan Signature**: Cryptographic hash (URL-safe base64, e.g., `y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o`)
+  - This is a **string**, not a JSON object
+  - You will pass this as the `plan` parameter in all `write_file` calls
+  - The MCP server will verify this signature against the Sigstore bundle
+  
+- **Plan Path**: Path to the signed plan file (always `docs/plans/<SIGNATURE>.json`)
+  - Example: `docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json`
+  - The corresponding bundle is at: `docs/plans/<SIGNATURE>.bundle.json`
 
-**CRITICAL**:
+**CRITICAL VALIDATION**:
 
-- If the plan file doesn't exist at the given path → STOP.
-- If the signature in the operator input doesn't match the filename (excluding `.md`) → STOP.
-- If the plan content has been tampered with, `write_file` will reject it via signature verification.
+- If the plan file doesn't exist at the given path → **STOP** (plan not found).
+- If the signature in the operator input doesn't match the filename (excluding `.json`) → **STOP** (signature mismatch).
+- If the plan content has been tampered with, the MCP server will reject it during `write_file` (signature verification fails).
+- If the plan `status` field is not `"APPROVED"` → **STOP** (plan not ready for execution).
+- If the plan `role` field is not `"ANTIGRAVITY"` → **STOP** (invalid plan role).
 
-**HALT** if any input is missing or ambiguous.
+**HALT** if any input is missing, ambiguous, or validation fails.
 
 ---
 
@@ -52,47 +60,33 @@ You will receive EXACTLY these two values:
 
 1. **Verify Server**: Check if the ATLAS-GATE MCP server is running. If not, start it using `bin/start-server.sh` (in the workspace root).
 2. **Initialize Session**: Call `begin_session({ workspace_root: "/path/to/project" })` (MANDATORY).
-3. **Read Plan**: Use `read_file({ path: "docs/plans/<SIGNATURE>.md" })`.
+3. **Read Plan**: Use `read_file({ path: "docs/plans/<SIGNATURE>.json" })`.
 4. **Verify Plan Integrity**:
-   - Confirm all 7 required sections are present.
+   - Confirm all required top-level JSON keys are present.
    - The MCP server will automatically load and verify the Sigstore bundle (`<signature>.bundle.json`) mathematically against the content on every `write_file` call.
 
 ---
 
 ## PLAN ANATOMY
 
-Plans have this exact structure:
+Plans are strict JSON files with this shape:
 
-```markdown
-<!--
-ATLAS-GATE_PLAN_SIGNATURE: [URL-safe base64 signature]
-ROLE: ANTIGRAVITY
-STATUS: APPROVED
--->
-
-# Plan Metadata
-...
-
-# Scope & Constraints
-...
-
-# Phase Definitions
-...
-
-# Path Allowlist
-...
-
-# Verification Gates
-...
-
-# Forbidden Actions
-...
-
-# Rollback / Failure Policy
-...
+```json
+{
+  "atlas_gate_plan_signature": "<SIGNATURE>",
+  "role": "ANTIGRAVITY",
+  "status": "APPROVED",
+  "plan_metadata": { "plan_id": "..." },
+  "scope_and_constraints": { "affected_files": [] },
+  "phase_definitions": [],
+  "path_allowlist": [],
+  "verification_gates": [],
+  "forbidden_actions": [],
+  "rollback_failure_policy": {}
+}
 ```
 
-All 7 sections are required.
+All keys above are required.
 
 ---
 
@@ -101,56 +95,79 @@ All 7 sections are required.
 **Before you can write ANY file**, you MUST first create a corresponding intent artifact file named `<filename>.intent.md`.
 The `write_file` tool will **mathematically reject** any write if it cannot find and validate this `.intent.md` file.
 
-The intent file MUST follow this exact 9-section canonical schema, with no deviations, code blocks, or conditional language:
+The intent file MUST follow this exact 9-section canonical schema (from the spec), with no deviations, code blocks, or conditional language:
 
 ```markdown
 # Intent: src/auth.js
 
 ## Purpose
-Plain English explanation of what this file does and why it is being changed. (Minimum 30 characters, no code symbols allowed).
+Plain English explanation of what this file does and why it is being changed. Minimum 30 characters, no code symbols allowed.
 
 ## Authority
-Plan Signature: [URL-safe base64 signature]
-Phase ID: PHASE_[NAME]
+Plan Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
+Phase ID: PHASE_IMPLEMENTATION
 
 ## Inputs
-- Bulleted list of inputs this code accepts
-- Must have at least one bullet
+- JWT token string from request header
+- Configuration with signing algorithm
 
 ## Outputs
-- Bulleted list of what this code returns or affects
+- Validated user identity object
+- Rejection error if token invalid or expired
 
 ## Invariants
-- Declarative rules that must always be true
-- NO conditional language (might, should, could)
+- Token signature is always verified before use
+- Expired tokens are always rejected
+- Missing tokens are always rejected
 
 ## Failure Modes
-- Bulleted list of how this code can fail
+- Invalid token signature detected
+- Token expired at time of validation
+- Token contains invalid claims
 
 ## Debug Signals
-- Observability points (e.g., logs, metrics)
+- Log entry when token validation succeeds
+- Log entry when token validation fails with reason
+- Metrics counter for token_validation_attempts
 
 ## Out-of-Scope
-- Explicit constraints on what this code does NOT do
+- Token generation (handled by auth service)
+- User database operations
+- Session storage
 ```
+
+**Note**: The Authority section format is:
+```
+Plan Signature: <signature-string>
+Phase ID: PHASE_NAME
+```
+Not bulleted—these are key-value pairs separated by `: ` (colon + space).
 
 ## `write_file` TOOL SCHEMA
 
 ```javascript
 await write_file({
   // REQUIRED
-  path: "src/auth.js",          // Workspace-relative path
-  plan: "y6RIU0Xr1_fLxte...",  // The plan signature (from operator input)
+  path: "src/auth.js",                    // Workspace-relative path (string)
+  plan: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",  // Plan signature from operator (string)
 
-  // CONTENT: provide ONE of these
-  content: "... complete file content ...",   // Full file content
-  patch: "--- a/src/auth.js\n+++...",         // Unified diff patch (optional alternative)
+  // CONTENT: provide ONE of these (required)
+  content: "... complete file content ...",   // Full file content (string) — recommended
+  // OR
+  patch: "--- a/src/auth.js\n+++...",         // Unified diff patch (string) — alternative
 
   // OPTIONAL
   role: "EXECUTABLE",           // EXECUTABLE | BOUNDARY | INFRASTRUCTURE | VERIFICATION
   intent: "Short summary",      // Optional inline summary, but .intent.md file is STILL REQUIRED
+  
+  // Advanced (optional)
+  workspace_root: "/path/to/project",    // Override workspace root if needed
+  planId: "PLAN_AUTH_V1",                // Optional plan ID for reference
+  purpose: "Implement JWT validation",   // Optional purpose description
 });
 ```
+
+**CRITICAL**: You MUST create the `.intent.md` file BEFORE calling `write_file` for the actual target file. The write_file tool will mathematically reject the write if the intent artifact is missing or invalid.
 
 ---
 
@@ -162,17 +179,38 @@ await write_file({
 
 ### Step 2: Plan Validation
 
-- Read the plan file with `read_file`.
-- Confirm all 7 sections are present.
-- Extract the `Path Allowlist`.
+- Read the plan file with `read_file` and parse the JSON.
+- Confirm `status === "APPROVED"` and `atlas_gate_plan_signature` matches operator input.
+- Extract `phase_definitions`, `path_allowlist`, `verification_gates`, and `rollback_failure_policy`.
 
 ### Step 3: Implement Changes
 
-For each file in `Scope & Constraints`:
+For each phase in `phase_definitions`, execute the required changes in order:
 
-1. **Validate Path**: Ensure the target path is in the `Path Allowlist`.
-2. **Create Intent**: Write the `<target_path>.intent.md` file using `write_file` (this file exempts itself from the rule).
-3. **Execute Write**: Call `write_file` for the actual target path (see schema above). It will automatically validate the intent file you just created.
+For each target file authorized by that phase:
+
+1. **Validate Path**: Ensure the target path is in the `path_allowlist`.
+   - If path not in allowlist → **STOP** (path violation).
+   
+2. **Validate Intent Requirement**: Ensure the file's `<target_path>.intent.md` appears in `required_intent_artifacts` for the current phase.
+   - If intent not required in phase → **STOP** (intent enforcement violation).
+   
+3. **Create Intent Artifact** (MANDATORY):
+   - Call `write_file` with `path: "<target_path>.intent.md"`
+   - Provide complete intent artifact following the 8-section schema (see "Intent Artifact Law" section above)
+   - Example:
+     ```javascript
+     await write_file({
+       path: "src/auth.js.intent.md",
+       plan: "y6RIU0Xr1_fLxte...",
+       content: "# Intent: src/auth.js\n\n## Purpose\nImplement JWT validation...\n\n## Authority\n..."
+     });
+     ```
+   
+4. **Execute Target Write**:
+   - Call `write_file` for the actual target path with complete file content
+   - The MCP server will automatically validate that the intent file you created exists and is valid
+   - If intent file is missing or invalid → write is **REJECTED** (fail-closed)
 
 ### Step 4: Verification
 

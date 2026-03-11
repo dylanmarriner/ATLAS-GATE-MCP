@@ -12,9 +12,9 @@ A **plan** is a cryptographically signed JSON document that:
 - Cannot be modified without invalidating the signature
 - Serves as proof of authorization in the audit trail
 
-## Plan Structure (10 Required Sections)
+## Plan Structure
 
-Every ATLAS-GATE plan MUST have these sections in order:
+Every ATLAS-GATE plan MUST be a strict JSON object with these required top-level keys:
 
 ### 1. Header (Meta + Signature)
 
@@ -289,10 +289,11 @@ When you call `lint_plan()`, the system runs:
 
 ### Stage 7: Cosign Signing
 
+- Performed by `save_plan`, not `lint_plan`
 - Canonicalizes JSON content
 - Signs with ECDSA P-256 private key
-- Returns URL-safe Base64 signature (43 characters)
-- Inserts signature into `atlas_gate_plan_signature` field
+- Returns URL-safe Base64 signature
+- Inserts signature into `atlas_gate_plan_signature` field and writes the saved plan
 
 ## Creating a Plan: Step-by-Step
 
@@ -357,8 +358,8 @@ For each phase, write verification commands:
 
 ### Step 7: Lint the Plan
 
-```
-lint_plan({ path: "my-plan.json" })
+```json
+lint_plan({ content: "<full JSON plan>" })
 ```
 
 Response:
@@ -366,18 +367,25 @@ Response:
 ```json
 {
   "passed": true,
-  "signature": "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
   "errors": [],
-  "warnings": []
+  "warnings": [],
+  "summary": {
+    "error_count": 0,
+    "warning_count": 0,
+    "invariants_checked": [
+      "PLAN_SCOPE_LAW",
+      "MECHANICAL_LAW_ONLY",
+      "PUBLIC_LAW_READABLE",
+      "PLAN_IMMUTABILITY"
+    ]
+  }
 }
 ```
 
 ### Step 8: Save Signed Plan
 
-Rename to signature:
-
-```bash
-mv my-plan.json docs/plans/y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o.json
+```json
+save_plan({ content: "<full JSON plan>" })
 ```
 
 The plan is now:
@@ -589,7 +597,7 @@ The plan is now:
 
 ## Checklist: Before Submitting for Linting
 
-- [ ] All 8 top-level sections present
+- [ ] All required top-level keys present
 - [ ] `status === "APPROVED"`
 - [ ] `role === "ANTIGRAVITY"`
 - [ ] `plan_id` is UPPERCASE_WITH_UNDERSCORES
@@ -608,7 +616,7 @@ The plan is now:
 ```
 Write Plan JSON
     ↓
-lint_plan({ path: "my-plan.json" })
+lint_plan({ content: "<json-plan>" })
     ↓
 Stage 1: JSON Parse
     ↓ (if fails → violations returned)
@@ -616,11 +624,13 @@ Stage 1: JSON Parse
 Stage 2-6: Custom Validation + Spectral
     ↓ (if fails → violations returned)
     ↓
-Stage 7: Cosign Signing
+Return: { passed: true, errors: [], warnings: [] }
     ↓
-Return: { passed: true, signature: "..." }
+save_plan({ content: "<json-plan>" })
     ↓
-Save to: docs/plans/SIGNATURE.json
+Sign canonicalized JSON + inject atlas_gate_plan_signature
+    ↓
+Return: { status: "PLAN_SAVED", signature, path, bundlePath }
     ↓
 Plan is immutable & verified
 ```

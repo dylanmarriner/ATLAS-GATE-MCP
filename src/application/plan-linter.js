@@ -240,7 +240,7 @@ function validatePhases(plan) {
     // Validate that required array fields are actually arrays
     for (const arrField of ["allowed_operations", "forbidden_operations", "required_intent_artifacts",
                              "verification_commands", "expected_outcomes", "failure_stop_conditions"]) {
-      if (field in phase && !Array.isArray(phase[arrField])) {
+      if (arrField in phase && !Array.isArray(phase[arrField])) {
         violations.push({
           code: PLAN_LINT_SYSTEM_ERROR_CODES.INVALID_STRUCTURE,
           message: `phase_definitions[${i}].${arrField} must be an array`,

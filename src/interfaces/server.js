@@ -198,7 +198,7 @@ export async function startServer(role = "ANTIGRAVITY") {
   runSelfAudit();
 
   const server = new McpServer({
-    name: `kaiza-mcp-${role.toLowerCase()}`,
+    name: `atlas-gate-mcp-${role.toLowerCase()}`,
     version: "1.0.0",
   });
 
@@ -529,5 +529,5 @@ export async function startServer(role = "ANTIGRAVITY") {
   // Attach stdio transport and start
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error(`[MCP] kaiza-mcp-${role.toLowerCase()} running | session=${SESSION_ID}`);
+  console.error(`[MCP] atlas-gate-mcp-${role.toLowerCase()} running | session=${SESSION_ID}`);
 }

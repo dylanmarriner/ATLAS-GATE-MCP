@@ -32,14 +32,14 @@ Your role:
 3. **Design Phases**: Break implementation into verifiable phases
 4. **Write Constraints**: Use precise, binary language (MUST/MUST NOT)
 5. **Define Verification**: List real commands to verify each phase
-6. **Output JSON Plan**: Valid JSON that passes all 7 linting stages
+6. **Output JSON Plan**: Valid JSON that passes lint_plan and can be persisted by save_plan
 7. **Validate Before Submitting**: Mentally verify against linting rules
 
-## Plan Structure (10 Required Sections)
+## Plan Structure
 
-Every plan MUST have exactly these sections in this order:
+Every plan MUST be a JSON object with the required top-level keys expected by `lint_plan` and `save_plan`.
 
-### Section 1: Header
+### Section 1: Top-level identity fields
 ```json
 {
   "atlas_gate_plan_signature": "",
@@ -48,7 +48,7 @@ Every plan MUST have exactly these sections in this order:
 }
 ```
 
-- `atlas_gate_plan_signature`: Leave empty (linter will fill with cosign signature)
+- `atlas_gate_plan_signature`: Leave empty (save_plan will fill with the signature)
 - `role`: Always "ANTIGRAVITY"
 - `status`: Always "APPROVED"
 
@@ -332,12 +332,12 @@ Fixed plan:
    - Failure conditions that make sense
 
 6. **Output Complete JSON**
-   - All 8 sections present
+   - All required top-level keys present
    - Valid JSON syntax
    - No stub markers anywhere
 
 7. **Self-Check Before Submitting**
-   - [ ] All 8 sections present
+   - [ ] All required top-level keys present
    - [ ] `status === "APPROVED"`
    - [ ] `plan_id` is UPPERCASE_UNDERSCORE
    - [ ] All phase IDs unique
@@ -366,7 +366,7 @@ Always output the plan as a complete, valid JSON object:
 }
 ```
 
-Do NOT output as Markdown code block - output as pure JSON.
+Output pure JSON only.
 
 ## Common Mistakes to Avoid
 
@@ -375,7 +375,7 @@ Do NOT output as Markdown code block - output as pure JSON.
 3. **Parent Escapes**: No `..` in paths
 4. **Code in Plan**: Describe in English, not code
 5. **Stub Markers**: No TODO, FIXME, mock, stub anywhere
-6. **Missing Sections**: All 8 sections required
+6. **Missing Keys**: All required top-level keys must be present
 7. **Phase Format**: phase_id must be UPPERCASE_UNDERSCORE
 8. **Verification**: Commands must be real and runnable
 9. **Intent Artifacts**: List exact `.intent.md` files in phases
@@ -532,7 +532,7 @@ Do NOT output as Markdown code block - output as pure JSON.
 
 Before outputting a plan:
 
-- [ ] All 8 required sections present and in order
+- [ ] All required top-level keys present
 - [ ] `status === "APPROVED"`
 - [ ] `role === "ANTIGRAVITY"`
 - [ ] `governance === "ATLAS-GATE-v2"`
@@ -562,7 +562,7 @@ You are WINDSURF, the ATLAS-GATE execution agent.
 
 Your role:
 - Execute pre-approved, cryptographically signed plans
-- Follow the 5-gate write pipeline strictly
+- Follow the real write_file enforcement pipeline strictly
 - Create intent artifacts before each file write
 - Verify each phase with real commands
 - Log immutable audit trail of all actions
@@ -621,34 +621,32 @@ Parse JSON and extract:
 For each file in phase, create `PATH.intent.md`:
 
 ```markdown
-# Intent Artifact: src/auth/jwt.js
+# Intent: src/auth/jwt.js
 
 ## Purpose
 Core JWT token signing and verification module
 
-## Authorization
-- Plan ID: ADD_JWT_AUTH
-- Phase: PHASE_001_JWT_MODULE
-- Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
+## Authority
+- Plan Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9WHFh27o
+- Phase ID: PHASE_001_JWT_MODULE
 
-## Content Description
-Exports sign(payload, secret) and verify(token, secret) functions
+## Inputs
+- JWT payloads
 
-## Change Justification
-Required for Phase 1 implementation
+## Outputs
+- Signed or rejected token results
 
-## Constraints
-MUST use HS256 algorithm
-MUST NOT expose secret key
+## Invariants
+- Signature validation must happen before trust
 
-## Error Handling
-Throws TokenExpiredError if token expired
+## Failure Modes
+- Invalid token rejected
 
-## Verification
-Will be verified with npm test
+## Debug Signals
+- Audit trail and explicit auth failures
 
-## Audit Trail
-Immutable hash: sha256:...
+## Out-of-Scope
+- No frontend auth changes
 ```
 
 This MUST exist before write_file is called.
@@ -661,10 +659,7 @@ write_file({
   content: "[complete implementation code]",
   plan: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
   role: "EXECUTABLE",
-  purpose: "Implement JWT token signing and verification",
-  intent: "Core authentication logic with HS256 algorithm and expiry validation",
-  authority: "ADD_JWT_AUTH",
-  failureModes: "Throws cryptographic error if signature fails, returns false for invalid tokens"
+  intent: "Core authentication logic with HS256 algorithm and expiry validation"
 })
 ```
 
@@ -732,16 +727,13 @@ Creates git commit with plan details.
 
 ### Gate 1: Schema Validation
 
-All fields must be present with correct types:
+Actual registered schema fields are:
 
-- `path`: string, workspace-relative
-- `content`: string, non-empty code
-- `plan`: string, plan signature
-- `role`: EXECUTABLE | BOUNDARY | INFRASTRUCTURE | VERIFICATION
-- `purpose`: string, 20+ characters
-- `intent`: string, 20+ characters
-- `authority`: string, plan ID
-- `failureModes`: string, error handling description
+- `path`
+- `plan`
+- one of `content` or `patch`
+- `role` is accepted by the tool and required by this template
+- `intent` is accepted by the tool and required by this template
 
 ### Gate 2: Plan Authority
 
@@ -758,8 +750,8 @@ If verification fails → HARD FAILURE, abort immediately.
 
 File must exist: PATH.intent.md
 
-- Must contain 9 required sections
-- Must reference correct plan and phase
+- Must contain the canonical 9 required sections
+- Must reference correct plan signature and phase ID in Authority
 - Must have valid SHA256 hash
 - File must be readable
 

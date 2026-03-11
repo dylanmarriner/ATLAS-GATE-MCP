@@ -28,9 +28,9 @@ WINDSURF is the **execution agent** that:
 2. **Workspace Root**: `/path/to/project`
 3. **Public Key Path**: `.atlas-gate/.cosign-keys/public.pem`
 
-## The 5-Gate Pipeline
+## The write_file Enforcement Pipeline
 
-Every `write_file` request passes through five sequential gates. If *any* gate fails, the entire operation is rejected atomically.
+Every `write_file` request passes through the server's enforcement flow. If any critical gate fails, the operation is rejected atomically.
 
 ### Gate 1: Schema Validation (Zod)
 
@@ -38,16 +38,13 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 
 **Checks**:
 
-- `path`: string, relative to workspace
-- `content`: string, non-empty code
+- `path`: string, workspace-relative
 - `plan`: string, plan signature
-- `role`: EXECUTABLE | BOUNDARY | INFRASTRUCTURE | VERIFICATION
-- `purpose`: string, 20+ characters
-- `intent`: string, 20+ characters
-- `authority`: string, plan ID
-- `failureModes`: string, error handling strategy
+- one of `content` or `patch`
+- `role`: accepted by the tool and required by this execution guide
+- `intent`: accepted by the tool and required by this execution guide
 
-**Failure**: Returns 400 Bad Request with field details
+**Failure**: Invalid schema or missing required mutation content is rejected before execution.
 
 **Example Valid Request**:
 
@@ -57,10 +54,7 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
   "content": "export function verify(token) { ... }",
   "plan": "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
   "role": "EXECUTABLE",
-  "purpose": "Implement JWT token verification function",
-  "intent": "Core authentication logic that validates token signature and expiration",
-  "authority": "FEATURE_JWT_AUTH_V1",
-  "failureModes": "If signature verification fails, throw cryptographic error"
+  "intent": "Core authentication logic that validates token signature and expiration"
 }
 ```
 
@@ -71,7 +65,7 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 **Checks**:
 
 1. Plan file exists at `docs/plans/<SIGNATURE>.json`
-2. Signature in request matches plan header
+2. Signature in request matches the `atlas_gate_plan_signature` field in the JSON plan
 3. Cosign signature verification against public key succeeds
 4. Plan `status === "APPROVED"`
 5. Plan `role === "ANTIGRAVITY"`
@@ -82,8 +76,8 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 
 ```
 1. Load plan from docs/plans/SIGNATURE.json
-2. Extract atlas_gate_plan_signature from plan header
-3. Strip header from plan content
+2. Extract `atlas_gate_plan_signature` from the JSON body
+3. Remove `atlas_gate_plan_signature` from the canonicalized content
 4. Canonicalize JSON (normalize whitespace, key order)
 5. Call cosign verify(content, signature, public_key)
 6. If verify returns false → HARD FAILURE, abort
@@ -105,36 +99,32 @@ Every `write_file` request passes through five sequential gates. If *any* gate f
 **Intent Artifact Structure** (Required 9 Sections):
 
 ```markdown
-# Intent Artifact: src/auth/jwt.js
+# Intent: src/auth/jwt.js
 
 ## Purpose
 Core JWT authentication module for API token validation
 
-## Authorization
-- Plan ID: FEATURE_JWT_AUTH_V1
-- Phase: PHASE_001_JWT_MODULE
-- Role: EXECUTABLE
-- Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o
+## Authority
+- Plan Signature: y6RIU0Xr1_fLxteAxdNCMSo9kriJx9WHFh27o
+- Phase ID: PHASE_001_JWT_MODULE
 
-## Content Description
-Exports sign() and verify() functions for HMAC-SHA256 token handling
+## Inputs
+- JWT payloads
 
-## Change Justification
-Required for completing Phase 1 of JWT authentication implementation plan
+## Outputs
+- Signed tokens and verification results
 
-## Constraints
-- MUST use standard jsonwebtoken library
-- MUST NOT expose private key
-- MUST handle TokenExpiredError
+## Invariants
+- Token verification remains deterministic
 
-## Error Handling
-Throws cryptographic errors for invalid tokens, expired tokens, and malformed signatures
+## Failure Modes
+- Invalid token or expired token rejected
 
-## Verification
-This intent is recorded in audit-log.jsonl with immutable hash
+## Debug Signals
+- Audit log entry and application error signals
 
-## Audit Trail
-Entry includes: session ID, plan signature, file path, intent hash, timestamp
+## Out-of-Scope
+- No frontend authentication behavior
 ```
 
 **Failure**: Intent file missing or invalid → operation aborted
@@ -328,10 +318,7 @@ For each file in phase:
      content: "export function verify(token) { ... }",
      plan: "y6RIU0Xr1_fLxteAxdNCMSo9kriJx9JcEkx9WHFh27o",
      role: "EXECUTABLE",
-     purpose: "Implement core JWT verification",
-     intent: "Token validation with signature and expiry checks",
-     authority: "FEATURE_JWT_AUTH_V1",
-     failureModes: "Throws on invalid signature or expired token"
+     intent: "Token validation with signature and expiry checks"
    })
    ```
 
@@ -480,9 +467,11 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ### 1. ANTIGRAVITY Creates Plan
 
 ```
-→ lint_plan({ path: "jwt-plan.json" })
+→ lint_plan({ content: "<jwt-plan-json>" })
+→ Returns: passed = true
+→ save_plan({ content: "<jwt-plan-json>" })
 → Returns: signature = "y6RIU0Xr1..."
-→ Saves to: docs/plans/y6RIU0Xr1.../json
+→ Saves to: docs/plans/y6RIU0Xr1....json
 ```
 
 ### 2. WINDSURF Initializes Session
@@ -495,7 +484,7 @@ Each operation creates an immutable entry in `audit-log.jsonl`:
 ### 3. WINDSURF Loads Plan
 
 ```
-→ read_file({ path: "docs/plans/y6RIU0Xr1.../json" })
+→ read_file({ path: "docs/plans/y6RIU0Xr1....json" })
 → Verifies plan structure
 → Caches plan metadata
 ```
@@ -558,7 +547,7 @@ audit-log.jsonl contains:
 
 **Error**: `path must be a string`
 
-**Fix**: Ensure all required fields are present with correct types:
+**Fix**: Ensure the execution template fields are present with correct types:
 
 ```json
 {
@@ -566,10 +555,7 @@ audit-log.jsonl contains:
   "content": "...",
   "plan": "signature",
   "role": "EXECUTABLE",
-  "purpose": "...",
-  "intent": "...",
-  "authority": "...",
-  "failureModes": "..."
+  "intent": "..."
 }
 ```
 

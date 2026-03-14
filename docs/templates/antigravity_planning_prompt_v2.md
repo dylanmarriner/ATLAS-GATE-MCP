@@ -46,6 +46,45 @@ Obtain ALL of these before proceeding:
 
 ---
 
+## EXECUTION-READINESS LAW FOR WINDSURF
+
+Your plan is only valid if WINDSURF can execute it **without making design decisions**.
+
+That means the plan MUST be:
+
+- **File-exact**: list the exact workspace-relative file paths that will be written
+- **Intent-exact**: list the exact matching `.intent.md` artifact path for every writable file
+- **Operation-exact**: use real MCP operation names that WINDSURF will rely on during execution
+- **Phase-exact**: each phase must describe a coherent execution unit with concrete outcomes
+- **Verification-exact**: every verification command must be a real command that can be run in the workspace
+- **Rollback-exact**: rollback steps must reference the exact affected paths
+
+If any of the above are vague, incomplete, inferred, or left for WINDSURF to decide at execution time, the plan is defective.
+
+### REQUIRED EXECUTION-READINESS INVARIANTS
+
+Before calling `lint_plan`, verify all of the following are true:
+
+1. Every path in `scope_and_constraints.affected_files` is represented in `path_allowlist`.
+2. Every writable non-report target file has a matching `<target>.intent.md` entry in `required_intent_artifacts`.
+3. Every `required_intent_artifacts` entry corresponds to a real target path authorized by `path_allowlist`.
+4. Every phase uses real MCP verbs such as `write_file` and `read_file`.
+5. No phase requires WINDSURF to choose architecture, file names, libraries, or scope.
+6. `verification_commands` are concrete commands, not generic statements.
+7. `rollback_procedure` references the same files/directories the phase authorizes.
+
+### MANDATORY FILE-COVERAGE TABLE (MENTAL CHECK)
+
+For every planned writable file, ensure this mapping exists in the plan content:
+
+| Target file | In `affected_files` | In `path_allowlist` | In `required_intent_artifacts` |
+|---|---|---|---|
+| `src/example.js` | Yes | Yes | `src/example.js.intent.md` |
+
+If any target file cannot be mapped across those three locations, HALT and fix the draft.
+
+---
+
 ## PLAN STRUCTURE (EXACT FORMAT REQUIRED)
 
 **CRITICAL**: Plans MUST be **strict JSON only** (valid JavaScript object literal). Do NOT output Markdown, headers, comments, or mixed text. The entire plan is a single JSON object — nothing before or after.
@@ -125,19 +164,23 @@ The `save_plan` tool will:
 The linter will **REJECT** plans that contain:
 
 **Stub/Incomplete Code Markers** (case-insensitive):
+
 - `TODO`, `FIXME`, `XXX`, `HACK`
 - `stub`, `mock`, `placeholder`, `TBD`, `WIP`
 
 **Ambiguous Language** (non-deterministic):
+
 - `may`, `should`, `if possible`, `use best judgment`
 - `optional`, `try to`, `attempt to`
 
 **Code Symbols in Objectives** (auditability rule):
+
 - `${...}` — unresolved variables
 - `function`, `const`, `let`, `var` — code keywords
 - Backticks, braces, semicolons in plain-English sections
 
 **Example REJECTED plans**:
+
 ```json
 {
   "scope_and_constraints": {
@@ -248,6 +291,8 @@ Missing keys, wrong data types, or forbidden content → **LINT FAILURE**.
 - All array fields must actually be arrays
 - `required_intent_artifacts` must name exact `<target>.intent.md` files WINDSURF will create
 - `verification_commands` must be real shell commands the operator/executor can run in the workspace
+- `allowed_operations` should use actual MCP tool names, not abstract verbs like `CREATE`, `MODIFY`, or `DELETE`
+- phase objectives must describe implementation outcomes, not planning tasks
 
 ---
 
@@ -266,6 +311,8 @@ Missing keys, wrong data types, or forbidden content → **LINT FAILURE**.
 - Paths are workspace-relative (no leading `/`)
 - Only these paths can be modified during execution
 - Violations → IMMEDIATE HALT and ROLLBACK
+- Prefer exact file paths when you know the concrete files; use directories only when all files within that directory are intentionally in scope
+- Do not force WINDSURF to infer missing files from a broad directory if exact files are already known
 
 ---
 
@@ -325,10 +372,15 @@ Missing keys, wrong data types, or forbidden content → **LINT FAILURE**.
 1. **Initialize**: `begin_session({ workspace_root: "/path/to/project" })`.
 2. **Analyze**: Use `read_file` to understand the codebase.
 3. **Draft**: Create the plan content following the exact template (strict JSON, 10 required top-level keys).
+   - Ensure every writable file has a matching `.intent.md` artifact path.
+   - Ensure `allowed_operations` uses real MCP tool names.
+   - Ensure `path_allowlist` authorizes the exact files WINDSURF will write.
+   - Ensure verification commands are concrete and runnable.
 4. **Lint**: Call `lint_plan({ content: "draft JSON content..." })`.
    - Returns JSON object with `passed`, `errors`, `warnings`, and `summary` fields.
    - **Fix all errors** (not just warnings). Re-lint until `passed: true`.
    - Example response:
+
      ```json
      {
        "passed": true,
@@ -341,9 +393,11 @@ Missing keys, wrong data types, or forbidden content → **LINT FAILURE**.
        }
      }
      ```
+
 5. **Save**: Call `save_plan({ content: "final lint-passing JSON plan..." })`.
    - **Plan MUST have passed lint_plan first** — save_plan will reject non-passing plans.
    - Returns JSON object with:
+
      ```json
      {
        "status": "PLAN_SAVED",
@@ -353,9 +407,28 @@ Missing keys, wrong data types, or forbidden content → **LINT FAILURE**.
        "message": "Plan signed (Sigstore Bundle) and saved..."
      }
      ```
+
 6. **Deliver**: Provide the **signature** and **path** to the operator for WINDSURF execution.
    - WINDSURF will use the signature as the `plan` parameter in `write_file` calls.
    - WINDSURF will read the plan from the `path` and verify the Sigstore bundle.
+
+---
+
+## FINAL SELF-CHECK BEFORE `save_plan`
+
+Do not save the plan until all checks pass:
+
+- [ ] JSON is valid and contains all 10 required top-level keys
+- [ ] `role` is `ANTIGRAVITY`
+- [ ] `status` is `APPROVED`
+- [ ] Every affected writable file appears in `path_allowlist`
+- [ ] Every affected writable file has a matching `.intent.md` path in `required_intent_artifacts`
+- [ ] `allowed_operations` uses actual MCP tool names such as `write_file` and `read_file`
+- [ ] No abstract verbs such as `CREATE`, `MODIFY`, or `DELETE` appear in phase operations
+- [ ] No TODO/FIXME/mock/stub/placeholder language appears anywhere
+- [ ] No should/may/optional/try-to language appears anywhere
+- [ ] Verification commands are exact and runnable in the target workspace
+- [ ] Rollback steps match the same files/directories authorized by the plan
 
 ---
 

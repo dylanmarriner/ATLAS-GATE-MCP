@@ -66,6 +66,7 @@
 **Canonical Spec**: [PLAN_FORMAT_SPEC.md](./PLAN_FORMAT_SPEC.md) — Complete JSON schema documentation
 
 **Key Points**:
+
 - Use PLAN_SCAFFOLD.json as the starting template
 - Refer to PLAN_FORMAT_SPEC.md for all field requirements
 - All plans must match the 10-key structure exactly
@@ -132,7 +133,7 @@ This document aligns with:
 | Save Plan Tool | `src/interfaces/tools/save_plan.js` | ✓ Signs and persists plans |
 | Lint Plan Tool | `src/interfaces/tools/lint_plan.js` | ✓ Returns errors/warnings/summary |
 | Write File Tool | `src/interfaces/tools/write_file.js` | ✓ Enforces plan authorization |
-| Intent Spec | `docs/reports/MCP_INTENT_ARTIFACT_SPEC.md` | ✓ 8-section canonical schema |
+| Intent Spec | `docs/reports/MCP_INTENT_ARTIFACT_SPEC.md` | ✓ 9-section canonical schema |
 | Plan Format | `docs/PLAN_FORMAT_SPEC.md` | ✓ Complete JSON schema |
 
 ---

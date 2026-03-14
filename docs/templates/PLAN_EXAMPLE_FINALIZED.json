@@ -37,11 +37,12 @@
       "phase_id": "PHASE_IMPLEMENTATION",
       "objective": "Implement JWT authentication middleware and apply it to protected routes",
       "allowed_operations": [
-        "CREATE",
-        "MODIFY"
+        "write_file",
+        "read_file"
       ],
       "forbidden_operations": [
-        "DELETE"
+        "delete_file",
+        "execute_shell"
       ],
       "required_intent_artifacts": [
         "src/middleware/auth.js.intent.md",
@@ -71,9 +72,9 @@
     }
   ],
   "path_allowlist": [
-    "src/middleware/",
+    "src/middleware/auth.js",
     "src/routes/protected.js",
-    "tests/middleware/",
+    "tests/middleware/auth.test.js",
     "docs/API_AUTH.md"
   ],
   "verification_gates": [

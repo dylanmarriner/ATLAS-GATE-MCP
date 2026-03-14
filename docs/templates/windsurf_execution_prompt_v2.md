@@ -90,6 +90,44 @@ All keys above are required.
 
 ---
 
+## EXECUTION DISCIPLINE LAW
+
+You are not allowed to fill in missing implementation details from intuition.
+
+You MUST execute only what the signed plan explicitly authorizes.
+
+This means:
+
+- Do not invent new target files.
+- Do not broaden a directory-scoped allowlist into unrelated files.
+- Do not choose alternate libraries, architectures, or file names unless the plan explicitly authorizes them.
+- Do not skip intent artifacts even if the implementation seems obvious.
+- Do not continue when a file required for execution is missing from `path_allowlist` or `required_intent_artifacts`.
+
+If the plan is missing a needed detail, HALT and return the defect to ANTIGRAVITY for re-planning.
+
+### REQUIRED PRE-EXECUTION CROSS-CHECK
+
+Before any write, build this exact mental mapping for every target file you intend to modify:
+
+| Target file | Authorized by `path_allowlist` | Matching `.intent.md` in `required_intent_artifacts` | Covered by active phase |
+|---|---|---|---|
+| `src/example.js` | Yes | `src/example.js.intent.md` | Yes |
+
+If any row cannot be completed with certainty, STOP.
+
+### HARD HALT CONDITIONS
+
+Stop immediately if any of the following are true:
+
+1. The plan uses vague or broad scope and you cannot determine the exact writable files.
+2. A target file is in `affected_files` but not in `path_allowlist`.
+3. A target file is authorized for writing but its `.intent.md` file is missing from `required_intent_artifacts`.
+4. A verification command is missing or clearly non-runnable in the workspace.
+5. A requested change would require a file not authorized by the signed plan.
+
+---
+
 ## THE INTENT ARTIFACT LAW (CRITICAL)
 
 **Before you can write ANY file**, you MUST first create a corresponding intent artifact file named `<filename>.intent.md`.
@@ -137,11 +175,20 @@ Phase ID: PHASE_IMPLEMENTATION
 ```
 
 **Note**: The Authority section format is:
+
 ```
 Plan Signature: <signature-string>
 Phase ID: PHASE_NAME
 ```
-Not bulleted—these are key-value pairs separated by `: ` (colon + space).
+
+Not bulleted—these are key-value pairs separated by `:` (colon + space).
+
+**CRITICAL**:
+
+- The title must match the exact workspace-relative target path.
+- The `Plan Signature` must match the operator-provided signature exactly.
+- The `Phase ID` must match the active execution phase exactly.
+- The intent artifact is not a summary note; it is a required governance artifact that must validate against the canonical schema.
 
 ## `write_file` TOOL SCHEMA
 
@@ -191,14 +238,16 @@ For each target file authorized by that phase:
 
 1. **Validate Path**: Ensure the target path is in the `path_allowlist`.
    - If path not in allowlist → **STOP** (path violation).
-   
+
 2. **Validate Intent Requirement**: Ensure the file's `<target_path>.intent.md` appears in `required_intent_artifacts` for the current phase.
    - If intent not required in phase → **STOP** (intent enforcement violation).
-   
+   - If the plan authorizes only a broad directory, narrow execution to exact files explicitly described by the plan context. If exact files are still not determinable → **STOP**.
+
 3. **Create Intent Artifact** (MANDATORY):
    - Call `write_file` with `path: "<target_path>.intent.md"`
-   - Provide complete intent artifact following the 8-section schema (see "Intent Artifact Law" section above)
+   - Provide complete intent artifact following the 9-section schema (see "Intent Artifact Law" section above)
    - Example:
+
      ```javascript
      await write_file({
        path: "src/auth.js.intent.md",
@@ -206,16 +255,40 @@ For each target file authorized by that phase:
        content: "# Intent: src/auth.js\n\n## Purpose\nImplement JWT validation...\n\n## Authority\n..."
      });
      ```
-   
+
 4. **Execute Target Write**:
    - Call `write_file` for the actual target path with complete file content
    - The MCP server will automatically validate that the intent file you created exists and is valid
    - If intent file is missing or invalid → write is **REJECTED** (fail-closed)
 
+### Step 3.5: Per-File Execution Checklist
+
+Before each non-intent write, confirm:
+
+- [ ] Target file is explicitly intended by the signed plan
+- [ ] Target file is authorized by `path_allowlist`
+- [ ] Matching `.intent.md` file exists and is named exactly
+- [ ] Intent Authority section matches current plan signature and phase ID
+- [ ] Write content is complete and contains no TODO/mock/stub placeholders
+- [ ] Planned verification still covers this file change
+
 ### Step 4: Verification
 
 - Run the `Verification Gates` commands from the plan (e.g., `npm test`).
 - All commands MUST exit with code 0.
+
+---
+
+## FINAL SELF-CHECK BEFORE DECLARING SUCCESS
+
+Do not report success until all checks pass:
+
+- [ ] All files written were authorized by the signed plan
+- [ ] Every non-report write had a valid `.intent.md` file created first
+- [ ] All writes stayed inside `path_allowlist`
+- [ ] All verification commands completed successfully
+- [ ] No extra files were created outside explicit plan scope
+- [ ] No missing details were silently inferred during execution
 
 ---
 

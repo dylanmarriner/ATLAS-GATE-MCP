@@ -10,6 +10,11 @@
 | `docs/templates/INTENT_ARTIFACT_TEMPLATE.md` | Active | Canonical intent artifact scaffold |
 | `docs/templates/PLAN_EXAMPLE_FINALIZED.json` | Active | Example of a finalized JSON plan |
 
+## Notes
+
+- `docs/templates/INTENT_ARTIFACT_TEMPLATE.md` is the canonical starter scaffold for `.intent.md` files.
+- The authoritative validation rules for intent artifacts are enforced by `src/domain/intent-schema.js` and documented in `docs/reports/MCP_INTENT_ARTIFACT_SPEC.md`.
+
 ## Verification target
 
 These templates must align with:

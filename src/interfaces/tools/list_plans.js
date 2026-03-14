@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getPlansDir } from '../../infrastructure/path-resolver.js';
+import { SystemError, SYSTEM_ERROR_CODES } from '../../domain/system-error.js';
 
 export async function listPlansHandler() {
   const plansDir = getPlansDir();
@@ -17,20 +18,21 @@ export async function listPlansHandler() {
       const filePath = path.join(plansDir, f);
       const content = fs.readFileSync(filePath, 'utf8');
 
-      let status = "UNKNOWN";
-      let scope = "UNKNOWN";
-      let version = "UNKNOWN";
-      let planId = "UNKNOWN";
-
+      let parsed;
       try {
-        const parsed = JSON.parse(content);
-        status = parsed.status || status;
-        scope = parsed.scope_and_constraints?.objective || scope;
-        version = parsed.plan_metadata?.version || version;
-        planId = parsed.plan_metadata?.plan_id || planId;
-      } catch (_err) {
-        status = "INVALID_JSON";
+        parsed = JSON.parse(content);
+      } catch (err) {
+        throw SystemError.toolFailure(SYSTEM_ERROR_CODES.INVALID_INPUT_VALUE, {
+          human_message: `Plan file contains invalid JSON: ${f}`,
+          tool_name: 'list_plans',
+          cause: err,
+        });
       }
+
+      const status = parsed.status || "UNKNOWN";
+      const scope = parsed.scope_and_constraints?.objective || "UNKNOWN";
+      const version = parsed.plan_metadata?.version || "UNKNOWN";
+      const planId = parsed.plan_metadata?.plan_id || "UNKNOWN";
 
       return {
         signature,

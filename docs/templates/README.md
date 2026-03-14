@@ -10,6 +10,7 @@
 These are the **ONLY** templates you should use. All others are archived/deprecated.
 
 ### 1. ANTIGRAVITY Planning Prompt
+
 **File**: `antigravity_planning_prompt_v2.md`  
 **Updated**: 2026-03-11  
 **Status**: ✓ CURRENT (fully aligned with PLAN_FORMAT_SPEC.md)
@@ -17,6 +18,7 @@ These are the **ONLY** templates you should use. All others are archived/depreca
 **What it does**: Instructions for ANTIGRAVITY agent to create governance-compliant plans
 
 **Key sections**:
+
 - YOUR TOOLS (lint_plan, save_plan, begin_session, etc.)
 - PLAN STRUCTURE (10 required top-level keys)
 - FORBIDDEN CONTENT (stub patterns, ambiguous language, code symbols)
@@ -27,6 +29,7 @@ These are the **ONLY** templates you should use. All others are archived/depreca
 ---
 
 ### 2. WINDSURF Execution Prompt
+
 **File**: `windsurf_execution_prompt_v2.md`  
 **Updated**: 2026-03-11  
 **Status**: ✓ CURRENT (fully aligned with PLAN_FORMAT_SPEC.md and MCP_INTENT_ARTIFACT_SPEC.md)
@@ -34,6 +37,7 @@ These are the **ONLY** templates you should use. All others are archived/depreca
 **What it does**: Instructions for WINDSURF agent to execute approved plans
 
 **Key sections**:
+
 - YOUR TOOLS (write_file, begin_session, etc.)
 - OPERATOR INPUT (plan signature + path)
 - PLAN ANATOMY (10 required keys)
@@ -47,10 +51,12 @@ These are the **ONLY** templates you should use. All others are archived/depreca
 ## REFERENCE DOCUMENTS (USE THESE FOR CONTEXT)
 
 ### Templates
+
 - `PLAN_SCAFFOLD.json` — Starter template with 10 required keys and examples
 - `PLAN_EXAMPLE_FINALIZED.json` — Concrete example (JWT auth plan)
 
 ### Specifications
+
 - `../PLAN_FORMAT_SPEC.md` — Canonical JSON schema (complete reference)
 - `../reports/MCP_INTENT_ARTIFACT_SPEC.md` — Intent artifact schema (9 sections)
 - `../PROMPT_TEMPLATES.md` — Index of all prompts and tools
@@ -77,6 +83,7 @@ These files are **OUT OF DATE** and should NOT be used. They are kept for histor
 ## How to Use
 
 ### For ANTIGRAVITY (Planning)
+
 1. Copy `antigravity_planning_prompt_v2.md`
 2. Feed it to your AI agent along with the user's requirements
 3. Agent creates JSON plan matching `PLAN_FORMAT_SPEC.md`
@@ -85,6 +92,7 @@ These files are **OUT OF DATE** and should NOT be used. They are kept for histor
 6. Agent delivers signature to operator
 
 ### For WINDSURF (Execution)
+
 1. Copy `windsurf_execution_prompt_v2.md`
 2. Feed it to your AI agent along with:
    - Plan signature (from ANTIGRAVITY)
@@ -95,6 +103,7 @@ These files are **OUT OF DATE** and should NOT be used. They are kept for histor
 6. All writes are audited
 
 ### For AI Agent Developers
+
 1. Reference: `../PLAN_FORMAT_SPEC.md` (complete JSON schema)
 2. Reference: `../reports/MCP_INTENT_ARTIFACT_SPEC.md` (intent schema)
 3. Reference: `../PROMPT_TEMPLATES.md` (tool documentation)
@@ -125,8 +134,10 @@ If you have code using old prompts, update as follows:
 **New**: `windsurf_execution_prompt_v2.md`
 
 **Changes in v2**:
+
 - ANTIGRAVITY now emphasizes STRICT JSON format
 - ANTIGRAVITY now documents forbidden patterns (stubs, ambiguous language)
+- ANTIGRAVITY now requires execution-ready file coverage so WINDSURF does not infer missing details
 - WINDSURF now clarifies plan parameter is a signature STRING
 - WINDSURF now shows correct 9-section intent artifact schema
 - WINDSURF now documents Authority format (key-value pairs, not bulleted)
@@ -143,4 +154,3 @@ See: `../../ALIGNMENT_INDEX.md` (navigation hub for all alignment docs)
 **Status**: ✓ CONSOLIDATED  
 **Last Updated**: 2026-03-11  
 **Authority**: ATLAS-GATE-v2 Governance
-
